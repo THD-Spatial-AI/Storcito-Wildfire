@@ -26,45 +26,7 @@ The application is part of the **SpatialHub** ecosystem at TH Deggendorf, runnin
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        WILDFIRE APP SYSTEM                          │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  ┌─────────────────────────────────────────────────────────────┐    │
-│  │                        FRONTEND                             │    │
-│  │  React 19 · TypeScript · Vite · TailwindCSS 4               │    │
-│  │  OpenLayers 10 (2D) · MapLibre GL JS (3D) · ECharts 6       │    │
-│  │  TanStack Query 5 · Zustand 5 · React Router 7              │    │
-│  │  Shared: @spatialhub/ui · auth · forms · i18n               │    │
-│  └──────────────────────┬──────────────────────────────────────┘    │
-│                         │                                           │
-│              REST API + SSE + Session Cookies                       │
-│                         ▼                                           │
-│  ┌─────────────────────────────────────────────────────────────┐    │
-│  │              NGINX REVERSE PROXY (:80 / :443)               │    │
-│  │      /api/* → Backend    /keycloak/* → Keycloak             │    │
-│  └──────────────────────┬──────────────────────────────────────┘    │
-│                         ▼                                           │
-│  ┌──────────────────┐  ┌──────────────┐  ┌──────────────────┐      │
-│  │  BACKEND (Go+Gin)│  │   KEYCLOAK   │  │    GEOSERVER     │      │
-│  │  • REST API      │  │ • OAuth2/OIDC│  │ • WMS raster     │      │
-│  │  • SSE notifs    │  │ • SSO & IAM  │  │ • Layer publish  │      │
-│  │  • Asynq workers │  │ • User roles │  │ • Spatial data   │      │
-│  │  • GORM ORM      │  │              │  │                  │      │
-│  └───────┬──────────┘  └──────────────┘  └──────────────────┘      │
-│          │                                                          │
-│          ▼                                                          │
-│  ┌───────────────┐  ┌──────────┐  ┌──────────────────────────┐     │
-│  │ POSTGRESQL 15 │  │ REDIS 7  │  │  WEBSERVICE (Platform)   │     │
-│  │ + POSTGIS     │  │          │  │  • Simulation dispatcher │     │
-│  │ • App data    │  │ • Session│  │  • Callback endpoint     │     │
-│  │ • Keycloak    │  │ • Queue  │  │  • Heartbeat & health    │     │
-│  │               │  │ • Cache  │  │                          │     │
-│  └───────────────┘  └──────────┘  └──────────────────────────┘     │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
-```
+The full system architecture is documented on the project's MkDocs documentation site (see `docs/`). Run `mkdocs serve` to browse it locally.
 
 ### Data Flow
 
