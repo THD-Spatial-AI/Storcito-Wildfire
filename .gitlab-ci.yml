@@ -1,0 +1,425 @@
+# WILDFIRE_APP production CI/CD pipeline
+
+variables:
+  # Must match the tag configured on the production GitLab runner.
+  RUNNER_TAG: storcito
+  GIT_DEPTH: 1
+  DOCKER_DRIVER: overlay2
+  DOCKER_BUILDKIT: 1
+  BUILDX_NO_DEFAULT_ATTESTATIONS: 1
+  APP_IMAGE: ${CI_REGISTRY_IMAGE}/wildfire-app
+  DEPLOY_SUBDIR_PROD: deploy
+  WILDFIRE_APP_DEPLOY_COMPOSE: docker-compose.deploy.yml
+  SERVER_URL_PROD: https://wildfire.th-deg.de
+
+stages:
+  - initial
+  - build
+  - production
+
+default:
+  tags:
+    - ${RUNNER_TAG}
+
+.prod_only: &prod_only
+  only:
+    - stable
+
+.prod_ssh: &prod_ssh
+  before_script:
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/deploy_key 2>/dev/null || echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+    - chmod 600 ~/.ssh/deploy_key
+    - ssh-add ~/.ssh/deploy_key
+    - ssh-keygen -R $DEPLOY_SERVER_HOST 2>/dev/null || true
+    - ssh-keyscan -H $DEPLOY_SERVER_HOST >> ~/.ssh/known_hosts 2>/dev/null
+    - ssh-keyscan -H mygit.th-deg.de >> ~/.ssh/known_hosts 2>/dev/null
+    - DEPLOY_REMOTE_HOME="$(ssh "$DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST" "printf %s \$HOME")"
+    - test -n "$DEPLOY_REMOTE_HOME"
+    - export DEPLOY_PATH_PROD="${DEPLOY_REMOTE_HOME}/${DEPLOY_SUBDIR_PROD:-deploy}"
+    - "echo Deploy path: $DEPLOY_PATH_PROD"
+    - |
+      clone_external_repo() {
+        repo="$1"
+        dest="$2"
+
+        if [ -d "$dest/.git" ]; then
+          git -C "$dest" pull --ff-only
+          return
+        fi
+
+        rm -rf "$dest"
+        if [ -n "${MICROSERVICE_GIT_TOKEN:-}" ]; then
+          git_user="${MICROSERVICE_GIT_USERNAME:-oauth2}"
+          if git clone --depth=1 "https://${git_user}:${MICROSERVICE_GIT_TOKEN}@mygit.th-deg.de/thd-spatial-ai/microservices/${repo}.git" "$dest"; then
+            return
+          fi
+          echo "MICROSERVICE_GIT_TOKEN clone failed for ${repo}; trying CI_JOB_TOKEN"
+          rm -rf "$dest"
+        fi
+
+        if git clone --depth=1 "https://gitlab-ci-token:${CI_JOB_TOKEN}@mygit.th-deg.de/thd-spatial-ai/microservices/${repo}.git" "$dest"; then
+          return
+        fi
+
+        echo "CI_JOB_TOKEN clone failed for ${repo}; trying SSH key"
+        rm -rf "$dest"
+        if git clone --depth=1 "git@mygit.th-deg.de:thd-spatial-ai/microservices/${repo}.git" "$dest"; then
+          return
+        fi
+
+        echo "ERROR: cannot clone ${repo}. Configure MICROSERVICE_GIT_TOKEN with read_repository access or allow CI_JOB_TOKEN access to the microservices projects."
+        return 1
+      }
+  <<: *prod_only
+
+initial:verify:
+  stage: initial
+  timeout: 5m
+  script:
+    - "echo '=== Production pipeline started ==='"
+    - "echo Branch: $CI_COMMIT_BRANCH"
+    - "echo Commit: $CI_COMMIT_SHORT_SHA"
+    - "echo Runner: ${CI_RUNNER_DESCRIPTION:-unknown}"
+    - "echo Registry: $CI_REGISTRY"
+    - "docker --version"
+    - "echo '=== Verification complete ==='"
+  <<: *prod_only
+
+build:wildfire-app:
+  stage: build
+  before_script:
+    - "echo 'CI_REGISTRY: $CI_REGISTRY'"
+    - "echo 'CI_REGISTRY_IMAGE: $CI_REGISTRY_IMAGE'"
+    - "echo $CI_JOB_TOKEN | docker login $CI_REGISTRY --password-stdin -u gitlab-ci-token"
+    - |
+      clone_external_repo() {
+        repo="$1"
+        dest="$2"
+
+        if [ -d "$dest/.git" ]; then
+          git -C "$dest" pull --ff-only
+          return
+        fi
+
+        rm -rf "$dest"
+        if [ -n "${MICROSERVICE_GIT_TOKEN:-}" ]; then
+          git_user="${MICROSERVICE_GIT_USERNAME:-oauth2}"
+          if git clone --depth=1 "https://${git_user}:${MICROSERVICE_GIT_TOKEN}@mygit.th-deg.de/thd-spatial-ai/microservices/${repo}.git" "$dest"; then
+            return
+          fi
+          echo "MICROSERVICE_GIT_TOKEN clone failed for ${repo}; trying CI_JOB_TOKEN"
+          rm -rf "$dest"
+        fi
+
+        if git clone --depth=1 "https://gitlab-ci-token:${CI_JOB_TOKEN}@mygit.th-deg.de/thd-spatial-ai/microservices/${repo}.git" "$dest"; then
+          return
+        fi
+
+        echo "ERROR: cannot clone ${repo}. Configure MICROSERVICE_GIT_TOKEN with read_repository access or allow CI_JOB_TOKEN access to the microservices projects."
+        return 1
+      }
+    - clone_external_repo backend-infrastructure infrastructure
+    - clone_external_repo react-shared-components libs
+  script:
+    - "echo '=== Building production Wildfire App image ==='"
+    - "docker build --no-cache --provenance=false --sbom=false -t $APP_IMAGE:$CI_COMMIT_SHORT_SHA -t $APP_IMAGE:latest -f Dockerfile.ci ."
+    - "for i in 1 2 3; do docker push $APP_IMAGE:$CI_COMMIT_SHORT_SHA && break || sleep 30; done"
+    - "for i in 1 2 3; do docker push $APP_IMAGE:latest && break || sleep 30; done"
+    - "echo '=== Build complete ==='"
+  when: manual
+  <<: *prod_only
+
+prod:infra:postgres-redis:
+  stage: production
+  <<: *prod_ssh
+  script:
+    - "echo '=== [PROD] Setting up Postgres and Redis ==='"
+    - clone_external_repo platform-core platform-core
+    - clone_external_repo backend-infrastructure infrastructure
+    - |
+      ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "mkdir -p \
+        $DEPLOY_PATH_PROD/platform-core/auth-service \
+        $DEPLOY_PATH_PROD/platform-core/webservice \
+        $DEPLOY_PATH_PROD/platform-core/geoserver \
+        $DEPLOY_PATH_PROD/infrastructure/common \
+        $DEPLOY_PATH_PROD/infrastructure/platform \
+        $DEPLOY_PATH_PROD/wildfire-app/backend \
+        $DEPLOY_PATH_PROD/nginx"
+    - scp -r infrastructure/common/. $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST:$DEPLOY_PATH_PROD/infrastructure/common/
+    - scp -r infrastructure/platform/. $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST:$DEPLOY_PATH_PROD/infrastructure/platform/
+    - scp platform-core/docker-compose.yml $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST:$DEPLOY_PATH_PROD/platform-core/
+    - scp -r platform-core/auth-service/. $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST:$DEPLOY_PATH_PROD/platform-core/auth-service/
+    - scp -r platform-core/webservice/. $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST:$DEPLOY_PATH_PROD/platform-core/webservice/
+    - |
+      ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "
+        cp $DEPLOY_PATH_PROD/platform-core/auth-service/.env.example $DEPLOY_PATH_PROD/platform-core/auth-service/.env 2>/dev/null || true
+        cp $DEPLOY_PATH_PROD/platform-core/webservice/.env.example $DEPLOY_PATH_PROD/platform-core/webservice/.env 2>/dev/null || true
+      "
+    - scp wildfire-app/backend/.env.example $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST:$DEPLOY_PATH_PROD/wildfire-app/backend/.env.example
+    - ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "[ -f $DEPLOY_PATH_PROD/wildfire-app/backend/.env ] || cp $DEPLOY_PATH_PROD/wildfire-app/backend/.env.example $DEPLOY_PATH_PROD/wildfire-app/backend/.env"
+    - |
+      ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "
+        cd $DEPLOY_PATH_PROD/platform-core
+        sed -i 's|../enerplanet/backend:/backend-config|../wildfire-app/backend:/backend-config|' docker-compose.yml
+        sed -i '/auth-service:/,/depends_on:/ s|KEYCLOAK_URL: .*|KEYCLOAK_URL: \${KEYCLOAK_ISSUER_URL:-${SERVER_URL_PROD}/keycloak}|' docker-compose.yml
+        sed -i '/webservice:/,/depends_on:/ s|KEYCLOAK_URL: .*|KEYCLOAK_URL: \${KEYCLOAK_ISSUER_URL:-${SERVER_URL_PROD}/keycloak}|' docker-compose.yml
+        AUTH_ENV=$DEPLOY_PATH_PROD/platform-core/auth-service/.env
+        WEB_ENV=$DEPLOY_PATH_PROD/platform-core/webservice/.env
+        sed -i 's|^APP_ENV=.*|APP_ENV=production|' \$AUTH_ENV
+        sed -i 's|^COOKIE_DOMAIN=.*|COOKIE_DOMAIN=wildfire.th-deg.de|' \$AUTH_ENV
+        sed -i 's|^FRONTEND_URL=.*|FRONTEND_URL=${SERVER_URL_PROD}|' \$AUTH_ENV
+        sed -i 's|^WEB_URLS=.*|WEB_URLS=${SERVER_URL_PROD}|' \$AUTH_ENV
+        sed -i 's|^KEYCLOAK_URL=.*|KEYCLOAK_URL=${SERVER_URL_PROD}/keycloak|' \$AUTH_ENV
+        sed -i 's|^REDIRECT_URL=.*|REDIRECT_URL=${SERVER_URL_PROD}/api/callback-auth|' \$AUTH_ENV
+        sed -i 's|^BACKEND_SERVICE_URL=.*|BACKEND_SERVICE_URL=http://app-backend-prod:8000|' \$AUTH_ENV
+        sed -i 's|^DB_HOST=.*|DB_HOST=postgres|' \$AUTH_ENV
+        sed -i 's|^DB_PORT=.*|DB_PORT=5432|' \$AUTH_ENV
+        sed -i 's|^REDIS_HOST=.*|REDIS_HOST=redis|' \$AUTH_ENV
+        sed -i 's|^REDIS_PORT=.*|REDIS_PORT=6379|' \$AUTH_ENV
+        sed -i 's|^REDIS_PASSWORD=.*|REDIS_PASSWORD=|' \$AUTH_ENV
+        sed -i 's|^APP_ENV=.*|APP_ENV=production|' \$WEB_ENV
+        sed -i 's|^CALLBACK_URL=.*|CALLBACK_URL=${SERVER_URL_PROD}|' \$WEB_ENV
+        sed -i 's|^DB_HOST=.*|DB_HOST=postgres|' \$WEB_ENV
+        sed -i 's|^DB_PORT=.*|DB_PORT=5432|' \$WEB_ENV
+        sed -i 's|^REDIS_HOST=.*|REDIS_HOST=redis|' \$WEB_ENV
+        sed -i 's|^REDIS_PORT=.*|REDIS_PORT=6379|' \$WEB_ENV
+        sed -i 's|^REDIS_PASSWORD=.*|REDIS_PASSWORD=|' \$WEB_ENV
+        chmod 600 \$AUTH_ENV \$WEB_ENV
+        touch .env
+        sed -i '/^KEYCLOAK_ISSUER_URL=/d' .env
+        echo 'KEYCLOAK_ISSUER_URL=${SERVER_URL_PROD}/keycloak' >> .env
+        grep -q '^KC_HOSTNAME=' .env && \
+          sed -i 's|^KC_HOSTNAME=.*|KC_HOSTNAME=${SERVER_URL_PROD}/keycloak|' .env || \
+          echo 'KC_HOSTNAME=${SERVER_URL_PROD}/keycloak' >> .env
+        if [ -n '$KEYCLOAK_ADMIN_PASSWORD' ]; then
+          grep -q '^KEYCLOAK_ADMIN_PASSWORD=' .env && \
+            sed -i 's|^KEYCLOAK_ADMIN_PASSWORD=.*|KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}|' .env || \
+            echo 'KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}' >> .env
+        fi
+        chmod 600 .env
+      "
+    - |
+      ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "cd $DEPLOY_PATH_PROD/platform-core && \
+        docker network create spatialhub-net 2>/dev/null || true && \
+        docker compose up -d postgres redis && \
+        echo 'Waiting for Postgres to be ready...' && \
+        sleep 10 && \
+        docker compose ps postgres redis"
+    - "echo '=== [PROD] Postgres and Redis started ==='"
+  environment:
+    name: production/infrastructure
+  when: manual
+
+prod:infra:keycloak:
+  stage: production
+  <<: *prod_ssh
+  script:
+    - "echo '=== [PROD] Starting Keycloak ==='"
+    - clone_external_repo platform-core platform-core
+    - scp platform-core/docker-compose.yml $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST:$DEPLOY_PATH_PROD/platform-core/
+    - scp -r platform-core/auth-service/keycloak/. $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST:$DEPLOY_PATH_PROD/platform-core/auth-service/keycloak/
+    - |
+      ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "
+        cd $DEPLOY_PATH_PROD/platform-core
+        sed -i 's|../enerplanet/backend:/backend-config|../wildfire-app/backend:/backend-config|' docker-compose.yml
+        touch .env
+        sed -i '/^KEYCLOAK_ISSUER_URL=/d' .env
+        echo 'KEYCLOAK_ISSUER_URL=${SERVER_URL_PROD}/keycloak' >> .env
+        grep -q '^KC_HOSTNAME=' .env && \
+          sed -i 's|^KC_HOSTNAME=.*|KC_HOSTNAME=${SERVER_URL_PROD}/keycloak|' .env || \
+          echo 'KC_HOSTNAME=${SERVER_URL_PROD}/keycloak' >> .env
+        if [ -n '$KEYCLOAK_ADMIN_PASSWORD' ]; then
+          grep -q '^KEYCLOAK_ADMIN_PASSWORD=' .env && \
+            sed -i 's|^KEYCLOAK_ADMIN_PASSWORD=.*|KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}|' .env || \
+            echo 'KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}' >> .env
+        fi
+        chmod 600 .env
+      "
+    - |
+      ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "cd $DEPLOY_PATH_PROD/platform-core && \
+        docker compose up -d --force-recreate keycloak && \
+        echo 'Waiting for Keycloak to be healthy...' && \
+        sleep 30 && \
+        docker compose ps keycloak"
+    - "echo '=== [PROD] Keycloak started ==='"
+  environment:
+    name: production/keycloak
+  when: manual
+
+prod:infra:keycloak-init:
+  stage: production
+  <<: *prod_ssh
+  script:
+    - "echo '=== [PROD] Running Keycloak Init ==='"
+    - |
+      ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "cd $DEPLOY_PATH_PROD/platform-core && \
+        sed -i 's|../enerplanet/backend:/backend-config|../wildfire-app/backend:/backend-config|' docker-compose.yml && \
+        SERVER_URL='$SERVER_URL_PROD' docker compose up keycloak-init && \
+        echo '=== Checking KEYCLOAK_CLIENT_SECRET ===' && \
+        grep KEYCLOAK_CLIENT_SECRET $DEPLOY_PATH_PROD/wildfire-app/backend/.env || echo 'Not found in wildfire-app' && \
+        grep KEYCLOAK_CLIENT_SECRET $DEPLOY_PATH_PROD/platform-core/auth-service/.env || echo 'Not found in auth-service' && \
+        grep KEYCLOAK_CLIENT_SECRET $DEPLOY_PATH_PROD/platform-core/webservice/.env || echo 'Not found in webservice'"
+    - "echo '=== [PROD] Keycloak Init complete ==='"
+  environment:
+    name: production/keycloak-init
+  when: manual
+
+prod:platform:auth-webservice:
+  stage: production
+  <<: *prod_ssh
+  script:
+    - "echo '=== [PROD] Starting Auth Service and Webservice ==='"
+    - clone_external_repo platform-core platform-core
+    - clone_external_repo backend-infrastructure infrastructure
+    - |
+      ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "
+        mkdir -p \
+          $DEPLOY_PATH_PROD/platform-core/auth-service \
+          $DEPLOY_PATH_PROD/platform-core/webservice \
+          $DEPLOY_PATH_PROD/infrastructure/common \
+          $DEPLOY_PATH_PROD/infrastructure/platform
+        [ ! -f $DEPLOY_PATH_PROD/platform-core/auth-service/.env ] || cp $DEPLOY_PATH_PROD/platform-core/auth-service/.env /tmp/wildfire-auth-service.env.${CI_PIPELINE_ID}
+        [ ! -f $DEPLOY_PATH_PROD/platform-core/webservice/.env ] || cp $DEPLOY_PATH_PROD/platform-core/webservice/.env /tmp/wildfire-webservice.env.${CI_PIPELINE_ID}
+      "
+    - scp -r infrastructure/common/. $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST:$DEPLOY_PATH_PROD/infrastructure/common/
+    - scp -r infrastructure/platform/. $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST:$DEPLOY_PATH_PROD/infrastructure/platform/
+    - scp platform-core/docker-compose.yml $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST:$DEPLOY_PATH_PROD/platform-core/
+    - scp -r platform-core/auth-service/. $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST:$DEPLOY_PATH_PROD/platform-core/auth-service/
+    - scp -r platform-core/webservice/. $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST:$DEPLOY_PATH_PROD/platform-core/webservice/
+    - |
+      ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "
+        [ ! -f /tmp/wildfire-auth-service.env.${CI_PIPELINE_ID} ] || mv /tmp/wildfire-auth-service.env.${CI_PIPELINE_ID} $DEPLOY_PATH_PROD/platform-core/auth-service/.env
+        [ ! -f /tmp/wildfire-webservice.env.${CI_PIPELINE_ID} ] || mv /tmp/wildfire-webservice.env.${CI_PIPELINE_ID} $DEPLOY_PATH_PROD/platform-core/webservice/.env
+      "
+    - |
+      ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "
+        [ -f $DEPLOY_PATH_PROD/platform-core/auth-service/.env ] || cp $DEPLOY_PATH_PROD/platform-core/auth-service/.env.example $DEPLOY_PATH_PROD/platform-core/auth-service/.env
+        [ -f $DEPLOY_PATH_PROD/platform-core/webservice/.env ] || cp $DEPLOY_PATH_PROD/platform-core/webservice/.env.example $DEPLOY_PATH_PROD/platform-core/webservice/.env
+        cd $DEPLOY_PATH_PROD/platform-core
+        sed -i 's|../enerplanet/backend:/backend-config|../wildfire-app/backend:/backend-config|' docker-compose.yml
+        sed -i '/auth-service:/,/depends_on:/ s|KEYCLOAK_URL: .*|KEYCLOAK_URL: \${KEYCLOAK_ISSUER_URL:-${SERVER_URL_PROD}/keycloak}|' docker-compose.yml
+        sed -i '/webservice:/,/depends_on:/ s|KEYCLOAK_URL: .*|KEYCLOAK_URL: \${KEYCLOAK_ISSUER_URL:-${SERVER_URL_PROD}/keycloak}|' docker-compose.yml
+        AUTH_ENV=$DEPLOY_PATH_PROD/platform-core/auth-service/.env
+        WEB_ENV=$DEPLOY_PATH_PROD/platform-core/webservice/.env
+        sed -i 's|^APP_ENV=.*|APP_ENV=production|' \$AUTH_ENV
+        sed -i 's|^COOKIE_DOMAIN=.*|COOKIE_DOMAIN=wildfire.th-deg.de|' \$AUTH_ENV
+        sed -i 's|^FRONTEND_URL=.*|FRONTEND_URL=${SERVER_URL_PROD}|' \$AUTH_ENV
+        sed -i 's|^WEB_URLS=.*|WEB_URLS=${SERVER_URL_PROD}|' \$AUTH_ENV
+        sed -i 's|^KEYCLOAK_URL=.*|KEYCLOAK_URL=${SERVER_URL_PROD}/keycloak|' \$AUTH_ENV
+        sed -i 's|^REDIRECT_URL=.*|REDIRECT_URL=${SERVER_URL_PROD}/api/callback-auth|' \$AUTH_ENV
+        sed -i 's|^BACKEND_SERVICE_URL=.*|BACKEND_SERVICE_URL=http://app-backend-prod:8000|' \$AUTH_ENV
+        sed -i 's|^DB_HOST=.*|DB_HOST=postgres|' \$AUTH_ENV
+        sed -i 's|^DB_PORT=.*|DB_PORT=5432|' \$AUTH_ENV
+        sed -i 's|^REDIS_HOST=.*|REDIS_HOST=redis|' \$AUTH_ENV
+        sed -i 's|^REDIS_PORT=.*|REDIS_PORT=6379|' \$AUTH_ENV
+        sed -i 's|^REDIS_PASSWORD=.*|REDIS_PASSWORD=|' \$AUTH_ENV
+        sed -i 's|^APP_ENV=.*|APP_ENV=production|' \$WEB_ENV
+        sed -i 's|^CALLBACK_URL=.*|CALLBACK_URL=${SERVER_URL_PROD}|' \$WEB_ENV
+        sed -i 's|^DB_HOST=.*|DB_HOST=postgres|' \$WEB_ENV
+        sed -i 's|^DB_PORT=.*|DB_PORT=5432|' \$WEB_ENV
+        sed -i 's|^REDIS_HOST=.*|REDIS_HOST=redis|' \$WEB_ENV
+        sed -i 's|^REDIS_PORT=.*|REDIS_PORT=6379|' \$WEB_ENV
+        sed -i 's|^REDIS_PASSWORD=.*|REDIS_PASSWORD=|' \$WEB_ENV
+        chmod 600 \$AUTH_ENV \$WEB_ENV
+        touch .env
+        sed -i '/^KEYCLOAK_ISSUER_URL=/d' .env
+        echo 'KEYCLOAK_ISSUER_URL=${SERVER_URL_PROD}/keycloak' >> .env
+        grep -q '^KC_HOSTNAME=' .env && \
+          sed -i 's|^KC_HOSTNAME=.*|KC_HOSTNAME=${SERVER_URL_PROD}/keycloak|' .env || \
+          echo 'KC_HOSTNAME=${SERVER_URL_PROD}/keycloak' >> .env
+      "
+    - |
+      ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "cd $DEPLOY_PATH_PROD/platform-core && \
+        docker compose build --no-cache auth-service webservice && \
+        docker compose up -d --no-deps --force-recreate auth-service webservice && \
+        sleep 5 && \
+        docker compose ps auth-service webservice"
+    - "echo '=== [PROD] Auth Service and Webservice started ==='"
+  environment:
+    name: production/platform-services
+  when: manual
+
+prod:deploy:wildfire-app:
+  stage: production
+  <<: *prod_ssh
+  needs:
+    - build:wildfire-app
+  script:
+    - "echo '=== [PROD] Deploying Wildfire App ==='"
+    - "echo $CI_JOB_TOKEN | docker login $CI_REGISTRY --password-stdin -u gitlab-ci-token"
+    - "docker pull $APP_IMAGE:latest || echo 'Pull failed, checking if image exists locally'"
+    - ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "mkdir -p $DEPLOY_PATH_PROD/wildfire-app/backend $DEPLOY_PATH_PROD/nginx/conf.d $DEPLOY_PATH_PROD/nginx/ssl $DEPLOY_PATH_PROD/nginx/certbot"
+    - scp wildfire-app/$WILDFIRE_APP_DEPLOY_COMPOSE $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST:$DEPLOY_PATH_PROD/wildfire-app/
+    - scp nginx/nginx.conf $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST:$DEPLOY_PATH_PROD/nginx/
+    - scp nginx/conf.d/wildfire.th-deg.de.conf $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST:$DEPLOY_PATH_PROD/nginx/conf.d/
+    - scp wildfire-app/backend/.env.example $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST:$DEPLOY_PATH_PROD/wildfire-app/backend/.env.example
+    - ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "[ -f $DEPLOY_PATH_PROD/wildfire-app/backend/.env.prod ] || cp $DEPLOY_PATH_PROD/wildfire-app/backend/.env.example $DEPLOY_PATH_PROD/wildfire-app/backend/.env.prod"
+    - |
+      ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "
+        sed -i 's|^APP_ENV=.*|APP_ENV=production|' $DEPLOY_PATH_PROD/wildfire-app/backend/.env.prod
+        sed -i 's|^APP_URL=.*|APP_URL=${SERVER_URL_PROD}|' $DEPLOY_PATH_PROD/wildfire-app/backend/.env.prod
+        sed -i 's|^REDIRECT_URL=.*|REDIRECT_URL=${SERVER_URL_PROD}/callback-auth|' $DEPLOY_PATH_PROD/wildfire-app/backend/.env.prod
+        sed -i 's|^COOKIE_DOMAIN=.*|COOKIE_DOMAIN=wildfire.th-deg.de|' $DEPLOY_PATH_PROD/wildfire-app/backend/.env.prod
+        if grep -q '^KEYCLOAK_CLIENT_SECRET=' $DEPLOY_PATH_PROD/wildfire-app/backend/.env 2>/dev/null; then
+          KC_SECRET=\$(grep '^KEYCLOAK_CLIENT_SECRET=' $DEPLOY_PATH_PROD/wildfire-app/backend/.env | head -1)
+          sed -i '/^KEYCLOAK_CLIENT_SECRET=/d' $DEPLOY_PATH_PROD/wildfire-app/backend/.env.prod
+          echo \$KC_SECRET >> $DEPLOY_PATH_PROD/wildfire-app/backend/.env.prod
+        else
+          echo 'WARNING: KEYCLOAK_CLIENT_SECRET not found in .env; run prod:infra:keycloak-init first'
+        fi
+        if [ -n '$CALLBACK_SECRET' ]; then
+          sed -i 's|^CALLBACK_SECRET=.*|CALLBACK_SECRET=${CALLBACK_SECRET}|' $DEPLOY_PATH_PROD/wildfire-app/backend/.env.prod
+        else
+          echo 'WARNING: CALLBACK_SECRET not set'
+        fi
+      "
+    - "echo 'Transferring image to production server...'"
+    - docker save $APP_IMAGE:latest | ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "docker load"
+    - ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "docker tag $APP_IMAGE:latest wildfire-app:latest"
+    - |
+      ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "
+        echo 'Cleaning up stale backend containers...'
+        for c in app-backend; do
+          if docker ps -a --format '{{.Names}}' | grep -qx \$c; then
+            docker stop \$c 2>/dev/null || true
+            docker rm \$c 2>/dev/null || true
+          fi
+        done
+      "
+    - |
+      ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "cd $DEPLOY_PATH_PROD/wildfire-app && \
+        docker compose -f $WILDFIRE_APP_DEPLOY_COMPOSE up -d --force-recreate app-backend-prod nginx && \
+        sleep 5 && \
+        docker compose -f $WILDFIRE_APP_DEPLOY_COMPOSE ps"
+    - "echo '=== [PROD] Wildfire App deployed ==='"
+  environment:
+    name: production/wildfire-app
+  when: manual
+
+prod:deploy:migrate:
+  stage: production
+  <<: *prod_ssh
+  script:
+    - "echo '=== [PROD] Running Migrations ==='"
+    - |
+      ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "cd $DEPLOY_PATH_PROD/wildfire-app && \
+        docker compose -f $WILDFIRE_APP_DEPLOY_COMPOSE run --rm --entrypoint /app/migrate app-backend-prod"
+    - "echo '=== [PROD] Migrations complete ==='"
+  environment:
+    name: production/migrate
+  when: manual
+
+prod:deploy:seed:
+  stage: production
+  <<: *prod_ssh
+  script:
+    - "echo '=== [PROD] Running Seed ==='"
+    - |
+      ssh $DEPLOY_SERVER_USER@$DEPLOY_SERVER_HOST "cd $DEPLOY_PATH_PROD/wildfire-app && \
+        docker compose -f $WILDFIRE_APP_DEPLOY_COMPOSE run --rm -e SEED_KEYCLOAK_USER=false --entrypoint /app/seed app-backend-prod"
+    - "echo '=== [PROD] Seed complete ==='"
+  environment:
+    name: production/seed
+  when: manual

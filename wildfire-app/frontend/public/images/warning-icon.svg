@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <!-- Warning triangle icon for high capacity usage -->
+
+  <!-- Drop shadow -->
+  <path d="M13.73 4.5l7.5 13a2 2 0 01-1.73 3H4.5a2 2 0 01-1.73-3l7.5-13a2 2 0 013.46 0z"
+        fill="rgba(0,0,0,0.2)" transform="translate(0.5, 0.5)"/>
+
+  <!-- Triangle background -->
+  <path d="M13.73 4l7.5 13a2 2 0 01-1.73 3H4.5a2 2 0 01-1.73-3l7.5-13a2 2 0 013.46 0z"
+        fill="#ef4444" stroke="#b91c1c" stroke-width="1"/>
+
+  <!-- Exclamation mark -->
+  <rect x="11" y="8" width="2" height="6" rx="1" fill="white"/>
+  <circle cx="12" cy="16.5" r="1.2" fill="white"/>
+</svg>

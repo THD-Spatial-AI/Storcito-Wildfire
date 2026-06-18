@@ -1,0 +1,1759 @@
+{
+  "drawing": {
+    "clickToDraw": "Click to draw",
+    "clickToClose": "Click to close",
+    "start": "Start"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "close": "Close",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "reset": "Reset",
+    "clear": "Clear",
+    "clearAll": "Clear All",
+    "selectAll": "Select All",
+    "noResults": "No results found",
+    "actions": "Actions",
+    "settings": "Settings",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "unknown": "Unknown",
+    "more": "more",
+    "add": "Add",
+    "refresh": "Refresh",
+    "healthCheck": "Health check",
+    "na": "N/A",
+    "from": "From",
+    "to": "To",
+    "duration": "Duration",
+    "days": "days",
+    "country": "Country",
+    "region": "Region",
+    "status": "Status",
+    "createdAt": "Created",
+    "updatedAt": "Last Updated",
+    "workspace": "Workspace",
+    "results": "Results",
+    "name": "Name",
+    "description": "Description",
+    "id": "ID",
+    "current": "Current",
+    "max": "Max",
+    "tooltips": {
+      "viewOnMap": "View on Map",
+      "editLocation": "Edit Location",
+      "editName": "Edit name",
+      "duplicate": "Duplicate",
+      "view": "View",
+      "share": "Share",
+      "moveToWorkspace": "Move to Workspace",
+      "profile": "Profile",
+      "documentation": "Documentation",
+      "restartTour": "Restart tour",
+      "feedback": "Feedback",
+      "theme": "Theme",
+      "searchLocation": "Search for a location"
+    },
+    "sidebar": {
+      "energySimulations": "Energy Simulations",
+      "map": "Map",
+      "locations": "Locations",
+      "simulationReports": "Model Comparison",
+      "technologies": "Technologies",
+      "simulations": "Wildfire Simulations"
+    },
+    "menu": {
+      "profile": "Profile",
+      "settings": "Settings",
+      "logout": "Log out"
+    },
+    "modelActions": {
+      "viewResults": "View Results",
+      "downloadResults": "Download Results",
+      "copyConfiguration": "Copy Configuration",
+      "editConfiguration": "Edit Configuration",
+      "cannotEditCompleted": "Cannot edit completed model",
+      "moveToWorkspace": "Move to Workspace",
+      "shareModel": "Share Model",
+      "delete": "Delete",
+      "cannotDelete": "Cannot delete - only the owner or an expert can delete",
+      "retryCalculation": "Retry Calculation",
+      "startCalculation": "Start Calculation",
+      "engineNotAvailable": "Simulation engine is not available"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "results": "results",
+      "noResults": "No results",
+      "loading": "Loading...",
+      "perPage": "per page",
+      "previousPage": "Previous page",
+      "nextPage": "Next page"
+    },
+    "appName": "Wildfire Risk Assessment",
+    "saved": "Saved"
+  },
+  "forms": {
+    "user": {
+      "personalInfo": {
+        "title": "Personal Information",
+        "description": "Basic user details and contact information"
+      },
+      "security": {
+        "title": "Security",
+        "description": "Account security credentials"
+      },
+      "fields": {
+        "fullName": "Full Name",
+        "email": "Email Address",
+        "organization": "Organization",
+        "position": "Position",
+        "phone": "Phone Number",
+        "accessLevel": "Access Level",
+        "emailVerified": "Email Verified",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "modelLimit": "Model Limit"
+      },
+      "placeholders": {
+        "fullName": "Enter full name",
+        "email": "Enter email address",
+        "organization": "Enter organization name",
+        "position": "Enter job position",
+        "password": "Enter password",
+        "confirmPassword": "Confirm password",
+        "modelLimit": "Leave empty for default"
+      },
+      "descriptions": {
+        "emailVerified": "Mark email as verified",
+        "modelLimit": "Custom model creation limit (0 = unlimited, empty = use default)"
+      },
+      "accessLevels": {
+        "veryLow": "Very Low Access",
+        "intermediate": "Intermediate Access",
+        "manager": "Manager (Group Access)",
+        "expert": "Expert (Full Access)"
+      },
+      "validation": {
+        "phoneInvalid": "Phone number can only contain digits, spaces, dashes, plus signs, and parentheses",
+        "passwordLength": "Password must be at least 8 characters long",
+        "nameRequired": "Name is required",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Please enter a valid email address",
+        "accessLevelRequired": "Access level is required",
+        "passwordRequired": "Password is required",
+        "confirmPasswordRequired": "Password confirmation is required",
+        "passwordsMismatch": "Passwords do not match"
+      }
+    },
+    "webservice": {
+      "serviceInfo": {
+        "title": "Service Information",
+        "description": "Basic webservice identification and metadata"
+      },
+      "connectionDetails": {
+        "title": "Connection Details",
+        "description": "Network connection and endpoint configuration"
+      },
+      "performanceSettings": {
+        "title": "Performance Settings",
+        "description": "Service capacity and performance configuration"
+      },
+      "fields": {
+        "serviceName": "Service Name",
+        "protocol": "Protocol",
+        "ipAddress": "IP Address",
+        "port": "Port",
+        "endpoint": "Endpoint Path",
+        "autoScaling": "Auto Scaling",
+        "maxConcurrency": "Max Concurrent Requests",
+        "initialStatus": "Initial Status"
+      },
+      "placeholders": {
+        "serviceName": "Enter service name",
+        "ipAddress": "e.g., 192.168.1.100"
+      },
+      "descriptions": {
+        "serviceName": "Human-readable name for the webservice",
+        "autoScaling": "Enable automatic scaling based on load",
+        "maxConcurrency": "Maximum number of concurrent requests (1-100)"
+      },
+      "statusOptions": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "maintenance": "Maintenance"
+      },
+      "validation": {
+        "ipInvalid": "Please enter a valid IP address",
+        "portRange": "Port must be between 1 and 65535",
+        "concurrencyRange": "Max concurrency must be between 1 and 100",
+        "nameRequired": "Service name is required",
+        "ipRequired": "IP address is required",
+        "portRequired": "Port is required"
+      }
+    },
+    "workspace": {
+      "details": {
+        "title": "Details",
+        "description": "Enter the workspace name and optional description"
+      },
+      "fields": {
+        "name": "Workspace Name",
+        "description": "Description"
+      },
+      "placeholders": {
+        "name": "Enter workspace name",
+        "description": "Enter workspace description (optional)"
+      },
+      "descriptions": {
+        "name": "A unique name for your workspace",
+        "description": "Optional description of the workspace purpose"
+      },
+      "validation": {
+        "nameRequired": "Workspace name is required"
+      }
+    },
+    "moveModel": {
+      "destination": {
+        "title": "Destination",
+        "description": "Select the target workspace for the model"
+      },
+      "fields": {
+        "targetWorkspace": "Target Workspace"
+      },
+      "placeholders": {
+        "selectWorkspace": "Select a workspace"
+      },
+      "descriptions": {
+        "targetWorkspace": "Choose the workspace to move the model to"
+      },
+      "defaultWorkspace": "Default Workspace"
+    },
+    "shareModel": {
+      "title": "Share with an Individual User",
+      "description": "Enter the email address of the user to share with",
+      "emailDescription": "The user will get access to this model"
+    },
+    "bulkCopy": {
+      "title": "Number of Copies",
+      "description": "Specify how many copies to create for each selected model",
+      "fields": {
+        "copyCount": "Number of Copies",
+        "copyCountDescription": "Each selected model will be duplicated this many times"
+      },
+      "validation": {
+        "min": "At least 1 copy is required",
+        "max": "Maximum 10 copies allowed",
+        "integer": "Must be a whole number"
+      }
+    }
+  },
+  "dashboard": {
+    "stats": {
+      "totalModels": "Total Models",
+      "draft": "Draft",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "published": "Published",
+      "modelLimit": "Model Limit",
+      "unlimited": "Unlimited"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "noNotifications": "No notifications",
+    "allCaughtUp": "You're all caught up!",
+    "markAllRead": "Mark all read",
+    "clearAll": "Clear all",
+    "viewAll": "View all notifications",
+    "moreNotification": "+{{count}} more notification",
+    "moreNotifications": "+{{count}} more notifications",
+    "details": "Details",
+    "close": "Close",
+    "scheduledFor": "Scheduled For:",
+    "service": "Service",
+    "last30Days": "Last 30 days",
+    "unread": "{{count}} unread",
+    "loading": "Loading notifications...",
+    "confirmClearTitle": "Clear all notifications?",
+    "confirmClearDescription": "Are you sure you want to clear all notifications? This action cannot be undone.",
+    "confirmClearButton": "Clear All",
+    "dismiss": "Dismiss",
+    "types": {
+      "success": "Success",
+      "error": "Error",
+      "warning": "Warning",
+      "info": "Info",
+      "maintenance": "Maintenance"
+    },
+    "totalExecutionTime": "Total Execution Time",
+    "completedIn": "Successfully completed in {{time}}",
+    "failedAfter": "Failed after {{time}}",
+    "cancelledAfter": "Cancelled after {{time}}",
+    "messages": {
+      "modelCalculationComplete": "Model Calculation Complete",
+      "modelCalculationCompleteMessage": "Your model '{{modelName}}' has been successfully calculated and is ready to view.",
+      "modelCalculationFailed": "Model Calculation Failed",
+      "modelCalculationFailedMessage": "Your model '{{modelName}}' calculation has failed. Please try again.",
+      "modelCalculationStarted": "Model Calculation Started",
+      "modelCalculationStartedMessage": "Your model '{{modelName}}' calculation has started."
+    }
+  },
+  "modelStatus": {
+    "draft": "Draft",
+    "queue": "Queued",
+    "calculating": "Calculating",
+    "running": "Running",
+    "processing": "Processing",
+    "completed": "Completed",
+    "published": "Published",
+    "failed": "Failed",
+    "cancelled": "Cancelled",
+    "modified": "Modified"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "signingIn": "Signing in...",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "enterYourEmail": "Enter your email",
+    "enterYourPassword": "Enter your password",
+    "welcomeBack": "Welcome back",
+    "signInToContinue": "Sign in to continue to your account",
+    "or": "or",
+    "dontHaveAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "forgotPassword": "Forgot your password?",
+    "rememberMe": "Remember me",
+    "loginFailed": "Login Failed",
+    "verificationEmailSent": "Verification Email Sent",
+    "checkInboxVerify": "Check your inbox and click the verification link.",
+    "emailVerificationRequired": "Email Verification Required",
+    "sending": "Sending...",
+    "resendVerificationEmail": "Resend verification email",
+    "protectedByEncryption": "Protected by industry-standard encryption",
+    "createAccount": "Create Account",
+    "joinUsAccess": "Join us to access the energy simulation platform",
+    "personalInformation": "Personal Information",
+    "fullName": "Full Name",
+    "enterFullName": "Enter your full name",
+    "emailAddress": "Email Address",
+    "enterEmailAddress": "Enter your email address",
+    "security": "Security",
+    "confirmYourPassword": "Confirm your password",
+    "passwordRequirements": {
+      "title": "Password Requirements",
+      "minChars": "At least 8 characters",
+      "uppercase": "One uppercase letter",
+      "lowercase": "One lowercase letter",
+      "number": "One number",
+      "specialChar": "One special character",
+      "hasSpaces": "Password contains leading or trailing spaces"
+    },
+    "organizationDetails": "Organization Details",
+    "organization": "Organization",
+    "enterOrganization": "Enter your organization",
+    "position": "Position",
+    "enterPosition": "Enter your position",
+    "phoneNumber": "Phone Number",
+    "enterPhoneNumber": "Enter your phone number",
+    "accessLevel": "Access Level",
+    "veryLow": "Very Low",
+    "low": "Low",
+    "intermediate": "Intermediate",
+    "manager": "Manager",
+    "expert": "Expert",
+    "forgotPasswordTitle": "Forgot Password",
+    "forgotPasswordDescription": "Enter your email address and we'll send you instructions to reset your password.",
+    "secureResetProcess": "Secure password reset process",
+    "sendResetInstructions": "Send Reset Instructions",
+    "backToLogin": "Back to Login",
+    "cancel": "Cancel",
+    "checkYourEmail": "Check Your Email",
+    "sentResetInstructions": "We've sent password reset instructions to your email address.",
+    "note": "Note",
+    "checkSpamFolder": "If you don't see the email, please check your spam or junk folder.",
+    "signUpNow": "Sign up now",
+    "createPassword": "Create a password",
+    "creating": "Creating...",
+    "agreeToTerms": "By creating an account, you agree to our Terms of Service",
+    "signInHere": "Sign in here",
+    "sidePanel": {
+      "badge": "Wildfire risk intelligence",
+      "title": "Protect rural communities before the flames ignite",
+      "subtitle": "Map, model and act on wildfire risk — turning local knowledge and geospatial data into proactive protection across rural Europe.",
+      "funded": "Funded by the European Union · Built on the STORCITO platform"
+    }
+  },
+  "workspace": {
+    "workspace": "Workspace",
+    "workspaces": "Workspaces",
+    "selectWorkspace": "Select Workspace",
+    "defaultWorkspace": "Default Workspace",
+    "default": "Default",
+    "shared": "Shared",
+    "searchWorkspaces": "Search workspaces...",
+    "noWorkspacesMatch": "No workspaces match your search",
+    "noWorkspacesFound": "No workspaces found",
+    "createNewWorkspace": "Create New Workspace",
+    "createDescription": "Create a new workspace to organize your models and collaborate with others",
+    "createWorkspace": "Create Workspace",
+    "renameWorkspace": "Rename Workspace",
+    "renameDescription": "Enter a new name for your workspace",
+    "copyWorkspaceTitle": "Copy Workspace",
+    "copyDescription": "Create a copy of this workspace with a new name",
+    "saveChanges": "Save Changes",
+    "copyWorkspace": "Copy Workspace",
+    "sharedWithYouBy": "Shared with you by {{user}}",
+    "sharedWithUsers": "Shared with users",
+    "sharedWithGroups": "Shared with groups",
+    "anotherUser": "another user",
+    "noMembersYet": "No members yet. Share with someone to collaborate!",
+    "noGroupsYet": "No groups have access yet. Share with a group to give all members access!",
+    "removeMember": "Remove member",
+    "removeGroup": "Remove group"
+  },
+  "model": {
+    "title": "Model",
+    "models": "Models",
+    "newModel": "New Model",
+    "editModel": "Edit Model",
+    "deleteModel": "Delete Model",
+    "modelName": "Model Name",
+    "description": "Description",
+    "status": "Status",
+    "created": "Created",
+    "updated": "Updated",
+    "running": "Running",
+    "completed": "Completed",
+    "failed": "Failed",
+    "pending": "Pending",
+    "queued": "Queued",
+    "cancelled": "Cancelled",
+    "modified": "Modified",
+    "runSimulation": "Run Simulation",
+    "viewResults": "View Results",
+    "duplicate": "Duplicate",
+    "export": "Export",
+    "compare": "Compare",
+    "dashboard": "Model Dashboard",
+    "manageConfigurations": "Manage your Wildfire assessment configurations",
+    "searchModels": "Search models...",
+    "allModels": "All Models",
+    "modelGroups": "Model Groups",
+    "loadingWorkspace": "Loading workspace...",
+    "loadingModels": "Loading models...",
+    "loadingWorkspaceDescription": "Please wait while we initialize your workspace preferences.",
+    "loadingModelsDescription": "Please wait while we fetch your Energy assessment models.",
+    "selectWorkspace": "Select or create a workspace to organize your models",
+    "refreshModels": "Refresh models list",
+    "share": "Share",
+    "shareDescription": "Share \"{{title}}\" with another user",
+    "copy": "Copy",
+    "rename": "Rename",
+    "delete": "Delete",
+    "move": "Move",
+    "shareWorkspace": "Share this workspace with other users",
+    "copyWorkspace": "Create a copy of this workspace with all its models",
+    "renameWorkspace": "Rename this workspace",
+    "deleteWorkspace": "Delete this workspace",
+    "moveToWorkspace": "Move to workspace",
+    "noModelsFound": "No models found",
+    "noModelsMatch": "No models match \"{{search}}\". Try adjusting your search.",
+    "noModelsYet": "You haven't created any Energy assessment models yet. Get started by creating your first model!",
+    "createFirstModel": "Create Your First Model",
+    "selected": "selected",
+    "deleteSelected": "Delete selected",
+    "moveSelected": "Move selected",
+    "cannotDelete": "Cannot delete - models are disabled or don't belong to you",
+    "cannotMove": "Cannot move - models don't belong to you",
+    "calculate": "Calculate",
+    "cannotCalculate": "Cannot calculate - no eligible models selected",
+    "noWebserviceAvailable": "No simulation engine available",
+    "bulkCopy": "Copy Models",
+    "bulkCopyDescription": "Create copies of {{count}} selected model(s)",
+    "bulkCopySubmit": "Create Copies",
+    "bulkCopyFailed": "Some models could not be copied. Please try again.",
+    "sharedCannotDelete": "Shared models cannot be deleted. Copy it first to delete",
+    "sharedCannotMove": "Shared models cannot be moved. Copy it first to move",
+    "sharedCannotShare": "Shared models cannot be shared again. Copy it first to share",
+    "limitReached": "You have reached your model creation limit",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all",
+    "actions": "Actions",
+    "name": "Model Name",
+    "owner": "Owner",
+    "workspace": "Workspace",
+    "draft": "Draft",
+    "published": "Published",
+    "total": "Total",
+    "queue": "Queue",
+    "copyOf": "Copy of \"{{name}}\"",
+    "ownedBy": "Owned by",
+    "parentModel": "Parent Model",
+    "parent": "Parent",
+    "anotherModel": "another model",
+    "failedDefaultMessage": "Calculation failed - webservice unavailable or timeout",
+    "waiting": "Waiting",
+    "queuedTooltip": "Your model is in the queue - the simulation engine is processing other calculations",
+    "compareRequires2Completed": "Select exactly 2 completed models to compare"
+  },
+  "polygon": {
+    "drawRegion": "Draw Your Region",
+    "clickToStart": "Click to start",
+    "clickAnywhere": "Click anywhere on the map to place your first point",
+    "addMorePoints": "Add more points",
+    "continueClicking": "Continue clicking to outline your area",
+    "closePolygon": "Close the polygon",
+    "doubleClickOrClick": "Double-click or click the starting point to complete",
+    "startEnd": "Start/End",
+    "clickHereToClose": "Click here to close",
+    "escToCancel": "to cancel drawing",
+    "pointsAdded": "{{count}} added",
+    "editPolygon": "Edit Polygon",
+    "moveVertex": "Move corners",
+    "moveVertexHint": "Drag any vertex to adjust",
+    "addVertex": "Add point",
+    "addVertexHint": "Click on any edge",
+    "removeVertex": "Remove point",
+    "removeVertexHint": "click on vertex",
+    "escToClear": "to clear polygon"
+  },
+  "time": {
+    "justNow": "Just now",
+    "minutesAgo": "{{count}} minute ago",
+    "minutesAgo_plural": "{{count}} minutes ago",
+    "hoursAgo": "{{count}} hour ago",
+    "hoursAgo_plural": "{{count}} hours ago",
+    "daysAgo": "{{count}} day ago",
+    "daysAgo_plural": "{{count}} days ago",
+    "weeksAgo": "{{count}} week ago",
+    "weeksAgo_plural": "{{count}} weeks ago"
+  },
+  "adminDashboard": {
+    "title": "Admin Dashboard",
+    "welcomeBack": "Welcome back, {{name}}!",
+    "managePlatform": "Manage your Energy Simulation Platform",
+    "administrator": "Administrator",
+    "loadingContent": "Loading content...",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout",
+    "tabs": {
+      "overview": "Overview",
+      "allSimulationModels": "All Simulation Models",
+      "simulationEngine": "Simulation-Engine",
+      "feedback": "Feedback",
+      "userManagement": "User Management",
+      "gridEngine": "Compute Engine"
+    },
+    "stats": {
+      "accessLevel": "Access Level",
+      "availableLayers": "Available Layers",
+      "status": "Status",
+      "totalUsers": "Total Users",
+      "lastLogin": "Last Login",
+      "active": "Active",
+      "online": "Online",
+      "live": "Live",
+      "updating": "Updating",
+      "recent": "Recent",
+      "allMapLayers": "All Maps Layers",
+      "mapLayers": "{{count}} Map Layers",
+      "mapLayer": "{{count}} Map Layer"
+    },
+    "accessLevels": {
+      "expert": "Expert Access",
+      "manager": "Manager Access",
+      "intermediate": "Intermediate Access",
+      "veryLow": "Very Low Access",
+      "unknown": "Unknown"
+    },
+    "accessTrends": {
+      "maximum": "Maximum",
+      "management": "Management",
+      "upgradable": "Upgradable",
+      "basic": "Basic"
+    },
+    "userProfile": {
+      "title": "User Profile",
+      "subtitle": "Your account information",
+      "email": "Email",
+      "organization": "Organization",
+      "position": "Position",
+      "phone": "Phone"
+    },
+    "accessPermissions": {
+      "title": "Access & Permissions",
+      "subtitle": "System capabilities",
+      "active": "Active",
+      "currentLevel": "Current Level",
+      "workspaces": "Workspaces",
+      "unlimited": "Unlimited",
+      "activeWorkspaces": "{{count}} Active",
+      "teamSharing": "Team Sharing",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "modelQuota": "Model Quota",
+      "standardLimit": "Standard Limit",
+      "computePower": "Compute Power",
+      "highPerformance": "High Perf.",
+      "standard": "Standard",
+      "availableFeatures": "Available Features",
+      "allLayersAvailable": "All Layers Available",
+      "fullSystemAccess": "Full System Access",
+      "energyRiskFinal": "Energy Risk Final",
+      "vegetationRisk": "Vegetation Risk",
+      "topographyRisk": "Topography Risk",
+      "upgradeMessage": "Unlock more features by requesting an upgrade from your admin.",
+      "fireRiskFinal": "Fire Risk Final"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "subtitle": "Navigate to key features",
+      "interactiveMap": "Interactive Map",
+      "viewRiskMap": "View risk assessment map",
+      "riskModels": "Risk Models",
+      "manageRiskModels": "Manage risk models",
+      "settings": "Settings",
+      "configurePreferences": "Configure preferences"
+    }
+  },
+  "userManagement": {
+    "title": "User Management",
+    "subtitle": "Manage users, groups, and permissions",
+    "searchPlaceholder": "Search name, email, organization...",
+    "refresh": "Refresh",
+    "addNewUser": "Add New User",
+    "add": "Add",
+    "editUser": "Edit User",
+    "createUser": "Create User",
+    "updateUser": "Update User",
+    "loadingUsers": "Loading users...",
+    "noUsersFound": "No users found",
+    "noUsersInGroup": "No users found in your group. Please contact an administrator to assign users to your group.",
+    "noUsersMatch": "No users match \"{{search}}\"",
+    "noUsersMatchSearch": "No users match \"{{search}}\"",
+    "addFirstUser": "Add the first user to get started.",
+    "dialog": {
+      "editTitle": "Edit User",
+      "addTitle": "Add New User",
+      "updateUser": "Update User",
+      "createUser": "Create User"
+    },
+    "table": {
+      "user": "User",
+      "organization": "Organization",
+      "position": "Position",
+      "accessLevel": "Access Level",
+      "group": "Group",
+      "emailVerified": "Email Verified",
+      "phone": "Phone",
+      "actions": "Actions"
+    },
+    "emailStatus": {
+      "verified": "Verified",
+      "unverified": "Unverified"
+    },
+    "actions": {
+      "changeGroup": "Change Group",
+      "enableUser": "User is disabled — click to enable",
+      "disableUser": "User is enabled — click to disable",
+      "editUser": "Edit User",
+      "deleteUser": "Delete User",
+      "copyEmail": "Copy email",
+      "copied": "Copied!",
+      "selectAll": "Select all",
+      "deselectAll": "Deselect all",
+      "selected": "{{count}} selected",
+      "bulkMoveToGroup": "Move to group",
+      "bulkDelete": "Delete selected"
+    },
+    "groups": {
+      "selectOrCreate": "Select or create a group",
+      "renameGroup": "Rename group",
+      "enableGroup": "Enable group and its users",
+      "disableGroup": "Disable group and its users",
+      "deleteGroup": "Delete group and all its users",
+      "defaultCannotDelete": "Default group cannot be deleted",
+      "default": "Default",
+      "unknown": "Unknown",
+      "defaultGroup": "Default Group",
+      "unknownGroup": "Unknown Group",
+      "changeUserGroup": "Change User Group",
+      "groupAssignment": "Group Assignment",
+      "selectGroup": "Select Group",
+      "changeGroup": "Change Group",
+      "renameGroupTitle": "Rename Group",
+      "groupName": "Group Name",
+      "newGroupName": "New Group Name",
+      "enterNewGroupName": "Enter new group name",
+      "rename": "Rename",
+      "bulkChangeGroup": "Move Users to Group",
+      "moveUsers": "Move Users",
+      "createNewGroup": "Create New Group",
+      "createGroupDescription": "Create a new group to organize users in your organization",
+      "createGroup": "Create Group",
+      "groupNameRequired": "Group name is required",
+      "groupCreated": "Group created successfully",
+      "failedToCreateGroup": "Failed to create group",
+      "groupNamePlaceholder": "e.g., Fire Brigade, Emergency Response",
+      "searchGroups": "Search groups...",
+      "allGroups": "All Groups",
+      "viewUsersFromAllGroups": "View users from all groups",
+      "noGroups": "No Groups",
+      "loading": "Loading...",
+      "noGroupsFound": "No groups found",
+      "noGroupsMatchSearch": "No groups match your search"
+    },
+    "notifications": {
+      "userCreated": "User created successfully!",
+      "userUpdated": "User updated successfully!",
+      "userDeleted": "User deleted successfully!",
+      "userDisabled": "User disabled successfully!",
+      "userEnabled": "User enabled successfully!",
+      "groupDisabled": "Group \"{{name}}\" disabled",
+      "groupEnabled": "Group \"{{name}}\" enabled",
+      "groupDeleted": "Group \"{{name}}\" deleted",
+      "groupRenamed": "Group renamed to \"{{name}}\" successfully",
+      "userMovedToGroup": "User moved to new group and logged out. They must re-login to access their new workspace.",
+      "failedToCreate": "Failed to create user",
+      "failedToUpdate": "Failed to update user",
+      "failedToDelete": "Failed to delete user",
+      "failedToDisable": "Failed to disable user",
+      "failedToEnable": "Failed to enable user",
+      "failedToFetch": "Failed to fetch users",
+      "failedToUpdateGroup": "Failed to update user group",
+      "failedToRenameGroup": "Failed to rename group",
+      "failedToCopyEmail": "Failed to copy email",
+      "bulkGroupChanged": "{{count}} users moved to new group successfully",
+      "bulkGroupChangeFailed": "Failed to move users to group",
+      "bulkDeleted": "{{count}} users deleted successfully",
+      "bulkDeletePartial": "{{succeeded}} of {{total}} users deleted. {{failed}} failed.",
+      "pleaseLogIn": "Please log in to view users",
+      "passwordMismatch": "Password and confirmation must match"
+    },
+    "confirmations": {
+      "disableUserDescription": "This will prevent the user from logging in.",
+      "enableUserDescription": "This will re-enable the user to log in.",
+      "disableGroupDescription": "Disabling a group will disable all its users.",
+      "enableGroupDescription": "Enabling a group will enable all its users.",
+      "deleteGroupDescription": "This will delete the group and all its users. This action cannot be undone.",
+      "bulkDeleteDescription": "This will permanently delete {{count}} selected users. This action cannot be undone."
+    }
+  },
+  "modelsManagement": {
+    "title": "All Simulation Assessment Models",
+    "subtitle": "Manage and monitor all models in the system",
+    "searchPlaceholder": "Search models...",
+    "refresh": "Refresh",
+    "loadingModels": "Loading models...",
+    "noModelsFound": "No models found",
+    "noModelsDescription": "Get started by creating your first simulation assessment model.",
+    "sharedWorkspace": "Shared Workspace (Owner: {{owner}})",
+    "table": {
+      "model": "Model",
+      "status": "Status",
+      "created": "Created",
+      "lastModified": "Last Modified",
+      "actions": "Actions"
+    },
+    "status": {
+      "draft": "Draft",
+      "inQueue": "In Queue",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "published": "Published"
+    },
+    "notifications": {
+      "duplicated": "Model \"{{title}}\" has been duplicated successfully",
+      "calculationStarted": "Calculation started successfully",
+      "failedToDuplicate": "Failed to duplicate model. Please try again.",
+      "failedToCalculate": "Failed to start calculation. Please try again.",
+      "moveComingSoon": "Move to workspace feature coming soon for \"{{title}}\"",
+      "shared": "Model shared successfully",
+      "deleted": "Model \"{{title}}\" has been deleted",
+      "failedToDelete": "Failed to delete model. Please try again."
+    }
+  },
+  "profile": {
+    "title": "Profile Settings",
+    "subtitle": "Manage your personal information and account preferences",
+    "goBack": "Go back",
+    "loadingProfile": "Loading your profile...",
+    "defaultUser": "User",
+    "accessLevel": "Access Level",
+    "notSpecified": "Not specified",
+    "personalInfo": "Personal Information",
+    "personalInfoDescription": "Update your profile details below",
+    "readOnly": "read-only",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "fields": {
+      "fullName": "Full Name",
+      "email": "Email Address",
+      "organization": "Organization",
+      "position": "Position",
+      "phone": "Phone Number"
+    },
+    "placeholders": {
+      "fullName": "Enter your full name",
+      "organization": "Your company or organization",
+      "position": "Your job title",
+      "phone": "+1 (555) 000-0000"
+    },
+    "accessLevels": {
+      "basic": "Basic",
+      "basicDescription": "Standard access to basic features",
+      "intermediate": "Intermediate",
+      "intermediateDescription": "Extended access with advanced features",
+      "expert": "Expert",
+      "expertDescription": "Full access to all features"
+    },
+    "notifications": {
+      "updated": "Profile updated successfully!",
+      "failedToLoad": "Failed to load profile. Please try again.",
+      "failedToUpdate": "Failed to update profile. Please try again."
+    },
+    "password": {
+      "title": "Change Password",
+      "description": "Update the password you use to sign in",
+      "current": "Current Password",
+      "new": "New Password",
+      "confirm": "Confirm New Password",
+      "currentPlaceholder": "Enter your current password",
+      "newPlaceholder": "Enter a new password",
+      "confirmPlaceholder": "Re-enter your new password",
+      "submit": "Update Password",
+      "updating": "Updating...",
+      "updated": "Password changed successfully!",
+      "failed": "Failed to change password. Please try again.",
+      "requirements": {
+        "minChars": "At least 8 characters",
+        "uppercase": "One uppercase letter",
+        "lowercase": "One lowercase letter",
+        "number": "One number",
+        "specialChar": "One special character"
+      },
+      "requirementsNotMet": "Password does not meet all requirements",
+      "mismatch": "Passwords do not match"
+    }
+  },
+  "webservicesManagement": {
+    "title": "Simulation Engine Management",
+    "subtitle": "Manage calculation webservice instances",
+    "searchPlaceholder": "Search by name, IP...",
+    "refresh": "Refresh",
+    "registerNew": "Register New Webservice",
+    "loadingWebservices": "Loading webservices...",
+    "noWebservicesFound": "No webservices found",
+    "noWebservicesDescription": "Get started by registering your first webservice instance.",
+    "noWebservicesAvailable": "No simulation engines are currently configured. Contact an administrator.",
+    "healthCheck": "Simulation Engine",
+    "summary": {
+      "total": "Total",
+      "online": "Online",
+      "available": "Available",
+      "busy": "Busy",
+      "offline": "Offline"
+    },
+    "yourSimulationStatus": "Your Simulation Status",
+    "modelsRunningDescription": "{{count}} of your models are currently being calculated",
+    "modelsQueuedDescription": "{{count}} of your models are waiting - the simulation engine is processing other calculations",
+    "filters": {
+      "allStatus": "All Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "maintenance": "Maintenance",
+      "error": "Error",
+      "allAvailability": "All Availability",
+      "available": "Available",
+      "unavailable": "Unavailable"
+    },
+    "table": {
+      "service": "Service",
+      "endpoint": "Endpoint",
+      "status": "Status",
+      "availability": "Availability",
+      "jobs": "Jobs",
+      "performance": "Performance",
+      "user": "User",
+      "ip": "IP Address",
+      "port": "Port",
+      "lastCheck": "Last Check",
+      "actions": "Actions",
+      "never": "Never"
+    },
+    "status": {
+      "online": "Online",
+      "offline": "Offline",
+      "available": "Available",
+      "unavailable": "Unavailable"
+    },
+    "busyStatus": {
+      "calculating": "Calculating ({{current}}/{{max}})",
+      "idle": "Idle (0/{{max}})"
+    },
+    "actions": {
+      "pingWebservice": "Ping Webservice",
+      "editWebservice": "Edit Webservice",
+      "deleteWebservice": "Delete Webservice"
+    },
+    "dialog": {
+      "editTitle": "Edit Webservice Instance",
+      "createTitle": "Register New Webservice",
+      "editDescription": "Update webservice configuration and settings",
+      "createDescription": "Configure a new simulation calculation webservice instance",
+      "editButton": "Update Webservice",
+      "createButton": "Register Webservice"
+    },
+    "notifications": {
+      "created": "Webservice registered successfully!",
+      "updated": "Webservice updated successfully!",
+      "deleted": "Webservice deleted successfully!",
+      "statusChanged": "Webservice status changed to {{status}}",
+      "failedToCreate": "Failed to register webservice",
+      "failedToUpdate": "Failed to update webservice",
+      "failedToDelete": "Failed to delete webservice",
+      "failedToPing": "Failed to ping webservice"
+    }
+  },
+  "feedbackManagement": {
+    "title": "User Feedback Management",
+    "subtitle": "Review and respond to user feedback",
+    "refresh": "Refresh",
+    "noFeedbackFound": "No feedback found",
+    "noFeedbackDescription": "User feedback will appear here when submitted.",
+    "filters": {
+      "label": "Filters:",
+      "allStatus": "All Status",
+      "allCategories": "All Categories",
+      "allPriorities": "All Priorities"
+    },
+    "statuses": {
+      "pending": "Pending",
+      "inProgress": "In Progress",
+      "resolved": "Resolved",
+      "closed": "Closed"
+    },
+    "categories": {
+      "bug": "Bug Report",
+      "feature": "Feature Request",
+      "improvement": "Improvement",
+      "general": "General"
+    },
+    "priorities": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical"
+    },
+    "table": {
+      "subject": "Subject",
+      "category": "Category",
+      "priority": "Priority",
+      "status": "Status",
+      "rating": "Rating",
+      "user": "User",
+      "created": "Created",
+      "actions": "Actions"
+    },
+    "actions": {
+      "viewDetails": "View Details",
+      "editStatus": "Edit Status",
+      "deleteFeedback": "Delete Feedback",
+      "delete": "Delete"
+    },
+    "hasAttachment": "Has attached image",
+    "viewDialog": {
+      "title": "Feedback Details",
+      "subtitle": "View complete feedback information",
+      "message": "Message:",
+      "rating": "Rating:",
+      "submitted": "Submitted",
+      "adminResponse": "Admin Response:",
+      "respondedOn": "Responded on:",
+      "attachedImage": "Attached Image",
+      "feedbackScreenshot": "Feedback screenshot",
+      "clickToEnlarge": "Click to enlarge",
+      "imageLoadError": "Failed to load image",
+      "submittedBy": "Submitted by"
+    },
+    "editDialog": {
+      "title": "Update Feedback",
+      "description": "Modify feedback status, priority, and provide an admin response",
+      "statusAndPriority": "Feedback Status & Priority",
+      "statusAndPriorityDescription": "Update feedback status and priority level",
+      "status": "Status",
+      "priority": "Priority",
+      "adminResponse": "Admin Response",
+      "adminResponseDescription": "Provide a response to the user",
+      "response": "Response",
+      "responsePlaceholder": "Add your response to the user...",
+      "saveChanges": "Save Changes"
+    },
+    "notifications": {
+      "updateSuccess": "Feedback \"{{subject}}\" updated successfully",
+      "updateError": "Failed to update feedback. Please try again.",
+      "deleteSuccess": "Feedback \"{{subject}}\" deleted successfully",
+      "deleteError": "Failed to delete feedback. Please try again."
+    }
+  },
+  "simulation": {
+    "simulationPeriod": "Assessment Period",
+    "mapHeader": {
+      "clearAll": "Clear All"
+    },
+    "bufferDistance": {
+      "label": "Buffer Distance (meters)",
+      "hint": "Range 0–2000 m in 100 m steps. Expands the area considered around your polygon.",
+      "decrease": "Decrease buffer distance",
+      "increase": "Increase buffer distance"
+    }
+  },
+  "mapLayers": {
+    "title": "Map Layers",
+    "description": "Configure map appearance and data layers",
+    "baseLayers": {
+      "title": "Base Layers",
+      "description": "Choose the background map style",
+      "osmStandard": "Standard OpenStreetMap layer",
+      "osmHumanitarian": "Humanitarian style OpenStreetMap",
+      "cartoPositron": "Light theme base map by CartoDB",
+      "cartoVoyager": "Detailed raster base map by CartoDB",
+      "openTopoMap": "Topographic style map",
+      "maplibreDark": "Dark vector basemap",
+      "maplibreVoyager": "Detailed vector basemap"
+    },
+    "dataLayers": {
+      "title": "Data Layers",
+      "energySimulation": "Final Energy Simulation layer"
+    }
+  },
+  "tour": {
+    "product": {
+      "welcome": {
+        "title": "Welcome to Wildfire Simulation Platform!",
+        "description": "Let's take a quick tour to help you get started with the Wildfire Simulation Platform.",
+        "tip": "This tour will only show once. You can skip it anytime or restart it from the sidebar."
+      },
+      "newAssessment": {
+        "title": "Create New Simulation",
+        "description": "Ready to get started? Click this button to create your first wildfire simulation. This will open the area selection wizard.",
+        "tip": "When you click this, you'll enter a dedicated tour for the area selection process!"
+      },
+      "profile": {
+        "title": "Profile & Settings",
+        "description": "Access your profile, account settings, and user preferences. Manage your account and access additional options."
+      },
+      "navigation": {
+        "title": "Dashboard Navigation",
+        "description": "Access your main dashboard to view your projects, recent assessments, and overall statistics. This is your home base."
+      },
+      "simulations": {
+        "title": "Wildfire Simulations",
+        "description": "Create and manage your wildfire simulation models. Start new simulations, configure parameters, and review existing runs."
+      },
+      "map": {
+        "title": "Interactive Map",
+        "description": "Your main workspace for geographical analysis. View map layers, select areas for simulation, and visualize wildfire risk data."
+      },
+      "locations": {
+        "title": "Saved Locations",
+        "description": "Manage your saved locations and areas of interest. Quick access to frequently analyzed regions."
+      },
+      "reports": {
+        "title": "Simulation Reports",
+        "description": "View detailed simulation reports, export data, and analyze historical trends and patterns."
+      },
+      "technologies": {
+        "title": "Simulation Parameters",
+        "description": "Configure wildfire simulation parameters such as fuel models, weather, and ignition sources.",
+        "tip": "Parameters can be customized per scenario for accurate wildfire simulations."
+      },
+      "layers": {
+        "title": "Map Layers",
+        "description": "Control map layers and overlays. Choose base maps, toggle data layers, and customize your map view."
+      },
+      "documentation": {
+        "title": "Documentation",
+        "description": "Open the platform docs for detailed guides, API references, and best practices.",
+        "tip": "Opens in a new tab so you keep your current workflow."
+      },
+      "feedback": {
+        "title": "Feedback",
+        "description": "Share your thoughts and suggestions with us. Your feedback helps improve the platform."
+      },
+      "complete": {
+        "title": "You're All Set!",
+        "description": "You've completed the tour! You're now ready to start creating wildfire simulations.",
+        "nextSteps": "Next Steps",
+        "nextStepsDescription": "Try creating your first wildfire simulation or explore the interactive map.",
+        "restartTour": "Restart Tour",
+        "restartTourDescription": "You can restart this tour anytime from the sidebar."
+      }
+    },
+    "areaSelect": {
+      "welcome": {
+        "title": "Wildfire Simulation Guide",
+        "description": "Welcome! This tour will guide you through creating a wildfire simulation for your chosen region.",
+        "tip": "You'll learn how to configure your model, draw areas, and create your simulation."
+      },
+      "modelName": {
+        "title": "Model Name",
+        "description": "Give your wildfire simulation model a descriptive name. This helps you identify it later in your dashboard.",
+        "tip": "Good names: \"Galicia Spain 2024\" or \"Galician Forest Scenario\""
+      },
+      "dateRange": {
+        "title": "Simulation Period",
+        "description": "Choose the time period for your wildfire analysis.",
+        "tip": "Longer periods provide more comprehensive wildfire analysis"
+      },
+      "resolution": {
+        "title": "Time Resolution",
+        "description": "Set the time interval for calculations. Higher resolution provides more detailed results but takes longer to process.",
+        "tip": "60 minutes is recommended for most simulations"
+      },
+      "technologies": {
+        "title": "Parameters",
+        "description": "Configure wildfire simulation parameters such as fuel models, weather, and ignition sources, and fine-tune advanced settings.",
+        "tip": "Click to view and customize settings for your simulation"
+      },
+      "mapContainer": {
+        "title": "Interactive Map",
+        "description": "This is your main workspace. Draw polygons on the map to select areas for your wildfire simulation.",
+        "tip": "You can zoom and pan the map to explore different regions"
+      },
+      "search": {
+        "title": "Location Search",
+        "description": "Use this search box to quickly find specific locations by name or address.",
+        "tip": "Try typing a location name to see instant results"
+      },
+      "save": {
+        "title": "Create Simulation",
+        "description": "Once you've configured everything, click here to create your wildfire simulation model and start the analysis.",
+        "tip": "All fields must be completed before you can save"
+      },
+      "calculationStatus": {
+        "title": "Calculation status",
+        "description": "This line tells you whether static dates are loading, unavailable, errored, or ready for selection.",
+        "tip": "If this shows a blocker, the continue button stays disabled until the date selection is valid."
+      },
+      "calculationMode": {
+        "title": "Calculation mode",
+        "description": "Choose static mode for one available fire-risk date or dynamic mode for a date range that the backend can process later.",
+        "tip": "The status text below the date control tells you whether available static dates are loaded and whether the selected date is valid."
+      },
+      "areaInput": {
+        "title": "Area input",
+        "description": "Draw the area directly on the map or upload a GeoJSON Polygon/MultiPolygon boundary.",
+        "tip": "The model can continue only after one valid area of interest is available."
+      },
+      "areaStatus": {
+        "title": "AOI status",
+        "description": "This status confirms whether the boundary is missing, drawn, uploaded, or blocked by an upload error."
+      },
+      "optionalLayers": {
+        "title": "Risk signals",
+        "description": "These toggles control which optional signals are sent with the model request, including fire-weather, terrain, and historical fires.",
+        "tip": "Keep fire-weather enabled for normal risk runs; disabling it is useful only for a baseline comparison."
+      },
+      "finalReview": {
+        "title": "Validation status",
+        "description": "The review step checks the model name, date, AOI, risk components, and buffer before the run can start."
+      },
+      "saveSummary": {
+        "title": "Save summary",
+        "description": "This final summary shows the values that will be saved with the model and sent to the calculation workflow."
+      }
+    },
+    "buttons": {
+      "skip": "Skip",
+      "back": "Back",
+      "next": "Next",
+      "finish": "Finish",
+      "close": "Close"
+    }
+  },
+  "feedback": {
+    "title": "Send Feedback",
+    "subtitle": "Help us improve your experience",
+    "category": "Feedback Category",
+    "categories": {
+      "bug": "Bug Report",
+      "bugDescription": "Something isn't working",
+      "feature": "Feature Request",
+      "featureDescription": "Suggest new functionality",
+      "improvement": "Improvement",
+      "improvementDescription": "Enhance existing features",
+      "general": "General",
+      "generalDescription": "Other feedback"
+    },
+    "subject": "Subject",
+    "subjectPlaceholder": "e.g., Map loading issue, Feature suggestion...",
+    "message": "Your Feedback",
+    "messagePlaceholder": "Please describe your feedback, suggestions, or issues in detail...",
+    "image": "Attachment (Optional)",
+    "imageDropzone": "Click to upload or drag and drop",
+    "imageFormats": "PNG, JPG, GIF up to 15MB",
+    "imagePreview": "Image preview",
+    "removeImage": "Remove image",
+    "rating": "Overall Rating",
+    "ratingDescription": "How would you rate your experience?",
+    "submit": "Send Feedback",
+    "submitting": "Submitting...",
+    "submittingMessage": "Submitting your feedback...",
+    "gdprNotice": "Your feedback is processed in compliance with GDPR regulations.",
+    "success": {
+      "title": "Feedback Submitted!",
+      "message": "Thank you for your feedback. We'll review it and get back to you if needed.",
+      "reference": "Reference"
+    },
+    "errors": {
+      "loginRequired": "Please log in to submit feedback",
+      "submitFailed": "Failed to submit feedback. Please try again later.",
+      "invalidImageType": "Please select a valid image file (PNG, JPG, GIF)",
+      "imageTooLarge": "Image size must be less than 15MB",
+      "payloadTooLarge": "The attachment is too large. Please use smaller images."
+    },
+    "myFeedback": {
+      "title": "My Feedback",
+      "subtitle": "Track the status of your submitted feedback",
+      "empty": "You haven't submitted any feedback yet",
+      "adminResponse": "Admin Response",
+      "submittedOn": "Submitted on",
+      "autoDeleteNotice": "This item will be automatically removed in {days} days",
+      "autoDeleteSoon": "This item will be automatically removed soon",
+      "showHistory": "My Submissions",
+      "hideHistory": "Hide",
+      "status": {
+        "pending": "Pending",
+        "in_progress": "In Progress",
+        "resolved": "Resolved",
+        "closed": "Closed"
+      }
+    },
+    "write": "Write",
+    "preview": "Preview",
+    "markdownSupported": "Markdown supported",
+    "words": "words",
+    "chars": "chars",
+    "previewEmpty": "Nothing to preview"
+  },
+  "weather": {
+    "temperature": "Temp.",
+    "windSpeed": "Wind",
+    "humidity": "Humidity",
+    "uvIndex": "UV",
+    "clickToRefresh": "Click weather to refresh",
+    "clickToRetry": "Click to retry",
+    "retry": "Retry",
+    "loadWeather": "Load weather",
+    "clickToLoad": "Click to load weather for {{location}}",
+    "current": "Current",
+    "searchLocation": "Search location...",
+    "yourLocations": "Your Locations",
+    "syncing": "Syncing...",
+    "temperatureTooltip": "Current temperature in Celsius and Fahrenheit",
+    "humidityTooltip": "Relative humidity percentage",
+    "uvLevels": {
+      "low": "Low",
+      "moderate": "Moderate",
+      "high": "High",
+      "veryHigh": "Very High",
+      "extreme": "Extreme"
+    },
+    "uvDescriptions": {
+      "low": "No protection needed",
+      "moderate": "Wear sunscreen",
+      "high": "Protection essential",
+      "veryHigh": "Extra protection needed",
+      "extreme": "Avoid sun exposure"
+    },
+    "dataBy": "Weather data by"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Customize your experience and preferences",
+    "configuration": "Configuration",
+    "goBack": "Go back",
+    "tabs": {
+      "general": "General",
+      "display": "Display",
+      "notifications": "Notifications",
+      "advanced": "Advanced"
+    },
+    "stats": {
+      "language": "Language",
+      "theme": "Theme",
+      "notifications": "Notifications",
+      "accessLevel": "Access Level",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "system": "System",
+      "user": "User"
+    },
+    "language": {
+      "title": "Language",
+      "subtitle": "Interface language"
+    },
+    "weatherLocation": {
+      "title": "Weather Location",
+      "subtitle": "Default weather"
+    },
+    "mapLocation": {
+      "title": "Map Location",
+      "subtitle": "Saved positions",
+      "syncing": "Syncing...",
+      "searchPlaceholder": "Search for a location...",
+      "current": "Current",
+      "noLocation": "No location set",
+      "savedLocations": "Saved Locations",
+      "clearAll": "Clear All",
+      "syncNote": "Locations sync to your account"
+    },
+    "locationSearch": {
+      "placeholder": "Search location...",
+      "searching": "Searching...",
+      "noResults": "No locations found",
+      "searchFailed": "Search failed"
+    },
+    "dataDisplay": {
+      "title": "Data & Display",
+      "subtitle": "Units and formatting",
+      "temperature": "Temperature",
+      "celsius": "Celsius",
+      "fahrenheit": "Fahrenheit",
+      "distance": "Distance",
+      "kilometers": "Kilometers",
+      "miles": "Miles",
+      "windSpeed": "Wind Speed",
+      "knots": "knots",
+      "dataRefresh": "Data Refresh",
+      "min": "min"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "subtitle": "Alert preferences",
+      "email": "Email",
+      "notifyWhenComplete": "Notify when complete",
+      "browser": "Browser",
+      "enabled": "Enabled",
+      "blocked": "Blocked",
+      "systemAlerts": "System alerts"
+    },
+    "sendNotification": {
+      "title": "Send Notification",
+      "subtitle": "System notifications",
+      "selectService": "Select service...",
+      "services": {
+        "webService": "Web Service",
+        "geoServer": "GeoServer",
+        "database": "Database",
+        "api": "API",
+        "mapService": "Map Service"
+      },
+      "messagePlaceholder": "Enter notification message...",
+      "sending": "Sending...",
+      "sendNotification": "Send Notification",
+      "sent": "Notification sent!",
+      "failedToSend": "Failed to send"
+    }
+  },
+  "simulationComparison": {
+    "title": "Simulation Comparison",
+    "subtitle": "Compare results across multiple simulation runs",
+    "baseline": "Baseline",
+    "comparison": "Comparison",
+    "selectBaselineModel": "Select baseline model",
+    "selectComparisonModel": "Select comparison model",
+    "noCompletedModels": "No completed models found",
+    "noRegion": "No region",
+    "loading": "Loading simulation data...",
+    "selectModels": "Select Models to Compare",
+    "selectModelsDescription": "Choose two completed simulation models above to analyze their differences in energy generation, costs, and key performance indicators.",
+    "startBySelectingBaseline": "Start by selecting a baseline model",
+    "nowSelectComparison": "Now select a comparison model",
+    "summaryWorse": "Risk increased",
+    "summaryBetter": "Risk reduced",
+    "summaryStable": "Risk is broadly stable",
+    "configuration": "Configuration",
+    "configurationSub": "Model metadata side-by-side",
+    "field": "Field",
+    "loadingMetrics": "Loading risk metrics…",
+    "summaryTitle": "Comparison Summary",
+    "summarySub": "Key changes between the baseline and comparison model.",
+    "criticalShare": "High + Very High share",
+    "sampleCoverage": "Sample coverage",
+    "dominantClass": "Dominant class",
+    "dominantClassSub": "Largest share of valid pixels: {{baseline}}% in baseline, {{comparison}}% in comparison.",
+    "dominantClassUnavailable": "Distribution data is not available.",
+    "analyzedArea": "Analyzed area",
+    "analyzedAreaSub": "Area is calculated from valid non-nodata pixels, so it can differ between model outputs.",
+    "readingDirection": "Interpretation",
+    "badDeltaLabel": "More High/Very High",
+    "badDeltaText": "means the comparison model is more severe.",
+    "goodDeltaLabel": "More Very Low/Low",
+    "goodDeltaText": "usually means risk shifted toward safer classes.",
+    "deltaTitle": "Risk Delta",
+    "deltaSub": "Change from baseline to comparison",
+    "distribution": "Distribution Comparison",
+    "distributionSub": "Share of pixels per risk level. Lighter bar = baseline, solid = comparison.",
+    "riskIntensityHeatmap": "Risk intensity",
+    "filledRiskMap": "Filled risk map",
+    "insightCharts": "Risk Map Charts",
+    "insightChartsSub": "These maps summarize the sampled raster cells from the comparison model. Use them to see risk concentration and exact class areas.",
+    "validCells": "valid cells",
+    "loadingMapSamples": "Loading geographic raster samples…",
+    "noMapSamples": "Geographic map samples are not available yet.",
+    "sampleMean": "Sample mean",
+    "comparisonOnly": "Comparison model",
+    "fromBaseline": "from baseline",
+    "validCellsShare": "of valid cells",
+    "highVeryHigh": "High + Very High",
+    "cells": "cells",
+    "samplingGrid": "Sampling grid",
+    "sampleMapNote": "This is a sampled raster view, not the street map. The filled cells show the same risk classes used by the Fire Risk layer.",
+    "geoHeatmap": "Geo Heatmap",
+    "geoHeatmapSub": "Smooth view of where risk is concentrated. Red means the strongest sampled risk.",
+    "choroplethMap": "Filled Risk Cells",
+    "choroplethMapSub": "Exact sampled cells by risk class. Use this when the smooth heatmap hides cell boundaries.",
+    "noConfiguredLayer": "No GeoServer layer is configured for this model yet.",
+    "incompleteLayer": "Layer configuration is incomplete",
+    "loadLayerFailed": "Failed to load layer from GeoServer",
+    "mapHint": "Pan/zoom either map — views stay in sync.",
+    "mapHintIndependent": "These models cover different areas — each map shows its own model.",
+    "synced": "Synced",
+    "independent": "Independent",
+    "loadingLayer": "Loading layer…"
+  },
+  "map": {
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out",
+    "centerMap": "Center Map",
+    "fitToExtent": "Fit to extent",
+    "resetTopDown": "Reset to top-down",
+    "rightClickRotate": "Right-click + drag to rotate",
+    "regions": "regions",
+    "myModels": "my models",
+    "grids": "grids",
+    "countries": "countries"
+  },
+  "privacy": {
+    "dataAndPrivacy": "Data & Privacy",
+    "acceptTerms": "Accept Privacy Terms",
+    "openSettings": "Open data & privacy settings",
+    "dialogTitle": "Data Processing & Privacy",
+    "cartoDescription": "To provide you with our services, we rely on CARTO and OSMF as third-party mapping providers.",
+    "sharedWithCarto": "By accepting, the following details will be shared with CARTO and OSMF respectively:",
+    "ipAddress": "IP Address",
+    "browserDeviceType": "Browser + Device Type",
+    "timeOfRequest": "Time of Request",
+    "localStorageDescription": "Additionally, we use local storage to remember your preferences and to track whether you've seen the introductory content on this device.",
+    "reviewPolicies": "For more information, please review the respective privacy policies:",
+    "cartoPolicy": "Carto Privacy Policy",
+    "osmfPolicy": "OSMF Privacy Policy",
+    "firePolicy": "EnerPlanET Privacy Policy",
+    "deny": "Deny",
+    "accept": "Accept"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Welcome!",
+      "description": "Let's set up your preferences to get started",
+      "greeting": "Welcome to Energy Simulation Platform!",
+      "intro": "Let's take a moment to set up your preferences. This will help us personalize your experience and provide you with the most relevant information.",
+      "step1": "Choose your preferred language",
+      "step2": "Set your weather and map preferences",
+      "step3": "Configure notification settings",
+      "timeNote": "This will only take a minute"
+    },
+    "language": {
+      "title": "Language Preference",
+      "description": "Select your preferred language for the application"
+    },
+    "weather": {
+      "title": "Weather Preferences",
+      "description": "Set your preferred location for weather information"
+    },
+    "map": {
+      "title": "Map Preferences",
+      "description": "Configure your default map location"
+    },
+    "notifications": {
+      "title": "Notification Preferences",
+      "description": "Choose how you want to receive alerts and updates"
+    },
+    "navigation": {
+      "previous": "Previous",
+      "next": "Next",
+      "complete": "Complete",
+      "completing": "Completing...",
+      "skip": "Skip"
+    }
+  },
+  "regionSelector": {
+    "goToRegion": "Go to region",
+    "jumpToRegion": "Jump to a region with available grid data",
+    "searchPlaceholder": "Search regions...",
+    "sortByGridCount": "Sort by grid count",
+    "sortByName": "Sort by name",
+    "setAsDefault": "Set as default region",
+    "removeAsDefault": "Remove as default region",
+    "favorite": "Favorite",
+    "recent": "Recent",
+    "noRegionsFound": "No regions found",
+    "coverageHigh": "High data coverage",
+    "coverageMedium": "Medium data coverage",
+    "coverageLow": "Low data coverage",
+    "summaryFooter": "{{countries}} countries · {{regions}} regions · {{grids}} grids"
+  },
+  "modelResults": {
+    "title": "Model Results",
+    "errors": {
+      "noId": "No model ID provided",
+      "loadFailed": "Failed to load model results",
+      "layerIncomplete": "Layer configuration is incomplete",
+      "layerLoad": "Failed to load layer from GeoServer",
+      "tileLoad": "Some tiles failed to load from GeoServer ({{count}})"
+    },
+    "loadingWorkspace": "Loading workspace…",
+    "loadingModels": "Loading models…",
+    "noCompletedModels": "No completed models",
+    "selectModel": "Select a model",
+    "layer": {
+      "visible": "Visible",
+      "hidden": "Hidden",
+      "opacity": "Opacity",
+      "publishing": "Publishing layer to GeoServer…"
+    },
+    "map": {
+      "initializing": "Initializing map…"
+    },
+    "empty": {
+      "title": "No result for this model yet.",
+      "hint": "The simulation output will appear here once processing finishes."
+    },
+    "layers": {
+      "title": "Overlays",
+      "roads": "Roads",
+      "labels": "Labels & places"
+    },
+    "legend": {
+      "title": "Fire Risk",
+      "allLevels": "All available levels"
+    },
+    "details": {
+      "description": "Description",
+      "location": "Location",
+      "period": "Assessment period",
+      "days": "days",
+      "updated": "Updated",
+      "awaiting": "Waiting for result…",
+      "title": "Title",
+      "region": "Region",
+      "country": "Country",
+      "from": "From",
+      "to": "To"
+    },
+    "risk": {
+      "notReady": "Metrics will be available once the layer is configured in GeoServer.",
+      "overall": "Overall Risk",
+      "meanScore": "Mean Risk Score",
+      "highRiskArea": "High + Very High area",
+      "ofArea": "of area",
+      "totalArea": "Analyzed area",
+      "analyzedSurface": "Valid (non-nodata) pixels",
+      "distribution": "Risk Level",
+      "sampleNote": "Based on {{count}} sampled pixels",
+      "highPlusArea": "High + Very High area",
+      "highPlusPixels": "High + Very High pixels"
+    }
+  },
+  "landing": {
+    "nav": {
+      "challenge": "The challenge",
+      "platform": "Platform",
+      "personas": "Who it's for",
+      "contact": "Contact"
+    },
+    "openApp": "Open the Wildfire App",
+    "languageLabel": "Language",
+    "hero": {
+      "badge": "Community-based wildfire prevention",
+      "title": "Wildfire risk intelligence for rural communities",
+      "subtitle": "A geospatial platform for municipalities, civil protection and researchers to map, model and act on wildfire risk — turning local knowledge and data into proactive protection before the flames ignite.",
+      "explore": "Explore the platform",
+      "why": "Why it matters"
+    },
+    "challenge": {
+      "eyebrow": "The challenge we face",
+      "title": "Wildfires are no longer isolated disasters — they are a seasonal crisis",
+      "p1": "Across Southern Europe, rising temperatures, longer droughts and unpredictable weather are turning forests into fuel. Rural depopulation means less land management and greater vegetation build-up, making outbreaks more intense and harder to control.",
+      "p2": "Recent seasons in Portugal, Spain and Greece were among the worst on record — costing lives, destroying ecosystems and displacing communities, while threatening agriculture, forestry, tourism and basic safety. Local actors remain under-equipped and under-supported.",
+      "cards": {
+        "hotter": {
+          "title": "Hotter, drier seasons",
+          "text": "Climate shifts extend the fire season year on year."
+        },
+        "vegetation": {
+          "title": "Vegetation build-up",
+          "text": "Depopulation leaves landscapes unmanaged and fuel-rich."
+        },
+        "cascading": {
+          "title": "Cascading impact",
+          "text": "Ecosystems, economies and rural life are all at risk."
+        },
+        "tooling": {
+          "title": "Limited tooling",
+          "text": "Communities lack shared, data-driven decision support."
+        }
+      },
+      "imgAlt1": "Wildfire spreading along a rural road",
+      "imgAlt2": "Firefighter tackling flames"
+    },
+    "platform": {
+      "eyebrow": "How it works",
+      "title": "From an area on the map to shared risk evidence",
+      "subtitle": "The platform combines 3D building and terrain data, geospatial analysis and a wildfire-risk engine into one role-appropriate workflow.",
+      "step": "STEP",
+      "imgAlt": "Wildfire response crew in the field",
+      "steps": {
+        "define": {
+          "title": "Define an area",
+          "text": "Search a municipality and draw the area of interest directly on the interactive map."
+        },
+        "run": {
+          "title": "Run a risk model",
+          "text": "Queue a wildfire-risk calculation over your AOI with the configured engine."
+        },
+        "inspect": {
+          "title": "Inspect the results",
+          "text": "Explore the classified risk overlay with optional fuel-model and vegetation layers."
+        },
+        "compare": {
+          "title": "Compare & share",
+          "text": "Compare scenarios side by side, export artefacts and share with stakeholders."
+        }
+      }
+    },
+    "capabilities": {
+      "eyebrow": "Capabilities",
+      "title": "Everything you need to assess and explain risk",
+      "items": {
+        "mapping": {
+          "title": "Interactive mapping",
+          "text": "2D maps with polygon drawing, place search and persistent operating areas."
+        },
+        "engine": {
+          "title": "Wildfire-risk engine",
+          "text": "Classified risk rasters with calibrated severity and high-risk area estimates."
+        },
+        "metrics": {
+          "title": "Metrics & comparison",
+          "text": "Risk cards, distribution charts, deltas and trends across model runs."
+        },
+        "fuel": {
+          "title": "Fuel & vegetation layers",
+          "text": "Optional FMT and NDVI overlays to understand why the risk map behaves as it does."
+        },
+        "multilingual": {
+          "title": "Multilingual & accessible",
+          "text": "Available in 8 languages with clear labels and guided tours for every role."
+        },
+        "secure": {
+          "title": "Secure & governed",
+          "text": "Role-based access, audited results and EU-compliant privacy controls."
+        }
+      }
+    },
+    "personas": {
+      "eyebrow": "Who it's for",
+      "title": "One platform, role-appropriate wildfire-risk evidence",
+      "items": {
+        "planners": {
+          "title": "Municipal & civil-protection planners",
+          "text": "Create and explain wildfire-risk assessments and brief decision-makers."
+        },
+        "analysts": {
+          "title": "Forest-fire risk analysts",
+          "text": "Validate GIS layers, risk metrics and engine outputs at expert level."
+        },
+        "researchers": {
+          "title": "Researchers & GIS teams",
+          "text": "Download GeoTIFF/ZIP outputs and study fuel models and vegetation indices."
+        },
+        "leads": {
+          "title": "Workshop leads & reviewers",
+          "text": "Run training sessions and review shared risk evidence with limited access."
+        }
+      }
+    },
+    "contact": {
+      "eyebrow": "Get in touch",
+      "title": "Start a conversation",
+      "subtitle": "Tell us about your region and how you'd like to use the platform. The team will get back to you — no account required to reach out.",
+      "responseTime": "We typically respond within a few working days.",
+      "name": "Name",
+      "email": "Email",
+      "category": "Category",
+      "subject": "Subject",
+      "message": "Message",
+      "send": "Send message",
+      "sending": "Sending…",
+      "successTitle": "Message sent",
+      "successText": "Thanks for reaching out — we'll be in touch soon.",
+      "sendAnother": "Send another message",
+      "validationError": "Please complete name, email, subject and message.",
+      "genericError": "Something went wrong. Please try again.",
+      "submitFailed": "Submission failed.",
+      "agree": "By submitting you agree to our",
+      "privacyPolicy": "privacy policy",
+      "categories": {
+        "general": "General enquiry",
+        "partnership": "Partnership",
+        "bug": "Bug report"
+      }
+    },
+    "footer": {
+      "tagline": "Community-based strategies to prevent and manage wildfire risk across rural Europe.",
+      "privacy": "Privacy Policy",
+      "cookies": "Cookies Policy",
+      "impressum": "Impressum",
+      "terms": "Terms & Conditions",
+      "euFundedAlt": "Funded by the European Union",
+      "euDisclaimer": "Funded by the European Union under grant agreement 101132652. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research Executive Agency (REA). Neither the European Union nor the granting authority can be held responsible for them.",
+      "builtOn": "Built on the STORCITO platform",
+      "copyright": "Wildfire App · Technische Hochschule Deggendorf"
+    },
+    "stats": {
+      "affectedArea": "Affected Area",
+      "municipalities": "Galicia Municipalities",
+      "riskDistribution": "Risk Distribution",
+      "trendAnalysis": "Risk Trend Analysis"
+    }
+  }
+}

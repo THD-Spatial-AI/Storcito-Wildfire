@@ -1,0 +1,68 @@
+/home/askhan/Documents/Development/wildfire/wildfire-app/frontend/src/components/map-controls/maplibre/maplibre-layers.ts
+  106:17  warning  Refactor this function to reduce its Cognitive Complexity from 18 to the 15 allowed  sonarjs/cognitive-complexity
+  113:22  warning  Define a constant instead of duplicating this literal 10 times                       sonarjs/no-duplicate-string
+  152:21  warning  Define a constant instead of duplicating this literal 4 times                        sonarjs/no-duplicate-string
+  239:22  warning  Define a constant instead of duplicating this literal 5 times                        sonarjs/no-duplicate-string
+  240:22  warning  Define a constant instead of duplicating this literal 5 times                        sonarjs/no-duplicate-string
+  255:20  warning  Define a constant instead of duplicating this literal 13 times                       sonarjs/no-duplicate-string
+  290:22  warning  Define a constant instead of duplicating this literal 5 times                        sonarjs/no-duplicate-string
+  327:22  warning  Define a constant instead of duplicating this literal 5 times                        sonarjs/no-duplicate-string
+  340:9   warning  Define a constant instead of duplicating this literal 12 times                       sonarjs/no-duplicate-string
+  370:50  warning  Define a constant instead of duplicating this literal 6 times                        sonarjs/no-duplicate-string
+--
+/home/askhan/Documents/Development/wildfire/wildfire-app/frontend/src/components/map-controls/maplibre/useMapLibreLayers.ts
+  158:54  warning  Define a constant instead of duplicating this literal 3 times  sonarjs/no-duplicate-string
+  182:10  warning  Define a constant instead of duplicating this literal 3 times  sonarjs/no-duplicate-string
+  182:42  warning  Define a constant instead of duplicating this literal 4 times  sonarjs/no-duplicate-string
+  182:79  warning  Define a constant instead of duplicating this literal 3 times  sonarjs/no-duplicate-string
+--
+/home/askhan/Documents/Development/wildfire/wildfire-app/frontend/src/components/ui/cards/ModelStatsCards.tsx
+  27:4  warning  Refactor this function to reduce its Cognitive Complexity from 20 to the 15 allowed  sonarjs/cognitive-complexity
+--
+/home/askhan/Documents/Development/wildfire/wildfire-app/frontend/src/components/workspace/WorkspaceSelector.tsx
+  162:41  warning  Define a constant instead of duplicating this literal 3 times  sonarjs/no-duplicate-string
+--
+/home/askhan/Documents/Development/wildfire/wildfire-app/frontend/src/configuration/formConfigurations.ts
+  218:65  warning  Define a constant instead of duplicating this literal 4 times  sonarjs/no-duplicate-string
+  234:62  warning  Define a constant instead of duplicating this literal 4 times  sonarjs/no-duplicate-string
+--
+/home/askhan/Documents/Development/wildfire/wildfire-app/frontend/src/features/admin-dashboard/components/user-management/UserManagementTable.tsx
+  118:33  warning  Refactor this function to reduce its Cognitive Complexity from 16 to the 15 allowed  sonarjs/cognitive-complexity
+--
+/home/askhan/Documents/Development/wildfire/wildfire-app/frontend/src/features/comparison/ComparisonMetrics.tsx
+  172:16  warning  Define a constant instead of duplicating this literal 3 times  sonarjs/no-duplicate-string
+  175:16  warning  Define a constant instead of duplicating this literal 3 times  sonarjs/no-duplicate-string
+--
+/home/askhan/Documents/Development/wildfire/wildfire-app/frontend/src/features/guided-tour/AreaSelectTour.tsx
+  31:44  warning  Define a constant instead of duplicating this literal 7 times  sonarjs/no-duplicate-string
+  43:48  warning  Define a constant instead of duplicating this literal 6 times  sonarjs/no-duplicate-string
+--
+/home/askhan/Documents/Development/wildfire/wildfire-app/frontend/src/features/guided-tour/ProductTour.tsx
+  44:48  warning  Define a constant instead of duplicating this literal 10 times  sonarjs/no-duplicate-string
+  48:44  warning  Define a constant instead of duplicating this literal 3 times   sonarjs/no-duplicate-string
+--
+/home/askhan/Documents/Development/wildfire/wildfire-app/frontend/src/features/guided-tour/TourController.tsx
+  93:55  warning  Refactor this function to reduce its Cognitive Complexity from 16 to the 15 allowed  sonarjs/cognitive-complexity
+--
+/home/askhan/Documents/Development/wildfire/wildfire-app/frontend/src/features/landing/components/LandingCTA.tsx
+  32:104  warning  Define a constant instead of duplicating this literal 3 times  sonarjs/no-duplicate-string
+--
+/home/askhan/Documents/Development/wildfire/wildfire-app/frontend/src/features/landing/components/LandingTrust.tsx
+  45:169  warning  Define a constant instead of duplicating this literal 5 times  sonarjs/no-duplicate-string
+  45:199  warning  Define a constant instead of duplicating this literal 4 times  sonarjs/no-duplicate-string
+--
+/home/askhan/Documents/Development/wildfire/wildfire-app/frontend/src/features/model-dashboard/components/ModelDashboard.tsx
+  568:60  warning  Define a constant instead of duplicating this literal 4 times  sonarjs/no-duplicate-string
+--
+/home/askhan/Documents/Development/wildfire/wildfire-app/frontend/src/features/model-dashboard/components/ModelTableRow.tsx
+  148:4  warning  Refactor this function to reduce its Cognitive Complexity from 16 to the 15 allowed  sonarjs/cognitive-complexity
+--
+/home/askhan/Documents/Development/wildfire/wildfire-app/frontend/src/features/model-dashboard/utils/statusHelpers.ts
+  30:16  warning  Define a constant instead of duplicating this literal 3 times  sonarjs/no-duplicate-string
+--
+/home/askhan/Documents/Development/wildfire/wildfire-app/frontend/src/features/model-results/components/RiskMetricsCard.tsx
+  27:10  warning  Define a constant instead of duplicating this literal 3 times  sonarjs/no-duplicate-string
+  35:10  warning  Define a constant instead of duplicating this literal 3 times  sonarjs/no-duplicate-string
+  43:10  warning  Define a constant instead of duplicating this literal 3 times  sonarjs/no-duplicate-string
+  51:10  warning  Define a constant instead of duplicating this literal 3 times  sonarjs/no-duplicate-string
+  59:10  warning  Define a constant instead of duplicating this literal 3 times  sonarjs/no-duplicate-string

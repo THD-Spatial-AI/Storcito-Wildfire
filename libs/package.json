@@ -1,0 +1,16 @@
+{
+  "name": "libs",
+  "private": true,
+  "version": "1.0.0",
+  "description": "SpatialHub shared frontend packages (versioned npm workspace).",
+  "workspaces": [
+    "auth",
+    "forms",
+    "i18n",
+    "ui"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  }
+}

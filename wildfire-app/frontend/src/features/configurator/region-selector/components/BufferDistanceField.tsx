@@ -1,0 +1,61 @@
+import { useCallback, type FC } from "react";
+import { Minus, Plus } from "lucide-react";
+import { useTranslation } from "@/i18n";
+
+import {
+    BUFFER_MAX,
+    BUFFER_MIN,
+    stepBuffer,
+} from "@/features/configurator/constants/buffer-distance";
+
+interface BufferDistanceFieldProps {
+    value: number;
+    onChange: (value: number) => void;
+}
+
+export const BufferDistanceField: FC<BufferDistanceFieldProps> = ({ value, onChange }) => {
+    const { t } = useTranslation();
+
+    const decrement = useCallback(() => onChange(stepBuffer(value, -1)), [value, onChange]);
+    const increment = useCallback(() => onChange(stepBuffer(value, 1)), [value, onChange]);
+
+    const atMin = value <= BUFFER_MIN;
+    const atMax = value >= BUFFER_MAX;
+
+    return (
+        <fieldset className="relative border-0 p-0 m-0" data-tour="buffer-distance">
+            <legend className="block text-sm font-medium text-foreground mb-2">
+                {t("simulation.bufferDistance.label")}
+            </legend>
+            <div className="flex items-center gap-2">
+                <button
+                    type="button"
+                    onClick={decrement}
+                    aria-label={t("simulation.bufferDistance.decrease")}
+                    disabled={atMin}
+                    className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-border bg-background dark:bg-gray-700 text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <Minus className="w-4 h-4" />
+                </button>
+                <div
+                    className="flex-1 min-w-[7rem] select-none text-center px-3 py-2 rounded-lg border border-border bg-background dark:bg-gray-700 text-sm font-semibold text-foreground"
+                    aria-live="polite"
+                >
+                    {value} m
+                </div>
+                <button
+                    type="button"
+                    onClick={increment}
+                    aria-label={t("simulation.bufferDistance.increase")}
+                    disabled={atMax}
+                    className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-border bg-background dark:bg-gray-700 text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <Plus className="w-4 h-4" />
+                </button>
+            </div>
+            <div className="text-xs text-muted-foreground mt-1">
+                {t("simulation.bufferDistance.hint")}
+            </div>
+        </fieldset>
+    );
+};

@@ -1,0 +1,1759 @@
+{
+  "drawing": {
+    "clickToDraw": "Cliquer pour dessiner",
+    "clickToClose": "Cliquer pour fermer",
+    "start": "Début"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "warning": "Avertissement",
+    "info": "Info",
+    "yes": "Oui",
+    "no": "Non",
+    "ok": "OK",
+    "back": "Retour",
+    "next": "Suivant",
+    "submit": "Soumettre",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "reset": "Réinitialiser",
+    "clear": "Effacer",
+    "clearAll": "Tout effacer",
+    "selectAll": "Tout sélectionner",
+    "noResults": "Aucun résultat trouvé",
+    "actions": "Actions",
+    "settings": "Paramètres",
+    "logout": "Déconnexion",
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "unknown": "Inconnu",
+    "more": "plus",
+    "add": "Ajouter",
+    "refresh": "Actualiser",
+    "healthCheck": "Vérification de l'état",
+    "na": "N/D",
+    "from": "De",
+    "to": "À",
+    "duration": "Durée",
+    "days": "jours",
+    "country": "Pays",
+    "region": "Région",
+    "status": "Statut",
+    "createdAt": "Créé",
+    "updatedAt": "Dernière mise à jour",
+    "workspace": "Espace de travail",
+    "results": "Résultats",
+    "name": "Nom",
+    "description": "Description",
+    "id": "ID",
+    "current": "Actuel",
+    "max": "Max",
+    "tooltips": {
+      "viewOnMap": "Voir sur la Carte",
+      "editLocation": "Modifier l'Emplacement",
+      "editName": "Modifier le nom",
+      "duplicate": "Dupliquer",
+      "view": "Voir",
+      "share": "Partager",
+      "moveToWorkspace": "Déplacer vers l'Espace de Travail",
+      "profile": "Profil",
+      "documentation": "Documentation",
+      "restartTour": "Redémarrer le tour",
+      "feedback": "Commentaires",
+      "theme": "Thème",
+      "searchLocation": "Rechercher un emplacement"
+    },
+    "sidebar": {
+      "energySimulations": "Simulations d'Énergie",
+      "map": "Carte",
+      "locations": "Emplacements",
+      "simulationReports": "Comparaison de Modèles",
+      "technologies": "Technologies",
+      "simulations": "Simulations Wildfire"
+    },
+    "menu": {
+      "profile": "Profil",
+      "settings": "Paramètres",
+      "logout": "Déconnexion"
+    },
+    "modelActions": {
+      "viewResults": "Voir les Résultats",
+      "downloadResults": "Télécharger les Résultats",
+      "copyConfiguration": "Copier la Configuration",
+      "editConfiguration": "Modifier la Configuration",
+      "cannotEditCompleted": "Impossible de modifier un modèle terminé",
+      "moveToWorkspace": "Déplacer vers l'Espace de Travail",
+      "shareModel": "Partager le Modèle",
+      "delete": "Supprimer",
+      "cannotDelete": "Suppression impossible - seul le propriétaire ou un expert peut supprimer",
+      "retryCalculation": "Réessayer le Calcul",
+      "startCalculation": "Démarrer le Calcul",
+      "engineNotAvailable": "Le moteur de simulation n'est pas disponible"
+    },
+    "pagination": {
+      "showing": "Affichage de",
+      "to": "à",
+      "of": "sur",
+      "results": "résultats",
+      "noResults": "Aucun résultat",
+      "loading": "Chargement...",
+      "perPage": "par page",
+      "previousPage": "Page précédente",
+      "nextPage": "Page suivante"
+    },
+    "appName": "Évaluation du risque d'incendie de forêt",
+    "saved": "Enregistré"
+  },
+  "forms": {
+    "user": {
+      "personalInfo": {
+        "title": "Informations Personnelles",
+        "description": "Coordonnées de base et informations de contact"
+      },
+      "security": {
+        "title": "Sécurité",
+        "description": "Identifiants de sécurité du compte"
+      },
+      "fields": {
+        "fullName": "Nom Complet",
+        "email": "Adresse E-mail",
+        "organization": "Organisation",
+        "position": "Poste",
+        "phone": "Numéro de Téléphone",
+        "accessLevel": "Niveau d'Accès",
+        "emailVerified": "E-mail Vérifié",
+        "password": "Mot de Passe",
+        "confirmPassword": "Confirmer le Mot de Passe",
+        "modelLimit": "Limite de Modèles"
+      },
+      "placeholders": {
+        "fullName": "Entrez le nom complet",
+        "email": "Entrez l'adresse e-mail",
+        "organization": "Entrez le nom de l'organisation",
+        "position": "Entrez le poste",
+        "password": "Entrez le mot de passe",
+        "confirmPassword": "Confirmez le mot de passe",
+        "modelLimit": "Laisser vide pour la valeur par défaut"
+      },
+      "descriptions": {
+        "emailVerified": "Marquer l'e-mail comme vérifié",
+        "modelLimit": "Limite personnalisée de création de modèles (0 = illimité, vide = par défaut)"
+      },
+      "accessLevels": {
+        "veryLow": "Accès Très Faible",
+        "intermediate": "Accès Intermédiaire",
+        "manager": "Gestionnaire (Accès Groupe)",
+        "expert": "Expert (Accès Complet)"
+      },
+      "validation": {
+        "phoneInvalid": "Le numéro de téléphone ne peut contenir que des chiffres, espaces, tirets, signes plus et parenthèses",
+        "passwordLength": "Le mot de passe doit contenir au moins 8 caractères",
+        "nameRequired": "Le nom est requis",
+        "emailRequired": "L'e-mail est requis",
+        "emailInvalid": "Veuillez entrer une adresse e-mail valide",
+        "accessLevelRequired": "Le niveau d'accès est requis",
+        "passwordRequired": "Le mot de passe est requis",
+        "confirmPasswordRequired": "La confirmation du mot de passe est requise",
+        "passwordsMismatch": "Les mots de passe ne correspondent pas"
+      }
+    },
+    "webservice": {
+      "serviceInfo": {
+        "title": "Informations du Service",
+        "description": "Identification de base et métadonnées du service web"
+      },
+      "connectionDetails": {
+        "title": "Détails de Connexion",
+        "description": "Configuration de la connexion réseau et du point d'accès"
+      },
+      "performanceSettings": {
+        "title": "Paramètres de Performance",
+        "description": "Capacité du service et configuration des performances"
+      },
+      "fields": {
+        "serviceName": "Nom du Service",
+        "protocol": "Protocole",
+        "ipAddress": "Adresse IP",
+        "port": "Port",
+        "endpoint": "Chemin du Point d'Accès",
+        "autoScaling": "Mise à l'Échelle Auto",
+        "maxConcurrency": "Max. Requêtes Simultanées",
+        "initialStatus": "Statut Initial"
+      },
+      "placeholders": {
+        "serviceName": "Entrez le nom du service",
+        "ipAddress": "ex., 192.168.1.100"
+      },
+      "descriptions": {
+        "serviceName": "Nom lisible pour le service web",
+        "autoScaling": "Activer la mise à l'échelle automatique selon la charge",
+        "maxConcurrency": "Nombre maximum de requêtes simultanées (1-100)"
+      },
+      "statusOptions": {
+        "active": "Actif",
+        "inactive": "Inactif",
+        "maintenance": "Maintenance"
+      },
+      "validation": {
+        "ipInvalid": "Veuillez entrer une adresse IP valide",
+        "portRange": "Le port doit être entre 1 et 65535",
+        "concurrencyRange": "La concurrence max doit être entre 1 et 100",
+        "nameRequired": "Le nom du service est requis",
+        "ipRequired": "L'adresse IP est requise",
+        "portRequired": "Le port est requis"
+      }
+    },
+    "workspace": {
+      "details": {
+        "title": "Détails",
+        "description": "Entrez le nom de l'espace de travail et la description optionnelle"
+      },
+      "fields": {
+        "name": "Nom de l'Espace de Travail",
+        "description": "Description"
+      },
+      "placeholders": {
+        "name": "Entrez le nom de l'espace de travail",
+        "description": "Entrez la description de l'espace de travail (optionnel)"
+      },
+      "descriptions": {
+        "name": "Un nom unique pour votre espace de travail",
+        "description": "Description optionnelle de l'objectif de l'espace de travail"
+      },
+      "validation": {
+        "nameRequired": "Le nom de l'espace de travail est requis"
+      }
+    },
+    "moveModel": {
+      "destination": {
+        "title": "Destination",
+        "description": "Sélectionnez l'espace de travail cible pour le modèle"
+      },
+      "fields": {
+        "targetWorkspace": "Espace de Travail Cible"
+      },
+      "placeholders": {
+        "selectWorkspace": "Sélectionnez un espace de travail"
+      },
+      "descriptions": {
+        "targetWorkspace": "Choisissez l'espace de travail vers lequel déplacer le modèle"
+      },
+      "defaultWorkspace": "Espace de Travail Par Défaut"
+    },
+    "shareModel": {
+      "title": "Partager avec un Utilisateur Individuel",
+      "description": "Entrez l'adresse e-mail de l'utilisateur avec qui partager",
+      "emailDescription": "L'utilisateur aura accès à ce modèle"
+    },
+    "bulkCopy": {
+      "title": "Nombre de copies",
+      "description": "Spécifiez combien de copies créer pour chaque modèle sélectionné",
+      "fields": {
+        "copyCount": "Nombre de copies",
+        "copyCountDescription": "Chaque modèle sélectionné sera dupliqué autant de fois"
+      },
+      "validation": {
+        "min": "Au moins 1 copie est requise",
+        "max": "Maximum 10 copies autorisées",
+        "integer": "Doit être un nombre entier"
+      }
+    }
+  },
+  "dashboard": {
+    "stats": {
+      "totalModels": "Total des Modèles",
+      "draft": "Brouillon",
+      "inProgress": "En Cours",
+      "completed": "Terminé",
+      "published": "Publié",
+      "modelLimit": "Limite de Modèles",
+      "unlimited": "Illimité"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "noNotifications": "Aucune notification",
+    "allCaughtUp": "Vous êtes à jour !",
+    "markAllRead": "Tout marquer comme lu",
+    "clearAll": "Tout effacer",
+    "viewAll": "Voir toutes les notifications",
+    "moreNotification": "+{{count}} notification supplémentaire",
+    "moreNotifications": "+{{count}} notifications supplémentaires",
+    "details": "Détails",
+    "close": "Fermer",
+    "scheduledFor": "Prévu pour :",
+    "service": "Service",
+    "last30Days": "30 derniers jours",
+    "unread": "{{count}} non lu(s)",
+    "loading": "Chargement des notifications...",
+    "confirmClearTitle": "Effacer toutes les notifications ?",
+    "confirmClearDescription": "Êtes-vous sûr de vouloir effacer toutes les notifications ? Cette action est irréversible.",
+    "confirmClearButton": "Tout effacer",
+    "dismiss": "Ignorer",
+    "types": {
+      "success": "Succès",
+      "error": "Erreur",
+      "warning": "Avertissement",
+      "info": "Info",
+      "maintenance": "Maintenance"
+    },
+    "totalExecutionTime": "Temps d'Exécution Total",
+    "completedIn": "Terminé avec succès en {{time}}",
+    "failedAfter": "Échec après {{time}}",
+    "cancelledAfter": "Annulé après {{time}}",
+    "messages": {
+      "modelCalculationComplete": "Calcul du modèle terminé",
+      "modelCalculationCompleteMessage": "Votre modèle '{{modelName}}' a été calculé avec succès et est prêt à être consulté.",
+      "modelCalculationFailed": "Échec du calcul du modèle",
+      "modelCalculationFailedMessage": "Le calcul de votre modèle '{{modelName}}' a échoué. Veuillez réessayer.",
+      "modelCalculationStarted": "Calcul du modèle démarré",
+      "modelCalculationStartedMessage": "Le calcul de votre modèle '{{modelName}}' a commencé."
+    }
+  },
+  "modelStatus": {
+    "draft": "Brouillon",
+    "queue": "En Attente",
+    "calculating": "Calcul en cours",
+    "running": "En cours",
+    "processing": "Traitement",
+    "completed": "Terminé",
+    "published": "Publié",
+    "failed": "Échoué",
+    "cancelled": "Annulé",
+    "modified": "Modifié"
+  },
+  "auth": {
+    "signIn": "Se Connecter",
+    "signUp": "S'inscrire",
+    "signOut": "Se Déconnecter",
+    "signingIn": "Connexion en cours...",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "enterYourEmail": "Entrez votre e-mail",
+    "enterYourPassword": "Entrez votre mot de passe",
+    "welcomeBack": "Bon retour",
+    "signInToContinue": "Connectez-vous pour continuer",
+    "or": "ou",
+    "dontHaveAccount": "Vous n'avez pas de compte?",
+    "alreadyHaveAccount": "Vous avez déjà un compte?",
+    "forgotPassword": "Mot de passe oublié?",
+    "rememberMe": "Se souvenir de moi",
+    "loginFailed": "Échec de la connexion",
+    "verificationEmailSent": "E-mail de vérification envoyé",
+    "checkInboxVerify": "Vérifiez votre boîte de réception et cliquez sur le lien de vérification.",
+    "emailVerificationRequired": "Vérification de l'e-mail requise",
+    "sending": "Envoi en cours...",
+    "resendVerificationEmail": "Renvoyer l'e-mail de vérification",
+    "protectedByEncryption": "Protégé par un cryptage standard de l'industrie",
+    "createAccount": "Créer un Compte",
+    "joinUsAccess": "Rejoignez-nous pour accéder à la plateforme de simulation énergétique",
+    "personalInformation": "Informations Personnelles",
+    "fullName": "Nom Complet",
+    "enterFullName": "Entrez votre nom complet",
+    "emailAddress": "Adresse E-mail",
+    "enterEmailAddress": "Entrez votre adresse e-mail",
+    "security": "Sécurité",
+    "confirmYourPassword": "Confirmez votre mot de passe",
+    "passwordRequirements": {
+      "title": "Exigences du Mot de Passe",
+      "minChars": "Au moins 8 caractères",
+      "uppercase": "Une lettre majuscule",
+      "lowercase": "Une lettre minuscule",
+      "number": "Un chiffre",
+      "specialChar": "Un caractère spécial",
+      "hasSpaces": "Le mot de passe contient des espaces au début ou à la fin"
+    },
+    "organizationDetails": "Détails de l'Organisation",
+    "organization": "Organisation",
+    "enterOrganization": "Entrez votre organisation",
+    "position": "Poste",
+    "enterPosition": "Entrez votre poste",
+    "phoneNumber": "Numéro de Téléphone",
+    "enterPhoneNumber": "Entrez votre numéro de téléphone",
+    "accessLevel": "Niveau d'Accès",
+    "veryLow": "Très Bas",
+    "low": "Bas",
+    "intermediate": "Intermédiaire",
+    "manager": "Manager",
+    "expert": "Expert",
+    "forgotPasswordTitle": "Mot de Passe Oublié",
+    "forgotPasswordDescription": "Entrez votre adresse e-mail et nous vous enverrons les instructions pour réinitialiser votre mot de passe.",
+    "secureResetProcess": "Processus sécurisé de réinitialisation",
+    "sendResetInstructions": "Envoyer les Instructions",
+    "backToLogin": "Retour à la Connexion",
+    "cancel": "Annuler",
+    "checkSpamFolder": "Si vous ne voyez pas l'e-mail, veuillez vérifier votre dossier spam ou courrier indésirable.",
+    "checkYourEmail": "Vérifiez votre e-mail",
+    "note": "Remarque",
+    "sentResetInstructions": "Nous avons envoyé les instructions de réinitialisation du mot de passe à votre adresse e-mail.",
+    "signUpNow": "Inscrivez-vous maintenant",
+    "createPassword": "Créer un mot de passe",
+    "creating": "Création en cours...",
+    "agreeToTerms": "En créant un compte, vous acceptez nos conditions d'utilisation",
+    "signInHere": "Connectez-vous ici",
+    "sidePanel": {
+      "badge": "Renseignement sur le risque d'incendie",
+      "title": "Protégez les communautés rurales avant que les flammes ne se déclarent",
+      "subtitle": "Cartographiez, modélisez et agissez sur le risque d'incendie — transformez les connaissances locales et les données géospatiales en protection proactive dans l'Europe rurale.",
+      "funded": "Financé par l'Union européenne · Construit sur la plateforme STORCITO"
+    }
+  },
+  "workspace": {
+    "workspace": "Espace de travail",
+    "workspaces": "Espaces de travail",
+    "selectWorkspace": "Sélectionner un espace de travail",
+    "defaultWorkspace": "Espace de travail par défaut",
+    "default": "Par défaut",
+    "shared": "Partagé",
+    "searchWorkspaces": "Rechercher des espaces de travail...",
+    "noWorkspacesMatch": "Aucun espace de travail ne correspond à votre recherche",
+    "noWorkspacesFound": "Aucun espace de travail trouvé",
+    "createNewWorkspace": "Créer un nouvel espace de travail",
+    "createDescription": "Créez un nouvel espace de travail pour organiser vos modèles et collaborer avec d'autres",
+    "createWorkspace": "Créer un espace de travail",
+    "renameWorkspace": "Renommer l'espace de travail",
+    "renameDescription": "Entrez un nouveau nom pour votre espace de travail",
+    "copyWorkspaceTitle": "Copier l'espace de travail",
+    "copyDescription": "Créer une copie de cet espace de travail avec un nouveau nom",
+    "saveChanges": "Enregistrer les modifications",
+    "copyWorkspace": "Copier l'espace de travail",
+    "sharedWithYouBy": "Partagé avec vous par {{user}}",
+    "sharedWithUsers": "Partagé avec des utilisateurs",
+    "sharedWithGroups": "Partagé avec des groupes",
+    "anotherUser": "un autre utilisateur",
+    "noMembersYet": "Pas encore de membres. Partagez avec quelqu'un pour collaborer!",
+    "noGroupsYet": "Aucun groupe n'a encore accès. Partagez avec un groupe pour donner accès à tous les membres!",
+    "removeMember": "Supprimer le membre",
+    "removeGroup": "Supprimer le groupe"
+  },
+  "model": {
+    "title": "Modèle",
+    "models": "Modèles",
+    "newModel": "Nouveau modèle",
+    "editModel": "Modifier le modèle",
+    "deleteModel": "Supprimer le modèle",
+    "modelName": "Nom du modèle",
+    "description": "Description",
+    "status": "Statut",
+    "created": "Créé",
+    "updated": "Mis à jour",
+    "running": "En cours",
+    "completed": "Terminé",
+    "failed": "Échoué",
+    "pending": "En attente",
+    "queued": "En file d'attente",
+    "cancelled": "Annulé",
+    "modified": "Modifié",
+    "runSimulation": "Lancer la simulation",
+    "viewResults": "Voir les résultats",
+    "duplicate": "Dupliquer",
+    "export": "Exporter",
+    "compare": "Comparer",
+    "dashboard": "Tableau de bord des modèles",
+    "manageConfigurations": "Gérez vos configurations d'évaluation des incendies de forêt",
+    "searchModels": "Rechercher des modèles...",
+    "allModels": "Tous les modèles",
+    "modelGroups": "Groupes de modèles",
+    "loadingWorkspace": "Chargement de l'espace de travail...",
+    "loadingModels": "Chargement des modèles...",
+    "loadingWorkspaceDescription": "Veuillez patienter pendant l'initialisation de vos préférences d'espace de travail.",
+    "loadingModelsDescription": "Veuillez patienter pendant le chargement de vos modèles d'évaluation énergétique.",
+    "selectWorkspace": "Sélectionnez ou créez un espace de travail",
+    "refreshModels": "Actualiser la liste des modèles",
+    "share": "Partager",
+    "shareDescription": "Partager \"{{title}}\" avec un autre utilisateur",
+    "copy": "Copier",
+    "rename": "Renommer",
+    "delete": "Supprimer",
+    "move": "Déplacer",
+    "shareWorkspace": "Partager cet espace de travail",
+    "copyWorkspace": "Créer une copie de cet espace de travail",
+    "renameWorkspace": "Renommer cet espace de travail",
+    "deleteWorkspace": "Supprimer cet espace de travail",
+    "moveToWorkspace": "Déplacer vers l'espace de travail",
+    "noModelsFound": "Aucun modèle trouvé",
+    "noModelsMatch": "Aucun modèle ne correspond à \"{{search}}\". Essayez d'ajuster votre recherche.",
+    "noModelsYet": "Vous n'avez pas encore créé de modèles d'évaluation énergétique. Commencez par créer votre premier modèle !",
+    "createFirstModel": "Créer votre premier modèle",
+    "selected": "sélectionnés",
+    "deleteSelected": "Supprimer la sélection",
+    "moveSelected": "Déplacer la sélection",
+    "cannotDelete": "Impossible de supprimer - les modèles sont désactivés ou ne vous appartiennent pas",
+    "cannotMove": "Impossible de déplacer - les modèles ne vous appartiennent pas",
+    "sharedCannotDelete": "Les modèles partagés ne peuvent pas être supprimés. Copiez-le d'abord",
+    "sharedCannotMove": "Les modèles partagés ne peuvent pas être déplacés. Copiez-le d'abord",
+    "sharedCannotShare": "Les modèles partagés ne peuvent pas être partagés à nouveau. Copiez-le d'abord",
+    "limitReached": "Vous avez atteint votre limite de création de modèles",
+    "selectAll": "Tout sélectionner",
+    "deselectAll": "Tout désélectionner",
+    "actions": "Actions",
+    "name": "Nom du modèle",
+    "owner": "Propriétaire",
+    "workspace": "Espace de travail",
+    "draft": "Brouillon",
+    "published": "Publié",
+    "total": "Total",
+    "queue": "File d'attente",
+    "copyOf": "Copie de \"{{name}}\"",
+    "ownedBy": "Propriété de",
+    "parentModel": "Modèle parent",
+    "parent": "Parent",
+    "anotherModel": "un autre modèle",
+    "failedDefaultMessage": "Calcul échoué - service web indisponible ou délai dépassé",
+    "waiting": "En attente",
+    "queuedTooltip": "Votre modèle est en file d'attente - le moteur de simulation traite d'autres calculs",
+    "compareRequires2Completed": "Sélectionnez exactement 2 modèles terminés pour comparer",
+    "bulkCopy": "Copier les modèles",
+    "bulkCopyDescription": "Créer des copies de {{count}} modèle(s) sélectionné(s)",
+    "bulkCopyFailed": "Certains modèles n'ont pas pu être copiés. Veuillez réessayer.",
+    "bulkCopySubmit": "Créer les copies",
+    "calculate": "Calculer",
+    "cannotCalculate": "Calcul impossible – aucun modèle éligible sélectionné",
+    "noWebserviceAvailable": "Aucun moteur de simulation disponible"
+  },
+  "polygon": {
+    "drawRegion": "Dessinez votre région",
+    "clickToStart": "Cliquez pour commencer",
+    "clickAnywhere": "Cliquez n'importe où sur la carte pour placer votre premier point",
+    "addMorePoints": "Ajouter plus de points",
+    "continueClicking": "Continuez à cliquer pour délimiter votre zone",
+    "closePolygon": "Fermer le polygone",
+    "doubleClickOrClick": "Double-cliquez ou cliquez sur le point de départ pour terminer",
+    "startEnd": "Début/Fin",
+    "clickHereToClose": "Cliquez ici pour fermer",
+    "escToCancel": "pour annuler le dessin",
+    "pointsAdded": "{{count}} ajoutés",
+    "editPolygon": "Modifier le polygone",
+    "moveVertex": "Déplacer les coins",
+    "moveVertexHint": "Faites glisser un sommet pour ajuster",
+    "addVertex": "Ajouter un point",
+    "addVertexHint": "Cliquez sur une arête",
+    "removeVertex": "Supprimer un point",
+    "removeVertexHint": "cliquez sur un sommet",
+    "escToClear": "pour effacer le polygone"
+  },
+  "time": {
+    "justNow": "À l'instant",
+    "minutesAgo": "Il y a {{count}} minute",
+    "minutesAgo_plural": "Il y a {{count}} minutes",
+    "hoursAgo": "Il y a {{count}} heure",
+    "hoursAgo_plural": "Il y a {{count}} heures",
+    "daysAgo": "Il y a {{count}} jour",
+    "daysAgo_plural": "Il y a {{count}} jours",
+    "weeksAgo": "Il y a {{count}} semaine",
+    "weeksAgo_plural": "Il y a {{count}} semaines"
+  },
+  "adminDashboard": {
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "logout": "Déconnexion",
+    "tabs": {
+      "overview": "Aperçu",
+      "allSimulationModels": "Tous les Modèles de Simulation",
+      "simulationEngine": "Moteur de Simulation",
+      "feedback": "Retours",
+      "userManagement": "Gestion des Utilisateurs",
+      "gridEngine": "Compute Engine"
+    },
+    "stats": {
+      "accessLevel": "Niveau d'Accès",
+      "availableLayers": "Couches Disponibles",
+      "status": "Statut",
+      "totalUsers": "Utilisateurs Totaux",
+      "lastLogin": "Dernière Connexion",
+      "active": "Actif",
+      "online": "En ligne",
+      "live": "En direct",
+      "updating": "Mise à jour",
+      "recent": "Récent",
+      "allMapLayers": "Toutes les Couches",
+      "mapLayers": "{{count}} Couches",
+      "mapLayer": "{{count}} Couche"
+    },
+    "accessLevels": {
+      "expert": "Accès Expert",
+      "manager": "Accès Gestionnaire",
+      "intermediate": "Accès Intermédiaire",
+      "veryLow": "Accès Très Faible",
+      "unknown": "Inconnu"
+    },
+    "accessTrends": {
+      "maximum": "Maximum",
+      "management": "Gestion",
+      "upgradable": "Évolutif",
+      "basic": "Basique"
+    },
+    "userProfile": {
+      "title": "Profil Utilisateur",
+      "subtitle": "Informations de votre compte",
+      "email": "E-mail",
+      "organization": "Organisation",
+      "position": "Poste",
+      "phone": "Téléphone"
+    },
+    "accessPermissions": {
+      "title": "Accès et Permissions",
+      "subtitle": "Capacités du système",
+      "active": "Actif",
+      "currentLevel": "Niveau Actuel",
+      "workspaces": "Espaces de Travail",
+      "unlimited": "Illimité",
+      "activeWorkspaces": "{{count}} Actifs",
+      "teamSharing": "Partage d'Équipe",
+      "enabled": "Activé",
+      "disabled": "Désactivé",
+      "modelQuota": "Quota de Modèles",
+      "standardLimit": "Limite Standard",
+      "computePower": "Puissance de Calcul",
+      "highPerformance": "Haute Performance",
+      "standard": "Standard",
+      "availableFeatures": "Fonctionnalités Disponibles",
+      "allLayersAvailable": "Toutes les Couches Disponibles",
+      "fullSystemAccess": "Accès Complet au Système",
+      "energyRiskFinal": "Risque Énergétique Final",
+      "vegetationRisk": "Risque de Végétation",
+      "topographyRisk": "Risque de Topographie",
+      "upgradeMessage": "Débloquez plus de fonctionnalités en demandant une mise à niveau à votre administrateur.",
+      "fireRiskFinal": "Risque d'Incendie Final"
+    },
+    "quickActions": {
+      "title": "Actions Rapides",
+      "subtitle": "Naviguer vers les fonctions clés",
+      "interactiveMap": "Carte Interactive",
+      "viewRiskMap": "Voir la carte d'évaluation des risques",
+      "riskModels": "Modèles de Risque",
+      "manageRiskModels": "Gérer les modèles de risque",
+      "settings": "Paramètres",
+      "configurePreferences": "Configurer les préférences"
+    },
+    "title": "Tableau de bord administrateur",
+    "welcomeBack": "Bienvenue, {{name}} !",
+    "managePlatform": "Gérer votre plateforme de simulation énergétique",
+    "administrator": "Administrateur",
+    "loadingContent": "Chargement du contenu..."
+  },
+  "userManagement": {
+    "title": "Gestion des utilisateurs",
+    "subtitle": "Gérer les utilisateurs, groupes et permissions",
+    "searchPlaceholder": "Rechercher nom, e-mail, organisation...",
+    "refresh": "Actualiser",
+    "addNewUser": "Ajouter un nouvel utilisateur",
+    "add": "Ajouter",
+    "editUser": "Modifier l'utilisateur",
+    "createUser": "Créer un utilisateur",
+    "updateUser": "Mettre à jour l'utilisateur",
+    "loadingUsers": "Chargement des utilisateurs...",
+    "noUsersFound": "Aucun utilisateur trouvé",
+    "noUsersInGroup": "Aucun utilisateur trouvé dans votre groupe. Contactez un administrateur pour assigner des utilisateurs à votre groupe.",
+    "noUsersMatch": "Aucun utilisateur ne correspond à \"{{search}}\"",
+    "noUsersMatchSearch": "Aucun utilisateur ne correspond à \"{{search}}\"",
+    "addFirstUser": "Ajoutez le premier utilisateur pour commencer.",
+    "dialog": {
+      "editTitle": "Modifier l'utilisateur",
+      "addTitle": "Ajouter un nouvel utilisateur",
+      "updateUser": "Mettre à jour l'utilisateur",
+      "createUser": "Créer un utilisateur"
+    },
+    "table": {
+      "user": "Utilisateur",
+      "organization": "Organisation",
+      "position": "Poste",
+      "accessLevel": "Niveau d'accès",
+      "group": "Groupe",
+      "emailVerified": "E-mail vérifié",
+      "phone": "Téléphone",
+      "actions": "Actions"
+    },
+    "emailStatus": {
+      "verified": "Vérifié",
+      "unverified": "Non vérifié"
+    },
+    "actions": {
+      "changeGroup": "Changer de groupe",
+      "enableUser": "L'utilisateur est désactivé — cliquez pour activer",
+      "disableUser": "L'utilisateur est activé — cliquez pour désactiver",
+      "editUser": "Modifier l'utilisateur",
+      "deleteUser": "Supprimer l'utilisateur",
+      "copyEmail": "Copier l'e-mail",
+      "copied": "Copié !",
+      "bulkDelete": "Supprimer la sélection",
+      "bulkMoveToGroup": "Déplacer vers le groupe",
+      "deselectAll": "Tout désélectionner",
+      "selectAll": "Tout sélectionner",
+      "selected": "{{count}} sélectionnés"
+    },
+    "groups": {
+      "selectOrCreate": "Sélectionner ou créer un groupe",
+      "renameGroup": "Renommer le groupe",
+      "enableGroup": "Activer le groupe et ses utilisateurs",
+      "disableGroup": "Désactiver le groupe et ses utilisateurs",
+      "deleteGroup": "Supprimer le groupe et tous ses utilisateurs",
+      "defaultCannotDelete": "Le groupe par défaut ne peut pas être supprimé",
+      "default": "Par défaut",
+      "unknown": "Inconnu",
+      "defaultGroup": "Groupe par défaut",
+      "unknownGroup": "Groupe inconnu",
+      "changeUserGroup": "Changer le groupe de l'utilisateur",
+      "groupAssignment": "Attribution de groupe",
+      "selectGroup": "Sélectionner un groupe",
+      "changeGroup": "Changer de groupe",
+      "renameGroupTitle": "Renommer le groupe",
+      "groupName": "Nom du groupe",
+      "newGroupName": "Nouveau nom du groupe",
+      "enterNewGroupName": "Entrez le nouveau nom du groupe",
+      "rename": "Renommer",
+      "createNewGroup": "Créer un nouveau groupe",
+      "createGroupDescription": "Créer un nouveau groupe pour organiser les utilisateurs de votre organisation",
+      "createGroup": "Créer le groupe",
+      "groupNameRequired": "Le nom du groupe est requis",
+      "groupCreated": "Groupe créé avec succès",
+      "failedToCreateGroup": "Échec de la création du groupe",
+      "groupNamePlaceholder": "ex. Pompiers, Intervention d'urgence",
+      "searchGroups": "Rechercher des groupes...",
+      "allGroups": "Tous les groupes",
+      "viewUsersFromAllGroups": "Voir les utilisateurs de tous les groupes",
+      "noGroups": "Aucun groupe",
+      "loading": "Chargement...",
+      "noGroupsFound": "Aucun groupe trouvé",
+      "noGroupsMatchSearch": "Aucun groupe ne correspond à votre recherche",
+      "bulkChangeGroup": "Déplacer les utilisateurs vers un groupe",
+      "moveUsers": "Déplacer les utilisateurs"
+    },
+    "notifications": {
+      "userCreated": "Utilisateur créé avec succès !",
+      "userUpdated": "Utilisateur mis à jour avec succès !",
+      "userDeleted": "Utilisateur supprimé avec succès !",
+      "userDisabled": "Utilisateur désactivé avec succès !",
+      "userEnabled": "Utilisateur activé avec succès !",
+      "groupDisabled": "Groupe \"{{name}}\" désactivé",
+      "groupEnabled": "Groupe \"{{name}}\" activé",
+      "groupDeleted": "Groupe \"{{name}}\" supprimé",
+      "groupRenamed": "Groupe renommé en \"{{name}}\" avec succès",
+      "userMovedToGroup": "Utilisateur déplacé vers un nouveau groupe et déconnecté. Il doit se reconnecter pour accéder à son nouvel espace de travail.",
+      "failedToCreate": "Échec de la création de l'utilisateur",
+      "failedToUpdate": "Échec de la mise à jour de l'utilisateur",
+      "failedToDelete": "Échec de la suppression de l'utilisateur",
+      "failedToDisable": "Échec de la désactivation de l'utilisateur",
+      "failedToEnable": "Échec de l'activation de l'utilisateur",
+      "failedToFetch": "Échec de la récupération des utilisateurs",
+      "failedToUpdateGroup": "Échec de la mise à jour du groupe de l'utilisateur",
+      "failedToRenameGroup": "Échec du renommage du groupe",
+      "failedToCopyEmail": "Échec de la copie de l'e-mail",
+      "pleaseLogIn": "Veuillez vous connecter pour voir les utilisateurs",
+      "passwordMismatch": "Le mot de passe et la confirmation doivent correspondre",
+      "bulkDeletePartial": "{{succeeded}} utilisateurs supprimés sur {{total}}. {{failed}} échecs.",
+      "bulkDeleted": "{{count}} utilisateurs supprimés avec succès",
+      "bulkGroupChangeFailed": "Échec du déplacement des utilisateurs vers le groupe",
+      "bulkGroupChanged": "{{count}} utilisateurs déplacés avec succès vers le nouveau groupe"
+    },
+    "confirmations": {
+      "disableUserDescription": "Cela empêchera l'utilisateur de se connecter.",
+      "enableUserDescription": "Cela permettra à l'utilisateur de se reconnecter.",
+      "disableGroupDescription": "La désactivation d'un groupe désactivera tous ses utilisateurs.",
+      "enableGroupDescription": "L'activation d'un groupe activera tous ses utilisateurs.",
+      "deleteGroupDescription": "Cela supprimera le groupe et tous ses utilisateurs. Cette action est irréversible.",
+      "bulkDeleteDescription": "Cela supprimera définitivement {{count}} utilisateurs sélectionnés. Cette action est irréversible."
+    }
+  },
+  "modelsManagement": {
+    "title": "Tous les modèles d'évaluation de simulation",
+    "subtitle": "Gérer et surveiller tous les modèles du système",
+    "searchPlaceholder": "Rechercher des modèles...",
+    "loadingModels": "Chargement des modèles...",
+    "noModelsFound": "Aucun modèle trouvé",
+    "noModelsDescription": "Commencez par créer votre premier modèle d'évaluation de simulation.",
+    "sharedWorkspace": "Espace de travail partagé (Propriétaire: {{owner}})",
+    "table": {
+      "model": "Modèle",
+      "status": "Statut",
+      "created": "Créé",
+      "lastModified": "Dernière modification",
+      "actions": "Actions"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "inQueue": "En file d'attente",
+      "inProgress": "En cours",
+      "completed": "Terminé",
+      "published": "Publié"
+    },
+    "notifications": {
+      "duplicated": "Le modèle \"{{title}}\" a été dupliqué avec succès",
+      "failedToDuplicate": "Échec de la duplication du modèle. Veuillez réessayer.",
+      "calculationStarted": "Calcul démarré avec succès",
+      "failedToCalculate": "Échec du démarrage du calcul. Veuillez réessayer.",
+      "moveComingSoon": "La fonction de déplacement vers l'espace de travail sera bientôt disponible pour \"{{title}}\"",
+      "shared": "Modèle partagé avec succès",
+      "deleted": "Modèle \"{{title}}\" a été supprimé",
+      "failedToDelete": "Échec de la suppression du modèle. Veuillez réessayer."
+    },
+    "refresh": "Actualiser"
+  },
+  "profile": {
+    "title": "Paramètres du profil",
+    "subtitle": "Gérez vos informations personnelles et préférences de compte",
+    "goBack": "Retour",
+    "loadingProfile": "Chargement de votre profil...",
+    "defaultUser": "Utilisateur",
+    "accessLevel": "Niveau d'accès",
+    "notSpecified": "Non spécifié",
+    "personalInfo": "Informations personnelles",
+    "personalInfoDescription": "Mettez à jour vos informations de profil ci-dessous",
+    "readOnly": "lecture seule",
+    "saving": "Enregistrement...",
+    "saveChanges": "Enregistrer les modifications",
+    "fields": {
+      "fullName": "Nom complet",
+      "email": "Adresse e-mail",
+      "organization": "Organisation",
+      "position": "Poste",
+      "phone": "Téléphone"
+    },
+    "placeholders": {
+      "fullName": "Entrez votre nom complet",
+      "organization": "Votre entreprise ou organisation",
+      "position": "Votre titre de poste",
+      "phone": "+33 6 00 00 00 00"
+    },
+    "accessLevels": {
+      "basic": "Basique",
+      "basicDescription": "Accès standard aux fonctionnalités de base",
+      "intermediate": "Intermédiaire",
+      "intermediateDescription": "Accès étendu avec fonctionnalités avancées",
+      "expert": "Expert",
+      "expertDescription": "Accès complet à toutes les fonctionnalités"
+    },
+    "notifications": {
+      "updated": "Profil mis à jour avec succès !",
+      "failedToLoad": "Échec du chargement du profil. Veuillez réessayer.",
+      "failedToUpdate": "Échec de la mise à jour du profil. Veuillez réessayer."
+    },
+    "password": {
+      "confirm": "Confirmer le nouveau mot de passe",
+      "confirmPlaceholder": "Saisissez à nouveau votre nouveau mot de passe",
+      "current": "Mot de passe actuel",
+      "currentPlaceholder": "Saisissez votre mot de passe actuel",
+      "description": "Mettez à jour le mot de passe que vous utilisez pour vous connecter",
+      "failed": "Échec du changement de mot de passe. Veuillez réessayer.",
+      "mismatch": "Les mots de passe ne correspondent pas",
+      "new": "Nouveau mot de passe",
+      "newPlaceholder": "Saisissez un nouveau mot de passe",
+      "requirements": {
+        "lowercase": "Une lettre minuscule",
+        "minChars": "Au moins 8 caractères",
+        "number": "Un chiffre",
+        "specialChar": "Un caractère spécial",
+        "uppercase": "Une lettre majuscule"
+      },
+      "requirementsNotMet": "Le mot de passe ne respecte pas toutes les exigences",
+      "submit": "Mettre à jour le mot de passe",
+      "title": "Changer le mot de passe",
+      "updated": "Mot de passe modifié avec succès !",
+      "updating": "Mise à jour…"
+    }
+  },
+  "webservicesManagement": {
+    "title": "Gestion du moteur de simulation",
+    "subtitle": "Gérer les instances de webservice de calcul",
+    "searchPlaceholder": "Rechercher par nom, IP...",
+    "refresh": "Actualiser",
+    "registerNew": "Enregistrer un nouveau webservice",
+    "loadingWebservices": "Chargement des webservices...",
+    "noWebservicesFound": "Aucun webservice trouvé",
+    "noWebservicesDescription": "Commencez par enregistrer votre première instance de webservice.",
+    "summary": {
+      "total": "Total",
+      "online": "En ligne",
+      "available": "Disponible",
+      "busy": "Occupé",
+      "offline": "Hors ligne"
+    },
+    "yourSimulationStatus": "Votre statut de simulation",
+    "modelsRunningDescription": "{{count}} de vos modèles sont en cours de calcul",
+    "modelsQueuedDescription": "{{count}} de vos modèles sont en attente - le moteur de simulation traite d'autres calculs",
+    "filters": {
+      "allStatus": "Tous les statuts",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "maintenance": "Maintenance",
+      "error": "Erreur",
+      "allAvailability": "Toute disponibilité",
+      "available": "Disponible",
+      "unavailable": "Non disponible"
+    },
+    "table": {
+      "service": "Service",
+      "endpoint": "Point de terminaison",
+      "status": "Statut",
+      "availability": "Disponibilité",
+      "jobs": "Tâches",
+      "performance": "Performance",
+      "user": "Utilisateur",
+      "ip": "Adresse IP",
+      "port": "Port",
+      "lastCheck": "Dernière vérification",
+      "actions": "Actions",
+      "never": "Jamais"
+    },
+    "status": {
+      "online": "En ligne",
+      "offline": "Hors ligne",
+      "available": "Disponible",
+      "unavailable": "Non disponible"
+    },
+    "busyStatus": {
+      "calculating": "Calcul en cours ({{current}}/{{max}})",
+      "idle": "Inactif (0/{{max}})"
+    },
+    "actions": {
+      "pingWebservice": "Ping du webservice",
+      "editWebservice": "Modifier le webservice",
+      "deleteWebservice": "Supprimer le webservice"
+    },
+    "dialog": {
+      "editTitle": "Modifier l'instance de webservice",
+      "createTitle": "Enregistrer un nouveau webservice",
+      "editDescription": "Mettre à jour la configuration du webservice",
+      "createDescription": "Configurer une nouvelle instance de webservice de calcul de simulation",
+      "editButton": "Mettre à jour le webservice",
+      "createButton": "Enregistrer le webservice"
+    },
+    "notifications": {
+      "created": "Webservice enregistré avec succès !",
+      "updated": "Webservice mis à jour avec succès !",
+      "deleted": "Webservice supprimé avec succès !",
+      "statusChanged": "Statut du webservice changé en {{status}}",
+      "failedToCreate": "Échec de l'enregistrement du webservice",
+      "failedToUpdate": "Échec de la mise à jour du webservice",
+      "failedToDelete": "Échec de la suppression du webservice",
+      "failedToPing": "Échec du ping du webservice"
+    },
+    "noWebservicesAvailable": "Aucun moteur de simulation n'est actuellement configuré. Contactez un administrateur.",
+    "healthCheck": "Moteur de simulation"
+  },
+  "feedbackManagement": {
+    "title": "Gestion des Retours Utilisateurs",
+    "subtitle": "Examiner et répondre aux retours des utilisateurs",
+    "refresh": "Actualiser",
+    "noFeedbackFound": "Aucun retour trouvé",
+    "noFeedbackDescription": "Les retours des utilisateurs apparaîtront ici une fois soumis.",
+    "filters": {
+      "label": "Filtres :",
+      "allStatus": "Tous les Statuts",
+      "allCategories": "Toutes les Catégories",
+      "allPriorities": "Toutes les Priorités"
+    },
+    "statuses": {
+      "pending": "En attente",
+      "inProgress": "En cours",
+      "resolved": "Résolu",
+      "closed": "Fermé"
+    },
+    "categories": {
+      "bug": "Rapport de Bug",
+      "feature": "Demande de Fonctionnalité",
+      "improvement": "Amélioration",
+      "general": "Général"
+    },
+    "priorities": {
+      "low": "Basse",
+      "medium": "Moyenne",
+      "high": "Haute",
+      "critical": "Critique"
+    },
+    "table": {
+      "subject": "Sujet",
+      "category": "Catégorie",
+      "priority": "Priorité",
+      "status": "Statut",
+      "rating": "Note",
+      "user": "Utilisateur",
+      "created": "Créé",
+      "actions": "Actions"
+    },
+    "actions": {
+      "viewDetails": "Voir les Détails",
+      "editStatus": "Modifier le Statut",
+      "deleteFeedback": "Supprimer le Retour",
+      "delete": "Supprimer"
+    },
+    "viewDialog": {
+      "title": "Détails du Retour",
+      "subtitle": "Voir les informations complètes du retour",
+      "message": "Message :",
+      "rating": "Note :",
+      "submitted": "Soumis",
+      "adminResponse": "Réponse de l'Administrateur :",
+      "respondedOn": "Répondu le :",
+      "attachedImage": "Image jointe",
+      "feedbackScreenshot": "Capture d'écran du feedback",
+      "clickToEnlarge": "Cliquer pour agrandir",
+      "imageLoadError": "Échec du chargement de l'image",
+      "submittedBy": "Soumis par"
+    },
+    "editDialog": {
+      "title": "Mettre à Jour le Retour",
+      "description": "Modifier le statut du retour, la priorité et fournir une réponse de l'administrateur",
+      "statusAndPriority": "Statut et Priorité du Retour",
+      "statusAndPriorityDescription": "Mettre à jour le statut et le niveau de priorité du retour",
+      "status": "Statut",
+      "priority": "Priorité",
+      "adminResponse": "Réponse de l'Administrateur",
+      "adminResponseDescription": "Fournir une réponse à l'utilisateur",
+      "response": "Réponse",
+      "responsePlaceholder": "Ajoutez votre réponse à l'utilisateur...",
+      "saveChanges": "Enregistrer les Modifications"
+    },
+    "notifications": {
+      "updateSuccess": "Retour \"{{subject}}\" mis à jour avec succès",
+      "updateError": "Échec de la mise à jour du retour. Veuillez réessayer.",
+      "deleteSuccess": "Retour \"{{subject}}\" supprimé avec succès",
+      "deleteError": "Échec de la suppression du retour. Veuillez réessayer."
+    },
+    "hasAttachment": "Contient une image jointe"
+  },
+  "simulation": {
+    "simulationPeriod": "Période de simulation",
+    "mapHeader": {
+      "clearAll": "Tout effacer"
+    },
+    "bufferDistance": {
+      "decrease": "Diminuer la distance de tampon",
+      "hint": "Plage de 0 à 2000 m par pas de 100 m. Étend la zone prise en compte autour de votre polygone.",
+      "increase": "Augmenter la distance de tampon",
+      "label": "Distance de tampon (mètres)"
+    }
+  },
+  "mapLayers": {
+    "title": "Couches de carte",
+    "description": "Configurer l'apparence de la carte et les couches de données",
+    "baseLayers": {
+      "title": "Couches de base",
+      "description": "Choisir le style de carte d'arrière-plan",
+      "osmStandard": "Couche OpenStreetMap standard",
+      "osmHumanitarian": "Style humanitaire OpenStreetMap",
+      "cartoPositron": "Carte de base claire par CartoDB",
+      "cartoVoyager": "Carte de base détaillée par CartoDB",
+      "openTopoMap": "Carte de style topographique",
+      "maplibreDark": "Fond de carte vectoriel sombre",
+      "maplibreVoyager": "Fond de carte vectoriel détaillé (Voyager)"
+    },
+    "dataLayers": {
+      "title": "Couches de données",
+      "energySimulation": "Couche de simulation énergétique finale"
+    }
+  },
+  "tour": {
+    "product": {
+      "welcome": {
+        "title": "Bienvenue sur la Plateforme de Simulation Wildfire !",
+        "description": "Faisons un tour rapide pour vous aider à démarrer avec la Plateforme de Simulation Wildfire.",
+        "tip": "Ce tour ne s'affichera qu'une seule fois. Vous pouvez le passer à tout moment ou le redémarrer depuis la barre latérale."
+      },
+      "newAssessment": {
+        "title": "Créer une Nouvelle Simulation",
+        "description": "Prêt à commencer ? Cliquez sur ce bouton pour créer votre première simulation Wildfire. Cela ouvrira l'assistant de sélection de zone.",
+        "tip": "En cliquant, vous entrerez dans un tour dédié au processus de sélection de zone !"
+      },
+      "profile": {
+        "title": "Profil et Paramètres",
+        "description": "Accédez à votre profil, aux paramètres du compte et aux préférences utilisateur. Gérez votre compte et les options supplémentaires."
+      },
+      "navigation": {
+        "title": "Navigation du Tableau de Bord",
+        "description": "Accédez à votre tableau de bord principal pour voir vos projets, évaluations récentes et statistiques globales. C'est votre base."
+      },
+      "simulations": {
+        "title": "Simulations Wildfire",
+        "description": "Créez et gérez vos modèles de simulation Wildfire. Lancez de nouvelles simulations, configurez les paramètres et consultez les exécutions existantes."
+      },
+      "map": {
+        "title": "Carte Interactive",
+        "description": "Votre espace de travail principal pour l'analyse géographique. Affichez les couches de la carte, sélectionnez les zones pour la simulation et visualisez les données de risque Wildfire."
+      },
+      "locations": {
+        "title": "Emplacements Enregistrés",
+        "description": "Gérez vos emplacements enregistrés et zones d'intérêt. Accès rapide aux régions fréquemment analysées."
+      },
+      "reports": {
+        "title": "Rapports de Simulation",
+        "description": "Consultez des rapports détaillés de simulation, exportez des données et analysez les tendances historiques."
+      },
+      "technologies": {
+        "title": "Paramètres de Simulation",
+        "description": "Configurez les paramètres de simulation Wildfire tels que les modèles de combustible, la météo et les sources d'ignition.",
+        "tip": "Les paramètres peuvent être personnalisés par scénario pour des simulations Wildfire précises."
+      },
+      "layers": {
+        "title": "Couches de Carte",
+        "description": "Contrôlez les couches de carte et les superpositions. Choisissez les cartes de base, activez/désactivez les couches de données et personnalisez votre vue de carte."
+      },
+      "documentation": {
+        "title": "Documentation",
+        "description": "Ouvrez la documentation de la plateforme pour des guides détaillés, références API et meilleures pratiques.",
+        "tip": "S'ouvre dans un nouvel onglet pour conserver votre flux de travail actuel."
+      },
+      "feedback": {
+        "title": "Commentaires",
+        "description": "Partagez vos réflexions et suggestions avec nous. Vos commentaires aident à améliorer la plateforme."
+      },
+      "complete": {
+        "title": "Tout est prêt !",
+        "description": "Vous avez terminé le tour ! Vous êtes maintenant prêt à créer des simulations Wildfire.",
+        "nextSteps": "Prochaines Étapes",
+        "nextStepsDescription": "Essayez de créer votre première simulation Wildfire ou explorez la carte interactive.",
+        "restartTour": "Redémarrer le Tour",
+        "restartTourDescription": "Vous pouvez redémarrer ce tour à tout moment depuis la barre latérale."
+      }
+    },
+    "areaSelect": {
+      "welcome": {
+        "title": "Guide de simulation d'incendies de forêt",
+        "description": "Bienvenue ! Ce tour vous guidera dans la création d'une simulation d'incendie de forêt pour la région choisie.",
+        "tip": "Vous apprendrez à configurer votre modèle, dessiner des zones et créer votre simulation."
+      },
+      "modelName": {
+        "title": "Nom du modèle",
+        "description": "Donnez à votre modèle de simulation d'incendie un nom descriptif.",
+        "tip": "Bons noms : « Californie Nord 2024 » ou « Scénario Forêt Méditerranéenne »"
+      },
+      "dateRange": {
+        "title": "Période de simulation",
+        "description": "Choisissez la période pour votre analyse d'incendie de forêt.",
+        "tip": "Des périodes plus longues fournissent une analyse plus complète"
+      },
+      "resolution": {
+        "title": "Résolution Temporelle",
+        "description": "Définissez l'intervalle de temps pour les calculs. Une résolution plus élevée fournit des résultats plus détaillés mais prend plus de temps à traiter.",
+        "tip": "60 minutes est recommandé pour la plupart des simulations"
+      },
+      "technologies": {
+        "title": "Paramètres",
+        "description": "Configurez les paramètres de simulation d'incendie tels que les modèles de combustible, la météo et les sources d'ignition.",
+        "tip": "Cliquez pour voir et personnaliser les paramètres"
+      },
+      "mapContainer": {
+        "title": "Carte interactive",
+        "description": "Ceci est votre espace de travail principal. Dessinez des polygones sur la carte pour sélectionner des zones pour votre simulation d'incendie.",
+        "tip": "Vous pouvez zoomer et déplacer la carte"
+      },
+      "search": {
+        "title": "Recherche de lieu",
+        "description": "Utilisez ce champ pour trouver rapidement des lieux par nom ou adresse.",
+        "tip": "Tapez un nom de lieu pour voir les résultats instantanés"
+      },
+      "save": {
+        "title": "Créer la simulation",
+        "description": "Une fois tout configuré, cliquez ici pour créer votre modèle de simulation d'incendie et lancer l'analyse.",
+        "tip": "Tous les champs doivent être remplis avant de pouvoir enregistrer"
+      },
+      "areaInput": {
+        "description": "Dessinez la zone directement sur la carte ou importez une limite GeoJSON Polygon/MultiPolygon.",
+        "tip": "Le modèle ne peut continuer qu'une fois qu'une zone d'intérêt valide est disponible.",
+        "title": "Saisie de la zone"
+      },
+      "areaStatus": {
+        "description": "Ce statut indique si la limite est manquante, dessinée, importée ou bloquée par une erreur d'import.",
+        "title": "Statut de l'AOI"
+      },
+      "calculationMode": {
+        "description": "Choisissez le mode statique pour une date de risque d'incendie disponible ou le mode dynamique pour une plage de dates que le backend pourra traiter ultérieurement.",
+        "tip": "Le texte d'état sous le contrôle de date indique si les dates statiques disponibles sont chargées et si la date sélectionnée est valide.",
+        "title": "Mode de calcul"
+      },
+      "calculationStatus": {
+        "description": "Cette ligne indique si les dates statiques sont en cours de chargement, indisponibles, en erreur ou prêtes à être sélectionnées.",
+        "tip": "Si un blocage s'affiche ici, le bouton continuer reste désactivé jusqu'à ce que la date sélectionnée soit valide.",
+        "title": "Statut du calcul"
+      },
+      "finalReview": {
+        "description": "L'étape de vérification contrôle le nom du modèle, la date, l'AOI, les composantes de risque et le tampon avant le lancement.",
+        "title": "Statut de validation"
+      },
+      "optionalLayers": {
+        "description": "Ces commutateurs déterminent quels signaux optionnels sont envoyés avec la requête du modèle, notamment la météo des incendies, le terrain et les incendies historiques.",
+        "tip": "Gardez la météo des incendies activée pour les exécutions normales ; la désactiver n'est utile que pour une comparaison de référence.",
+        "title": "Signaux de risque"
+      },
+      "saveSummary": {
+        "description": "Ce résumé final affiche les valeurs qui seront enregistrées avec le modèle et envoyées au flux de calcul.",
+        "title": "Résumé de l'enregistrement"
+      }
+    },
+    "buttons": {
+      "skip": "Passer",
+      "back": "Retour",
+      "next": "Suivant",
+      "finish": "Terminer",
+      "close": "Fermer"
+    }
+  },
+  "feedback": {
+    "title": "Envoyer des commentaires",
+    "subtitle": "Aidez-nous à améliorer votre expérience",
+    "category": "Catégorie de commentaires",
+    "categories": {
+      "bug": "Rapport de bug",
+      "bugDescription": "Quelque chose ne fonctionne pas",
+      "feature": "Demande de fonctionnalité",
+      "featureDescription": "Suggérer une nouvelle fonctionnalité",
+      "improvement": "Amélioration",
+      "improvementDescription": "Améliorer les fonctionnalités existantes",
+      "general": "Général",
+      "generalDescription": "Autres commentaires"
+    },
+    "subject": "Objet",
+    "subjectPlaceholder": "ex. : Problème de chargement de la carte, Suggestion de fonctionnalité...",
+    "message": "Vos commentaires",
+    "messagePlaceholder": "Veuillez décrire vos commentaires, suggestions ou problèmes en détail...",
+    "image": "Pièce jointe (Optionnel)",
+    "imageDropzone": "Cliquez pour télécharger ou glissez-déposez",
+    "imageFormats": "PNG, JPG, GIF jusqu'à 15Mo",
+    "imagePreview": "Aperçu de l'image",
+    "removeImage": "Supprimer l'image",
+    "rating": "Évaluation globale",
+    "ratingDescription": "Comment évalueriez-vous votre expérience ?",
+    "submit": "Envoyer les commentaires",
+    "submitting": "Envoi en cours...",
+    "submittingMessage": "Envoi de vos commentaires...",
+    "gdprNotice": "Vos commentaires sont traités conformément aux règlements RGPD.",
+    "success": {
+      "title": "Commentaires envoyés !",
+      "message": "Merci pour vos commentaires. Nous les examinerons et vous contacterons si nécessaire.",
+      "reference": "Référence"
+    },
+    "errors": {
+      "loginRequired": "Veuillez vous connecter pour envoyer des commentaires",
+      "submitFailed": "Échec de l'envoi des commentaires. Veuillez réessayer plus tard.",
+      "invalidImageType": "Veuillez sélectionner un fichier image valide (PNG, JPG, GIF)",
+      "imageTooLarge": "La taille de l'image doit être inférieure à 15Mo",
+      "payloadTooLarge": "La pièce jointe est trop volumineuse. Veuillez utiliser des images plus petites."
+    },
+    "myFeedback": {
+      "title": "Mes retours",
+      "subtitle": "Suivez le statut de vos retours soumis",
+      "empty": "Vous n'avez pas encore soumis de retour",
+      "adminResponse": "Réponse de l'administrateur",
+      "submittedOn": "Soumis le",
+      "autoDeleteNotice": "Cet élément sera automatiquement supprimé dans {days} jours",
+      "autoDeleteSoon": "Cet élément sera bientôt automatiquement supprimé",
+      "showHistory": "Mes soumissions",
+      "hideHistory": "Masquer",
+      "status": {
+        "pending": "En attente",
+        "in_progress": "En cours",
+        "resolved": "Résolu",
+        "closed": "Fermé"
+      }
+    },
+    "chars": "caractères",
+    "markdownSupported": "Markdown pris en charge",
+    "preview": "Aperçu",
+    "previewEmpty": "Rien à prévisualiser",
+    "words": "mots",
+    "write": "Écrire"
+  },
+  "weather": {
+    "temperature": "Temp.",
+    "windSpeed": "Vent",
+    "humidity": "Humidité",
+    "uvIndex": "UV",
+    "clickToRefresh": "Cliquez pour actualiser",
+    "clickToRetry": "Cliquez pour réessayer",
+    "retry": "Réessayer",
+    "loadWeather": "Charger la météo",
+    "clickToLoad": "Cliquez pour charger la météo de {{location}}",
+    "current": "Actuel",
+    "searchLocation": "Rechercher un emplacement...",
+    "yourLocations": "Vos Emplacements",
+    "syncing": "Synchronisation...",
+    "temperatureTooltip": "Température actuelle en Celsius et Fahrenheit",
+    "humidityTooltip": "Pourcentage d'humidité relative",
+    "uvLevels": {
+      "low": "Faible",
+      "moderate": "Modéré",
+      "high": "Élevé",
+      "veryHigh": "Très Élevé",
+      "extreme": "Extrême"
+    },
+    "uvDescriptions": {
+      "low": "Aucune protection nécessaire",
+      "moderate": "Porter de la crème solaire",
+      "high": "Protection essentielle",
+      "veryHigh": "Protection supplémentaire nécessaire",
+      "extreme": "Éviter l'exposition au soleil"
+    },
+    "dataBy": "Données météo par"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Personnalisez votre expérience et vos préférences",
+    "configuration": "Configuration",
+    "goBack": "Retour",
+    "tabs": {
+      "general": "Général",
+      "display": "Affichage",
+      "notifications": "Notifications",
+      "advanced": "Avancé"
+    },
+    "stats": {
+      "language": "Langue",
+      "theme": "Thème",
+      "notifications": "Notifications",
+      "accessLevel": "Niveau d'Accès",
+      "enabled": "Activé",
+      "disabled": "Désactivé",
+      "system": "Système",
+      "user": "Utilisateur"
+    },
+    "language": {
+      "title": "Langue",
+      "subtitle": "Langue de l'interface"
+    },
+    "weatherLocation": {
+      "title": "Emplacement Météo",
+      "subtitle": "Météo par défaut"
+    },
+    "mapLocation": {
+      "title": "Emplacement Carte",
+      "subtitle": "Positions enregistrées",
+      "syncing": "Synchronisation...",
+      "searchPlaceholder": "Rechercher un emplacement...",
+      "current": "Actuel",
+      "noLocation": "Aucun emplacement défini",
+      "savedLocations": "Emplacements Enregistrés",
+      "clearAll": "Tout effacer",
+      "syncNote": "Les emplacements sont synchronisés avec votre compte"
+    },
+    "locationSearch": {
+      "placeholder": "Rechercher un emplacement...",
+      "searching": "Recherche...",
+      "noResults": "Aucun emplacement trouvé",
+      "searchFailed": "Échec de la recherche"
+    },
+    "dataDisplay": {
+      "title": "Données et Affichage",
+      "subtitle": "Unités et formatage",
+      "temperature": "Température",
+      "celsius": "Celsius",
+      "fahrenheit": "Fahrenheit",
+      "distance": "Distance",
+      "kilometers": "Kilomètres",
+      "miles": "Miles",
+      "windSpeed": "Vitesse du Vent",
+      "knots": "nœuds",
+      "dataRefresh": "Actualisation des Données",
+      "min": "min"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "subtitle": "Préférences d'alertes",
+      "email": "E-mail",
+      "notifyWhenComplete": "Notifier à la fin",
+      "browser": "Navigateur",
+      "enabled": "Activé",
+      "blocked": "Bloqué",
+      "systemAlerts": "Alertes système"
+    },
+    "sendNotification": {
+      "title": "Envoyer Notification",
+      "subtitle": "Notifications système",
+      "selectService": "Sélectionner service...",
+      "services": {
+        "webService": "Service Web",
+        "geoServer": "GeoServer",
+        "database": "Base de Données",
+        "api": "API",
+        "mapService": "Service Carte"
+      },
+      "messagePlaceholder": "Entrez le message de notification...",
+      "sending": "Envoi...",
+      "sendNotification": "Envoyer Notification",
+      "sent": "Notification envoyée !",
+      "failedToSend": "Échec de l'envoi"
+    }
+  },
+  "simulationComparison": {
+    "title": "Comparaison de Simulations",
+    "subtitle": "Comparer les résultats de plusieurs exécutions de simulation",
+    "baseline": "Référence",
+    "comparison": "Comparaison",
+    "selectBaselineModel": "Sélectionner le modèle de référence",
+    "selectComparisonModel": "Sélectionner le modèle de comparaison",
+    "noCompletedModels": "Aucun modèle terminé trouvé",
+    "noRegion": "Pas de région",
+    "loading": "Chargement des données de simulation...",
+    "selectModels": "Sélectionner les modèles à comparer",
+    "selectModelsDescription": "Choisissez deux modèles de simulation terminés ci-dessus pour analyser leurs différences en matière de production d'énergie, de coûts et d'indicateurs de performance clés.",
+    "startBySelectingBaseline": "Commencez par sélectionner un modèle de référence",
+    "nowSelectComparison": "Maintenant, sélectionnez un modèle de comparaison",
+    "analyzedArea": "Surface analysée",
+    "analyzedAreaSub": "La surface est calculée à partir des pixels valides (hors nodata) et peut donc varier d'un résultat de modèle à l'autre.",
+    "badDeltaLabel": "Plus Élevé/Très élevé",
+    "badDeltaText": "signifie que le modèle de comparaison est plus sévère.",
+    "cells": "cellules",
+    "choroplethMap": "Cellules de risque remplies",
+    "choroplethMapSub": "Cellules échantillonnées exactes par classe de risque. À utiliser lorsque la carte thermique masque les limites des cellules.",
+    "comparisonOnly": "Modèle de comparaison",
+    "configuration": "Configuration",
+    "configurationSub": "Métadonnées du modèle côte à côte",
+    "criticalShare": "Part Élevé + Très élevé",
+    "deltaSub": "Changement de la référence à la comparaison",
+    "deltaTitle": "Écart de risque",
+    "distribution": "Comparaison des répartitions",
+    "distributionSub": "Part de pixels par niveau de risque. Barre plus claire = référence, pleine = comparaison.",
+    "dominantClass": "Classe de risque dominante",
+    "dominantClassSub": "Plus grande part de pixels valides : {{baseline}}% dans la référence, {{comparison}}% dans la comparaison.",
+    "dominantClassUnavailable": "Les données de répartition ne sont pas disponibles.",
+    "field": "Champ",
+    "filledRiskMap": "Carte de risque remplie",
+    "fromBaseline": "par rapport à la référence",
+    "geoHeatmap": "Carte thermique géo",
+    "geoHeatmapSub": "Vue lissée de la concentration du risque. Le rouge indique le risque échantillonné le plus élevé.",
+    "goodDeltaLabel": "Plus Très faible/Faible",
+    "goodDeltaText": "signifie généralement que le risque s'est déplacé vers des classes plus sûres.",
+    "highVeryHigh": "Élevé + Très élevé",
+    "incompleteLayer": "La configuration de la couche est incomplète",
+    "independent": "Indépendant",
+    "insightCharts": "Graphiques de la carte de risque",
+    "insightChartsSub": "Ces cartes résument les cellules raster échantillonnées du modèle de comparaison. Utilisez-les pour voir la concentration du risque et les surfaces exactes par classe.",
+    "loadLayerFailed": "Échec du chargement de la couche depuis GeoServer",
+    "loadingLayer": "Chargement de la couche…",
+    "loadingMapSamples": "Chargement des échantillons raster géographiques…",
+    "loadingMetrics": "Chargement des métriques de risque…",
+    "mapHint": "Déplacez/zoomez l'une des cartes — les vues restent synchronisées.",
+    "mapHintIndependent": "Ces modèles couvrent des zones différentes — chaque carte affiche son propre modèle.",
+    "noConfiguredLayer": "Aucune couche GeoServer n'est encore configurée pour ce modèle.",
+    "noMapSamples": "Les échantillons cartographiques géographiques ne sont pas encore disponibles.",
+    "readingDirection": "Interprétation",
+    "riskIntensityHeatmap": "Intensité du risque",
+    "sampleCoverage": "Couverture de l'échantillon",
+    "sampleMapNote": "Il s'agit d'une vue raster échantillonnée, pas du plan des rues. Les cellules remplies montrent les mêmes classes de risque que la couche Risque d'incendie.",
+    "sampleMean": "Moyenne de l'échantillon",
+    "samplingGrid": "Grille d'échantillonnage",
+    "summaryBetter": "Risque réduit",
+    "summaryStable": "Le risque est globalement stable",
+    "summarySub": "Principaux changements entre le modèle de référence et celui de comparaison.",
+    "summaryTitle": "Résumé de la comparaison",
+    "summaryWorse": "Risque accru",
+    "synced": "Synchronisé",
+    "validCells": "cellules valides",
+    "validCellsShare": "des cellules valides"
+  },
+  "map": {
+    "zoomIn": "Zoomer",
+    "zoomOut": "Dézoomer",
+    "centerMap": "Centrer la carte",
+    "fitToExtent": "Ajuster à l'étendue",
+    "resetTopDown": "Réinitialiser la vue de dessus",
+    "rightClickRotate": "Clic droit + glisser pour pivoter",
+    "regions": "régions",
+    "myModels": "mes modèles",
+    "grids": "grilles",
+    "countries": "pays"
+  },
+  "privacy": {
+    "dataAndPrivacy": "Données et confidentialité",
+    "acceptTerms": "Accepter les conditions de confidentialité",
+    "openSettings": "Ouvrir les paramètres de données et confidentialité",
+    "dialogTitle": "Traitement des données et confidentialité",
+    "cartoDescription": "Pour vous fournir nos services, nous utilisons CARTO et OSMF comme fournisseurs de cartographie tiers.",
+    "sharedWithCarto": "En acceptant, les informations suivantes seront partagées avec CARTO et OSMF respectivement:",
+    "ipAddress": "Adresse IP",
+    "browserDeviceType": "Navigateur + type d'appareil",
+    "timeOfRequest": "Heure de la demande",
+    "localStorageDescription": "De plus, nous utilisons le stockage local pour mémoriser vos préférences et suivre si vous avez vu le contenu d'introduction sur cet appareil.",
+    "reviewPolicies": "Pour plus d'informations, veuillez consulter les politiques de confidentialité respectives:",
+    "cartoPolicy": "Politique de confidentialité de Carto",
+    "osmfPolicy": "Politique de confidentialité de l'OSMF",
+    "firePolicy": "Politique de confidentialité d'EnerPlanET",
+    "deny": "Refuser",
+    "accept": "Accepter"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Bienvenue !",
+      "description": "Configurons vos préférences pour commencer",
+      "greeting": "Bienvenue sur la plateforme de simulation énergétique !",
+      "intro": "Prenons un moment pour configurer vos préférences. Cela nous aidera à personnaliser votre expérience et à vous fournir les informations les plus pertinentes.",
+      "step1": "Choisissez votre langue préférée",
+      "step2": "Définissez vos préférences météo et carte",
+      "step3": "Configurez les paramètres de notification",
+      "timeNote": "Cela ne prendra qu'une minute"
+    },
+    "language": {
+      "title": "Préférence de langue",
+      "description": "Sélectionnez votre langue préférée pour l'application"
+    },
+    "weather": {
+      "title": "Préférences météo",
+      "description": "Définissez votre emplacement préféré pour les informations météo"
+    },
+    "map": {
+      "title": "Préférences de carte",
+      "description": "Configurez votre emplacement de carte par défaut"
+    },
+    "notifications": {
+      "title": "Préférences de notification",
+      "description": "Choisissez comment vous souhaitez recevoir les alertes et mises à jour"
+    },
+    "navigation": {
+      "previous": "Précédent",
+      "next": "Suivant",
+      "complete": "Terminer",
+      "completing": "Finalisation...",
+      "skip": "Passer"
+    }
+  },
+  "regionSelector": {
+    "goToRegion": "Aller à la région",
+    "jumpToRegion": "Accéder à une région avec des données de grille disponibles",
+    "searchPlaceholder": "Rechercher des régions...",
+    "sortByGridCount": "Trier par nombre de grilles",
+    "sortByName": "Trier par nom",
+    "setAsDefault": "Définir comme région par défaut",
+    "removeAsDefault": "Supprimer comme région par défaut",
+    "favorite": "Favoris",
+    "recent": "Récent",
+    "noRegionsFound": "Aucune région trouvée",
+    "coverageHigh": "Couverture de données élevée",
+    "coverageMedium": "Couverture de données moyenne",
+    "coverageLow": "Couverture de données faible",
+    "summaryFooter": "{{countries}} pays · {{regions}} régions · {{grids}} grilles"
+  },
+  "modelResults": {
+    "details": {
+      "awaiting": "En attente du résultat…",
+      "country": "Pays",
+      "days": "jours",
+      "description": "Description",
+      "from": "Du",
+      "location": "Emplacement",
+      "period": "Période d'évaluation",
+      "region": "Région",
+      "title": "Titre",
+      "to": "Au",
+      "updated": "Mis à jour"
+    },
+    "empty": {
+      "hint": "Le résultat de la simulation apparaîtra ici une fois le traitement terminé.",
+      "title": "Aucun résultat pour ce modèle pour l'instant."
+    },
+    "errors": {
+      "layerIncomplete": "La configuration de la couche est incomplète",
+      "layerLoad": "Échec du chargement de la couche depuis GeoServer",
+      "loadFailed": "Échec du chargement des résultats du modèle",
+      "noId": "Aucun identifiant de modèle fourni",
+      "tileLoad": "Certaines tuiles n'ont pas pu être chargées depuis GeoServer ({{count}})"
+    },
+    "layer": {
+      "hidden": "Masqué",
+      "opacity": "Opacité",
+      "publishing": "Publication de la couche sur GeoServer…",
+      "visible": "Visible"
+    },
+    "layers": {
+      "labels": "Étiquettes et lieux",
+      "roads": "Routes",
+      "title": "Superpositions"
+    },
+    "legend": {
+      "allLevels": "Tous les niveaux disponibles",
+      "title": "Risque d'incendie"
+    },
+    "loadingModels": "Chargement des modèles…",
+    "loadingWorkspace": "Chargement de l'espace de travail…",
+    "map": {
+      "initializing": "Initialisation de la carte…"
+    },
+    "noCompletedModels": "Aucun modèle terminé",
+    "risk": {
+      "analyzedSurface": "Pixels valides (hors nodata)",
+      "distribution": "Répartition du risque",
+      "highPlusArea": "Surface Élevé + Très élevé",
+      "highPlusPixels": "Pixels Élevé + Très élevé",
+      "highRiskArea": "Surface Élevé + Très élevé",
+      "meanScore": "Score moyen",
+      "notReady": "Les métriques seront disponibles une fois la couche configurée dans GeoServer.",
+      "ofArea": "de la surface",
+      "overall": "Risque global",
+      "sampleNote": "Basé sur {{count}} pixels échantillonnés",
+      "totalArea": "Surface analysée"
+    },
+    "selectModel": "Sélectionner un modèle",
+    "title": "Résultats du modèle"
+  },
+  "landing": {
+    "nav": {
+      "challenge": "Le défi",
+      "platform": "Plateforme",
+      "personas": "Pour qui",
+      "contact": "Contact"
+    },
+    "openApp": "Ouvrir l'application Wildfire",
+    "languageLabel": "Langue",
+    "hero": {
+      "badge": "Prévention des incendies basée sur la communauté",
+      "title": "Renseignement sur le risque d'incendie pour les communautés rurales",
+      "subtitle": "Une plateforme géospatiale pour les municipalités, la protection civile et les chercheurs afin de cartographier, modéliser et agir sur le risque d'incendie — transformant les connaissances locales et les données en protection proactive avant que les flammes ne se déclarent.",
+      "explore": "Explorer la plateforme",
+      "why": "Pourquoi c'est important"
+    },
+    "challenge": {
+      "eyebrow": "Le défi que nous affrontons",
+      "title": "Les incendies ne sont plus des catastrophes isolées — ils constituent une crise saisonnière",
+      "p1": "Dans toute l'Europe du Sud, la hausse des températures, des sécheresses plus longues et une météo imprévisible transforment les forêts en combustible. Le dépeuplement rural entraîne une moindre gestion des terres et une accumulation accrue de végétation, rendant les départs de feu plus intenses et plus difficiles à maîtriser.",
+      "p2": "Les dernières saisons au Portugal, en Espagne et en Grèce ont compté parmi les pires jamais enregistrées — coûtant des vies, détruisant des écosystèmes et déplaçant des communautés, tout en menaçant l'agriculture, la sylviculture, le tourisme et la sécurité de base. Les acteurs locaux restent sous-équipés et peu soutenus.",
+      "cards": {
+        "hotter": {
+          "title": "Des saisons plus chaudes et plus sèches",
+          "text": "Le changement climatique allonge la saison des incendies année après année."
+        },
+        "vegetation": {
+          "title": "Accumulation de végétation",
+          "text": "Le dépeuplement laisse des paysages non gérés et riches en combustible."
+        },
+        "cascading": {
+          "title": "Impact en cascade",
+          "text": "Les écosystèmes, les économies et la vie rurale sont tous menacés."
+        },
+        "tooling": {
+          "title": "Outils limités",
+          "text": "Les communautés manquent d'un appui à la décision partagé et fondé sur les données."
+        }
+      },
+      "imgAlt1": "Incendie se propageant le long d'une route rurale",
+      "imgAlt2": "Pompier luttant contre les flammes"
+    },
+    "platform": {
+      "eyebrow": "Comment ça marche",
+      "title": "D'une zone sur la carte à des preuves de risque partagées",
+      "subtitle": "La plateforme combine des données 3D de bâtiments et de terrain, l'analyse géospatiale et un moteur de risque d'incendie en un seul flux de travail adapté à chaque rôle.",
+      "step": "ÉTAPE",
+      "imgAlt": "Équipe d'intervention incendie sur le terrain",
+      "steps": {
+        "define": {
+          "title": "Définir une zone",
+          "text": "Recherchez une commune et dessinez la zone d'intérêt directement sur la carte interactive."
+        },
+        "run": {
+          "title": "Lancer un modèle de risque",
+          "text": "Mettez en file d'attente un calcul de risque d'incendie sur votre AOI avec le moteur configuré."
+        },
+        "inspect": {
+          "title": "Examiner les résultats",
+          "text": "Explorez la superposition de risque classifié avec des couches optionnelles de modèle de combustible et de végétation."
+        },
+        "compare": {
+          "title": "Comparer et partager",
+          "text": "Comparez des scénarios côte à côte, exportez des artefacts et partagez-les avec les parties prenantes."
+        }
+      }
+    },
+    "capabilities": {
+      "eyebrow": "Fonctionnalités",
+      "title": "Tout ce dont vous avez besoin pour évaluer et expliquer le risque",
+      "items": {
+        "mapping": {
+          "title": "Cartographie interactive",
+          "text": "Cartes 2D avec dessin de polygones, recherche de lieux et zones de travail persistantes."
+        },
+        "engine": {
+          "title": "Moteur de risque d'incendie",
+          "text": "Rasters de risque classifiés avec gravité calibrée et estimations des zones à haut risque."
+        },
+        "metrics": {
+          "title": "Métriques et comparaison",
+          "text": "Cartes de risque, graphiques de répartition, écarts et tendances entre les exécutions de modèles."
+        },
+        "fuel": {
+          "title": "Couches de combustible et de végétation",
+          "text": "Superpositions FMT et NDVI optionnelles pour comprendre pourquoi la carte de risque se comporte ainsi."
+        },
+        "multilingual": {
+          "title": "Multilingue et accessible",
+          "text": "Disponible en 8 langues avec des libellés clairs et des visites guidées pour chaque rôle."
+        },
+        "secure": {
+          "title": "Sécurisé et encadré",
+          "text": "Accès basé sur les rôles, résultats audités et contrôles de confidentialité conformes à l'UE."
+        }
+      }
+    },
+    "personas": {
+      "eyebrow": "Pour qui",
+      "title": "Une plateforme, des preuves de risque d'incendie adaptées à chaque rôle",
+      "items": {
+        "planners": {
+          "title": "Planificateurs municipaux et de protection civile",
+          "text": "Créez et expliquez des évaluations du risque d'incendie et informez les décideurs."
+        },
+        "analysts": {
+          "title": "Analystes du risque d'incendie de forêt",
+          "text": "Validez les couches SIG, les métriques de risque et les sorties du moteur au niveau expert."
+        },
+        "researchers": {
+          "title": "Chercheurs et équipes SIG",
+          "text": "Téléchargez les sorties GeoTIFF/ZIP et étudiez les modèles de combustible et les indices de végétation."
+        },
+        "leads": {
+          "title": "Animateurs d'ateliers et relecteurs",
+          "text": "Animez des sessions de formation et examinez les preuves de risque partagées avec un accès limité."
+        }
+      }
+    },
+    "contact": {
+      "eyebrow": "Contactez-nous",
+      "title": "Démarrez une conversation",
+      "subtitle": "Parlez-nous de votre région et de la manière dont vous souhaitez utiliser la plateforme. L'équipe vous recontactera — aucun compte n'est requis pour nous joindre.",
+      "responseTime": "Nous répondons généralement sous quelques jours ouvrés.",
+      "name": "Nom",
+      "email": "E-mail",
+      "category": "Catégorie",
+      "subject": "Objet",
+      "message": "Message",
+      "send": "Envoyer le message",
+      "sending": "Envoi…",
+      "successTitle": "Message envoyé",
+      "successText": "Merci de nous avoir contactés — nous reviendrons vers vous bientôt.",
+      "sendAnother": "Envoyer un autre message",
+      "validationError": "Veuillez renseigner le nom, l'e-mail, l'objet et le message.",
+      "genericError": "Une erreur s'est produite. Veuillez réessayer.",
+      "submitFailed": "Échec de l'envoi.",
+      "agree": "En envoyant, vous acceptez notre",
+      "privacyPolicy": "politique de confidentialité",
+      "categories": {
+        "general": "Demande générale",
+        "partnership": "Partenariat",
+        "bug": "Signalement de bug"
+      }
+    },
+    "footer": {
+      "tagline": "Des stratégies communautaires pour prévenir et gérer le risque d'incendie dans l'Europe rurale.",
+      "privacy": "Politique de confidentialité",
+      "cookies": "Politique relative aux cookies",
+      "impressum": "Mentions légales",
+      "terms": "Conditions générales",
+      "euFundedAlt": "Financé par l'Union européenne",
+      "euDisclaimer": "Financé par l'Union européenne au titre de la convention de subvention 101132652. Les points de vue et opinions exprimés n'engagent toutefois que leur(s) auteur(s) et ne reflètent pas nécessairement ceux de l'Union européenne ou de l'Agence exécutive européenne pour la recherche (REA). Ni l'Union européenne ni l'autorité subventionnaire ne peuvent en être tenues responsables.",
+      "builtOn": "Construit sur la plateforme STORCITO",
+      "copyright": "Wildfire App · Technische Hochschule Deggendorf"
+    },
+    "stats": {
+      "affectedArea": "Zone Affectée",
+      "municipalities": "Communes de Galice",
+      "riskDistribution": "Répartition des Risques",
+      "trendAnalysis": "Analyse des Tendances des Risques"
+    }
+  }
+}

@@ -1,0 +1,1759 @@
+{
+  "common": {
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "create": "Aanmaken",
+    "close": "Sluiten",
+    "confirm": "Bevestigen",
+    "loading": "Laden...",
+    "error": "Fout",
+    "success": "Succes",
+    "warning": "Waarschuwing",
+    "info": "Info",
+    "yes": "Ja",
+    "no": "Nee",
+    "ok": "OK",
+    "back": "Terug",
+    "next": "Volgende",
+    "submit": "Verzenden",
+    "search": "Zoeken",
+    "filter": "Filteren",
+    "reset": "Resetten",
+    "clear": "Wissen",
+    "clearAll": "Alles wissen",
+    "selectAll": "Alles selecteren",
+    "noResults": "Geen resultaten gevonden",
+    "actions": "Acties",
+    "settings": "Instellingen",
+    "logout": "Uitloggen",
+    "login": "Inloggen",
+    "register": "Registreren",
+    "unknown": "Onbekend",
+    "more": "meer",
+    "add": "Toevoegen",
+    "refresh": "Vernieuwen",
+    "healthCheck": "Statuscontrole",
+    "na": "N/B",
+    "from": "Van",
+    "to": "Tot",
+    "duration": "Duur",
+    "days": "dagen",
+    "country": "Land",
+    "region": "Regio",
+    "status": "Status",
+    "createdAt": "Aangemaakt",
+    "updatedAt": "Laatst bijgewerkt",
+    "workspace": "Werkruimte",
+    "results": "Resultaten",
+    "name": "Naam",
+    "description": "Beschrijving",
+    "id": "ID",
+    "current": "Huidig",
+    "max": "Max",
+    "tooltips": {
+      "viewOnMap": "Bekijk op Kaart",
+      "editLocation": "Locatie Bewerken",
+      "editName": "Naam bewerken",
+      "duplicate": "Dupliceren",
+      "view": "Bekijken",
+      "share": "Delen",
+      "moveToWorkspace": "Verplaatsen naar Werkruimte",
+      "profile": "Profiel",
+      "documentation": "Documentatie",
+      "restartTour": "Tour herstarten",
+      "feedback": "Feedback",
+      "theme": "Thema",
+      "searchLocation": "Zoek locatie"
+    },
+    "sidebar": {
+      "energySimulations": "Energiesimulaties",
+      "map": "Kaart",
+      "locations": "Locaties",
+      "simulationReports": "Modelvergelijking",
+      "technologies": "Technologieën",
+      "simulations": "Wildfire-simulaties"
+    },
+    "menu": {
+      "profile": "Profiel",
+      "settings": "Instellingen",
+      "logout": "Uitloggen"
+    },
+    "modelActions": {
+      "viewResults": "Resultaten Bekijken",
+      "downloadResults": "Resultaten Downloaden",
+      "copyConfiguration": "Configuratie Kopiëren",
+      "editConfiguration": "Configuratie Bewerken",
+      "cannotEditCompleted": "Kan voltooid model niet bewerken",
+      "moveToWorkspace": "Verplaatsen naar Werkruimte",
+      "shareModel": "Model Delen",
+      "delete": "Verwijderen",
+      "cannotDelete": "Kan niet verwijderen - alleen de eigenaar of een expert kan verwijderen",
+      "retryCalculation": "Berekening Opnieuw",
+      "startCalculation": "Berekening Starten",
+      "engineNotAvailable": "Simulatiemotor is niet beschikbaar"
+    },
+    "pagination": {
+      "showing": "Weergave",
+      "to": "tot",
+      "of": "van",
+      "results": "resultaten",
+      "noResults": "Geen resultaten",
+      "loading": "Laden...",
+      "perPage": "per pagina",
+      "previousPage": "Vorige pagina",
+      "nextPage": "Volgende pagina"
+    },
+    "appName": "Beoordeling van bosbrandrisico",
+    "saved": "Opgeslagen"
+  },
+  "dashboard": {
+    "stats": {
+      "totalModels": "Totaal Modellen",
+      "draft": "Concept",
+      "inProgress": "In Uitvoering",
+      "completed": "Voltooid",
+      "published": "Gepubliceerd",
+      "modelLimit": "Modellimiet",
+      "unlimited": "Onbeperkt"
+    }
+  },
+  "notifications": {
+    "title": "Meldingen",
+    "noNotifications": "Geen meldingen",
+    "allCaughtUp": "Je bent helemaal bij!",
+    "markAllRead": "Alles als gelezen markeren",
+    "clearAll": "Alles wissen",
+    "viewAll": "Alle meldingen bekijken",
+    "moreNotification": "+{{count}} melding meer",
+    "moreNotifications": "+{{count}} meldingen meer",
+    "details": "Details",
+    "close": "Sluiten",
+    "scheduledFor": "Gepland voor:",
+    "service": "Service",
+    "last30Days": "Laatste 30 dagen",
+    "unread": "{{count}} ongelezen",
+    "loading": "Meldingen laden...",
+    "confirmClearTitle": "Alle meldingen wissen?",
+    "confirmClearDescription": "Weet u zeker dat u alle meldingen wilt wissen? Deze actie kan niet ongedaan worden gemaakt.",
+    "confirmClearButton": "Alles wissen",
+    "dismiss": "Negeren",
+    "types": {
+      "success": "Succes",
+      "error": "Fout",
+      "warning": "Waarschuwing",
+      "info": "Info",
+      "maintenance": "Onderhoud"
+    },
+    "totalExecutionTime": "Totale Uitvoeringstijd",
+    "completedIn": "Succesvol voltooid in {{time}}",
+    "failedAfter": "Mislukt na {{time}}",
+    "cancelledAfter": "Geannuleerd na {{time}}",
+    "messages": {
+      "modelCalculationComplete": "Modelberekening voltooid",
+      "modelCalculationCompleteMessage": "Uw model '{{modelName}}' is succesvol berekend en is klaar om te bekijken.",
+      "modelCalculationFailed": "Modelberekening mislukt",
+      "modelCalculationFailedMessage": "De berekening van uw model '{{modelName}}' is mislukt. Probeer het opnieuw.",
+      "modelCalculationStarted": "Modelberekening gestart",
+      "modelCalculationStartedMessage": "De berekening van uw model '{{modelName}}' is gestart."
+    }
+  },
+  "modelStatus": {
+    "draft": "Concept",
+    "queue": "In Wachtrij",
+    "calculating": "Berekenen",
+    "running": "Actief",
+    "processing": "Verwerking",
+    "completed": "Voltooid",
+    "published": "Gepubliceerd",
+    "failed": "Mislukt",
+    "cancelled": "Geannuleerd",
+    "modified": "Gewijzigd"
+  },
+  "auth": {
+    "signIn": "Inloggen",
+    "signUp": "Registreren",
+    "signOut": "Uitloggen",
+    "signingIn": "Inloggen...",
+    "email": "E-mail",
+    "password": "Wachtwoord",
+    "confirmPassword": "Bevestig wachtwoord",
+    "enterYourEmail": "Voer uw e-mail in",
+    "enterYourPassword": "Voer uw wachtwoord in",
+    "welcomeBack": "Welkom terug",
+    "signInToContinue": "Log in om door te gaan",
+    "or": "of",
+    "dontHaveAccount": "Heeft u geen account?",
+    "alreadyHaveAccount": "Heeft u al een account?",
+    "forgotPassword": "Wachtwoord vergeten?",
+    "rememberMe": "Onthoud mij",
+    "loginFailed": "Inloggen mislukt",
+    "verificationEmailSent": "Verificatie-e-mail verzonden",
+    "checkInboxVerify": "Controleer uw inbox en klik op de verificatielink.",
+    "emailVerificationRequired": "E-mailverificatie vereist",
+    "sending": "Verzenden...",
+    "resendVerificationEmail": "Verificatie-e-mail opnieuw verzenden",
+    "protectedByEncryption": "Beveiligd met industriestandaard versleuteling",
+    "createAccount": "Account Aanmaken",
+    "joinUsAccess": "Sluit u aan om toegang te krijgen tot het energiesimulatieplatform",
+    "personalInformation": "Persoonlijke Informatie",
+    "fullName": "Volledige Naam",
+    "enterFullName": "Voer uw volledige naam in",
+    "emailAddress": "E-mailadres",
+    "enterEmailAddress": "Voer uw e-mailadres in",
+    "security": "Beveiliging",
+    "confirmYourPassword": "Bevestig uw wachtwoord",
+    "passwordRequirements": {
+      "title": "Wachtwoordvereisten",
+      "minChars": "Minimaal 8 tekens",
+      "uppercase": "Eén hoofdletter",
+      "lowercase": "Eén kleine letter",
+      "number": "Eén cijfer",
+      "specialChar": "Eén speciaal teken",
+      "hasSpaces": "Wachtwoord bevat spaties aan het begin of einde"
+    },
+    "organizationDetails": "Organisatiegegevens",
+    "organization": "Organisatie",
+    "enterOrganization": "Voer uw organisatie in",
+    "position": "Functie",
+    "enterPosition": "Voer uw functie in",
+    "phoneNumber": "Telefoonnummer",
+    "enterPhoneNumber": "Voer uw telefoonnummer in",
+    "accessLevel": "Toegangsniveau",
+    "veryLow": "Zeer Laag",
+    "low": "Laag",
+    "intermediate": "Gemiddeld",
+    "manager": "Manager",
+    "expert": "Expert",
+    "forgotPasswordTitle": "Wachtwoord Vergeten",
+    "forgotPasswordDescription": "Voer uw e-mailadres in en we sturen u instructies om uw wachtwoord te resetten.",
+    "secureResetProcess": "Veilig wachtwoord reset proces",
+    "sendResetInstructions": "Instructies Versturen",
+    "backToLogin": "Terug naar Inloggen",
+    "cancel": "Annuleren",
+    "checkSpamFolder": "Als je de e-mail niet ziet, controleer dan je spam- of ongewenste e-mailmap.",
+    "checkYourEmail": "Controleer je e-mail",
+    "note": "Opmerking",
+    "sentResetInstructions": "We hebben instructies voor het opnieuw instellen van het wachtwoord naar je e-mailadres gestuurd.",
+    "signUpNow": "Meld je nu aan",
+    "createPassword": "Maak een wachtwoord aan",
+    "creating": "Aanmaken...",
+    "agreeToTerms": "Door een account aan te maken, gaat u akkoord met onze Servicevoorwaarden",
+    "signInHere": "Hier inloggen",
+    "sidePanel": {
+      "badge": "Inzicht in bosbrandrisico",
+      "title": "Bescherm plattelandsgemeenschappen voordat de vlammen ontstaan",
+      "subtitle": "Breng bosbrandrisico in kaart, modelleer en handel — lokale kennis en geospatiale data worden proactieve bescherming in landelijk Europa.",
+      "funded": "Gefinancierd door de Europese Unie · Gebouwd op het STORCITO-platform"
+    }
+  },
+  "workspace": {
+    "workspace": "Werkruimte",
+    "workspaces": "Werkruimtes",
+    "selectWorkspace": "Werkruimte selecteren",
+    "defaultWorkspace": "Standaard werkruimte",
+    "default": "Standaard",
+    "shared": "Gedeeld",
+    "searchWorkspaces": "Werkruimtes zoeken...",
+    "noWorkspacesMatch": "Geen werkruimtes komen overeen met je zoekopdracht",
+    "noWorkspacesFound": "Geen werkruimtes gevonden",
+    "createNewWorkspace": "Nieuwe werkruimte maken",
+    "createDescription": "Maak een nieuwe werkruimte om je modellen te organiseren en samen te werken met anderen",
+    "createWorkspace": "Werkruimte maken",
+    "renameWorkspace": "Werkruimte hernoemen",
+    "renameDescription": "Voer een nieuwe naam in voor je werkruimte",
+    "copyWorkspaceTitle": "Werkruimte kopiëren",
+    "copyDescription": "Maak een kopie van deze werkruimte met een nieuwe naam",
+    "saveChanges": "Wijzigingen opslaan",
+    "copyWorkspace": "Werkruimte kopiëren",
+    "sharedWithYouBy": "Gedeeld met jou door {{user}}",
+    "sharedWithUsers": "Gedeeld met gebruikers",
+    "sharedWithGroups": "Gedeeld met groepen",
+    "anotherUser": "een andere gebruiker",
+    "noMembersYet": "Nog geen leden. Deel met iemand om samen te werken!",
+    "noGroupsYet": "Nog geen groepen hebben toegang. Deel met een groep om alle leden toegang te geven!",
+    "removeMember": "Lid verwijderen",
+    "removeGroup": "Groep verwijderen"
+  },
+  "model": {
+    "title": "Model",
+    "models": "Modellen",
+    "newModel": "Nieuw model",
+    "editModel": "Model bewerken",
+    "deleteModel": "Model verwijderen",
+    "modelName": "Modelnaam",
+    "description": "Beschrijving",
+    "status": "Status",
+    "created": "Aangemaakt",
+    "updated": "Bijgewerkt",
+    "running": "Actief",
+    "completed": "Voltooid",
+    "failed": "Mislukt",
+    "pending": "In afwachting",
+    "queued": "In wachtrij",
+    "runSimulation": "Simulatie starten",
+    "viewResults": "Resultaten bekijken",
+    "duplicate": "Dupliceren",
+    "export": "Exporteren",
+    "compare": "Vergelijken",
+    "dashboard": "Model Dashboard",
+    "manageConfigurations": "Beheer je bosbrand-evaluatieconfiguraties",
+    "searchModels": "Modellen zoeken...",
+    "allModels": "Alle modellen",
+    "modelGroups": "Modelgroepen",
+    "loadingWorkspace": "Werkruimte laden...",
+    "loadingModels": "Modellen laden...",
+    "loadingWorkspaceDescription": "Even geduld terwijl we je werkruimtevoorkeuren initialiseren.",
+    "loadingModelsDescription": "Even geduld terwijl we je energie-evaluatiemodellen ophalen.",
+    "selectWorkspace": "Selecteer of maak een werkruimte",
+    "refreshModels": "Modellenlijst vernieuwen",
+    "share": "Delen",
+    "shareDescription": "\"{{title}}\" delen met een andere gebruiker",
+    "copy": "Kopiëren",
+    "rename": "Hernoemen",
+    "delete": "Verwijderen",
+    "move": "Verplaatsen",
+    "shareWorkspace": "Deze werkruimte delen",
+    "copyWorkspace": "Een kopie van deze werkruimte maken",
+    "renameWorkspace": "Deze werkruimte hernoemen",
+    "deleteWorkspace": "Deze werkruimte verwijderen",
+    "moveToWorkspace": "Naar werkruimte verplaatsen",
+    "noModelsFound": "Geen modellen gevonden",
+    "noModelsMatch": "Geen modellen komen overeen met \"{{search}}\". Probeer je zoekopdracht aan te passen.",
+    "noModelsYet": "Je hebt nog geen energie-evaluatiemodellen gemaakt. Begin met het maken van je eerste model!",
+    "createFirstModel": "Maak je eerste model",
+    "selected": "geselecteerd",
+    "deleteSelected": "Geselecteerde verwijderen",
+    "moveSelected": "Geselecteerde verplaatsen",
+    "cannotDelete": "Kan niet verwijderen - modellen zijn uitgeschakeld of zijn niet van jou",
+    "cannotMove": "Kan niet verplaatsen - modellen zijn niet van jou",
+    "sharedCannotDelete": "Gedeelde modellen kunnen niet worden verwijderd. Kopieer het eerst",
+    "sharedCannotMove": "Gedeelde modellen kunnen niet worden verplaatst. Kopieer het eerst",
+    "sharedCannotShare": "Gedeelde modellen kunnen niet opnieuw worden gedeeld. Kopieer het eerst",
+    "limitReached": "U heeft uw limiet voor het maken van modellen bereikt",
+    "selectAll": "Alles selecteren",
+    "deselectAll": "Alles deselecteren",
+    "actions": "Acties",
+    "name": "Modelnaam",
+    "owner": "Eigenaar",
+    "workspace": "Werkruimte",
+    "draft": "Concept",
+    "published": "Gepubliceerd",
+    "total": "Totaal",
+    "queue": "Wachtrij",
+    "copyOf": "Kopie van \"{{name}}\"",
+    "ownedBy": "Eigendom van",
+    "parentModel": "Bovenliggend model",
+    "parent": "Bovenliggend",
+    "anotherModel": "een ander model",
+    "failedDefaultMessage": "Berekening mislukt - webservice niet beschikbaar of time-out",
+    "waiting": "Wachtend",
+    "queuedTooltip": "Uw model staat in de wachtrij - de simulatie-engine verwerkt andere berekeningen",
+    "compareRequires2Completed": "Selecteer precies 2 voltooide modellen om te vergelijken",
+    "bulkCopy": "Modellen kopiëren",
+    "bulkCopyDescription": "Kopieën maken van {{count}} geselecteerd(e) model(len)",
+    "bulkCopyFailed": "Sommige modellen konden niet worden gekopieerd. Probeer het opnieuw.",
+    "bulkCopySubmit": "Kopieën maken",
+    "calculate": "Berekenen",
+    "cannotCalculate": "Kan niet berekenen – geen geschikte modellen geselecteerd",
+    "noWebserviceAvailable": "Geen simulatie-engine beschikbaar",
+    "cancelled": "Geannuleerd",
+    "modified": "Gewijzigd"
+  },
+  "polygon": {
+    "drawRegion": "Teken je regio",
+    "clickToStart": "Klik om te beginnen",
+    "clickAnywhere": "Klik ergens op de kaart om je eerste punt te plaatsen",
+    "addMorePoints": "Meer punten toevoegen",
+    "continueClicking": "Blijf klikken om je gebied te omlijnen",
+    "closePolygon": "Sluit de polygoon",
+    "doubleClickOrClick": "Dubbelklik of klik op het startpunt om te voltooien",
+    "startEnd": "Start/Einde",
+    "clickHereToClose": "Klik hier om te sluiten",
+    "escToCancel": "om tekenen te annuleren",
+    "pointsAdded": "{{count}} toegevoegd",
+    "editPolygon": "Polygoon bewerken",
+    "moveVertex": "Hoeken verplaatsen",
+    "moveVertexHint": "Sleep een hoekpunt om aan te passen",
+    "addVertex": "Punt toevoegen",
+    "addVertexHint": "Klik op een rand",
+    "removeVertex": "Punt verwijderen",
+    "removeVertexHint": "klik op een hoekpunt",
+    "escToClear": "om polygoon te wissen"
+  },
+  "time": {
+    "justNow": "Zojuist",
+    "minutesAgo": "{{count}} minuut geleden",
+    "minutesAgo_plural": "{{count}} minuten geleden",
+    "hoursAgo": "{{count}} uur geleden",
+    "hoursAgo_plural": "{{count}} uur geleden",
+    "daysAgo": "{{count}} dag geleden",
+    "daysAgo_plural": "{{count}} dagen geleden",
+    "weeksAgo": "{{count}} week geleden",
+    "weeksAgo_plural": "{{count}} weken geleden"
+  },
+  "adminDashboard": {
+    "profile": "Profiel",
+    "settings": "Instellingen",
+    "logout": "Uitloggen",
+    "tabs": {
+      "overview": "Overzicht",
+      "allSimulationModels": "Alle Simulatiemodellen",
+      "simulationEngine": "Simulatie-Engine",
+      "feedback": "Feedback",
+      "userManagement": "Gebruikersbeheer",
+      "gridEngine": "Compute Engine"
+    },
+    "stats": {
+      "accessLevel": "Toegangsniveau",
+      "availableLayers": "Beschikbare Lagen",
+      "status": "Status",
+      "totalUsers": "Totaal Gebruikers",
+      "lastLogin": "Laatste Aanmelding",
+      "active": "Actief",
+      "online": "Online",
+      "live": "Live",
+      "updating": "Bijwerken",
+      "recent": "Recent",
+      "allMapLayers": "Alle Lagen",
+      "mapLayers": "{{count}} Lagen",
+      "mapLayer": "{{count}} Laag"
+    },
+    "accessLevels": {
+      "expert": "Expert Toegang",
+      "manager": "Manager Toegang",
+      "intermediate": "Gemiddelde Toegang",
+      "veryLow": "Zeer Lage Toegang",
+      "unknown": "Onbekend"
+    },
+    "accessTrends": {
+      "maximum": "Maximum",
+      "management": "Beheer",
+      "upgradable": "Upgradebaar",
+      "basic": "Basis"
+    },
+    "userProfile": {
+      "title": "Gebruikersprofiel",
+      "subtitle": "Uw accountinformatie",
+      "email": "E-mail",
+      "organization": "Organisatie",
+      "position": "Functie",
+      "phone": "Telefoon"
+    },
+    "accessPermissions": {
+      "title": "Toegang & Machtigingen",
+      "subtitle": "Systeemmogelijkheden",
+      "active": "Actief",
+      "currentLevel": "Huidig Niveau",
+      "workspaces": "Werkruimtes",
+      "unlimited": "Onbeperkt",
+      "activeWorkspaces": "{{count}} Actief",
+      "teamSharing": "Team Delen",
+      "enabled": "Ingeschakeld",
+      "disabled": "Uitgeschakeld",
+      "modelQuota": "Model Quotum",
+      "standardLimit": "Standaard Limiet",
+      "computePower": "Rekenkracht",
+      "highPerformance": "Hoge Prestaties",
+      "standard": "Standaard",
+      "availableFeatures": "Beschikbare Functies",
+      "allLayersAvailable": "Alle Lagen Beschikbaar",
+      "fullSystemAccess": "Volledige Systeemtoegang",
+      "energyRiskFinal": "Energie Risico Finaal",
+      "vegetationRisk": "Vegetatie Risico",
+      "topographyRisk": "Topografie Risico",
+      "upgradeMessage": "Ontgrendel meer functies door een upgrade aan te vragen bij uw beheerder.",
+      "fireRiskFinal": "Brandrisico Finaal"
+    },
+    "quickActions": {
+      "title": "Snelle Acties",
+      "subtitle": "Navigeer naar belangrijke functies",
+      "interactiveMap": "Interactieve Kaart",
+      "viewRiskMap": "Bekijk risicobeoordelingskaart",
+      "riskModels": "Risicomodellen",
+      "manageRiskModels": "Beheer risicomodellen",
+      "settings": "Instellingen",
+      "configurePreferences": "Configureer voorkeuren"
+    },
+    "title": "Beheerdersdashboard",
+    "welcomeBack": "Welkom terug, {{name}}!",
+    "managePlatform": "Beheer uw energiesimulatieplatform",
+    "administrator": "Beheerder",
+    "loadingContent": "Inhoud laden..."
+  },
+  "userManagement": {
+    "title": "Gebruikersbeheer",
+    "subtitle": "Beheer gebruikers, groepen en machtigingen",
+    "searchPlaceholder": "Zoek naam, e-mail, organisatie...",
+    "refresh": "Vernieuwen",
+    "addNewUser": "Nieuwe gebruiker toevoegen",
+    "add": "Toevoegen",
+    "editUser": "Gebruiker bewerken",
+    "createUser": "Gebruiker aanmaken",
+    "updateUser": "Gebruiker bijwerken",
+    "loadingUsers": "Gebruikers laden...",
+    "noUsersFound": "Geen gebruikers gevonden",
+    "noUsersInGroup": "Geen gebruikers gevonden in uw groep. Neem contact op met een beheerder om gebruikers aan uw groep toe te wijzen.",
+    "noUsersMatch": "Geen gebruikers komen overeen met \"{{search}}\"",
+    "noUsersMatchSearch": "Geen gebruikers komen overeen met \"{{search}}\"",
+    "addFirstUser": "Voeg de eerste gebruiker toe om te beginnen.",
+    "dialog": {
+      "editTitle": "Gebruiker bewerken",
+      "addTitle": "Nieuwe gebruiker toevoegen",
+      "updateUser": "Gebruiker bijwerken",
+      "createUser": "Gebruiker aanmaken"
+    },
+    "table": {
+      "user": "Gebruiker",
+      "organization": "Organisatie",
+      "position": "Functie",
+      "accessLevel": "Toegangsniveau",
+      "group": "Groep",
+      "emailVerified": "E-mail geverifieerd",
+      "phone": "Telefoon",
+      "actions": "Acties"
+    },
+    "emailStatus": {
+      "verified": "Geverifieerd",
+      "unverified": "Niet geverifieerd"
+    },
+    "actions": {
+      "changeGroup": "Groep wijzigen",
+      "enableUser": "Gebruiker is uitgeschakeld — klik om in te schakelen",
+      "disableUser": "Gebruiker is ingeschakeld — klik om uit te schakelen",
+      "editUser": "Gebruiker bewerken",
+      "deleteUser": "Gebruiker verwijderen",
+      "copyEmail": "E-mail kopiëren",
+      "copied": "Gekopieerd!",
+      "bulkDelete": "Geselecteerde verwijderen",
+      "bulkMoveToGroup": "Naar groep verplaatsen",
+      "deselectAll": "Alles deselecteren",
+      "selectAll": "Alles selecteren",
+      "selected": "{{count}} geselecteerd"
+    },
+    "groups": {
+      "selectOrCreate": "Selecteer of maak een groep aan",
+      "renameGroup": "Groep hernoemen",
+      "enableGroup": "Groep en gebruikers inschakelen",
+      "disableGroup": "Groep en gebruikers uitschakelen",
+      "deleteGroup": "Groep en alle gebruikers verwijderen",
+      "defaultCannotDelete": "Standaardgroep kan niet worden verwijderd",
+      "default": "Standaard",
+      "unknown": "Onbekend",
+      "defaultGroup": "Standaardgroep",
+      "unknownGroup": "Onbekende groep",
+      "changeUserGroup": "Gebruikersgroep wijzigen",
+      "groupAssignment": "Groeptoewijzing",
+      "selectGroup": "Groep selecteren",
+      "changeGroup": "Groep wijzigen",
+      "renameGroupTitle": "Groep hernoemen",
+      "groupName": "Groepsnaam",
+      "newGroupName": "Nieuwe groepsnaam",
+      "enterNewGroupName": "Voer nieuwe groepsnaam in",
+      "rename": "Hernoemen",
+      "createNewGroup": "Nieuwe groep maken",
+      "createGroupDescription": "Maak een nieuwe groep om gebruikers in uw organisatie te organiseren",
+      "createGroup": "Groep maken",
+      "groupNameRequired": "Groepsnaam is verplicht",
+      "groupCreated": "Groep succesvol aangemaakt",
+      "failedToCreateGroup": "Groep aanmaken mislukt",
+      "groupNamePlaceholder": "bijv. Brandweer, Noodhulp",
+      "searchGroups": "Groepen zoeken...",
+      "allGroups": "Alle groepen",
+      "viewUsersFromAllGroups": "Gebruikers van alle groepen bekijken",
+      "noGroups": "Geen groepen",
+      "loading": "Laden...",
+      "noGroupsFound": "Geen groepen gevonden",
+      "noGroupsMatchSearch": "Geen groepen komen overeen met uw zoekopdracht",
+      "bulkChangeGroup": "Gebruikers naar groep verplaatsen",
+      "moveUsers": "Gebruikers verplaatsen"
+    },
+    "notifications": {
+      "userCreated": "Gebruiker succesvol aangemaakt!",
+      "userUpdated": "Gebruiker succesvol bijgewerkt!",
+      "userDeleted": "Gebruiker succesvol verwijderd!",
+      "userDisabled": "Gebruiker succesvol uitgeschakeld!",
+      "userEnabled": "Gebruiker succesvol ingeschakeld!",
+      "groupDisabled": "Groep \"{{name}}\" uitgeschakeld",
+      "groupEnabled": "Groep \"{{name}}\" ingeschakeld",
+      "groupDeleted": "Groep \"{{name}}\" verwijderd",
+      "groupRenamed": "Groep succesvol hernoemd naar \"{{name}}\"",
+      "userMovedToGroup": "Gebruiker verplaatst naar nieuwe groep en uitgelogd. Ze moeten opnieuw inloggen om toegang te krijgen tot hun nieuwe werkruimte.",
+      "failedToCreate": "Gebruiker aanmaken mislukt",
+      "failedToUpdate": "Gebruiker bijwerken mislukt",
+      "failedToDelete": "Gebruiker verwijderen mislukt",
+      "failedToDisable": "Gebruiker uitschakelen mislukt",
+      "failedToEnable": "Gebruiker inschakelen mislukt",
+      "failedToFetch": "Gebruikers ophalen mislukt",
+      "failedToUpdateGroup": "Gebruikersgroep bijwerken mislukt",
+      "failedToRenameGroup": "Groep hernoemen mislukt",
+      "failedToCopyEmail": "E-mail kopiëren mislukt",
+      "pleaseLogIn": "Log in om gebruikers te bekijken",
+      "passwordMismatch": "Wachtwoord en bevestiging moeten overeenkomen",
+      "bulkDeletePartial": "{{succeeded}} van {{total}} gebruikers verwijderd. {{failed}} mislukt.",
+      "bulkDeleted": "{{count}} gebruikers succesvol verwijderd",
+      "bulkGroupChangeFailed": "Gebruikers verplaatsen naar groep mislukt",
+      "bulkGroupChanged": "{{count}} gebruikers succesvol naar nieuwe groep verplaatst"
+    },
+    "confirmations": {
+      "disableUserDescription": "Dit voorkomt dat de gebruiker kan inloggen.",
+      "enableUserDescription": "Dit stelt de gebruiker in staat om opnieuw in te loggen.",
+      "disableGroupDescription": "Het uitschakelen van een groep schakelt al zijn gebruikers uit.",
+      "enableGroupDescription": "Het inschakelen van een groep schakelt al zijn gebruikers in.",
+      "deleteGroupDescription": "Dit verwijdert de groep en al zijn gebruikers. Deze actie kan niet ongedaan worden gemaakt.",
+      "bulkDeleteDescription": "Hiermee worden {{count}} geselecteerde gebruikers permanent verwijderd. Deze actie kan niet ongedaan worden gemaakt."
+    }
+  },
+  "modelsManagement": {
+    "title": "Alle simulatiebeoordelingsmodellen",
+    "subtitle": "Beheer en monitor alle modellen in het systeem",
+    "searchPlaceholder": "Modellen zoeken...",
+    "loadingModels": "Modellen laden...",
+    "noModelsFound": "Geen modellen gevonden",
+    "noModelsDescription": "Begin met het maken van uw eerste simulatiebeoordelingsmodel.",
+    "sharedWorkspace": "Gedeelde werkruimte (Eigenaar: {{owner}})",
+    "table": {
+      "model": "Model",
+      "status": "Status",
+      "created": "Aangemaakt",
+      "lastModified": "Laatst gewijzigd",
+      "actions": "Acties"
+    },
+    "status": {
+      "draft": "Concept",
+      "inQueue": "In wachtrij",
+      "inProgress": "In uitvoering",
+      "completed": "Voltooid",
+      "published": "Gepubliceerd"
+    },
+    "notifications": {
+      "duplicated": "Model \"{{title}}\" is succesvol gedupliceerd",
+      "failedToDuplicate": "Model dupliceren mislukt. Probeer het opnieuw.",
+      "calculationStarted": "Berekening succesvol gestart",
+      "failedToCalculate": "Berekening starten mislukt. Probeer het opnieuw.",
+      "moveComingSoon": "Verplaatsen naar werkruimte functie komt binnenkort voor \"{{title}}\"",
+      "shared": "Model succesvol gedeeld",
+      "deleted": "Model \"{{title}}\" is verwijderd",
+      "failedToDelete": "Model verwijderen mislukt. Probeer het opnieuw."
+    },
+    "refresh": "Vernieuwen"
+  },
+  "profile": {
+    "title": "Profielinstellingen",
+    "subtitle": "Beheer uw persoonlijke gegevens en accountvoorkeuren",
+    "goBack": "Terug",
+    "loadingProfile": "Uw profiel laden...",
+    "defaultUser": "Gebruiker",
+    "accessLevel": "Toegangsniveau",
+    "notSpecified": "Niet gespecificeerd",
+    "personalInfo": "Persoonlijke informatie",
+    "personalInfoDescription": "Werk uw profielgegevens hieronder bij",
+    "readOnly": "alleen-lezen",
+    "saving": "Opslaan...",
+    "saveChanges": "Wijzigingen opslaan",
+    "fields": {
+      "fullName": "Volledige naam",
+      "email": "E-mailadres",
+      "organization": "Organisatie",
+      "position": "Functie",
+      "phone": "Telefoonnummer"
+    },
+    "placeholders": {
+      "fullName": "Voer uw volledige naam in",
+      "organization": "Uw bedrijf of organisatie",
+      "position": "Uw functietitel",
+      "phone": "+31 6 12345678"
+    },
+    "accessLevels": {
+      "basic": "Basis",
+      "basicDescription": "Standaard toegang tot basisfuncties",
+      "intermediate": "Gemiddeld",
+      "intermediateDescription": "Uitgebreide toegang met geavanceerde functies",
+      "expert": "Expert",
+      "expertDescription": "Volledige toegang tot alle functies"
+    },
+    "notifications": {
+      "updated": "Profiel succesvol bijgewerkt!",
+      "failedToLoad": "Profiel laden mislukt. Probeer het opnieuw.",
+      "failedToUpdate": "Profiel bijwerken mislukt. Probeer het opnieuw."
+    },
+    "password": {
+      "confirm": "Nieuw wachtwoord bevestigen",
+      "confirmPlaceholder": "Voer uw nieuwe wachtwoord opnieuw in",
+      "current": "Huidig wachtwoord",
+      "currentPlaceholder": "Voer uw huidige wachtwoord in",
+      "description": "Werk het wachtwoord bij dat u gebruikt om in te loggen",
+      "failed": "Wachtwoord wijzigen mislukt. Probeer het opnieuw.",
+      "mismatch": "Wachtwoorden komen niet overeen",
+      "new": "Nieuw wachtwoord",
+      "newPlaceholder": "Voer een nieuw wachtwoord in",
+      "requirements": {
+        "lowercase": "Eén kleine letter",
+        "minChars": "Minimaal 8 tekens",
+        "number": "Eén cijfer",
+        "specialChar": "Eén speciaal teken",
+        "uppercase": "Eén hoofdletter"
+      },
+      "requirementsNotMet": "Het wachtwoord voldoet niet aan alle vereisten",
+      "submit": "Wachtwoord bijwerken",
+      "title": "Wachtwoord wijzigen",
+      "updated": "Wachtwoord succesvol gewijzigd!",
+      "updating": "Bijwerken…"
+    }
+  },
+  "webservicesManagement": {
+    "title": "Simulatiemotor beheer",
+    "subtitle": "Beheer berekeningswebservice-instanties",
+    "searchPlaceholder": "Zoeken op naam, IP...",
+    "refresh": "Vernieuwen",
+    "registerNew": "Nieuwe webservice registreren",
+    "loadingWebservices": "Webservices laden...",
+    "noWebservicesFound": "Geen webservices gevonden",
+    "noWebservicesDescription": "Begin met het registreren van uw eerste webservice-instantie.",
+    "summary": {
+      "total": "Totaal",
+      "online": "Online",
+      "available": "Beschikbaar",
+      "busy": "Bezig",
+      "offline": "Offline"
+    },
+    "yourSimulationStatus": "Uw simulatiestatus",
+    "modelsRunningDescription": "{{count}} van uw modellen worden momenteel berekend",
+    "modelsQueuedDescription": "{{count}} van uw modellen wachten - de simulatie-engine verwerkt andere berekeningen",
+    "filters": {
+      "allStatus": "Alle statussen",
+      "active": "Actief",
+      "inactive": "Inactief",
+      "maintenance": "Onderhoud",
+      "error": "Fout",
+      "allAvailability": "Alle beschikbaarheid",
+      "available": "Beschikbaar",
+      "unavailable": "Niet beschikbaar"
+    },
+    "table": {
+      "service": "Service",
+      "endpoint": "Endpoint",
+      "status": "Status",
+      "availability": "Beschikbaarheid",
+      "jobs": "Taken",
+      "performance": "Prestaties",
+      "user": "Gebruiker",
+      "ip": "IP-adres",
+      "port": "Poort",
+      "lastCheck": "Laatste controle",
+      "actions": "Acties",
+      "never": "Nooit"
+    },
+    "status": {
+      "online": "Online",
+      "offline": "Offline",
+      "available": "Beschikbaar",
+      "unavailable": "Niet beschikbaar"
+    },
+    "busyStatus": {
+      "calculating": "Berekening ({{current}}/{{max}})",
+      "idle": "Inactief (0/{{max}})"
+    },
+    "actions": {
+      "pingWebservice": "Webservice pingen",
+      "editWebservice": "Webservice bewerken",
+      "deleteWebservice": "Webservice verwijderen"
+    },
+    "dialog": {
+      "editTitle": "Webservice-instantie bewerken",
+      "createTitle": "Nieuwe webservice registreren",
+      "editDescription": "Webserviceconfiguratie bijwerken",
+      "createDescription": "Een nieuwe simulatieberekeningswebservice-instantie configureren",
+      "editButton": "Webservice bijwerken",
+      "createButton": "Webservice registreren"
+    },
+    "notifications": {
+      "created": "Webservice succesvol geregistreerd!",
+      "updated": "Webservice succesvol bijgewerkt!",
+      "deleted": "Webservice succesvol verwijderd!",
+      "statusChanged": "Webservicestatus gewijzigd naar {{status}}",
+      "failedToCreate": "Webservice registreren mislukt",
+      "failedToUpdate": "Webservice bijwerken mislukt",
+      "failedToDelete": "Webservice verwijderen mislukt",
+      "failedToPing": "Webservice pingen mislukt"
+    },
+    "noWebservicesAvailable": "Geen simulatie-engines momenteel geconfigureerd. Neem contact op met een beheerder.",
+    "healthCheck": "Simulatie-engine"
+  },
+  "feedbackManagement": {
+    "title": "Gebruikersfeedback Beheer",
+    "subtitle": "Bekijk en reageer op gebruikersfeedback",
+    "refresh": "Vernieuwen",
+    "noFeedbackFound": "Geen feedback gevonden",
+    "noFeedbackDescription": "Gebruikersfeedback verschijnt hier wanneer het wordt ingediend.",
+    "filters": {
+      "label": "Filters:",
+      "allStatus": "Alle Statussen",
+      "allCategories": "Alle Categorieën",
+      "allPriorities": "Alle Prioriteiten"
+    },
+    "statuses": {
+      "pending": "In Afwachting",
+      "inProgress": "In Behandeling",
+      "resolved": "Opgelost",
+      "closed": "Gesloten"
+    },
+    "categories": {
+      "bug": "Bugrapport",
+      "feature": "Functieverzoek",
+      "improvement": "Verbetering",
+      "general": "Algemeen"
+    },
+    "priorities": {
+      "low": "Laag",
+      "medium": "Gemiddeld",
+      "high": "Hoog",
+      "critical": "Kritiek"
+    },
+    "table": {
+      "subject": "Onderwerp",
+      "category": "Categorie",
+      "priority": "Prioriteit",
+      "status": "Status",
+      "rating": "Beoordeling",
+      "user": "Gebruiker",
+      "created": "Aangemaakt",
+      "actions": "Acties"
+    },
+    "actions": {
+      "viewDetails": "Details Bekijken",
+      "editStatus": "Status Bewerken",
+      "deleteFeedback": "Feedback Verwijderen",
+      "delete": "Verwijderen"
+    },
+    "viewDialog": {
+      "title": "Feedbackdetails",
+      "subtitle": "Bekijk volledige feedbackinformatie",
+      "message": "Bericht:",
+      "rating": "Beoordeling:",
+      "submitted": "Ingediend",
+      "adminResponse": "Admin Reactie:",
+      "respondedOn": "Gereageerd op:",
+      "attachedImage": "Bijgevoegde afbeelding",
+      "feedbackScreenshot": "Feedback screenshot",
+      "clickToEnlarge": "Klik om te vergroten",
+      "imageLoadError": "Afbeelding laden mislukt",
+      "submittedBy": "Ingediend door"
+    },
+    "editDialog": {
+      "title": "Feedback Bijwerken",
+      "description": "Wijzig feedbackstatus, prioriteit en geef een adminreactie",
+      "statusAndPriority": "Feedbackstatus & Prioriteit",
+      "statusAndPriorityDescription": "Werk feedbackstatus en prioriteitsniveau bij",
+      "status": "Status",
+      "priority": "Prioriteit",
+      "adminResponse": "Admin Reactie",
+      "adminResponseDescription": "Geef een reactie aan de gebruiker",
+      "response": "Reactie",
+      "responsePlaceholder": "Voeg uw reactie toe aan de gebruiker...",
+      "saveChanges": "Wijzigingen Opslaan"
+    },
+    "notifications": {
+      "updateSuccess": "Feedback \"{{subject}}\" succesvol bijgewerkt",
+      "updateError": "Feedback bijwerken mislukt. Probeer het opnieuw.",
+      "deleteSuccess": "Feedback \"{{subject}}\" succesvol verwijderd",
+      "deleteError": "Feedback verwijderen mislukt. Probeer het opnieuw."
+    },
+    "hasAttachment": "Heeft bijgevoegde afbeelding"
+  },
+  "simulation": {
+    "simulationPeriod": "Simulatieperiode",
+    "mapHeader": {
+      "clearAll": "Alles wissen"
+    },
+    "bufferDistance": {
+      "decrease": "Bufferafstand verkleinen",
+      "hint": "Bereik 0–2000 m in stappen van 100 m. Vergroot het gebied rond uw polygoon.",
+      "increase": "Bufferafstand vergroten",
+      "label": "Bufferafstand (meter)"
+    }
+  },
+  "mapLayers": {
+    "title": "Kaartlagen",
+    "description": "Configureer kaartweergave en datalagen",
+    "baseLayers": {
+      "title": "Basislagen",
+      "description": "Kies de achtergrondkaartstijl",
+      "osmStandard": "Standaard OpenStreetMap-laag",
+      "osmHumanitarian": "Humanitaire stijl OpenStreetMap",
+      "cartoPositron": "Lichte thema basiskaart van CartoDB",
+      "cartoVoyager": "Gedetailleerde basiskaart van CartoDB",
+      "openTopoMap": "Topografische stijlkaart",
+      "maplibreDark": "Donkere vector-basiskaart",
+      "maplibreVoyager": "Gedetailleerde vector-basiskaart (Voyager)"
+    },
+    "dataLayers": {
+      "title": "Datalagen",
+      "energySimulation": "Eindlaag energiesimulatie"
+    }
+  },
+  "tour": {
+    "product": {
+      "welcome": {
+        "title": "Welkom bij het Wildfire-simulatieplatform!",
+        "description": "Laten we een snelle rondleiding maken om u te helpen aan de slag te gaan met het Wildfire-simulatieplatform.",
+        "tip": "Deze rondleiding wordt slechts één keer weergegeven. U kunt deze op elk moment overslaan of opnieuw starten vanuit de zijbalk."
+      },
+      "newAssessment": {
+        "title": "Nieuwe Simulatie Maken",
+        "description": "Klaar om te beginnen? Klik op deze knop om uw eerste Wildfire-simulatie te maken. Dit opent de wizard voor gebiedsselectie.",
+        "tip": "Wanneer u hierop klikt, start een speciale rondleiding voor het selecteren van een gebied!"
+      },
+      "profile": {
+        "title": "Profiel & Instellingen",
+        "description": "Toegang tot uw profiel, accountinstellingen en gebruikersvoorkeuren. Beheer uw account en extra opties."
+      },
+      "navigation": {
+        "title": "Dashboard Navigatie",
+        "description": "Toegang tot uw hoofddashboard om uw projecten, recente beoordelingen en algemene statistieken te bekijken. Dit is uw thuisbasis."
+      },
+      "simulations": {
+        "title": "Wildfire-simulaties",
+        "description": "Maak en beheer uw Wildfire-simulatiemodellen. Start nieuwe simulaties, configureer parameters en bekijk bestaande runs."
+      },
+      "map": {
+        "title": "Interactieve Kaart",
+        "description": "Uw hoofdwerkruimte voor geografische analyse. Bekijk kaartlagen, selecteer gebieden voor simulatie en visualiseer Wildfire-risicogegevens."
+      },
+      "locations": {
+        "title": "Opgeslagen Locaties",
+        "description": "Beheer uw opgeslagen locaties en interessegebieden. Snelle toegang tot vaak geanalyseerde regio's."
+      },
+      "reports": {
+        "title": "Simulatierapporten",
+        "description": "Bekijk gedetailleerde simulatierapporten, exporteer gegevens en analyseer historische trends."
+      },
+      "technologies": {
+        "title": "Simulatieparameters",
+        "description": "Configureer Wildfire-simulatieparameters zoals brandstofmodellen, weer en ontstekingsbronnen.",
+        "tip": "Parameters kunnen per scenario worden aangepast voor nauwkeurige Wildfire-simulaties."
+      },
+      "layers": {
+        "title": "Kaartlagen",
+        "description": "Beheer kaartlagen en overlays. Kies basiskaarten, schakel gegevenslagen in/uit en pas uw kaartweergave aan."
+      },
+      "documentation": {
+        "title": "Documentatie",
+        "description": "Open de platformdocumentatie voor gedetailleerde handleidingen, API-referenties en best practices.",
+        "tip": "Opent in een nieuw tabblad zodat u uw huidige workflow behoudt."
+      },
+      "feedback": {
+        "title": "Feedback",
+        "description": "Deel uw gedachten en suggesties met ons. Uw feedback helpt het platform te verbeteren."
+      },
+      "complete": {
+        "title": "Alles klaar!",
+        "description": "U heeft de rondleiding voltooid! U bent nu klaar om Wildfire-simulaties te maken.",
+        "nextSteps": "Volgende Stappen",
+        "nextStepsDescription": "Probeer uw eerste Wildfire-simulatie te maken of verken de interactieve kaart.",
+        "restartTour": "Rondleiding Herstarten",
+        "restartTourDescription": "U kunt deze rondleiding op elk moment herstarten vanuit de zijbalk."
+      }
+    },
+    "areaSelect": {
+      "welcome": {
+        "title": "Wildfire-simulatiegids",
+        "description": "Welkom! Deze rondleiding begeleidt u bij het maken van een wildfire-simulatie voor uw gekozen regio.",
+        "tip": "U leert hoe u uw model configureert, gebieden tekent en uw simulatie maakt."
+      },
+      "modelName": {
+        "title": "Modelnaam",
+        "description": "Geef uw wildfire-simulatiemodel een beschrijvende naam.",
+        "tip": "Goede namen: \"Californië Noord 2024\" of \"Mediterraan Bosscenario\""
+      },
+      "dateRange": {
+        "title": "Simulatieperiode",
+        "description": "Kies de periode voor uw wildfire-analyse.",
+        "tip": "Langere perioden bieden een uitgebreidere analyse"
+      },
+      "resolution": {
+        "title": "Tijdresolutie",
+        "description": "Stel het tijdsinterval in voor berekeningen. Hogere resolutie geeft gedetailleerdere resultaten maar duurt langer om te verwerken.",
+        "tip": "60 minuten wordt aanbevolen voor de meeste simulaties"
+      },
+      "technologies": {
+        "title": "Parameters",
+        "description": "Configureer wildfire-simulatieparameters zoals brandstofmodellen, weer en ontstekingsbronnen.",
+        "tip": "Klik om instellingen te bekijken en aan te passen"
+      },
+      "mapContainer": {
+        "title": "Interactieve kaart",
+        "description": "Dit is uw belangrijkste werkruimte. Teken polygonen op de kaart om gebieden voor uw wildfire-simulatie te selecteren.",
+        "tip": "U kunt in- en uitzoomen en de kaart verschuiven"
+      },
+      "search": {
+        "title": "Locatie zoeken",
+        "description": "Gebruik dit zoekvak om snel locaties op naam of adres te vinden.",
+        "tip": "Typ een locatienaam voor directe resultaten"
+      },
+      "save": {
+        "title": "Simulatie maken",
+        "description": "Zodra alles is geconfigureerd, klikt u hier om uw wildfire-simulatiemodel te maken en de analyse te starten.",
+        "tip": "Alle velden moeten zijn ingevuld voordat u kunt opslaan"
+      },
+      "areaInput": {
+        "description": "Teken het gebied direct op de kaart of upload een GeoJSON Polygon/MultiPolygon-grens.",
+        "tip": "Het model kan pas verder zodra er één geldig interessegebied beschikbaar is.",
+        "title": "Gebiedsinvoer"
+      },
+      "areaStatus": {
+        "description": "Deze status geeft aan of de grens ontbreekt, getekend, geüpload of geblokkeerd is door een uploadfout.",
+        "title": "AOI-status"
+      },
+      "calculationMode": {
+        "description": "Kies de statische modus voor één beschikbare brandrisicodatum of de dynamische modus voor een datumbereik dat de backend later kan verwerken.",
+        "tip": "De statustekst onder de datumkeuze geeft aan of beschikbare statische datums zijn geladen en of de gekozen datum geldig is.",
+        "title": "Berekeningsmodus"
+      },
+      "calculationStatus": {
+        "description": "Deze regel geeft aan of statische datums laden, niet beschikbaar zijn, een fout hebben of klaar zijn om te selecteren.",
+        "tip": "Als hier een blokkade staat, blijft de knop doorgaan uitgeschakeld totdat de datumselectie geldig is.",
+        "title": "Berekeningsstatus"
+      },
+      "finalReview": {
+        "description": "De controlestap controleert de modelnaam, datum, AOI, risicocomponenten en buffer voordat de run kan starten.",
+        "title": "Validatiestatus"
+      },
+      "optionalLayers": {
+        "description": "Deze schakelaars bepalen welke optionele signalen met het modelverzoek worden meegestuurd, waaronder brandgevaarlijk weer, terrein en historische branden.",
+        "tip": "Houd brandgevaarlijk weer ingeschakeld voor normale runs; uitschakelen is alleen nuttig voor een basisvergelijking.",
+        "title": "Risicosignalen"
+      },
+      "saveSummary": {
+        "description": "Dit eindoverzicht toont de waarden die met het model worden opgeslagen en naar de berekeningsworkflow worden gestuurd.",
+        "title": "Opslagoverzicht"
+      }
+    },
+    "buttons": {
+      "skip": "Overslaan",
+      "back": "Terug",
+      "next": "Volgende",
+      "finish": "Voltooien",
+      "close": "Sluiten"
+    }
+  },
+  "feedback": {
+    "title": "Feedback verzenden",
+    "subtitle": "Help ons uw ervaring te verbeteren",
+    "category": "Feedback categorie",
+    "categories": {
+      "bug": "Bugmelding",
+      "bugDescription": "Iets werkt niet",
+      "feature": "Functieverzoek",
+      "featureDescription": "Nieuwe functionaliteit voorstellen",
+      "improvement": "Verbetering",
+      "improvementDescription": "Bestaande functies verbeteren",
+      "general": "Algemeen",
+      "generalDescription": "Overige feedback"
+    },
+    "subject": "Onderwerp",
+    "subjectPlaceholder": "bijv. Kaart laadprobleem, Functiesuggestie...",
+    "message": "Uw feedback",
+    "messagePlaceholder": "Beschrijf uw feedback, suggesties of problemen in detail...",
+    "image": "Bijlage (Optioneel)",
+    "imageDropzone": "Klik om te uploaden of sleep en zet neer",
+    "imageFormats": "PNG, JPG, GIF tot 15MB",
+    "imagePreview": "Afbeeldingsvoorbeeld",
+    "removeImage": "Afbeelding verwijderen",
+    "rating": "Algemene beoordeling",
+    "ratingDescription": "Hoe zou u uw ervaring beoordelen?",
+    "submit": "Feedback verzenden",
+    "submitting": "Verzenden...",
+    "submittingMessage": "Uw feedback wordt verzonden...",
+    "gdprNotice": "Uw feedback wordt verwerkt in overeenstemming met de AVG-regelgeving.",
+    "success": {
+      "title": "Feedback verzonden!",
+      "message": "Bedankt voor uw feedback. We zullen het bekijken en indien nodig contact met u opnemen.",
+      "reference": "Referentie"
+    },
+    "errors": {
+      "loginRequired": "Log in om feedback te verzenden",
+      "submitFailed": "Feedback verzenden mislukt. Probeer het later opnieuw.",
+      "invalidImageType": "Selecteer een geldig afbeeldingsbestand (PNG, JPG, GIF)",
+      "imageTooLarge": "Afbeeldingsgrootte moet kleiner zijn dan 15MB",
+      "payloadTooLarge": "De bijlage is te groot. Gebruik kleinere afbeeldingen."
+    },
+    "myFeedback": {
+      "title": "Mijn feedback",
+      "subtitle": "Volg de status van uw ingediende feedback",
+      "empty": "U heeft nog geen feedback ingediend",
+      "adminResponse": "Beheerderreactie",
+      "submittedOn": "Ingediend op",
+      "autoDeleteNotice": "Dit item wordt automatisch verwijderd over {days} dagen",
+      "autoDeleteSoon": "Dit item wordt binnenkort automatisch verwijderd",
+      "showHistory": "Mijn inzendingen",
+      "hideHistory": "Verbergen",
+      "status": {
+        "pending": "In afwachting",
+        "in_progress": "In behandeling",
+        "resolved": "Opgelost",
+        "closed": "Gesloten"
+      }
+    },
+    "chars": "tekens",
+    "markdownSupported": "Markdown ondersteund",
+    "preview": "Voorbeeld",
+    "previewEmpty": "Niets om te tonen",
+    "words": "woorden",
+    "write": "Schrijven"
+  },
+  "weather": {
+    "temperature": "Temp.",
+    "windSpeed": "Wind",
+    "humidity": "Vocht.",
+    "uvIndex": "UV",
+    "clickToRefresh": "Klik om te vernieuwen",
+    "clickToRetry": "Klik om opnieuw te proberen",
+    "retry": "Opnieuw",
+    "loadWeather": "Weer laden",
+    "clickToLoad": "Klik om weer te laden voor {{location}}",
+    "current": "Huidig",
+    "searchLocation": "Zoek locatie...",
+    "yourLocations": "Uw Locaties",
+    "syncing": "Synchroniseren...",
+    "temperatureTooltip": "Huidige temperatuur in Celsius en Fahrenheit",
+    "humidityTooltip": "Relatieve luchtvochtigheid percentage",
+    "uvLevels": {
+      "low": "Laag",
+      "moderate": "Matig",
+      "high": "Hoog",
+      "veryHigh": "Zeer Hoog",
+      "extreme": "Extreem"
+    },
+    "uvDescriptions": {
+      "low": "Geen bescherming nodig",
+      "moderate": "Gebruik zonnebrandcrème",
+      "high": "Bescherming essentieel",
+      "veryHigh": "Extra bescherming nodig",
+      "extreme": "Vermijd blootstelling aan de zon"
+    },
+    "dataBy": "Weerdata door"
+  },
+  "settings": {
+    "title": "Instellingen",
+    "subtitle": "Pas uw ervaring en voorkeuren aan",
+    "configuration": "Configuratie",
+    "goBack": "Terug",
+    "tabs": {
+      "general": "Algemeen",
+      "display": "Weergave",
+      "notifications": "Meldingen",
+      "advanced": "Geavanceerd"
+    },
+    "stats": {
+      "language": "Taal",
+      "theme": "Thema",
+      "notifications": "Meldingen",
+      "accessLevel": "Toegangsniveau",
+      "enabled": "Ingeschakeld",
+      "disabled": "Uitgeschakeld",
+      "system": "Systeem",
+      "user": "Gebruiker"
+    },
+    "language": {
+      "title": "Taal",
+      "subtitle": "Interfacetaal"
+    },
+    "weatherLocation": {
+      "title": "Weerlocatie",
+      "subtitle": "Standaard weer"
+    },
+    "mapLocation": {
+      "title": "Kaartlocatie",
+      "subtitle": "Opgeslagen posities",
+      "syncing": "Synchroniseren...",
+      "searchPlaceholder": "Zoek locatie...",
+      "current": "Huidig",
+      "noLocation": "Geen locatie ingesteld",
+      "savedLocations": "Opgeslagen Locaties",
+      "clearAll": "Alles wissen",
+      "syncNote": "Locaties worden gesynchroniseerd met uw account"
+    },
+    "locationSearch": {
+      "placeholder": "Zoek locatie...",
+      "searching": "Zoeken...",
+      "noResults": "Geen locaties gevonden",
+      "searchFailed": "Zoeken mislukt"
+    },
+    "dataDisplay": {
+      "title": "Data en Weergave",
+      "subtitle": "Eenheden en opmaak",
+      "temperature": "Temperatuur",
+      "celsius": "Celsius",
+      "fahrenheit": "Fahrenheit",
+      "distance": "Afstand",
+      "kilometers": "Kilometers",
+      "miles": "Mijlen",
+      "windSpeed": "Windsnelheid",
+      "knots": "knopen",
+      "dataRefresh": "Data Verversing",
+      "min": "min"
+    },
+    "notifications": {
+      "title": "Meldingen",
+      "subtitle": "Alertvoorkeuren",
+      "email": "E-mail",
+      "notifyWhenComplete": "Melden bij voltooiing",
+      "browser": "Browser",
+      "enabled": "Ingeschakeld",
+      "blocked": "Geblokkeerd",
+      "systemAlerts": "Systeemwaarschuwingen"
+    },
+    "sendNotification": {
+      "title": "Melding Verzenden",
+      "subtitle": "Systeemmeldingen",
+      "selectService": "Selecteer dienst...",
+      "services": {
+        "webService": "Webdienst",
+        "geoServer": "GeoServer",
+        "database": "Database",
+        "api": "API",
+        "mapService": "Kaartdienst"
+      },
+      "messagePlaceholder": "Voer meldingsbericht in...",
+      "sending": "Verzenden...",
+      "sendNotification": "Melding Verzenden",
+      "sent": "Melding verzonden!",
+      "failedToSend": "Verzenden mislukt"
+    }
+  },
+  "simulationComparison": {
+    "title": "Simulatie Vergelijking",
+    "subtitle": "Vergelijk resultaten van meerdere simulatieruns",
+    "baseline": "Basislijn",
+    "comparison": "Vergelijking",
+    "selectBaselineModel": "Selecteer basismodel",
+    "selectComparisonModel": "Selecteer vergelijkingsmodel",
+    "noCompletedModels": "Geen voltooide modellen gevonden",
+    "noRegion": "Geen regio",
+    "loading": "Simulatiegegevens laden...",
+    "selectModels": "Selecteer modellen om te vergelijken",
+    "selectModelsDescription": "Kies hierboven twee voltooide simulatiemodellen om hun verschillen in energieopwekking, kosten en belangrijke prestatie-indicatoren te analyseren.",
+    "startBySelectingBaseline": "Begin met het selecteren van een basismodel",
+    "nowSelectComparison": "Selecteer nu een vergelijkingsmodel",
+    "analyzedArea": "Geanalyseerd gebied",
+    "analyzedAreaSub": "Het gebied wordt berekend op basis van geldige pixels (geen nodata) en kan dus per modeluitvoer verschillen.",
+    "badDeltaLabel": "Meer Hoog/Zeer hoog",
+    "badDeltaText": "betekent dat het vergelijkingsmodel ernstiger is.",
+    "cells": "cellen",
+    "choroplethMap": "Gevulde risicocellen",
+    "choroplethMapSub": "Exact gesamplede cellen per risicoklasse. Gebruik dit wanneer de heatmap de celgrenzen verbergt.",
+    "comparisonOnly": "Vergelijkingsmodel",
+    "configuration": "Configuratie",
+    "configurationSub": "Modelmetadata naast elkaar",
+    "criticalShare": "Aandeel Hoog + Zeer hoog",
+    "deltaSub": "Verandering van basislijn naar vergelijking",
+    "deltaTitle": "Risicoverschil",
+    "distribution": "Verdelingsvergelijking",
+    "distributionSub": "Aandeel pixels per risiconiveau. Lichtere balk = basislijn, vol = vergelijking.",
+    "dominantClass": "Dominante risicoklasse",
+    "dominantClassSub": "Grootste aandeel geldige pixels: {{baseline}}% in basislijn, {{comparison}}% in vergelijking.",
+    "dominantClassUnavailable": "Verdelingsgegevens zijn niet beschikbaar.",
+    "field": "Veld",
+    "filledRiskMap": "Gevulde risicokaart",
+    "fromBaseline": "t.o.v. basislijn",
+    "geoHeatmap": "Geo-heatmap",
+    "geoHeatmapSub": "Vloeiende weergave van waar het risico is geconcentreerd. Rood is het hoogst gemeten risico.",
+    "goodDeltaLabel": "Meer Zeer laag/Laag",
+    "goodDeltaText": "betekent meestal dat het risico naar veiligere klassen is verschoven.",
+    "highVeryHigh": "Hoog + Zeer hoog",
+    "incompleteLayer": "De laagconfiguratie is onvolledig",
+    "independent": "Onafhankelijk",
+    "insightCharts": "Risicokaart-grafieken",
+    "insightChartsSub": "Deze kaarten vatten de gesamplede rastercellen van het vergelijkingsmodel samen. Gebruik ze om risicoconcentratie en exacte klassegebieden te zien.",
+    "loadLayerFailed": "Laag laden vanaf GeoServer mislukt",
+    "loadingLayer": "Laag laden…",
+    "loadingMapSamples": "Geografische rastersamples laden…",
+    "loadingMetrics": "Risicostatistieken laden…",
+    "mapHint": "Verschuif/zoom een van de kaarten — de weergaven blijven gesynchroniseerd.",
+    "mapHintIndependent": "Deze modellen bestrijken verschillende gebieden — elke kaart toont zijn eigen model.",
+    "noConfiguredLayer": "Er is nog geen GeoServer-laag geconfigureerd voor dit model.",
+    "noMapSamples": "Geografische kaartsamples zijn nog niet beschikbaar.",
+    "readingDirection": "Interpretatie",
+    "riskIntensityHeatmap": "Risico-intensiteit",
+    "sampleCoverage": "Steekproefdekking",
+    "sampleMapNote": "Dit is een gesamplede rasterweergave, niet de stratenkaart. De gevulde cellen tonen dezelfde risicoklassen als de Brandrisico-laag.",
+    "sampleMean": "Steekproefgemiddelde",
+    "samplingGrid": "Steekproefraster",
+    "summaryBetter": "Risico verminderd",
+    "summaryStable": "Risico is grotendeels stabiel",
+    "summarySub": "Belangrijkste verschillen tussen het basis- en vergelijkingsmodel.",
+    "summaryTitle": "Vergelijkingsoverzicht",
+    "summaryWorse": "Risico toegenomen",
+    "synced": "Gesynchroniseerd",
+    "validCells": "geldige cellen",
+    "validCellsShare": "van de geldige cellen"
+  },
+  "map": {
+    "zoomIn": "Inzoomen",
+    "zoomOut": "Uitzoomen",
+    "centerMap": "Kaart centreren",
+    "fitToExtent": "Aanpassen aan bereik",
+    "resetTopDown": "Terug naar bovenaanzicht",
+    "rightClickRotate": "Rechtsklik + slepen om te draaien",
+    "regions": "regio's",
+    "myModels": "mijn modellen",
+    "grids": "rasters",
+    "countries": "landen"
+  },
+  "privacy": {
+    "dataAndPrivacy": "Gegevens & Privacy",
+    "acceptTerms": "Privacyvoorwaarden accepteren",
+    "openSettings": "Gegevens- en privacy-instellingen openen",
+    "dialogTitle": "Gegevensverwerking & Privacy",
+    "cartoDescription": "Om u onze diensten te kunnen leveren, maken we gebruik van CARTO en OSMF als externe kaartproviders.",
+    "sharedWithCarto": "Door te accepteren worden de volgende gegevens gedeeld met CARTO en OSMF:",
+    "ipAddress": "IP-adres",
+    "browserDeviceType": "Browser + apparaattype",
+    "timeOfRequest": "Tijdstip van verzoek",
+    "localStorageDescription": "Daarnaast gebruiken we lokale opslag om uw voorkeuren te onthouden en bij te houden of u de introductie-inhoud op dit apparaat hebt gezien.",
+    "reviewPolicies": "Raadpleeg voor meer informatie het respectievelijke privacybeleid:",
+    "cartoPolicy": "Carto Privacybeleid",
+    "osmfPolicy": "OSMF Privacybeleid",
+    "firePolicy": "EnerPlanET Privacybeleid",
+    "deny": "Weigeren",
+    "accept": "Accepteren"
+  },
+  "drawing": {
+    "clickToDraw": "Klik om te tekenen",
+    "clickToClose": "Klik om te sluiten",
+    "start": "Start"
+  },
+  "forms": {
+    "user": {
+      "personalInfo": {
+        "title": "Persoonlijke Informatie",
+        "description": "Basisgegevens en contactinformatie van gebruiker"
+      },
+      "security": {
+        "title": "Beveiliging",
+        "description": "Beveiligingsgegevens van account"
+      },
+      "fields": {
+        "fullName": "Volledige Naam",
+        "email": "E-mailadres",
+        "organization": "Organisatie",
+        "position": "Functie",
+        "phone": "Telefoonnummer",
+        "accessLevel": "Toegangsniveau",
+        "emailVerified": "E-mail Geverifieerd",
+        "password": "Wachtwoord",
+        "confirmPassword": "Bevestig Wachtwoord",
+        "modelLimit": "Modellimiet"
+      },
+      "placeholders": {
+        "fullName": "Voer volledige naam in",
+        "email": "Voer e-mailadres in",
+        "organization": "Voer organisatienaam in",
+        "position": "Voer functie in",
+        "password": "Voer wachtwoord in",
+        "confirmPassword": "Bevestig wachtwoord",
+        "modelLimit": "Laat leeg voor standaardwaarde"
+      },
+      "descriptions": {
+        "emailVerified": "Markeer e-mail als geverifieerd",
+        "modelLimit": "Aangepaste limiet voor het maken van modellen (0 = onbeperkt, leeg = standaard)"
+      },
+      "accessLevels": {
+        "veryLow": "Zeer Lage Toegang",
+        "intermediate": "Tussenliggende Toegang",
+        "manager": "Manager (Groepstoegang)",
+        "expert": "Expert (Volledige Toegang)"
+      },
+      "validation": {
+        "phoneInvalid": "Telefoonnummer mag alleen cijfers, spaties, streepjes, plustekens en haakjes bevatten",
+        "passwordLength": "Wachtwoord moet minimaal 8 tekens lang zijn",
+        "nameRequired": "Naam is verplicht",
+        "emailRequired": "E-mail is verplicht",
+        "emailInvalid": "Voer een geldig e-mailadres in",
+        "accessLevelRequired": "Toegangsniveau is verplicht",
+        "passwordRequired": "Wachtwoord is verplicht",
+        "confirmPasswordRequired": "Wachtwoordbevestiging is verplicht",
+        "passwordsMismatch": "Wachtwoorden komen niet overeen"
+      }
+    },
+    "webservice": {
+      "serviceInfo": {
+        "title": "Service Informatie",
+        "description": "Basisidentificatie en metadata van webservice"
+      },
+      "connectionDetails": {
+        "title": "Verbindingsdetails",
+        "description": "Netwerk- en endpoint-configuratie"
+      },
+      "performanceSettings": {
+        "title": "Prestatie-instellingen",
+        "description": "Capaciteits- en prestatieconfiguratie van service"
+      },
+      "fields": {
+        "serviceName": "Servicenaam",
+        "protocol": "Protocol",
+        "ipAddress": "IP-adres",
+        "port": "Poort",
+        "endpoint": "Endpoint Pad",
+        "autoScaling": "Auto Schalen",
+        "maxConcurrency": "Max Gelijktijdige Verzoeken",
+        "initialStatus": "Initiële Status"
+      },
+      "placeholders": {
+        "serviceName": "Voer servicenaam in",
+        "ipAddress": "bijv., 192.168.1.100"
+      },
+      "descriptions": {
+        "serviceName": "Leesbare naam voor de webservice",
+        "autoScaling": "Schakel automatisch schalen in op basis van belasting",
+        "maxConcurrency": "Maximum aantal gelijktijdige verzoeken (1-100)"
+      },
+      "statusOptions": {
+        "active": "Actief",
+        "inactive": "Inactief",
+        "maintenance": "Onderhoud"
+      },
+      "validation": {
+        "ipInvalid": "Voer een geldig IP-adres in",
+        "portRange": "Poort moet tussen 1 en 65535 liggen",
+        "concurrencyRange": "Max gelijktijdigheid moet tussen 1 en 100 liggen",
+        "nameRequired": "Servicenaam is verplicht",
+        "ipRequired": "IP-adres is verplicht",
+        "portRequired": "Poort is verplicht"
+      }
+    },
+    "workspace": {
+      "details": {
+        "title": "Details",
+        "description": "Voer de werkruimtenaam en optionele beschrijving in"
+      },
+      "fields": {
+        "name": "Werkruimte Naam",
+        "description": "Beschrijving"
+      },
+      "placeholders": {
+        "name": "Voer werkruimtenaam in",
+        "description": "Voer werkruimtebeschrijving in (optioneel)"
+      },
+      "descriptions": {
+        "name": "Een unieke naam voor uw werkruimte",
+        "description": "Optionele beschrijving van het doel van de werkruimte"
+      },
+      "validation": {
+        "nameRequired": "Werkruimtenaam is verplicht"
+      }
+    },
+    "moveModel": {
+      "destination": {
+        "title": "Bestemming",
+        "description": "Selecteer de doelwerkruimte voor het model"
+      },
+      "fields": {
+        "targetWorkspace": "Doelwerkruimte"
+      },
+      "placeholders": {
+        "selectWorkspace": "Selecteer een werkruimte"
+      },
+      "descriptions": {
+        "targetWorkspace": "Kies de werkruimte waarnaar het model wordt verplaatst"
+      },
+      "defaultWorkspace": "Standaard Werkruimte"
+    },
+    "shareModel": {
+      "title": "Deel met een Individuele Gebruiker",
+      "description": "Voer het e-mailadres in van de gebruiker om mee te delen",
+      "emailDescription": "De gebruiker krijgt toegang tot dit model"
+    },
+    "bulkCopy": {
+      "title": "Aantal kopieën",
+      "description": "Geef aan hoeveel kopieën er voor elk geselecteerd model moeten worden gemaakt",
+      "fields": {
+        "copyCount": "Aantal kopieën",
+        "copyCountDescription": "Elk geselecteerd model wordt zo vaak gedupliceerd"
+      },
+      "validation": {
+        "min": "Minimaal 1 kopie is vereist",
+        "max": "Maximaal 10 kopieën toegestaan",
+        "integer": "Moet een geheel getal zijn"
+      }
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Welkom!",
+      "description": "Laten we je voorkeuren instellen om te beginnen",
+      "greeting": "Welkom bij het energiesimulatieplatform!",
+      "intro": "Laten we even de tijd nemen om je voorkeuren in te stellen. Dit helpt ons je ervaring te personaliseren en je de meest relevante informatie te geven.",
+      "step1": "Kies je voorkeurstaal",
+      "step2": "Stel je weer- en kaartvoorkeuren in",
+      "step3": "Configureer meldingsinstellingen",
+      "timeNote": "Dit duurt maar een minuut"
+    },
+    "language": {
+      "title": "Taalvoorkeur",
+      "description": "Selecteer je voorkeurstaal voor de applicatie"
+    },
+    "weather": {
+      "title": "Weervoorkeuren",
+      "description": "Stel je voorkeurslocatie in voor weerinformatie"
+    },
+    "map": {
+      "title": "Kaartvoorkeuren",
+      "description": "Configureer je standaard kaartlocatie"
+    },
+    "notifications": {
+      "title": "Meldingsvoorkeuren",
+      "description": "Kies hoe je waarschuwingen en updates wilt ontvangen"
+    },
+    "navigation": {
+      "previous": "Vorige",
+      "next": "Volgende",
+      "complete": "Voltooien",
+      "completing": "Voltooien...",
+      "skip": "Overslaan"
+    }
+  },
+  "regionSelector": {
+    "goToRegion": "Ga naar regio",
+    "jumpToRegion": "Ga naar een regio met beschikbare rastergegevens",
+    "searchPlaceholder": "Regio's zoeken...",
+    "sortByGridCount": "Sorteren op rasteraantal",
+    "sortByName": "Sorteren op naam",
+    "setAsDefault": "Instellen als standaardregio",
+    "removeAsDefault": "Verwijderen als standaardregio",
+    "favorite": "Favorieten",
+    "recent": "Recent",
+    "noRegionsFound": "Geen regio's gevonden",
+    "coverageHigh": "Hoge gegevensdekking",
+    "coverageMedium": "Gemiddelde gegevensdekking",
+    "coverageLow": "Lage gegevensdekking",
+    "summaryFooter": "{{countries}} landen · {{regions}} regio's · {{grids}} rasters"
+  },
+  "modelResults": {
+    "details": {
+      "awaiting": "Wachten op resultaat…",
+      "country": "Land",
+      "days": "dagen",
+      "description": "Beschrijving",
+      "from": "Van",
+      "location": "Locatie",
+      "period": "Beoordelingsperiode",
+      "region": "Regio",
+      "title": "Titel",
+      "to": "Tot",
+      "updated": "Bijgewerkt"
+    },
+    "empty": {
+      "hint": "De simulatie-uitvoer verschijnt hier zodra de verwerking is voltooid.",
+      "title": "Nog geen resultaat voor dit model."
+    },
+    "errors": {
+      "layerIncomplete": "De laagconfiguratie is onvolledig",
+      "layerLoad": "Laag laden vanaf GeoServer mislukt",
+      "loadFailed": "Modelresultaten laden mislukt",
+      "noId": "Geen model-ID opgegeven",
+      "tileLoad": "Sommige tegels konden niet van GeoServer worden geladen ({{count}})"
+    },
+    "layer": {
+      "hidden": "Verborgen",
+      "opacity": "Dekking",
+      "publishing": "Laag publiceren naar GeoServer…",
+      "visible": "Zichtbaar"
+    },
+    "layers": {
+      "labels": "Labels & plaatsen",
+      "roads": "Wegen",
+      "title": "Overlays"
+    },
+    "legend": {
+      "allLevels": "Alle beschikbare niveaus",
+      "title": "Brandrisico"
+    },
+    "loadingModels": "Modellen laden…",
+    "loadingWorkspace": "Werkruimte laden…",
+    "map": {
+      "initializing": "Kaart initialiseren…"
+    },
+    "noCompletedModels": "Geen voltooide modellen",
+    "risk": {
+      "analyzedSurface": "Geldige pixels (geen nodata)",
+      "distribution": "Risicoverdeling",
+      "highPlusArea": "Gebied Hoog + Zeer hoog",
+      "highPlusPixels": "Pixels Hoog + Zeer hoog",
+      "highRiskArea": "Gebied Hoog + Zeer hoog",
+      "meanScore": "Gemiddelde score",
+      "notReady": "De statistieken zijn beschikbaar zodra de laag in GeoServer is geconfigureerd.",
+      "ofArea": "van het gebied",
+      "overall": "Totaal risico",
+      "sampleNote": "Gebaseerd op {{count}} gesamplede pixels",
+      "totalArea": "Geanalyseerd gebied"
+    },
+    "selectModel": "Selecteer een model",
+    "title": "Modelresultaten"
+  },
+  "landing": {
+    "nav": {
+      "challenge": "De uitdaging",
+      "platform": "Platform",
+      "personas": "Voor wie",
+      "contact": "Contact"
+    },
+    "openApp": "Open de Wildfire-app",
+    "languageLabel": "Taal",
+    "hero": {
+      "badge": "Gemeenschapsgerichte bosbrandpreventie",
+      "title": "Inzicht in bosbrandrisico voor plattelandsgemeenschappen",
+      "subtitle": "Een geospatiaal platform voor gemeenten, civiele bescherming en onderzoekers om bosbrandrisico in kaart te brengen, te modelleren en erop te reageren — lokale kennis en data worden proactieve bescherming voordat de vlammen ontstaan.",
+      "explore": "Verken het platform",
+      "why": "Waarom het belangrijk is"
+    },
+    "challenge": {
+      "eyebrow": "De uitdaging waarvoor we staan",
+      "title": "Bosbranden zijn geen geïsoleerde rampen meer — ze zijn een seizoenscrisis",
+      "p1": "In heel Zuid-Europa veranderen stijgende temperaturen, langere droogtes en onvoorspelbaar weer bossen in brandstof. Plattelandsontvolking betekent minder landbeheer en meer vegetatie-opbouw, waardoor branden heviger en moeilijker te beheersen worden.",
+      "p2": "De recente seizoenen in Portugal, Spanje en Griekenland behoorden tot de ergste ooit — ze kostten levens, vernietigden ecosystemen en verdreven gemeenschappen, terwijl ze landbouw, bosbouw, toerisme en de basisveiligheid bedreigden. Lokale actoren blijven onvoldoende uitgerust en ondersteund.",
+      "cards": {
+        "hotter": {
+          "title": "Warmere, drogere seizoenen",
+          "text": "Klimaatverandering verlengt het brandseizoen jaar na jaar."
+        },
+        "vegetation": {
+          "title": "Vegetatie-opbouw",
+          "text": "Ontvolking laat landschappen onbeheerd en brandstofrijk achter."
+        },
+        "cascading": {
+          "title": "Trapsgewijze impact",
+          "text": "Ecosystemen, economieën en het plattelandsleven lopen allemaal gevaar."
+        },
+        "tooling": {
+          "title": "Beperkte hulpmiddelen",
+          "text": "Gemeenschappen missen gedeelde, datagestuurde beslissingsondersteuning."
+        }
+      },
+      "imgAlt1": "Bosbrand verspreidt zich langs een landweg",
+      "imgAlt2": "Brandweerman bestrijdt vlammen"
+    },
+    "platform": {
+      "eyebrow": "Hoe het werkt",
+      "title": "Van een gebied op de kaart naar gedeeld risicobewijs",
+      "subtitle": "Het platform combineert 3D-gebouw- en terreingegevens, geospatiale analyse en een bosbrandrisico-engine in één rolgerichte workflow.",
+      "step": "STAP",
+      "imgAlt": "Bosbrandbestrijdingsteam in het veld",
+      "steps": {
+        "define": {
+          "title": "Een gebied bepalen",
+          "text": "Zoek een gemeente en teken het interessegebied direct op de interactieve kaart."
+        },
+        "run": {
+          "title": "Een risicomodel uitvoeren",
+          "text": "Plaats een bosbrandrisicoberekening voor uw AOI in de wachtrij met de geconfigureerde engine."
+        },
+        "inspect": {
+          "title": "Resultaten bekijken",
+          "text": "Verken de geclassificeerde risico-overlay met optionele brandstofmodel- en vegetatielagen."
+        },
+        "compare": {
+          "title": "Vergelijken & delen",
+          "text": "Vergelijk scenario's naast elkaar, exporteer artefacten en deel ze met belanghebbenden."
+        }
+      }
+    },
+    "capabilities": {
+      "eyebrow": "Mogelijkheden",
+      "title": "Alles wat u nodig hebt om risico te beoordelen en uit te leggen",
+      "items": {
+        "mapping": {
+          "title": "Interactieve kaarten",
+          "text": "2D-kaarten met polygoontekening, plaatszoeken en persistente werkgebieden."
+        },
+        "engine": {
+          "title": "Bosbrandrisico-engine",
+          "text": "Geclassificeerde risicorasters met gekalibreerde ernst en schattingen van hoogrisicogebieden."
+        },
+        "metrics": {
+          "title": "Statistieken & vergelijking",
+          "text": "Risicokaarten, verdelingsgrafieken, delta's en trends over modelruns."
+        },
+        "fuel": {
+          "title": "Brandstof- & vegetatielagen",
+          "text": "Optionele FMT- en NDVI-overlays om te begrijpen waarom de risicokaart zich zo gedraagt."
+        },
+        "multilingual": {
+          "title": "Meertalig & toegankelijk",
+          "text": "Beschikbaar in 8 talen met duidelijke labels en rondleidingen voor elke rol."
+        },
+        "secure": {
+          "title": "Veilig & beheerd",
+          "text": "Rolgebaseerde toegang, gecontroleerde resultaten en EU-conforme privacycontroles."
+        }
+      }
+    },
+    "personas": {
+      "eyebrow": "Voor wie",
+      "title": "Eén platform, rolgerichte bosbrandrisico-informatie",
+      "items": {
+        "planners": {
+          "title": "Gemeentelijke en civiele-beschermingsplanners",
+          "text": "Maak en leg bosbrandrisicobeoordelingen uit en informeer besluitvormers."
+        },
+        "analysts": {
+          "title": "Bosbrandrisicoanalisten",
+          "text": "Valideer GIS-lagen, risicostatistieken en engine-uitvoer op expertniveau."
+        },
+        "researchers": {
+          "title": "Onderzoekers & GIS-teams",
+          "text": "Download GeoTIFF/ZIP-uitvoer en bestudeer brandstofmodellen en vegetatie-indices."
+        },
+        "leads": {
+          "title": "Workshopleiders & beoordelaars",
+          "text": "Geef trainingen en beoordeel gedeeld risicobewijs met beperkte toegang."
+        }
+      }
+    },
+    "contact": {
+      "eyebrow": "Neem contact op",
+      "title": "Start een gesprek",
+      "subtitle": "Vertel ons over uw regio en hoe u het platform wilt gebruiken. Het team neemt contact met u op — geen account nodig om ons te bereiken.",
+      "responseTime": "We reageren doorgaans binnen enkele werkdagen.",
+      "name": "Naam",
+      "email": "E-mail",
+      "category": "Categorie",
+      "subject": "Onderwerp",
+      "message": "Bericht",
+      "send": "Bericht verzenden",
+      "sending": "Verzenden…",
+      "successTitle": "Bericht verzonden",
+      "successText": "Bedankt voor uw bericht — we nemen snel contact op.",
+      "sendAnother": "Nog een bericht verzenden",
+      "validationError": "Vul naam, e-mail, onderwerp en bericht in.",
+      "genericError": "Er is iets misgegaan. Probeer het opnieuw.",
+      "submitFailed": "Verzenden mislukt.",
+      "agree": "Door te verzenden gaat u akkoord met ons",
+      "privacyPolicy": "privacybeleid",
+      "categories": {
+        "general": "Algemene vraag",
+        "partnership": "Samenwerking",
+        "bug": "Bugmelding"
+      }
+    },
+    "footer": {
+      "tagline": "Gemeenschapsgerichte strategieën om bosbrandrisico in landelijk Europa te voorkomen en beheersen.",
+      "privacy": "Privacybeleid",
+      "cookies": "Cookiebeleid",
+      "impressum": "Impressum",
+      "terms": "Algemene voorwaarden",
+      "euFundedAlt": "Gefinancierd door de Europese Unie",
+      "euDisclaimer": "Gefinancierd door de Europese Unie in het kader van subsidieovereenkomst 101132652. De geuite standpunten en meningen zijn echter uitsluitend die van de auteur(s) en weerspiegelen niet noodzakelijk die van de Europese Unie of het Europees Uitvoerend Agentschap onderzoek (REA). Noch de Europese Unie, noch de subsidieverlenende autoriteit kan ervoor aansprakelijk worden gesteld.",
+      "builtOn": "Gebouwd op het STORCITO-platform",
+      "copyright": "Wildfire App · Technische Hochschule Deggendorf"
+    },
+    "stats": {
+      "affectedArea": "Getroffen Gebied",
+      "municipalities": "Gemeenten in Galicië",
+      "riskDistribution": "Risicoverdeling",
+      "trendAnalysis": "Risicotrendanalyse"
+    }
+  }
+}

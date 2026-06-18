@@ -1,0 +1,1759 @@
+{
+  "common": {
+    "save": "Uložit",
+    "cancel": "Zrušit",
+    "delete": "Smazat",
+    "edit": "Upravit",
+    "create": "Vytvořit",
+    "close": "Zavřít",
+    "confirm": "Potvrdit",
+    "loading": "Načítání...",
+    "error": "Chyba",
+    "success": "Úspěch",
+    "warning": "Varování",
+    "info": "Informace",
+    "yes": "Ano",
+    "no": "Ne",
+    "ok": "OK",
+    "back": "Zpět",
+    "next": "Další",
+    "submit": "Odeslat",
+    "search": "Hledat",
+    "filter": "Filtrovat",
+    "reset": "Obnovit",
+    "clear": "Vymazat",
+    "clearAll": "Vymazat vše",
+    "selectAll": "Vybrat vše",
+    "noResults": "Žádné výsledky",
+    "actions": "Akce",
+    "settings": "Nastavení",
+    "logout": "Odhlásit",
+    "login": "Přihlásit",
+    "register": "Registrovat",
+    "unknown": "Neznámý",
+    "more": "více",
+    "add": "Přidat",
+    "refresh": "Obnovit",
+    "healthCheck": "Kontrola stavu",
+    "na": "N/A",
+    "from": "Od",
+    "to": "Do",
+    "duration": "Trvání",
+    "days": "dní",
+    "country": "Země",
+    "region": "Region",
+    "status": "Stav",
+    "createdAt": "Vytvořeno",
+    "updatedAt": "Naposledy aktualizováno",
+    "workspace": "Pracovní prostor",
+    "results": "Výsledky",
+    "name": "Název",
+    "description": "Popis",
+    "id": "ID",
+    "current": "Aktuální",
+    "max": "Max",
+    "tooltips": {
+      "viewOnMap": "Zobrazit na Mapě",
+      "editLocation": "Upravit Polohu",
+      "editName": "Upravit název",
+      "duplicate": "Duplikovat",
+      "view": "Zobrazit",
+      "share": "Sdílet",
+      "moveToWorkspace": "Přesunout do Pracovního Prostoru",
+      "profile": "Profil",
+      "documentation": "Dokumentace",
+      "restartTour": "Restartovat prohlídku",
+      "feedback": "Zpětná vazba",
+      "theme": "Motiv",
+      "searchLocation": "Hledat místo"
+    },
+    "sidebar": {
+      "energySimulations": "Energetické Simulace",
+      "map": "Mapa",
+      "locations": "Polohy",
+      "simulationReports": "Porovnání Modelů",
+      "technologies": "Technologie",
+      "simulations": "Simulace Wildfire"
+    },
+    "menu": {
+      "profile": "Profil",
+      "settings": "Nastavení",
+      "logout": "Odhlásit"
+    },
+    "modelActions": {
+      "viewResults": "Zobrazit Výsledky",
+      "downloadResults": "Stáhnout Výsledky",
+      "copyConfiguration": "Kopírovat Konfiguraci",
+      "editConfiguration": "Upravit Konfiguraci",
+      "cannotEditCompleted": "Nelze upravit dokončený model",
+      "moveToWorkspace": "Přesunout do Pracovního Prostoru",
+      "shareModel": "Sdílet Model",
+      "delete": "Smazat",
+      "cannotDelete": "Nelze smazat - pouze vlastník nebo expert může smazat",
+      "retryCalculation": "Opakovat Výpočet",
+      "startCalculation": "Zahájit Výpočet",
+      "engineNotAvailable": "Simulační motor není k dispozici"
+    },
+    "pagination": {
+      "showing": "Zobrazeno",
+      "to": "až",
+      "of": "z",
+      "results": "výsledků",
+      "noResults": "Žádné výsledky",
+      "loading": "Načítání...",
+      "perPage": "na stránku",
+      "previousPage": "Předchozí stránka",
+      "nextPage": "Další stránka"
+    },
+    "appName": "Hodnocení rizika požárů",
+    "saved": "Uloženo"
+  },
+  "dashboard": {
+    "stats": {
+      "totalModels": "Celkem Modelů",
+      "draft": "Koncept",
+      "inProgress": "Probíhá",
+      "completed": "Dokončeno",
+      "published": "Publikováno",
+      "modelLimit": "Limit Modelů",
+      "unlimited": "Neomezeno"
+    }
+  },
+  "notifications": {
+    "title": "Oznámení",
+    "noNotifications": "Žádná oznámení",
+    "allCaughtUp": "Vše je přečteno!",
+    "markAllRead": "Označit vše jako přečtené",
+    "clearAll": "Vymazat vše",
+    "viewAll": "Zobrazit všechna oznámení",
+    "moreNotification": "+{{count}} další oznámení",
+    "moreNotifications": "+{{count}} dalších oznámení",
+    "details": "Podrobnosti",
+    "close": "Zavřít",
+    "scheduledFor": "Naplánováno na:",
+    "service": "Služba",
+    "last30Days": "Posledních 30 dní",
+    "unread": "{{count}} nepřečtených",
+    "loading": "Načítání oznámení...",
+    "confirmClearTitle": "Vymazat všechna oznámení?",
+    "confirmClearDescription": "Opravdu chcete vymazat všechna oznámení? Tuto akci nelze vrátit zpět.",
+    "confirmClearButton": "Vymazat vše",
+    "dismiss": "Zavřít",
+    "types": {
+      "success": "Úspěch",
+      "error": "Chyba",
+      "warning": "Varování",
+      "info": "Info",
+      "maintenance": "Údržba"
+    },
+    "totalExecutionTime": "Celková Doba Provádění",
+    "completedIn": "Úspěšně dokončeno za {{time}}",
+    "failedAfter": "Selhalo po {{time}}",
+    "cancelledAfter": "Zrušeno po {{time}}",
+    "messages": {
+      "modelCalculationComplete": "Výpočet modelu dokončen",
+      "modelCalculationCompleteMessage": "Váš model '{{modelName}}' byl úspěšně vypočítán a je připraven k zobrazení.",
+      "modelCalculationFailed": "Výpočet modelu selhal",
+      "modelCalculationFailedMessage": "Výpočet modelu '{{modelName}}' selhal. Zkuste to prosím znovu.",
+      "modelCalculationStarted": "Výpočet modelu zahájen",
+      "modelCalculationStartedMessage": "Výpočet modelu '{{modelName}}' byl zahájen."
+    }
+  },
+  "modelStatus": {
+    "draft": "Koncept",
+    "queue": "Ve Frontě",
+    "calculating": "Výpočet",
+    "running": "Běží",
+    "processing": "Zpracování",
+    "completed": "Dokončeno",
+    "published": "Publikováno",
+    "failed": "Selhalo",
+    "cancelled": "Zrušeno",
+    "modified": "Upraveno"
+  },
+  "auth": {
+    "signIn": "Přihlásit se",
+    "signUp": "Registrovat se",
+    "signOut": "Odhlásit se",
+    "signingIn": "Přihlašování...",
+    "email": "E-mail",
+    "password": "Heslo",
+    "confirmPassword": "Potvrdit heslo",
+    "enterYourEmail": "Zadejte svůj e-mail",
+    "enterYourPassword": "Zadejte své heslo",
+    "welcomeBack": "Vítejte zpět",
+    "signInToContinue": "Přihlaste se pro pokračování",
+    "or": "nebo",
+    "dontHaveAccount": "Nemáte účet?",
+    "alreadyHaveAccount": "Už máte účet?",
+    "forgotPassword": "Zapomněli jste heslo?",
+    "rememberMe": "Zapamatovat si mě",
+    "loginFailed": "Přihlášení se nezdařilo",
+    "verificationEmailSent": "Ověřovací e-mail odeslán",
+    "checkInboxVerify": "Zkontrolujte svou doručenou poštu a klikněte na ověřovací odkaz.",
+    "emailVerificationRequired": "Vyžadováno ověření e-mailu",
+    "sending": "Odesílání...",
+    "resendVerificationEmail": "Znovu odeslat ověřovací e-mail",
+    "protectedByEncryption": "Chráněno standardním šifrováním",
+    "createAccount": "Vytvořit Účet",
+    "joinUsAccess": "Připojte se k nám pro přístup k platformě energetické simulace",
+    "personalInformation": "Osobní Informace",
+    "fullName": "Celé Jméno",
+    "enterFullName": "Zadejte své celé jméno",
+    "emailAddress": "E-mailová Adresa",
+    "enterEmailAddress": "Zadejte svou e-mailovou adresu",
+    "security": "Zabezpečení",
+    "confirmYourPassword": "Potvrďte své heslo",
+    "passwordRequirements": {
+      "title": "Požadavky na Heslo",
+      "minChars": "Alespoň 8 znaků",
+      "uppercase": "Jedno velké písmeno",
+      "lowercase": "Jedno malé písmeno",
+      "number": "Jedna číslice",
+      "specialChar": "Jeden speciální znak",
+      "hasSpaces": "Heslo obsahuje mezery na začátku nebo na konci"
+    },
+    "organizationDetails": "Údaje o Organizaci",
+    "organization": "Organizace",
+    "enterOrganization": "Zadejte svou organizaci",
+    "position": "Pozice",
+    "enterPosition": "Zadejte svou pozici",
+    "phoneNumber": "Telefonní Číslo",
+    "enterPhoneNumber": "Zadejte své telefonní číslo",
+    "accessLevel": "Úroveň Přístupu",
+    "veryLow": "Velmi Nízká",
+    "low": "Nízká",
+    "intermediate": "Střední",
+    "manager": "Manažer",
+    "expert": "Expert",
+    "forgotPasswordTitle": "Zapomenuté Heslo",
+    "forgotPasswordDescription": "Zadejte svou e-mailovou adresu a pošleme vám instrukce pro reset hesla.",
+    "secureResetProcess": "Bezpečný proces resetování",
+    "sendResetInstructions": "Odeslat Instrukce",
+    "backToLogin": "Zpět na Přihlášení",
+    "cancel": "Zrušit",
+    "checkSpamFolder": "Pokud e-mail nevidíte, zkontrolujte prosím složku spamu nebo nevyžádané pošty.",
+    "checkYourEmail": "Zkontrolujte svůj e-mail",
+    "note": "Poznámka",
+    "sentResetInstructions": "Odeslali jsme pokyny pro obnovení hesla na vaši e-mailovou adresu.",
+    "signUpNow": "Zaregistrujte se nyní",
+    "createPassword": "Vytvořte heslo",
+    "creating": "Vytváření...",
+    "agreeToTerms": "Vytvořením účtu souhlasíte s našimi Podmínkami služby",
+    "signInHere": "Přihlaste se zde",
+    "sidePanel": {
+      "badge": "Analýza rizika požárů",
+      "title": "Chraňte venkovské komunity dříve, než vzplanou plameny",
+      "subtitle": "Mapujte, modelujte a jednejte v oblasti rizika požárů — proměňte místní znalosti a geoprostorová data v proaktivní ochranu ve venkovské Evropě.",
+      "funded": "Financováno Evropskou unií · Postaveno na platformě STORCITO"
+    }
+  },
+  "workspace": {
+    "workspace": "Pracovní prostor",
+    "workspaces": "Pracovní prostory",
+    "selectWorkspace": "Vybrat pracovní prostor",
+    "defaultWorkspace": "Výchozí pracovní prostor",
+    "default": "Výchozí",
+    "shared": "Sdíleno",
+    "searchWorkspaces": "Hledat pracovní prostory...",
+    "noWorkspacesMatch": "Žádný pracovní prostor neodpovídá vašemu hledání",
+    "noWorkspacesFound": "Nebyly nalezeny žádné pracovní prostory",
+    "createNewWorkspace": "Vytvořit nový pracovní prostor",
+    "createDescription": "Vytvořte nový pracovní prostor pro organizaci vašich modelů a spolupráci s ostatními",
+    "createWorkspace": "Vytvořit pracovní prostor",
+    "renameWorkspace": "Přejmenovat pracovní prostor",
+    "renameDescription": "Zadejte nový název pro váš pracovní prostor",
+    "copyWorkspaceTitle": "Kopírovat pracovní prostor",
+    "copyDescription": "Vytvořit kopii tohoto pracovního prostoru s novým názvem",
+    "saveChanges": "Uložit změny",
+    "copyWorkspace": "Kopírovat pracovní prostor",
+    "sharedWithYouBy": "Sdíleno s vámi uživatelem {{user}}",
+    "sharedWithUsers": "Sdíleno s uživateli",
+    "sharedWithGroups": "Sdíleno se skupinami",
+    "anotherUser": "jiným uživatelem",
+    "noMembersYet": "Zatím žádní členové. Sdílejte s někým pro spolupráci!",
+    "noGroupsYet": "Zatím žádná skupina nemá přístup. Sdílejte se skupinou pro přístup všech členů!",
+    "removeMember": "Odstranit člena",
+    "removeGroup": "Odstranit skupinu"
+  },
+  "model": {
+    "title": "Model",
+    "models": "Modely",
+    "newModel": "Nový model",
+    "editModel": "Upravit model",
+    "deleteModel": "Smazat model",
+    "modelName": "Název modelu",
+    "description": "Popis",
+    "status": "Stav",
+    "created": "Vytvořeno",
+    "updated": "Aktualizováno",
+    "running": "Běží",
+    "completed": "Dokončeno",
+    "failed": "Selhalo",
+    "pending": "Čeká",
+    "queued": "Ve frontě",
+    "runSimulation": "Spustit simulaci",
+    "viewResults": "Zobrazit výsledky",
+    "duplicate": "Duplikovat",
+    "export": "Exportovat",
+    "compare": "Porovnat",
+    "dashboard": "Panel modelů",
+    "manageConfigurations": "Spravujte konfigurace hodnocení požárů",
+    "searchModels": "Hledat modely...",
+    "allModels": "Všechny modely",
+    "modelGroups": "Skupiny modelů",
+    "loadingWorkspace": "Načítání pracovního prostoru...",
+    "loadingModels": "Načítání modelů...",
+    "loadingWorkspaceDescription": "Prosím počkejte, inicializujeme vaše preference pracovního prostoru.",
+    "loadingModelsDescription": "Prosím počkejte, načítáme vaše modely energetického hodnocení.",
+    "selectWorkspace": "Vyberte nebo vytvořte pracovní prostor",
+    "refreshModels": "Obnovit seznam modelů",
+    "share": "Sdílet",
+    "shareDescription": "Sdílet \"{{title}}\" s jiným uživatelem",
+    "copy": "Kopírovat",
+    "rename": "Přejmenovat",
+    "delete": "Smazat",
+    "move": "Přesunout",
+    "shareWorkspace": "Sdílet tento pracovní prostor",
+    "copyWorkspace": "Vytvořit kopii tohoto pracovního prostoru",
+    "renameWorkspace": "Přejmenovat tento pracovní prostor",
+    "deleteWorkspace": "Smazat tento pracovní prostor",
+    "moveToWorkspace": "Přesunout do pracovního prostoru",
+    "noModelsFound": "Žádné modely nenalezeny",
+    "noModelsMatch": "Žádný model neodpovídá \"{{search}}\". Zkuste upravit vyhledávání.",
+    "noModelsYet": "Zatím jste nevytvořili žádné modely energetického hodnocení. Začněte vytvořením prvního modelu!",
+    "createFirstModel": "Vytvořte svůj první model",
+    "selected": "vybráno",
+    "deleteSelected": "Smazat vybrané",
+    "moveSelected": "Přesunout vybrané",
+    "cannotDelete": "Nelze smazat - modely jsou zakázány nebo vám nepatří",
+    "cannotMove": "Nelze přesunout - modely vám nepatří",
+    "sharedCannotDelete": "Sdílené modely nelze smazat. Nejprve je zkopírujte",
+    "sharedCannotMove": "Sdílené modely nelze přesunout. Nejprve je zkopírujte",
+    "sharedCannotShare": "Sdílené modely nelze znovu sdílet. Nejprve je zkopírujte",
+    "limitReached": "Dosáhli jste limitu pro vytváření modelů",
+    "selectAll": "Vybrat vše",
+    "deselectAll": "Zrušit výběr",
+    "actions": "Akce",
+    "name": "Název modelu",
+    "owner": "Vlastník",
+    "workspace": "Pracovní prostor",
+    "draft": "Koncept",
+    "published": "Publikováno",
+    "total": "Celkem",
+    "queue": "Fronta",
+    "copyOf": "Kopie \"{{name}}\"",
+    "ownedBy": "Vlastník",
+    "parentModel": "Nadřazený model",
+    "parent": "Nadřazený",
+    "anotherModel": "jiného modelu",
+    "failedDefaultMessage": "Výpočet selhal - webová služba nedostupná nebo vypršel časový limit",
+    "waiting": "Čekání",
+    "queuedTooltip": "Váš model je ve frontě - simulační engine zpracovává jiné výpočty",
+    "compareRequires2Completed": "Vyberte přesně 2 dokončené modely k porovnání",
+    "bulkCopy": "Kopírovat modely",
+    "bulkCopyDescription": "Vytvořit kopie {{count}} vybraného modelu/modelů",
+    "bulkCopyFailed": "Některé modely se nepodařilo zkopírovat. Zkuste to znovu.",
+    "bulkCopySubmit": "Vytvořit kopie",
+    "calculate": "Vypočítat",
+    "cannotCalculate": "Nelze vypočítat – nejsou vybrány žádné vhodné modely",
+    "noWebserviceAvailable": "Simulační engine není k dispozici",
+    "cancelled": "Zrušeno",
+    "modified": "Upraveno"
+  },
+  "polygon": {
+    "drawRegion": "Nakreslete svůj region",
+    "clickToStart": "Klikněte pro začátek",
+    "clickAnywhere": "Klikněte kamkoli na mapě pro umístění prvního bodu",
+    "addMorePoints": "Přidejte další body",
+    "continueClicking": "Pokračujte v klikání pro ohraničení oblasti",
+    "closePolygon": "Uzavřít polygon",
+    "doubleClickOrClick": "Dvojklik nebo klik na počáteční bod pro dokončení",
+    "startEnd": "Start/Konec",
+    "clickHereToClose": "Klikněte zde pro uzavření",
+    "escToCancel": "pro zrušení kreslení",
+    "pointsAdded": "Přidáno {{count}}",
+    "editPolygon": "Upravit polygon",
+    "moveVertex": "Přesunout rohy",
+    "moveVertexHint": "Přetáhněte libovolný vrchol pro úpravu",
+    "addVertex": "Přidat bod",
+    "addVertexHint": "Klikněte na libovolnou hranu",
+    "removeVertex": "Odstranit bod",
+    "removeVertexHint": "klikněte na vrchol",
+    "escToClear": "pro vymazání polygonu"
+  },
+  "time": {
+    "justNow": "Právě teď",
+    "minutesAgo": "Před {{count}} minutou",
+    "minutesAgo_plural": "Před {{count}} minutami",
+    "hoursAgo": "Před {{count}} hodinou",
+    "hoursAgo_plural": "Před {{count}} hodinami",
+    "daysAgo": "Před {{count}} dnem",
+    "daysAgo_plural": "Před {{count}} dny",
+    "weeksAgo": "Před {{count}} týdnem",
+    "weeksAgo_plural": "Před {{count}} týdny"
+  },
+  "adminDashboard": {
+    "profile": "Profil",
+    "settings": "Nastavení",
+    "logout": "Odhlásit",
+    "tabs": {
+      "overview": "Přehled",
+      "allSimulationModels": "Všechny Simulační Modely",
+      "simulationEngine": "Simulační Engine",
+      "feedback": "Zpětná Vazba",
+      "userManagement": "Správa Uživatelů",
+      "gridEngine": "Compute Engine"
+    },
+    "stats": {
+      "accessLevel": "Úroveň Přístupu",
+      "availableLayers": "Dostupné Vrstvy",
+      "status": "Stav",
+      "totalUsers": "Celkem Uživatelů",
+      "lastLogin": "Poslední Přihlášení",
+      "active": "Aktivní",
+      "online": "Online",
+      "live": "Živě",
+      "updating": "Aktualizace",
+      "recent": "Nedávné",
+      "allMapLayers": "Všechny Vrstvy",
+      "mapLayers": "{{count}} Vrstev",
+      "mapLayer": "{{count}} Vrstva"
+    },
+    "accessLevels": {
+      "expert": "Expertní Přístup",
+      "manager": "Manažerský Přístup",
+      "intermediate": "Střední Přístup",
+      "veryLow": "Velmi Nízký Přístup",
+      "unknown": "Neznámý"
+    },
+    "accessTrends": {
+      "maximum": "Maximum",
+      "management": "Správa",
+      "upgradable": "Upgradovatelný",
+      "basic": "Základní"
+    },
+    "userProfile": {
+      "title": "Uživatelský Profil",
+      "subtitle": "Informace o vašem účtu",
+      "email": "E-mail",
+      "organization": "Organizace",
+      "position": "Pozice",
+      "phone": "Telefon"
+    },
+    "accessPermissions": {
+      "title": "Přístup a Oprávnění",
+      "subtitle": "Možnosti systému",
+      "active": "Aktivní",
+      "currentLevel": "Aktuální Úroveň",
+      "workspaces": "Pracovní Prostory",
+      "unlimited": "Neomezené",
+      "activeWorkspaces": "{{count}} Aktivních",
+      "teamSharing": "Sdílení Týmu",
+      "enabled": "Povoleno",
+      "disabled": "Zakázáno",
+      "modelQuota": "Kvóta Modelů",
+      "standardLimit": "Standardní Limit",
+      "computePower": "Výpočetní Výkon",
+      "highPerformance": "Vysoký Výkon",
+      "standard": "Standardní",
+      "availableFeatures": "Dostupné Funkce",
+      "allLayersAvailable": "Všechny Vrstvy Dostupné",
+      "fullSystemAccess": "Plný Přístup k Systému",
+      "energyRiskFinal": "Konečné Energetické Riziko",
+      "vegetationRisk": "Riziko Vegetace",
+      "topographyRisk": "Riziko Topografie",
+      "upgradeMessage": "Odemkněte více funkcí požádáním administrátora o upgrade.",
+      "fireRiskFinal": "Konečné Požární Riziko"
+    },
+    "quickActions": {
+      "title": "Rychlé Akce",
+      "subtitle": "Přejít na klíčové funkce",
+      "interactiveMap": "Interaktivní Mapa",
+      "viewRiskMap": "Zobrazit mapu hodnocení rizik",
+      "riskModels": "Modely Rizik",
+      "manageRiskModels": "Spravovat modely rizik",
+      "settings": "Nastavení",
+      "configurePreferences": "Konfigurovat preference"
+    },
+    "title": "Panel správce",
+    "welcomeBack": "Vítejte zpět, {{name}}!",
+    "managePlatform": "Spravujte svou platformu pro simulaci energie",
+    "administrator": "Administrátor",
+    "loadingContent": "Načítání obsahu..."
+  },
+  "userManagement": {
+    "title": "Správa uživatelů",
+    "subtitle": "Spravujte uživatele, skupiny a oprávnění",
+    "searchPlaceholder": "Hledat jméno, e-mail, organizaci...",
+    "refresh": "Obnovit",
+    "addNewUser": "Přidat nového uživatele",
+    "add": "Přidat",
+    "editUser": "Upravit uživatele",
+    "createUser": "Vytvořit uživatele",
+    "updateUser": "Aktualizovat uživatele",
+    "loadingUsers": "Načítání uživatelů...",
+    "noUsersFound": "Nebyli nalezeni žádní uživatelé",
+    "noUsersInGroup": "Ve vaší skupině nebyli nalezeni žádní uživatelé. Kontaktujte administrátora pro přiřazení uživatelů do vaší skupiny.",
+    "noUsersMatch": "Žádný uživatel neodpovídá \"{{search}}\"",
+    "noUsersMatchSearch": "Žádný uživatel neodpovídá \"{{search}}\"",
+    "addFirstUser": "Přidejte svého prvního uživatele a začněte.",
+    "dialog": {
+      "editTitle": "Upravit uživatele",
+      "addTitle": "Přidat nového uživatele",
+      "updateUser": "Aktualizovat uživatele",
+      "createUser": "Vytvořit uživatele"
+    },
+    "table": {
+      "user": "Uživatel",
+      "organization": "Organizace",
+      "position": "Pozice",
+      "accessLevel": "Úroveň přístupu",
+      "group": "Skupina",
+      "emailVerified": "E-mail ověřen",
+      "phone": "Telefon",
+      "actions": "Akce"
+    },
+    "emailStatus": {
+      "verified": "Ověřeno",
+      "unverified": "Neověřeno"
+    },
+    "actions": {
+      "changeGroup": "Změnit skupinu",
+      "enableUser": "Uživatel je deaktivován — klikněte pro aktivaci",
+      "disableUser": "Uživatel je aktivován — klikněte pro deaktivaci",
+      "editUser": "Upravit uživatele",
+      "deleteUser": "Smazat uživatele",
+      "copyEmail": "Kopírovat e-mail",
+      "copied": "Zkopírováno!",
+      "bulkDelete": "Odstranit vybrané",
+      "bulkMoveToGroup": "Přesunout do skupiny",
+      "deselectAll": "Zrušit výběr všeho",
+      "selectAll": "Vybrat vše",
+      "selected": "{{count}} vybráno"
+    },
+    "groups": {
+      "selectOrCreate": "Vyberte nebo vytvořte skupinu",
+      "renameGroup": "Přejmenovat skupinu",
+      "enableGroup": "Aktivovat skupinu a její uživatele",
+      "disableGroup": "Deaktivovat skupinu a její uživatele",
+      "deleteGroup": "Smazat skupinu a všechny její uživatele",
+      "defaultCannotDelete": "Výchozí skupinu nelze smazat",
+      "default": "Výchozí",
+      "unknown": "Neznámý",
+      "defaultGroup": "Výchozí skupina",
+      "unknownGroup": "Neznámá skupina",
+      "changeUserGroup": "Změnit skupinu uživatele",
+      "groupAssignment": "Přiřazení skupiny",
+      "selectGroup": "Vyberte skupinu",
+      "changeGroup": "Změnit skupinu",
+      "renameGroupTitle": "Přejmenovat skupinu",
+      "groupName": "Název skupiny",
+      "newGroupName": "Nový název skupiny",
+      "enterNewGroupName": "Zadejte nový název skupiny",
+      "rename": "Přejmenovat",
+      "createNewGroup": "Vytvořit novou skupinu",
+      "createGroupDescription": "Vytvořte novou skupinu pro organizaci uživatelů ve vaší organizaci",
+      "createGroup": "Vytvořit skupinu",
+      "groupNameRequired": "Název skupiny je povinný",
+      "groupCreated": "Skupina úspěšně vytvořena",
+      "failedToCreateGroup": "Nepodařilo se vytvořit skupinu",
+      "groupNamePlaceholder": "např. Hasiči, Záchranná služba",
+      "searchGroups": "Hledat skupiny...",
+      "allGroups": "Všechny skupiny",
+      "viewUsersFromAllGroups": "Zobrazit uživatele ze všech skupin",
+      "noGroups": "Žádné skupiny",
+      "loading": "Načítání...",
+      "noGroupsFound": "Žádné skupiny nenalezeny",
+      "noGroupsMatchSearch": "Žádné skupiny neodpovídají vašemu hledání",
+      "bulkChangeGroup": "Přesunout uživatele do skupiny",
+      "moveUsers": "Přesunout uživatele"
+    },
+    "notifications": {
+      "userCreated": "Uživatel úspěšně vytvořen!",
+      "userUpdated": "Uživatel úspěšně aktualizován!",
+      "userDeleted": "Uživatel úspěšně smazán!",
+      "userDisabled": "Uživatel úspěšně deaktivován!",
+      "userEnabled": "Uživatel úspěšně aktivován!",
+      "groupDisabled": "Skupina \"{{name}}\" deaktivována",
+      "groupEnabled": "Skupina \"{{name}}\" aktivována",
+      "groupDeleted": "Skupina \"{{name}}\" smazána",
+      "groupRenamed": "Skupina úspěšně přejmenována na \"{{name}}\"",
+      "userMovedToGroup": "Uživatel přesunut do nové skupiny a odhlášen. Musí se znovu přihlásit pro přístup k novému pracovnímu prostoru.",
+      "failedToCreate": "Nepodařilo se vytvořit uživatele",
+      "failedToUpdate": "Nepodařilo se aktualizovat uživatele",
+      "failedToDelete": "Nepodařilo se smazat uživatele",
+      "failedToDisable": "Nepodařilo se deaktivovat uživatele",
+      "failedToEnable": "Nepodařilo se aktivovat uživatele",
+      "failedToFetch": "Nepodařilo se načíst uživatele",
+      "failedToUpdateGroup": "Nepodařilo se aktualizovat skupinu uživatele",
+      "failedToRenameGroup": "Nepodařilo se přejmenovat skupinu",
+      "failedToCopyEmail": "Nepodařilo se zkopírovat e-mail",
+      "pleaseLogIn": "Přihlaste se pro zobrazení uživatelů",
+      "passwordMismatch": "Heslo a potvrzení se musí shodovat",
+      "bulkDeletePartial": "{{succeeded}} z {{total}} uživatelů bylo odstraněno. {{failed}} selhalo.",
+      "bulkDeleted": "{{count}} uživatelů bylo úspěšně odstraněno",
+      "bulkGroupChangeFailed": "Nepodařilo se přesunout uživatele do skupiny",
+      "bulkGroupChanged": "{{count}} uživatelů bylo úspěšně přesunuto do nové skupiny"
+    },
+    "confirmations": {
+      "disableUserDescription": "Uživatel se nebude moci přihlásit.",
+      "enableUserDescription": "Uživatel se bude moci znovu přihlásit.",
+      "disableGroupDescription": "Deaktivace skupiny deaktivuje všechny její uživatele.",
+      "enableGroupDescription": "Aktivace skupiny aktivuje všechny její uživatele.",
+      "deleteGroupDescription": "Tím smažete skupinu a všechny její uživatele. Tuto akci nelze vrátit.",
+      "bulkDeleteDescription": "Tímto trvale odstraníte {{count}} vybraných uživatelů. Tuto akci nelze vrátit zpět."
+    }
+  },
+  "modelsManagement": {
+    "title": "Všechny modely hodnocení simulace",
+    "subtitle": "Spravujte a sledujte všechny modely v systému",
+    "searchPlaceholder": "Hledat modely...",
+    "loadingModels": "Načítání modelů...",
+    "noModelsFound": "Nebyly nalezeny žádné modely",
+    "noModelsDescription": "Začněte vytvořením prvního modelu hodnocení simulace.",
+    "sharedWorkspace": "Sdílený pracovní prostor (Vlastník: {{owner}})",
+    "table": {
+      "model": "Model",
+      "status": "Stav",
+      "created": "Vytvořeno",
+      "lastModified": "Naposledy upraveno",
+      "actions": "Akce"
+    },
+    "status": {
+      "draft": "Koncept",
+      "inQueue": "Ve frontě",
+      "inProgress": "Probíhá",
+      "completed": "Dokončeno",
+      "published": "Publikováno"
+    },
+    "notifications": {
+      "duplicated": "Model \"{{title}}\" byl úspěšně duplikován",
+      "failedToDuplicate": "Nepodařilo se duplikovat model. Zkuste to prosím znovu.",
+      "calculationStarted": "Výpočet úspěšně zahájen",
+      "failedToCalculate": "Nepodařilo se zahájit výpočet. Zkuste to prosím znovu.",
+      "moveComingSoon": "Funkce přesunu do pracovního prostoru bude brzy dostupná pro \"{{title}}\"",
+      "shared": "Model úspěšně sdílen",
+      "deleted": "Model \"{{title}}\" byl smazán",
+      "failedToDelete": "Nepodařilo se smazat model. Zkuste to prosím znovu."
+    },
+    "refresh": "Obnovit"
+  },
+  "profile": {
+    "title": "Nastavení profilu",
+    "subtitle": "Spravujte své osobní údaje a předvolby účtu",
+    "goBack": "Zpět",
+    "loadingProfile": "Načítání vašeho profilu...",
+    "defaultUser": "Uživatel",
+    "accessLevel": "Úroveň přístupu",
+    "notSpecified": "Nespecifikováno",
+    "personalInfo": "Osobní informace",
+    "personalInfoDescription": "Aktualizujte své profilové údaje níže",
+    "readOnly": "pouze pro čtení",
+    "saving": "Ukládání...",
+    "saveChanges": "Uložit změny",
+    "fields": {
+      "fullName": "Celé jméno",
+      "email": "E-mailová adresa",
+      "organization": "Organizace",
+      "position": "Pozice",
+      "phone": "Telefon"
+    },
+    "placeholders": {
+      "fullName": "Zadejte své celé jméno",
+      "organization": "Vaše společnost nebo organizace",
+      "position": "Vaše pracovní pozice",
+      "phone": "+420 123 456 789"
+    },
+    "accessLevels": {
+      "basic": "Základní",
+      "basicDescription": "Standardní přístup k základním funkcím",
+      "intermediate": "Střední",
+      "intermediateDescription": "Rozšířený přístup s pokročilými funkcemi",
+      "expert": "Expert",
+      "expertDescription": "Plný přístup ke všem funkcím"
+    },
+    "notifications": {
+      "updated": "Profil úspěšně aktualizován!",
+      "failedToLoad": "Nepodařilo se načíst profil. Zkuste to prosím znovu.",
+      "failedToUpdate": "Nepodařilo se aktualizovat profil. Zkuste to prosím znovu."
+    },
+    "password": {
+      "confirm": "Potvrďte nové heslo",
+      "confirmPlaceholder": "Zadejte znovu nové heslo",
+      "current": "Současné heslo",
+      "currentPlaceholder": "Zadejte své současné heslo",
+      "description": "Aktualizujte heslo, které používáte k přihlášení",
+      "failed": "Změna hesla se nezdařila. Zkuste to znovu.",
+      "mismatch": "Hesla se neshodují",
+      "new": "Nové heslo",
+      "newPlaceholder": "Zadejte nové heslo",
+      "requirements": {
+        "lowercase": "Jedno malé písmeno",
+        "minChars": "Alespoň 8 znaků",
+        "number": "Jedno číslo",
+        "specialChar": "Jeden speciální znak",
+        "uppercase": "Jedno velké písmeno"
+      },
+      "requirementsNotMet": "Heslo nesplňuje všechny požadavky",
+      "submit": "Aktualizovat heslo",
+      "title": "Změnit heslo",
+      "updated": "Heslo bylo úspěšně změněno!",
+      "updating": "Aktualizace…"
+    }
+  },
+  "webservicesManagement": {
+    "title": "Správa simulačního enginu",
+    "subtitle": "Spravujte instance webservices výpočtů",
+    "searchPlaceholder": "Hledat podle názvu, IP...",
+    "refresh": "Obnovit",
+    "registerNew": "Registrovat nový webservice",
+    "loadingWebservices": "Načítání webservices...",
+    "noWebservicesFound": "Nebyly nalezeny žádné webservices",
+    "noWebservicesDescription": "Začněte registrací první instance webservice.",
+    "summary": {
+      "total": "Celkem",
+      "online": "Online",
+      "available": "Dostupný",
+      "busy": "Zaneprázdněný",
+      "offline": "Offline"
+    },
+    "yourSimulationStatus": "Váš stav simulace",
+    "modelsRunningDescription": "{{count}} vašich modelů se právě počítá",
+    "modelsQueuedDescription": "{{count}} vašich modelů čeká - simulační engine zpracovává jiné výpočty",
+    "filters": {
+      "allStatus": "Všechny stavy",
+      "active": "Aktivní",
+      "inactive": "Neaktivní",
+      "maintenance": "Údržba",
+      "error": "Chyba",
+      "allAvailability": "Všechna dostupnost",
+      "available": "Dostupný",
+      "unavailable": "Nedostupný"
+    },
+    "table": {
+      "service": "Služba",
+      "endpoint": "Endpoint",
+      "status": "Stav",
+      "availability": "Dostupnost",
+      "jobs": "Úlohy",
+      "performance": "Výkon",
+      "user": "Uživatel",
+      "ip": "IP adresa",
+      "port": "Port",
+      "lastCheck": "Poslední kontrola",
+      "actions": "Akce",
+      "never": "Nikdy"
+    },
+    "status": {
+      "online": "Online",
+      "offline": "Offline",
+      "available": "Dostupný",
+      "unavailable": "Nedostupný"
+    },
+    "busyStatus": {
+      "calculating": "Výpočet ({{current}}/{{max}})",
+      "idle": "Nečinný (0/{{max}})"
+    },
+    "actions": {
+      "pingWebservice": "Ping webservice",
+      "editWebservice": "Upravit webservice",
+      "deleteWebservice": "Smazat webservice"
+    },
+    "dialog": {
+      "editTitle": "Upravit instanci webservice",
+      "createTitle": "Registrovat nový webservice",
+      "editDescription": "Aktualizovat konfiguraci webservice",
+      "createDescription": "Nastavit novou instanci webservice pro simulační výpočty",
+      "editButton": "Aktualizovat webservice",
+      "createButton": "Registrovat webservice"
+    },
+    "notifications": {
+      "created": "Webservice úspěšně registrován!",
+      "updated": "Webservice úspěšně aktualizován!",
+      "deleted": "Webservice úspěšně smazán!",
+      "statusChanged": "Stav webservice změněn na {{status}}",
+      "failedToCreate": "Nepodařilo se registrovat webservice",
+      "failedToUpdate": "Nepodařilo se aktualizovat webservice",
+      "failedToDelete": "Nepodařilo se smazat webservice",
+      "failedToPing": "Nepodařilo se pingnout webservice"
+    },
+    "noWebservicesAvailable": "Žádné simulační motory nejsou aktuálně nakonfigurovány. Kontaktujte správce.",
+    "healthCheck": "Simulační motor"
+  },
+  "feedbackManagement": {
+    "title": "Správa Zpětné Vazby Uživatelů",
+    "subtitle": "Kontrolujte a odpovídejte na zpětnou vazbu uživatelů",
+    "refresh": "Obnovit",
+    "noFeedbackFound": "Žádná zpětná vazba nenalezena",
+    "noFeedbackDescription": "Zpětná vazba uživatelů se zde zobrazí po odeslání.",
+    "filters": {
+      "label": "Filtry:",
+      "allStatus": "Všechny Stavy",
+      "allCategories": "Všechny Kategorie",
+      "allPriorities": "Všechny Priority"
+    },
+    "statuses": {
+      "pending": "Čekající",
+      "inProgress": "Probíhající",
+      "resolved": "Vyřešeno",
+      "closed": "Uzavřeno"
+    },
+    "categories": {
+      "bug": "Hlášení Chyby",
+      "feature": "Požadavek na Funkci",
+      "improvement": "Vylepšení",
+      "general": "Obecné"
+    },
+    "priorities": {
+      "low": "Nízká",
+      "medium": "Střední",
+      "high": "Vysoká",
+      "critical": "Kritická"
+    },
+    "table": {
+      "subject": "Předmět",
+      "category": "Kategorie",
+      "priority": "Priorita",
+      "status": "Stav",
+      "rating": "Hodnocení",
+      "user": "Uživatel",
+      "created": "Vytvořeno",
+      "actions": "Akce"
+    },
+    "actions": {
+      "viewDetails": "Zobrazit Detaily",
+      "editStatus": "Upravit Stav",
+      "deleteFeedback": "Smazat Zpětnou Vazbu",
+      "delete": "Smazat"
+    },
+    "viewDialog": {
+      "title": "Detaily Zpětné Vazby",
+      "subtitle": "Zobrazit kompletní informace o zpětné vazbě",
+      "message": "Zpráva:",
+      "rating": "Hodnocení:",
+      "submitted": "Odesláno",
+      "adminResponse": "Odpověď Administrátora:",
+      "respondedOn": "Odpovězeno:",
+      "attachedImage": "Přiložený obrázek",
+      "feedbackScreenshot": "Snímek obrazovky zpětné vazby",
+      "clickToEnlarge": "Klikněte pro zvětšení",
+      "imageLoadError": "Nepodařilo se načíst obrázek",
+      "submittedBy": "Odesláno uživatelem"
+    },
+    "editDialog": {
+      "title": "Aktualizovat Zpětnou Vazbu",
+      "description": "Upravte stav zpětné vazby, prioritu a poskytněte odpověď administrátora",
+      "statusAndPriority": "Stav a Priorita Zpětné Vazby",
+      "statusAndPriorityDescription": "Aktualizujte stav a úroveň priority zpětné vazby",
+      "status": "Stav",
+      "priority": "Priorita",
+      "adminResponse": "Odpověď Administrátora",
+      "adminResponseDescription": "Poskytněte odpověď uživateli",
+      "response": "Odpověď",
+      "responsePlaceholder": "Přidejte svou odpověď uživateli...",
+      "saveChanges": "Uložit Změny"
+    },
+    "notifications": {
+      "updateSuccess": "Zpětná vazba \"{{subject}}\" úspěšně aktualizována",
+      "updateError": "Nepodařilo se aktualizovat zpětnou vazbu. Zkuste to prosím znovu.",
+      "deleteSuccess": "Zpětná vazba \"{{subject}}\" úspěšně smazána",
+      "deleteError": "Nepodařilo se smazat zpětnou vazbu. Zkuste to prosím znovu."
+    },
+    "hasAttachment": "Má přiložený obrázek"
+  },
+  "simulation": {
+    "simulationPeriod": "Období simulace",
+    "mapHeader": {
+      "clearAll": "Smazat vše"
+    },
+    "bufferDistance": {
+      "decrease": "Zmenšit vzdálenost bufferu",
+      "hint": "Rozsah 0–2000 m v krocích po 100 m. Rozšiřuje oblast kolem polygonu.",
+      "increase": "Zvětšit vzdálenost bufferu",
+      "label": "Vzdálenost bufferu (metry)"
+    }
+  },
+  "mapLayers": {
+    "title": "Mapové vrstvy",
+    "description": "Nakonfigurovat vzhled mapy a datové vrstvy",
+    "baseLayers": {
+      "title": "Základní vrstvy",
+      "description": "Vyberte styl podkladové mapy",
+      "osmStandard": "Standardní vrstva OpenStreetMap",
+      "osmHumanitarian": "Humanitární styl OpenStreetMap",
+      "cartoPositron": "Světlá základní mapa od CartoDB",
+      "cartoVoyager": "Podrobná základní mapa od CartoDB",
+      "openTopoMap": "Topografická stylová mapa",
+      "maplibreDark": "Tmavá vektorová podkladová mapa",
+      "maplibreVoyager": "Podrobná vektorová podkladová mapa (Voyager)"
+    },
+    "dataLayers": {
+      "title": "Datové vrstvy",
+      "energySimulation": "Konečná vrstva energetické simulace"
+    }
+  },
+  "tour": {
+    "product": {
+      "welcome": {
+        "title": "Vítejte na Platformě Simulace Wildfire!",
+        "description": "Udělejme si rychlou prohlídku, která vám pomůže začít s Platformou Simulace Wildfire.",
+        "tip": "Tato prohlídka se zobrazí pouze jednou. Můžete ji kdykoli přeskočit nebo restartovat z postranního panelu."
+      },
+      "newAssessment": {
+        "title": "Vytvořit novou simulaci",
+        "description": "Připraveni začít? Klikněte na toto tlačítko a vytvořte svou první simulaci Wildfire. Otevře se průvodce výběrem oblasti.",
+        "tip": "Po kliknutí přejdete na speciální prohlídku procesu výběru oblasti!"
+      },
+      "profile": {
+        "title": "Profil a Nastavení",
+        "description": "Přístup k vašemu profilu, nastavení účtu a uživatelským preferencím. Spravujte svůj účet a další možnosti."
+      },
+      "navigation": {
+        "title": "Navigace Řídicího Panelu",
+        "description": "Přístup k hlavnímu řídicímu panelu pro zobrazení projektů, nedávných hodnocení a celkových statistik. Toto je vaše základna."
+      },
+      "simulations": {
+        "title": "Simulace Wildfire",
+        "description": "Vytvářejte a spravujte své modely simulace Wildfire. Spouštějte nové simulace, konfigurujte parametry a procházejte existující spuštění."
+      },
+      "map": {
+        "title": "Interaktivní mapa",
+        "description": "Váš hlavní pracovní prostor pro geografickou analýzu. Zobrazte vrstvy mapy, vyberte oblasti pro simulaci a vizualizujte data o riziku Wildfire."
+      },
+      "locations": {
+        "title": "Uložené Lokace",
+        "description": "Spravujte uložené lokace a oblasti zájmu. Rychlý přístup k často analyzovaným regionům."
+      },
+      "reports": {
+        "title": "Zprávy simulací",
+        "description": "Zobrazte podrobné zprávy simulací, exportujte data a analyzujte historické trendy."
+      },
+      "technologies": {
+        "title": "Parametry simulace",
+        "description": "Konfigurujte parametry simulace Wildfire, jako jsou modely paliva, počasí a zdroje vznícení.",
+        "tip": "Parametry lze přizpůsobit scénáři pro přesné simulace Wildfire."
+      },
+      "layers": {
+        "title": "Vrstvy Mapy",
+        "description": "Ovládejte vrstvy mapy a překryvy. Vybírejte základní mapy, přepínejte datové vrstvy a přizpůsobujte zobrazení mapy."
+      },
+      "documentation": {
+        "title": "Dokumentace",
+        "description": "Otevřete dokumentaci platformy pro podrobné průvodce, API reference a osvědčené postupy.",
+        "tip": "Otevře se v nové záložce, abyste si zachovali současný pracovní postup."
+      },
+      "feedback": {
+        "title": "Zpětná Vazba",
+        "description": "Sdílejte s námi své myšlenky a návrhy. Vaše zpětná vazba pomáhá zlepšovat platformu."
+      },
+      "complete": {
+        "title": "Vše je připraveno!",
+        "description": "Dokončili jste prohlídku! Nyní jste připraveni vytvářet simulace Wildfire.",
+        "nextSteps": "Další kroky",
+        "nextStepsDescription": "Zkuste vytvořit svou první simulaci Wildfire nebo prozkoumejte interaktivní mapu.",
+        "restartTour": "Restartovat Prohlídku",
+        "restartTourDescription": "Tuto prohlídku můžete kdykoli restartovat z postranního panelu."
+      }
+    },
+    "areaSelect": {
+      "welcome": {
+        "title": "Průvodce simulací lesních požárů",
+        "description": "Vítejte! Tato prohlídka vás provede vytvořením simulace lesního požáru pro vybraný region.",
+        "tip": "Naučíte se konfigurovat model, kreslit oblasti a vytvořit simulaci."
+      },
+      "modelName": {
+        "title": "Název modelu",
+        "description": "Dejte svému modelu simulace požáru popisný název.",
+        "tip": "Dobré názvy: „Kalifornie Sever 2024\" nebo „Scénář Středomořského lesa\""
+      },
+      "dateRange": {
+        "title": "Období simulace",
+        "description": "Zvolte období pro analýzu lesního požáru.",
+        "tip": "Delší období poskytují komplexnější analýzu"
+      },
+      "resolution": {
+        "title": "Časové Rozlišení",
+        "description": "Nastavte časový interval pro výpočty. Vyšší rozlišení poskytuje podrobnější výsledky, ale zpracování trvá déle.",
+        "tip": "60 minut je doporučeno pro většinu simulací"
+      },
+      "technologies": {
+        "title": "Parametry",
+        "description": "Konfigurujte parametry simulace požáru jako modely paliva, počasí a zdroje vznícení.",
+        "tip": "Klikněte pro zobrazení a úpravu nastavení"
+      },
+      "mapContainer": {
+        "title": "Interaktivní mapa",
+        "description": "Toto je váš hlavní pracovní prostor. Kreslete polygony na mapě pro výběr oblastí pro simulaci požáru.",
+        "tip": "Mapu můžete přibližovat a posouvat"
+      },
+      "search": {
+        "title": "Vyhledávání místa",
+        "description": "Pomocí tohoto pole rychle najdete místa podle názvu nebo adresy.",
+        "tip": "Zadejte název místa pro okamžité výsledky"
+      },
+      "save": {
+        "title": "Vytvořit simulaci",
+        "description": "Po nakonfigurování všeho klikněte zde pro vytvoření modelu simulace požáru a zahájení analýzy.",
+        "tip": "Všechna pole musí být vyplněna před uložením"
+      },
+      "areaInput": {
+        "description": "Nakreslete oblast přímo na mapě nebo nahrajte hranici GeoJSON Polygon/MultiPolygon.",
+        "tip": "Model může pokračovat až po dostupnosti jedné platné zájmové oblasti.",
+        "title": "Zadání oblasti"
+      },
+      "areaStatus": {
+        "description": "Tento stav ukazuje, zda hranice chybí, je nakreslená, nahraná nebo blokovaná chybou nahrávání.",
+        "title": "Stav AOI"
+      },
+      "calculationMode": {
+        "description": "Zvolte statický režim pro jedno dostupné datum rizika požáru nebo dynamický režim pro rozsah dat, který backend zpracuje později.",
+        "tip": "Text stavu pod ovládáním data ukazuje, zda jsou načtena dostupná statická data a zda je vybrané datum platné.",
+        "title": "Režim výpočtu"
+      },
+      "calculationStatus": {
+        "description": "Tento řádek ukazuje, zda se statická data načítají, jsou nedostupná, mají chybu nebo jsou připravena k výběru.",
+        "tip": "Pokud se zde zobrazí blokace, tlačítko pokračovat zůstává neaktivní, dokud není výběr data platný.",
+        "title": "Stav výpočtu"
+      },
+      "finalReview": {
+        "description": "Krok kontroly ověří název modelu, datum, AOI, rizikové složky a buffer před spuštěním.",
+        "title": "Stav ověření"
+      },
+      "optionalLayers": {
+        "description": "Tyto přepínače určují, které volitelné signály se odešlou s požadavkem modelu, včetně požárního počasí, terénu a historických požárů.",
+        "tip": "Ponechte požární počasí zapnuté pro běžné běhy; vypnutí je užitečné jen pro základní porovnání.",
+        "title": "Rizikové signály"
+      },
+      "saveSummary": {
+        "description": "Tento závěrečný souhrn zobrazuje hodnoty, které budou uloženy s modelem a odeslány do výpočetního procesu.",
+        "title": "Souhrn uložení"
+      }
+    },
+    "buttons": {
+      "skip": "Přeskočit",
+      "back": "Zpět",
+      "next": "Další",
+      "finish": "Dokončit",
+      "close": "Zavřít"
+    }
+  },
+  "feedback": {
+    "title": "Odeslat zpětnou vazbu",
+    "subtitle": "Pomozte nám zlepšit váš zážitek",
+    "category": "Kategorie zpětné vazby",
+    "categories": {
+      "bug": "Hlášení chyby",
+      "bugDescription": "Něco nefunguje",
+      "feature": "Požadavek na funkci",
+      "featureDescription": "Navrhnout novou funkcionalitu",
+      "improvement": "Vylepšení",
+      "improvementDescription": "Vylepšit stávající funkce",
+      "general": "Obecné",
+      "generalDescription": "Ostatní zpětná vazba"
+    },
+    "subject": "Předmět",
+    "subjectPlaceholder": "např. Problém s načítáním mapy, Návrh funkce...",
+    "message": "Vaše zpětná vazba",
+    "messagePlaceholder": "Popište prosím podrobně vaši zpětnou vazbu, návrhy nebo problémy...",
+    "image": "Příloha (Volitelné)",
+    "imageDropzone": "Klikněte pro nahrání nebo přetáhněte",
+    "imageFormats": "PNG, JPG, GIF do 15MB",
+    "imagePreview": "Náhled obrázku",
+    "removeImage": "Odstranit obrázek",
+    "rating": "Celkové hodnocení",
+    "ratingDescription": "Jak byste ohodnotili svou zkušenost?",
+    "submit": "Odeslat zpětnou vazbu",
+    "submitting": "Odesílání...",
+    "submittingMessage": "Odesílání vaší zpětné vazby...",
+    "gdprNotice": "Vaše zpětná vazba je zpracována v souladu s nařízením GDPR.",
+    "success": {
+      "title": "Zpětná vazba odeslána!",
+      "message": "Děkujeme za zpětnou vazbu. Zkontrolujeme ji a v případě potřeby vás budeme kontaktovat.",
+      "reference": "Reference"
+    },
+    "errors": {
+      "loginRequired": "Pro odeslání zpětné vazby se prosím přihlaste",
+      "submitFailed": "Odeslání zpětné vazby se nezdařilo. Zkuste to prosím později.",
+      "invalidImageType": "Vyberte prosím platný obrazový soubor (PNG, JPG, GIF)",
+      "imageTooLarge": "Velikost obrázku musí být menší než 15MB",
+      "payloadTooLarge": "Příloha je příliš velká. Použijte menší obrázky."
+    },
+    "myFeedback": {
+      "title": "Moje zpětná vazba",
+      "subtitle": "Sledujte stav vašich odeslaných zpětných vazeb",
+      "empty": "Zatím jste neodeslali žádnou zpětnou vazbu",
+      "adminResponse": "Odpověď administrátora",
+      "submittedOn": "Odesláno dne",
+      "autoDeleteNotice": "Tato položka bude automaticky odstraněna za {days} dní",
+      "autoDeleteSoon": "Tato položka bude brzy automaticky odstraněna",
+      "showHistory": "Moje odeslání",
+      "hideHistory": "Skrýt",
+      "status": {
+        "pending": "Čeká na vyřízení",
+        "in_progress": "Zpracovává se",
+        "resolved": "Vyřešeno",
+        "closed": "Uzavřeno"
+      }
+    },
+    "chars": "znaků",
+    "markdownSupported": "Podpora Markdown",
+    "preview": "Náhled",
+    "previewEmpty": "Není co zobrazit",
+    "words": "slov",
+    "write": "Psát"
+  },
+  "weather": {
+    "temperature": "Tep.",
+    "windSpeed": "Vítr",
+    "humidity": "Vlhk.",
+    "uvIndex": "UV",
+    "clickToRefresh": "Klikněte pro obnovení",
+    "clickToRetry": "Klikněte pro opakování",
+    "retry": "Opakovat",
+    "loadWeather": "Načíst počasí",
+    "clickToLoad": "Klikněte pro načtení počasí pro {{location}}",
+    "current": "Aktuální",
+    "searchLocation": "Vyhledat polohu...",
+    "yourLocations": "Vaše Polohy",
+    "syncing": "Synchronizace...",
+    "temperatureTooltip": "Aktuální teplota v Celsius a Fahrenheit",
+    "humidityTooltip": "Relativní vlhkost v procentech",
+    "uvLevels": {
+      "low": "Nízký",
+      "moderate": "Střední",
+      "high": "Vysoký",
+      "veryHigh": "Velmi Vysoký",
+      "extreme": "Extrémní"
+    },
+    "uvDescriptions": {
+      "low": "Ochrana není potřeba",
+      "moderate": "Používejte opalovací krém",
+      "high": "Ochrana nezbytná",
+      "veryHigh": "Potřeba extra ochrana",
+      "extreme": "Vyhněte se slunečnímu záření"
+    },
+    "dataBy": "Meteorologická data od"
+  },
+  "settings": {
+    "title": "Nastavení",
+    "subtitle": "Přizpůsobte si svůj zážitek a preference",
+    "configuration": "Konfigurace",
+    "goBack": "Zpět",
+    "tabs": {
+      "general": "Obecné",
+      "display": "Zobrazení",
+      "notifications": "Oznámení",
+      "advanced": "Pokročilé"
+    },
+    "stats": {
+      "language": "Jazyk",
+      "theme": "Téma",
+      "notifications": "Oznámení",
+      "accessLevel": "Úroveň Přístupu",
+      "enabled": "Povoleno",
+      "disabled": "Zakázáno",
+      "system": "Systém",
+      "user": "Uživatel"
+    },
+    "language": {
+      "title": "Jazyk",
+      "subtitle": "Jazyk rozhraní"
+    },
+    "weatherLocation": {
+      "title": "Poloha Počasí",
+      "subtitle": "Výchozí počasí"
+    },
+    "mapLocation": {
+      "title": "Poloha Mapy",
+      "subtitle": "Uložené pozice",
+      "syncing": "Synchronizace...",
+      "searchPlaceholder": "Vyhledat polohu...",
+      "current": "Aktuální",
+      "noLocation": "Není nastavena žádná poloha",
+      "savedLocations": "Uložené Polohy",
+      "clearAll": "Smazat vše",
+      "syncNote": "Polohy se synchronizují s vaším účtem"
+    },
+    "locationSearch": {
+      "placeholder": "Vyhledat polohu...",
+      "searching": "Vyhledávání...",
+      "noResults": "Nebyly nalezeny žádné polohy",
+      "searchFailed": "Vyhledávání selhalo"
+    },
+    "dataDisplay": {
+      "title": "Data a Zobrazení",
+      "subtitle": "Jednotky a formátování",
+      "temperature": "Teplota",
+      "celsius": "Celsius",
+      "fahrenheit": "Fahrenheit",
+      "distance": "Vzdálenost",
+      "kilometers": "Kilometry",
+      "miles": "Míle",
+      "windSpeed": "Rychlost Větru",
+      "knots": "uzly",
+      "dataRefresh": "Obnovení Dat",
+      "min": "min"
+    },
+    "notifications": {
+      "title": "Oznámení",
+      "subtitle": "Preference upozornění",
+      "email": "Email",
+      "notifyWhenComplete": "Oznámit po dokončení",
+      "browser": "Prohlížeč",
+      "enabled": "Povoleno",
+      "blocked": "Blokováno",
+      "systemAlerts": "Systémová upozornění"
+    },
+    "sendNotification": {
+      "title": "Odeslat Oznámení",
+      "subtitle": "Systémová oznámení",
+      "selectService": "Vybrat službu...",
+      "services": {
+        "webService": "Webová Služba",
+        "geoServer": "GeoServer",
+        "database": "Databáze",
+        "api": "API",
+        "mapService": "Mapová Služba"
+      },
+      "messagePlaceholder": "Zadejte text oznámení...",
+      "sending": "Odesílání...",
+      "sendNotification": "Odeslat Oznámení",
+      "sent": "Oznámení odesláno!",
+      "failedToSend": "Odeslání selhalo"
+    }
+  },
+  "simulationComparison": {
+    "title": "Porovnání Simulací",
+    "subtitle": "Porovnejte výsledky více simulačních běhů",
+    "baseline": "Základní linie",
+    "comparison": "Porovnání",
+    "selectBaselineModel": "Vyberte základní model",
+    "selectComparisonModel": "Vyberte model pro porovnání",
+    "noCompletedModels": "Nebyly nalezeny žádné dokončené modely",
+    "noRegion": "Žádný region",
+    "loading": "Načítání dat simulace...",
+    "selectModels": "Vyberte modely k porovnání",
+    "selectModelsDescription": "Vyberte výše dva dokončené simulační modely pro analýzu jejich rozdílů ve výrobě energie, nákladech a klíčových ukazatelích výkonu.",
+    "startBySelectingBaseline": "Začněte výběrem základního modelu",
+    "nowSelectComparison": "Nyní vyberte model pro porovnání",
+    "analyzedArea": "Analyzovaná plocha",
+    "analyzedAreaSub": "Plocha se počítá z platných pixelů (bez nodata), proto se může mezi výstupy modelů lišit.",
+    "badDeltaLabel": "Více Vysoké/Velmi vysoké",
+    "badDeltaText": "znamená, že srovnávací model je závažnější.",
+    "cells": "buňky",
+    "choroplethMap": "Vyplněné rizikové buňky",
+    "choroplethMapSub": "Přesně vzorkované buňky podle třídy rizika. Použijte, když teplotní mapa skrývá hranice buněk.",
+    "comparisonOnly": "Srovnávací model",
+    "configuration": "Konfigurace",
+    "configurationSub": "Metadata modelů vedle sebe",
+    "criticalShare": "Podíl Vysoké + Velmi vysoké",
+    "deltaSub": "Změna od výchozího stavu k porovnání",
+    "deltaTitle": "Rozdíl rizika",
+    "distribution": "Porovnání rozložení",
+    "distributionSub": "Podíl pixelů na úroveň rizika. Světlejší sloupec = výchozí, plný = porovnání.",
+    "dominantClass": "Převažující třída rizika",
+    "dominantClassSub": "Největší podíl platných pixelů: {{baseline}} % ve výchozím, {{comparison}} % v porovnání.",
+    "dominantClassUnavailable": "Data o rozložení nejsou k dispozici.",
+    "field": "Pole",
+    "filledRiskMap": "Vyplněná mapa rizika",
+    "fromBaseline": "oproti výchozímu",
+    "geoHeatmap": "Geografická teplotní mapa",
+    "geoHeatmapSub": "Vyhlazený pohled na koncentraci rizika. Červená znamená nejvyšší vzorkované riziko.",
+    "goodDeltaLabel": "Více Velmi nízké/Nízké",
+    "goodDeltaText": "obvykle znamená, že se riziko posunulo k bezpečnějším třídám.",
+    "highVeryHigh": "Vysoké + Velmi vysoké",
+    "incompleteLayer": "Konfigurace vrstvy je neúplná",
+    "independent": "Nezávislé",
+    "insightCharts": "Grafy mapy rizika",
+    "insightChartsSub": "Tyto mapy shrnují vzorkované rastrové buňky srovnávacího modelu. Ukazují koncentraci rizika a přesné plochy tříd.",
+    "loadLayerFailed": "Načtení vrstvy z GeoServeru selhalo",
+    "loadingLayer": "Načítání vrstvy…",
+    "loadingMapSamples": "Načítání geografických rastrových vzorků…",
+    "loadingMetrics": "Načítání metrik rizika…",
+    "mapHint": "Posouvejte/přibližujte kteroukoli mapu — pohledy zůstávají synchronizované.",
+    "mapHintIndependent": "Tyto modely pokrývají různé oblasti — každá mapa zobrazuje vlastní model.",
+    "noConfiguredLayer": "Pro tento model zatím není nakonfigurována žádná vrstva GeoServeru.",
+    "noMapSamples": "Geografické vzorky mapy zatím nejsou k dispozici.",
+    "readingDirection": "Interpretace",
+    "riskIntensityHeatmap": "Intenzita rizika",
+    "sampleCoverage": "Pokrytí vzorku",
+    "sampleMapNote": "Toto je vzorkovaný rastrový pohled, nikoli mapa ulic. Vyplněné buňky zobrazují stejné třídy rizika jako vrstva Riziko požáru.",
+    "sampleMean": "Průměr vzorku",
+    "samplingGrid": "Vzorkovací mřížka",
+    "summaryBetter": "Riziko sníženo",
+    "summaryStable": "Riziko je v zásadě stabilní",
+    "summarySub": "Klíčové změny mezi výchozím a srovnávacím modelem.",
+    "summaryTitle": "Souhrn porovnání",
+    "summaryWorse": "Riziko vzrostlo",
+    "synced": "Synchronizováno",
+    "validCells": "platné buňky",
+    "validCellsShare": "platných buněk"
+  },
+  "map": {
+    "zoomIn": "Přiblížit",
+    "zoomOut": "Oddálit",
+    "centerMap": "Vycentrovat mapu",
+    "fitToExtent": "Přizpůsobit rozsahu",
+    "resetTopDown": "Obnovit pohled shora",
+    "rightClickRotate": "Pravé tlačítko + táhnout pro otočení",
+    "regions": "regiony",
+    "myModels": "moje modely",
+    "grids": "mřížky",
+    "countries": "země"
+  },
+  "privacy": {
+    "dataAndPrivacy": "Data a soukromí",
+    "acceptTerms": "Přijmout podmínky ochrany soukromí",
+    "openSettings": "Otevřít nastavení dat a soukromí",
+    "dialogTitle": "Zpracování dat a soukromí",
+    "cartoDescription": "Pro poskytování našich služeb využíváme CARTO a OSMF jako poskytovatele mapových služeb třetí strany.",
+    "sharedWithCarto": "Přijetím budou s CARTO a OSMF sdíleny následující údaje:",
+    "ipAddress": "IP adresa",
+    "browserDeviceType": "Prohlížeč + typ zařízení",
+    "timeOfRequest": "Čas požadavku",
+    "localStorageDescription": "Kromě toho používáme místní úložiště k zapamatování vašich preferencí a sledování, zda jste na tomto zařízení viděli úvodní obsah.",
+    "reviewPolicies": "Pro více informací si prosím přečtěte příslušné zásady ochrany osobních údajů:",
+    "cartoPolicy": "Zásady ochrany osobních údajů Carto",
+    "osmfPolicy": "Zásady ochrany osobních údajů OSMF",
+    "firePolicy": "Zásady ochrany osobních údajů EnerPlanET",
+    "deny": "Odmítnout",
+    "accept": "Přijmout"
+  },
+  "drawing": {
+    "clickToDraw": "Klikněte pro kreslení",
+    "clickToClose": "Klikněte pro uzavření",
+    "start": "Start"
+  },
+  "forms": {
+    "user": {
+      "personalInfo": {
+        "title": "Osobní Informace",
+        "description": "Základní údaje uživatele a kontaktní informace"
+      },
+      "security": {
+        "title": "Zabezpečení",
+        "description": "Bezpečnostní údaje účtu"
+      },
+      "fields": {
+        "fullName": "Celé Jméno",
+        "email": "E-mailová Adresa",
+        "organization": "Organizace",
+        "position": "Pozice",
+        "phone": "Telefonní Číslo",
+        "accessLevel": "Úroveň Přístupu",
+        "emailVerified": "E-mail Ověřen",
+        "password": "Heslo",
+        "confirmPassword": "Potvrdit Heslo",
+        "modelLimit": "Limit Modelů"
+      },
+      "placeholders": {
+        "fullName": "Zadejte celé jméno",
+        "email": "Zadejte e-mailovou adresu",
+        "organization": "Zadejte název organizace",
+        "position": "Zadejte pracovní pozici",
+        "password": "Zadejte heslo",
+        "confirmPassword": "Potvrďte heslo",
+        "modelLimit": "Ponechte prázdné pro výchozí hodnotu"
+      },
+      "descriptions": {
+        "emailVerified": "Označit e-mail jako ověřený",
+        "modelLimit": "Vlastní limit pro vytváření modelů (0 = neomezeno, prázdné = výchozí)"
+      },
+      "accessLevels": {
+        "veryLow": "Velmi Nízký Přístup",
+        "intermediate": "Střední Přístup",
+        "manager": "Manažer (Skupinový Přístup)",
+        "expert": "Expert (Plný Přístup)"
+      },
+      "validation": {
+        "phoneInvalid": "Telefonní číslo může obsahovat pouze číslice, mezery, pomlčky, znaménka plus a závorky",
+        "passwordLength": "Heslo musí mít alespoň 8 znaků",
+        "nameRequired": "Jméno je povinné",
+        "emailRequired": "E-mail je povinný",
+        "emailInvalid": "Zadejte platnou e-mailovou adresu",
+        "accessLevelRequired": "Úroveň přístupu je povinná",
+        "passwordRequired": "Heslo je povinné",
+        "confirmPasswordRequired": "Potvrzení hesla je povinné",
+        "passwordsMismatch": "Hesla se neshodují"
+      }
+    },
+    "webservice": {
+      "serviceInfo": {
+        "title": "Informace o Službě",
+        "description": "Základní identifikace a metadata webové služby"
+      },
+      "connectionDetails": {
+        "title": "Detaily Připojení",
+        "description": "Konfigurace síťového připojení a koncového bodu"
+      },
+      "performanceSettings": {
+        "title": "Nastavení Výkonu",
+        "description": "Konfigurace kapacity a výkonu služby"
+      },
+      "fields": {
+        "serviceName": "Název Služby",
+        "protocol": "Protokol",
+        "ipAddress": "IP Adresa",
+        "port": "Port",
+        "endpoint": "Cesta Koncového Bodu",
+        "autoScaling": "Auto Škálování",
+        "maxConcurrency": "Max Souběžných Požadavků",
+        "initialStatus": "Počáteční Stav"
+      },
+      "placeholders": {
+        "serviceName": "Zadejte název služby",
+        "ipAddress": "např., 192.168.1.100"
+      },
+      "descriptions": {
+        "serviceName": "Čitelný název pro webovou službu",
+        "autoScaling": "Povolit automatické škálování na základě zátěže",
+        "maxConcurrency": "Maximální počet souběžných požadavků (1-100)"
+      },
+      "statusOptions": {
+        "active": "Aktivní",
+        "inactive": "Neaktivní",
+        "maintenance": "Údržba"
+      },
+      "validation": {
+        "ipInvalid": "Zadejte platnou IP adresu",
+        "portRange": "Port musí být mezi 1 a 65535",
+        "concurrencyRange": "Max souběžnost musí být mezi 1 a 100",
+        "nameRequired": "Název služby je povinný",
+        "ipRequired": "IP adresa je povinná",
+        "portRequired": "Port je povinný"
+      }
+    },
+    "workspace": {
+      "details": {
+        "title": "Detaily",
+        "description": "Zadejte název pracovního prostoru a volitelný popis"
+      },
+      "fields": {
+        "name": "Název Pracovního Prostoru",
+        "description": "Popis"
+      },
+      "placeholders": {
+        "name": "Zadejte název pracovního prostoru",
+        "description": "Zadejte popis pracovního prostoru (volitelné)"
+      },
+      "descriptions": {
+        "name": "Jedinečný název pro váš pracovní prostor",
+        "description": "Volitelný popis účelu pracovního prostoru"
+      },
+      "validation": {
+        "nameRequired": "Název pracovního prostoru je povinný"
+      }
+    },
+    "moveModel": {
+      "destination": {
+        "title": "Cíl",
+        "description": "Vyberte cílový pracovní prostor pro model"
+      },
+      "fields": {
+        "targetWorkspace": "Cílový Pracovní Prostor"
+      },
+      "placeholders": {
+        "selectWorkspace": "Vyberte pracovní prostor"
+      },
+      "descriptions": {
+        "targetWorkspace": "Vyberte pracovní prostor, do kterého přesunout model"
+      },
+      "defaultWorkspace": "Výchozí Pracovní Prostor"
+    },
+    "shareModel": {
+      "title": "Sdílet s Jednotlivým Uživatelem",
+      "description": "Zadejte e-mailovou adresu uživatele, se kterým chcete sdílet",
+      "emailDescription": "Uživatel získá přístup k tomuto modelu"
+    },
+    "bulkCopy": {
+      "title": "Počet kopií",
+      "description": "Určete, kolik kopií vytvořit pro každý vybraný model",
+      "fields": {
+        "copyCount": "Počet kopií",
+        "copyCountDescription": "Každý vybraný model bude tolikrát zduplikován"
+      },
+      "validation": {
+        "min": "Je vyžadována alespoň 1 kopie",
+        "max": "Maximálně 10 kopií povoleno",
+        "integer": "Musí být celé číslo"
+      }
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Vítejte!",
+      "description": "Nastavme vaše preference pro začátek",
+      "greeting": "Vítejte na platformě pro energetickou simulaci!",
+      "intro": "Věnujme chvíli nastavení vašich preferencí. To nám pomůže přizpůsobit váš zážitek a poskytnout vám nejrelevantnější informace.",
+      "step1": "Vyberte svůj preferovaný jazyk",
+      "step2": "Nastavte preference počasí a mapy",
+      "step3": "Nakonfigurujte nastavení oznámení",
+      "timeNote": "Bude to trvat jen minutu"
+    },
+    "language": {
+      "title": "Jazyková preference",
+      "description": "Vyberte svůj preferovaný jazyk pro aplikaci"
+    },
+    "weather": {
+      "title": "Preference počasí",
+      "description": "Nastavte preferované umístění pro informace o počasí"
+    },
+    "map": {
+      "title": "Preference mapy",
+      "description": "Nakonfigurujte výchozí umístění mapy"
+    },
+    "notifications": {
+      "title": "Preference oznámení",
+      "description": "Vyberte, jak chcete dostávat upozornění a aktualizace"
+    },
+    "navigation": {
+      "previous": "Předchozí",
+      "next": "Další",
+      "complete": "Dokončit",
+      "completing": "Dokončování...",
+      "skip": "Přeskočit"
+    }
+  },
+  "regionSelector": {
+    "goToRegion": "Přejít na region",
+    "jumpToRegion": "Přejít na region s dostupnými daty mřížky",
+    "searchPlaceholder": "Hledat regiony...",
+    "sortByGridCount": "Řadit podle počtu mřížek",
+    "sortByName": "Řadit podle názvu",
+    "setAsDefault": "Nastavit jako výchozí region",
+    "removeAsDefault": "Odebrat jako výchozí region",
+    "favorite": "Oblíbené",
+    "recent": "Nedávné",
+    "noRegionsFound": "Žádné regiony nenalezeny",
+    "coverageHigh": "Vysoké pokrytí dat",
+    "coverageMedium": "Střední pokrytí dat",
+    "coverageLow": "Nízké pokrytí dat",
+    "summaryFooter": "{{countries}} zemí · {{regions}} regionů · {{grids}} mřížek"
+  },
+  "modelResults": {
+    "details": {
+      "awaiting": "Čekání na výsledek…",
+      "country": "Země",
+      "days": "dní",
+      "description": "Popis",
+      "from": "Od",
+      "location": "Místo",
+      "period": "Období hodnocení",
+      "region": "Region",
+      "title": "Název",
+      "to": "Do",
+      "updated": "Aktualizováno"
+    },
+    "empty": {
+      "hint": "Výstup simulace se zde zobrazí po dokončení zpracování.",
+      "title": "Pro tento model zatím není výsledek."
+    },
+    "errors": {
+      "layerIncomplete": "Konfigurace vrstvy je neúplná",
+      "layerLoad": "Načtení vrstvy z GeoServeru selhalo",
+      "loadFailed": "Načtení výsledků modelu selhalo",
+      "noId": "Nebylo zadáno ID modelu",
+      "tileLoad": "Některé dlaždice se nepodařilo načíst z GeoServeru ({{count}})"
+    },
+    "layer": {
+      "hidden": "Skryto",
+      "opacity": "Průhlednost",
+      "publishing": "Publikování vrstvy na GeoServer…",
+      "visible": "Viditelné"
+    },
+    "layers": {
+      "labels": "Popisky a místa",
+      "roads": "Silnice",
+      "title": "Překryvy"
+    },
+    "legend": {
+      "allLevels": "Všechny dostupné úrovně",
+      "title": "Riziko požáru"
+    },
+    "loadingModels": "Načítání modelů…",
+    "loadingWorkspace": "Načítání pracovního prostoru…",
+    "map": {
+      "initializing": "Inicializace mapy…"
+    },
+    "noCompletedModels": "Žádné dokončené modely",
+    "risk": {
+      "analyzedSurface": "Platné pixely (bez nodata)",
+      "distribution": "Rozložení rizika",
+      "highPlusArea": "Plocha Vysoké + Velmi vysoké",
+      "highPlusPixels": "Pixely Vysoké + Velmi vysoké",
+      "highRiskArea": "Plocha Vysoké + Velmi vysoké",
+      "meanScore": "Průměrné skóre",
+      "notReady": "Metriky budou k dispozici po konfiguraci vrstvy v GeoServeru.",
+      "ofArea": "plochy",
+      "overall": "Celkové riziko",
+      "sampleNote": "Na základě {{count}} vzorkovaných pixelů",
+      "totalArea": "Analyzovaná plocha"
+    },
+    "selectModel": "Vyberte model",
+    "title": "Výsledky modelu"
+  },
+  "landing": {
+    "nav": {
+      "challenge": "Výzva",
+      "platform": "Platforma",
+      "personas": "Pro koho",
+      "contact": "Kontakt"
+    },
+    "openApp": "Otevřít aplikaci Wildfire",
+    "languageLabel": "Jazyk",
+    "hero": {
+      "badge": "Komunitní prevence požárů",
+      "title": "Analýza rizika požárů pro venkovské komunity",
+      "subtitle": "Geoprostorová platforma pro obce, civilní ochranu a výzkumníky k mapování, modelování a reakci na riziko požárů — proměňuje místní znalosti a data v proaktivní ochranu dříve, než vzplanou plameny.",
+      "explore": "Prozkoumat platformu",
+      "why": "Proč na tom záleží"
+    },
+    "challenge": {
+      "eyebrow": "Výzva, které čelíme",
+      "title": "Požáry už nejsou ojedinělé katastrofy — jsou sezónní krizí",
+      "p1": "V celé jižní Evropě rostoucí teploty, delší sucha a nepředvídatelné počasí mění lesy v palivo. Vylidňování venkova znamená menší péči o krajinu a větší nárůst vegetace, takže požáry jsou intenzivnější a hůře zvladatelné.",
+      "p2": "Nedávné sezóny v Portugalsku, Španělsku a Řecku patřily k nejhorším v historii — stály životy, zničily ekosystémy a vysídlily komunity, přičemž ohrožovaly zemědělství, lesnictví, cestovní ruch a základní bezpečnost. Místní aktéři zůstávají nedostatečně vybavení a podporovaní.",
+      "cards": {
+        "hotter": {
+          "title": "Teplejší, sušší období",
+          "text": "Změny klimatu rok co rok prodlužují požární sezónu."
+        },
+        "vegetation": {
+          "title": "Nárůst vegetace",
+          "text": "Vylidňování zanechává krajinu neudržovanou a bohatou na palivo."
+        },
+        "cascading": {
+          "title": "Kaskádový dopad",
+          "text": "Ekosystémy, ekonomiky i venkovský život jsou ohroženy."
+        },
+        "tooling": {
+          "title": "Omezené nástroje",
+          "text": "Komunitám chybí sdílená, datově podložená podpora rozhodování."
+        }
+      },
+      "imgAlt1": "Požár šířící se podél venkovské silnice",
+      "imgAlt2": "Hasič bojující s plameny"
+    },
+    "platform": {
+      "eyebrow": "Jak to funguje",
+      "title": "Od oblasti na mapě ke sdíleným důkazům o riziku",
+      "subtitle": "Platforma kombinuje 3D data budov a terénu, geoprostorovou analýzu a engine rizika požárů do jednoho pracovního postupu odpovídajícího roli.",
+      "step": "KROK",
+      "imgAlt": "Zásahový tým pro požáry v terénu",
+      "steps": {
+        "define": {
+          "title": "Vymezte oblast",
+          "text": "Vyhledejte obec a nakreslete zájmovou oblast přímo na interaktivní mapě."
+        },
+        "run": {
+          "title": "Spusťte model rizika",
+          "text": "Zařaďte výpočet rizika požáru pro vaši AOI s nakonfigurovaným enginem."
+        },
+        "inspect": {
+          "title": "Prozkoumejte výsledky",
+          "text": "Prozkoumejte klasifikovaný překryv rizika s volitelnými vrstvami modelu paliva a vegetace."
+        },
+        "compare": {
+          "title": "Porovnejte a sdílejte",
+          "text": "Porovnávejte scénáře vedle sebe, exportujte artefakty a sdílejte je se zainteresovanými stranami."
+        }
+      }
+    },
+    "capabilities": {
+      "eyebrow": "Možnosti",
+      "title": "Vše, co potřebujete k hodnocení a vysvětlení rizika",
+      "items": {
+        "mapping": {
+          "title": "Interaktivní mapy",
+          "text": "2D mapy s kreslením polygonů, vyhledáváním míst a trvalými pracovními oblastmi."
+        },
+        "engine": {
+          "title": "Engine rizika požárů",
+          "text": "Klasifikované rastry rizika s kalibrovanou závažností a odhady ploch s vysokým rizikem."
+        },
+        "metrics": {
+          "title": "Metriky a porovnání",
+          "text": "Karty rizika, grafy rozložení, rozdíly a trendy napříč běhy modelů."
+        },
+        "fuel": {
+          "title": "Vrstvy paliva a vegetace",
+          "text": "Volitelné překryvy FMT a NDVI pro pochopení, proč se mapa rizika chová tak, jak se chová."
+        },
+        "multilingual": {
+          "title": "Vícejazyčné a přístupné",
+          "text": "Dostupné v 8 jazycích s jasnými popisky a průvodci pro každou roli."
+        },
+        "secure": {
+          "title": "Zabezpečené a řízené",
+          "text": "Přístup podle rolí, auditované výsledky a ochrana soukromí v souladu s EU."
+        }
+      }
+    },
+    "personas": {
+      "eyebrow": "Pro koho",
+      "title": "Jedna platforma, důkazy o riziku požárů odpovídající roli",
+      "items": {
+        "planners": {
+          "title": "Obecní a krizoví plánovači",
+          "text": "Vytvářejte a vysvětlujte hodnocení rizika požárů a informujte rozhodovatele."
+        },
+        "analysts": {
+          "title": "Analytici rizika lesních požárů",
+          "text": "Ověřujte GIS vrstvy, metriky rizika a výstupy enginu na expertní úrovni."
+        },
+        "researchers": {
+          "title": "Výzkumníci a GIS týmy",
+          "text": "Stahujte výstupy GeoTIFF/ZIP a studujte modely paliva a vegetační indexy."
+        },
+        "leads": {
+          "title": "Vedoucí workshopů a recenzenti",
+          "text": "Veďte školení a kontrolujte sdílené důkazy o riziku s omezeným přístupem."
+        }
+      }
+    },
+    "contact": {
+      "eyebrow": "Spojte se s námi",
+      "title": "Začněte konverzaci",
+      "subtitle": "Řekněte nám o svém regionu a o tom, jak chcete platformu používat. Tým se vám ozve — k oslovení není potřeba účet.",
+      "responseTime": "Obvykle odpovídáme do několika pracovních dnů.",
+      "name": "Jméno",
+      "email": "E-mail",
+      "category": "Kategorie",
+      "subject": "Předmět",
+      "message": "Zpráva",
+      "send": "Odeslat zprávu",
+      "sending": "Odesílání…",
+      "successTitle": "Zpráva odeslána",
+      "successText": "Děkujeme za zprávu — brzy se ozveme.",
+      "sendAnother": "Odeslat další zprávu",
+      "validationError": "Vyplňte prosím jméno, e-mail, předmět a zprávu.",
+      "genericError": "Něco se pokazilo. Zkuste to znovu.",
+      "submitFailed": "Odeslání se nezdařilo.",
+      "agree": "Odesláním souhlasíte s našimi",
+      "privacyPolicy": "zásadami ochrany soukromí",
+      "categories": {
+        "general": "Obecný dotaz",
+        "partnership": "Partnerství",
+        "bug": "Hlášení chyby"
+      }
+    },
+    "footer": {
+      "tagline": "Komunitní strategie pro prevenci a řízení rizika požárů ve venkovské Evropě.",
+      "privacy": "Zásady ochrany soukromí",
+      "cookies": "Zásady cookies",
+      "impressum": "Tiráž",
+      "terms": "Obchodní podmínky",
+      "euFundedAlt": "Financováno Evropskou unií",
+      "euDisclaimer": "Financováno Evropskou unií v rámci grantové dohody 101132652. Vyjádřené názory a stanoviska jsou však pouze názory autora(ů) a nemusí nutně odrážet názory Evropské unie nebo Evropské výkonné agentury pro výzkum (REA). Evropská unie ani poskytovatel grantu za ně nenesou odpovědnost.",
+      "builtOn": "Postaveno na platformě STORCITO",
+      "copyright": "Wildfire App · Technische Hochschule Deggendorf"
+    },
+    "stats": {
+      "affectedArea": "Zasažená Oblast",
+      "municipalities": "Obce Galicie",
+      "riskDistribution": "Rozložení Rizika",
+      "trendAnalysis": "Analýza Trendů Rizika"
+    }
+  }
+}

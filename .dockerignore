@@ -1,0 +1,15 @@
+.git
+**/.git
+
+**/node_modules
+**/dist
+**/.vite
+**/coverage
+**/report
+
+wildfire-app/backend/bin
+wildfire-app/backend/logs
+wildfire-app/backend/storage
+
+.codex
+*.pdf
