@@ -1,0 +1,1150 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Template repository for open source projects in the THD-Spatial-AI GitHub organisation">
+      
+      
+        <meta name="author" content="THD-Spatial-AI">
+      
+      
+        <link rel="canonical" href="https://THD-Spatial-AI.github.io/gitHub-template/api-token-guide/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>API Token Guide — Programmatic Access to Models - THD-Spatial-AI GitHub Template</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#api-token-guide-programmatic-access-to-models" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="THD-Spatial-AI GitHub Template" class="md-header__button md-logo" aria-label="THD-Spatial-AI GitHub Template" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            THD-Spatial-AI GitHub Template
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              API Token Guide — Programmatic Access to Models
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1M8 13h8v-2H8zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4a5 5 0 0 0 5-5 5 5 0 0 0-5-5"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5M7 15a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/THD-Spatial-AI/gitHub-template" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    THD-Spatial/GitHub-Template
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting-started/open-source-checklist/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Checklist
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting-started/repository-naming/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Repository Naming
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting-started/documentation-setup/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Documentation Setup
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting-started/legal-sync/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Legal Sync
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting-started/branch-naming/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Branch Naming
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting-started/branch-rules/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Branch Rules
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting-started/commit-conventions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Commit Conventions
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="THD-Spatial-AI GitHub Template" class="md-nav__button md-logo" aria-label="THD-Spatial-AI GitHub Template" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    THD-Spatial-AI GitHub Template
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/THD-Spatial-AI/gitHub-template" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    THD-Spatial/GitHub-Template
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/open-source-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/repository-naming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Repository Naming
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/documentation-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentation Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/legal-sync/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Legal Sync
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/branch-naming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Branch Naming
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/branch-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Branch Rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/commit-conventions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commit Conventions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/THD-Spatial-AI/gitHub-template/edit/main/docs/api-token-guide.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/THD-Spatial-AI/gitHub-template/raw/main/docs/api-token-guide.md" title="View source of this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="api-token-guide-programmatic-access-to-models">API Token Guide — Programmatic Access to Models<a class="headerlink" href="#api-token-guide-programmatic-access-to-models" title="Permanent link">&para;</a></h1>
+<p>This guide explains how an <strong>expert</strong> issues a personal access token for a
+user, and how that user accesses their wildfire models and results from any
+external application (scripts, Postman, other apps) using the token.</p>
+<ul>
+<li>Base URL (local development): <code>http://localhost:8000/api</code></li>
+<li>Base URL (production): <code>https://wildfire.th-deg.de/api</code></li>
+</ul>
+<hr />
+<h2 id="part-1-issuing-a-token-expert">Part 1 — Issuing a token (expert)<a class="headerlink" href="#part-1-issuing-a-token-expert" title="Permanent link">&para;</a></h2>
+<p>Tokens are created by experts from the admin dashboard and handed to the user.
+A token always acts <strong>as that user</strong>: it can see exactly the models the user
+owns or that were shared with them — nothing more.</p>
+<ol>
+<li>Log in with an <strong>expert</strong> account.</li>
+<li>Go to <strong>Admin Dashboard → User Management</strong>.</li>
+<li>Find the user in the table and click the <strong>key icon</strong> in the Actions
+   column.</li>
+<li>A grey key = the user has no active tokens.</li>
+<li>A green key = the user already has at least one active token.</li>
+<li>In the dialog, fill in:</li>
+<li><strong>Token name</strong> — what it's for, e.g. <code>analysis-script</code> or <code>qgis-import</code>.</li>
+<li><strong>Scope</strong> — <code>Read-only (recommended)</code> can only fetch data;
+     <code>Read &amp; write</code> can also create/modify (use only when required).</li>
+<li><strong>Expiry</strong> — 30 days, 90 days (default), 1 year, or never.</li>
+<li>Click <strong>Generate token</strong>.</li>
+<li><strong>Copy the token immediately</strong> (yellow box, <code>whf_…</code>).
+   ⚠️ It is shown exactly once and can never be retrieved again — not by
+   you, not by the user, not from the database (only a hash is stored).</li>
+<li>Hand the token to the user over a secure channel (not plain e-mail if
+   avoidable; a password manager share or similar is preferred).</li>
+</ol>
+<h3 id="managing-existing-tokens">Managing existing tokens<a class="headerlink" href="#managing-existing-tokens" title="Permanent link">&para;</a></h3>
+<p>The same dialog lists every token of the user with its name, prefix
+(<code>whf_xxxxxxxx…</code>), status (Active / Revoked / Expired), scope, expiry, and
+last-used date. Click <strong>Revoke</strong> to disable a token immediately — the next
+API request with it fails with <code>401</code>.</p>
+<hr />
+<h2 id="part-2-using-the-token-user-external-app">Part 2 — Using the token (user / external app)<a class="headerlink" href="#part-2-using-the-token-user-external-app" title="Permanent link">&para;</a></h2>
+<p>Send the token in the <code>Authorization</code> header of every request:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Authorization: Bearer whf_&lt;your-token&gt;
+</span></code></pre></div>
+<h3 id="quick-test-with-curl">Quick test with curl<a class="headerlink" href="#quick-test-with-curl" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">TOKEN</span><span class="o">=</span><span class="s2">&quot;whf_paste_your_token_here&quot;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># List your models</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">&quot;</span><span class="w"> </span>http://localhost:8000/api/models
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># One model (take an id from the list)</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">&quot;</span><span class="w"> </span>http://localhost:8000/api/models/92
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1"># Results and risk metrics of a model</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">&quot;</span><span class="w"> </span>http://localhost:8000/api/models/92/results
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">&quot;</span><span class="w"> </span>http://localhost:8000/api/models/92/risk-metrics
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="c1"># Download the result archive</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>curl<span class="w"> </span>-OJ<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">&quot;</span><span class="w"> </span>http://localhost:8000/api/models/92/download
+</span></code></pre></div>
+<h3 id="postman">Postman<a class="headerlink" href="#postman" title="Permanent link">&para;</a></h3>
+<ol>
+<li>New request → method <code>GET</code>, URL <code>http://localhost:8000/api/models</code>.</li>
+<li><strong>Authorization</strong> tab → Type <strong>Bearer Token</strong> → paste the <code>whf_…</code> token.</li>
+<li><strong>Send</strong>. A <code>200</code> response lists the user's models.</li>
+<li>Save the token as a Postman environment variable (<code>{{api_token}}</code>) to
+   reuse it across requests.</li>
+</ol>
+<h3 id="python-example">Python example<a class="headerlink" href="#python-example" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">BASE</span> <span class="o">=</span> <span class="s2">&quot;http://localhost:8000/api&quot;</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">TOKEN</span> <span class="o">=</span> <span class="s2">&quot;whf_paste_your_token_here&quot;</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Bearer </span><span class="si">{</span><span class="n">TOKEN</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">models</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/models&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">m</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">],</span> <span class="n">m</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">])</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="n">model_id</span> <span class="o">=</span> <span class="n">models</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="n">metrics</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/models/</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">/risk-metrics&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="nb">print</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="selecting-a-model">Selecting a model<a class="headerlink" href="#selecting-a-model" title="Permanent link">&para;</a></h3>
+<p><code>GET /models</code> returns <strong>all the models you can access</strong> — your own plus any
+shared with you. You pick the one you want from that list. Each entry includes:</p>
+<ul>
+<li><code>id</code> — the model id you pass to every other <code>/models/{id}/...</code> endpoint.</li>
+<li><code>title</code> — the human name of the model (e.g. <code>Galicia</code>), so you can recognise it.</li>
+<li><code>status</code> — <code>draft</code>, <code>queue</code>, <code>running</code>, <code>completed</code>, <code>published</code>, …</li>
+<li><code>child_model_ids</code> — on a <strong>parent</strong> model, the ids of its copies/versions.</li>
+<li><code>parent_model_id</code> + <code>parent_model_title</code> — on a <strong>child</strong> model, the id and
+  title of the model it was copied from (e.g. <code>Galicia v1</code> shows
+  <code>parent_model_title: "Galicia"</code>), so the relationship is readable.</li>
+</ul>
+<p>Normal flow: call <code>GET /models</code>, find the model <strong>by its <code>id</code></strong> (using the
+<code>title</code> to recognise it), then use that id in the follow-up calls.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># List all models, then pick the id of the one whose title you want</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">&quot;</span><span class="w"> </span>http://localhost:8000/api/models<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.data[] | {id, title, status, parent_model_title, child_model_ids}&#39;</span>
+</span></code></pre></div>
+<h3 id="fetching-a-result-and-its-map-layer-the-result-id">Fetching a result and its map layer (the result id)<a class="headerlink" href="#fetching-a-result-and-its-map-layer-the-result-id" title="Permanent link">&para;</a></h3>
+<p>The map/WMS layer is <strong>not</strong> addressed by the model id. There are two ids in
+play, and mixing them up is the most common mistake:</p>
+<ul>
+<li><strong>model id</strong> — identifies the model (e.g. <code>84</code>). Used by every <code>/models/...</code>
+  endpoint.</li>
+<li><strong>result id</strong> — identifies the <em>processed result record</em> of that model
+  (e.g. <code>43</code>). Used <strong>only</strong> by <code>/results/{result_id}/layer</code>.</li>
+</ul>
+<p><strong>How to get the <code>result_id</code>:</strong> run <code>GET /models/{model_id}/results</code>. The
+response <code>data</code> is a list of result records; the <code>id</code> of a record <strong>is</strong> the
+<code>result_id</code>. Then call <code>/results/{result_id}/layer</code> with it.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>GET /models/84/results   →  data[0].id = 43      ← this 43 is the result_id
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>GET /results/43/layer    →  WMS layer info
+</span></code></pre></div>
+<p>Full example:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nv">MODEL_ID</span><span class="o">=</span><span class="m">84</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># 1. Get the result record(s) for the model — each has its own &quot;id&quot;</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span>http://localhost:8000/api/models/<span class="nv">$MODEL_ID</span>/results
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="c1"># → data: [ { &quot;id&quot;: 57, &quot;model_id&quot;: 84,</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1">#             &quot;geoserver_layer_name&quot;: &quot;...&quot;, &quot;geoserver_status&quot;: &quot;configured&quot; } ]</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="c1"># 2. Use that RESULT id (57 here — NOT the model id 84) to get the layer</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">  </span>http://localhost:8000/api/results/57/layer
+</span></code></pre></div>
+<p>In Python:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">model_id</span> <span class="o">=</span> <span class="mi">84</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">results</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/models/</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">/results&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="k">if</span> <span class="n">results</span><span class="p">:</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="n">result_id</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>            <span class="c1"># the result-record id, NOT the model id</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="n">layer</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/results/</span><span class="si">{</span><span class="n">result_id</span><span class="si">}</span><span class="s2">/layer&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="k">else</span><span class="p">:</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No processed result yet for this model.&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>If <code>GET /models/{id}/results</code> returns an empty list (<code>"data": []</code>), the
+calculation has not been processed into GeoServer yet, so there is no layer to
+fetch and <code>/results/{result_id}/layer</code> would return <code>404 Result not found</code>.</p>
+<h3 id="available-endpoints">Available endpoints<a class="headerlink" href="#available-endpoints" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Description</th>
+<th>Scope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/models</code></td>
+<td>List your models (supports <code>limit</code>, <code>offset</code>, <code>search</code>, <code>workspace_id</code>)</td>
+<td>read</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/models/stats</code></td>
+<td>Your model usage statistics</td>
+<td>read</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/models/{id}</code></td>
+<td>One model with its configuration</td>
+<td>read</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/models/{id}/results</code></td>
+<td>Result records (processing status, GeoServer layer state)</td>
+<td>read</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/models/{id}/risk-metrics</code></td>
+<td>Computed fire-risk metrics</td>
+<td>read</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/models/{id}/risk-map-samples</code></td>
+<td>Positioned raster samples for visualisation</td>
+<td>read</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/models/{id}/download</code></td>
+<td>Download the result archive</td>
+<td>read</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/results/{result_id}/layer</code></td>
+<td>WMS layer info for map integration (QGIS etc.)</td>
+<td>read</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/models</code></td>
+<td>Create a model</td>
+<td>full</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/calculation/start/{id}</code></td>
+<td>Start a calculation</td>
+<td>full</td>
+</tr>
+</tbody>
+</table>
+<p>A <strong>read-only</strong> token can use every GET endpoint; POST/PUT/DELETE requests
+are rejected with <code>403</code>. A <strong>full</strong> token can also use the write endpoints,
+with the user's normal permissions and limits.</p>
+<blockquote>
+<p><strong>Note on ids:</strong> every <code>/models/...</code> endpoint takes the <strong>model id</strong>. The
+<code>/results/{result_id}/layer</code> endpoint is the exception — <code>{result_id}</code> is the
+id of a <strong>result record</strong>, not the model id. Get it from
+<code>GET /models/{id}/results</code>: each entry there has its own <code>id</code>, which you then
+pass to <code>/results/{result_id}/layer</code>. A model only has a result record once
+its calculation has been processed into GeoServer; until then this endpoint
+returns <code>404 Result not found</code>.</p>
+</blockquote>
+<hr />
+<h2 id="part-3-errors-and-what-they-mean">Part 3 — Errors and what they mean<a class="headerlink" href="#part-3-errors-and-what-they-mean" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Response</th>
+<th>Meaning</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>401 Invalid API token</code></td>
+<td>Token unknown, expired, or revoked</td>
+<td>Ask an expert for a new token</td>
+</tr>
+<tr>
+<td><code>401 Session not found</code></td>
+<td><code>Authorization</code> header missing or malformed</td>
+<td>Header must be exactly <code>Bearer whf_…</code></td>
+</tr>
+<tr>
+<td><code>403 This API token is read-only</code></td>
+<td>Write attempt with a read-only token</td>
+<td>Ask for a <code>full</code>-scope token if writing is really needed</td>
+</tr>
+<tr>
+<td><code>403 Access denied</code></td>
+<td>The model belongs to another user and is not shared with you</td>
+<td>Request access via model sharing</td>
+</tr>
+<tr>
+<td><code>404 Model not found</code></td>
+<td>Wrong model id</td>
+<td>Check <code>GET /models</code> for valid ids</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="part-4-security-properties-for-reference">Part 4 — Security properties (for reference)<a class="headerlink" href="#part-4-security-properties-for-reference" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Tokens are 256-bit random values; the server stores only a SHA-256 hash.
+  A database leak does not expose usable tokens.</li>
+<li>The plaintext appears exactly once, in the create response, and is never
+  logged.</li>
+<li>Tokens never carry expert/manager privileges, regardless of the user's
+  role — admin endpoints are not reachable with a token.</li>
+<li>Default scope is read-only; default lifetime is 90 days.</li>
+<li>Every token request is audit-logged (token id, user, route); creation and
+  revocation are logged with the acting expert.</li>
+<li>Revocation is immediate.</li>
+</ul>
+<h2 id="part-5-manager-access-creating-users-api-tokens">Part 5 — Manager access (creating users &amp; API tokens)<a class="headerlink" href="#part-5-manager-access-creating-users-api-tokens" title="Permanent link">&para;</a></h2>
+<p>If your account has <strong>Manager</strong> access, you can manage your own group of users
+directly from the dashboard — you don't need an expert for day-to-day work:</p>
+<ul>
+<li><strong>Create new users</strong> in your group — <strong>User Management → Add New User</strong>.</li>
+<li><strong>Generate and revoke API tokens</strong> for those users — the <strong>key icon</strong> in the
+  Actions column opens the same token dialog described in Part 1.</li>
+<li>Users you create stay inside your manager group.</li>
+</ul>
+<p><img alt="Manager — User Management" src="images/user-management.png" /></p>
+<p>The screenshot shows the <strong>User Management</strong> tab under <strong>Manager Access</strong>: the
+<strong>Add New User</strong> button (top right) and, for each user row, the <strong>Actions</strong>
+icons — including the <strong>key icon</strong> used to create or revoke that user's API
+tokens. So a manager can both onboard a user and issue them an API token from
+this one screen.</p>
+<hr />
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Everything returns 401 although the token is fresh</strong> — the backend may
+  be running a build that predates the token feature; restart it.</li>
+<li><strong><code>{"data": []}</code> although the user has models</strong> — the token belongs to a
+  different user than expected; check the email shown in the token dialog.</li>
+<li><strong>CORS errors from a browser app</strong> — browser-based apps on other origins
+  are subject to the API's CORS allow-list; server-side use (scripts,
+  Postman, backends) is unaffected.</li>
+</ul>
+<hr />
+<h2 id="part-6-worked-example-model-result-id-layer-tested-in-postman">Part 6 — Worked example: model → result id → layer (tested in Postman)<a class="headerlink" href="#part-6-worked-example-model-result-id-layer-tested-in-postman" title="Permanent link">&para;</a></h2>
+<p>This is the end-to-end flow that turns a <strong>model id</strong> into a <strong>map layer</strong>,
+using model <code>84</code> as the example. Set <strong>Authorization → Bearer Token</strong> to your
+<code>whf_…</code> token on each request.</p>
+<h3 id="step-0-list-the-users-models-find-the-model_id">Step 0 — List the user's models (find the <code>model_id</code>)<a class="headerlink" href="#step-0-list-the-users-models-find-the-model_id" title="Permanent link">&para;</a></h3>
+<p>Send:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>GET http://localhost:8000/api/models
+</span></code></pre></div>
+<p>This returns <strong>every model belonging to (or shared with) the token's user</strong>.
+The response <code>data</code> is a list; for each model you can read:</p>
+<ul>
+<li><code>id</code> — the <strong>model id</strong> (here <code>84</code>) you'll use in the next steps.</li>
+<li><code>title</code> — the model's name, so you can recognise the one you want.</li>
+<li><code>status</code> — e.g. <code>completed</code>, <code>draft</code>, <code>running</code>.</li>
+<li><code>workspace</code> — the workspace the model lives in (id, name, members).</li>
+<li><code>parent_model_id</code> / <code>parent_model_title</code> — present on a copy, showing which
+  model it was versioned from.</li>
+<li><code>child_model_ids</code> — present on an original, listing its copies/versions.</li>
+</ul>
+<p>Pick the <code>id</code> of the model you want (here <strong><code>84</code></strong>) and continue.</p>
+<p><img alt="GET /models — all models for the user, with id, title, status, workspace" src="images/test-models-list.png" /></p>
+<h3 id="step-1-get-the-result-record-find-the-result_id">Step 1 — Get the result record (find the <code>result_id</code>)<a class="headerlink" href="#step-1-get-the-result-record-find-the-result_id" title="Permanent link">&para;</a></h3>
+<p>Send:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>GET http://localhost:8000/api/models/84/results
+</span></code></pre></div>
+<p>The response lists the model's result record(s). The <strong><code>id</code></strong> field of a
+record is the <strong><code>result_id</code></strong> you need next — here it is <strong><code>43</code></strong> (note this is
+<em>not</em> the model id <code>84</code>). Useful fields in the same record:</p>
+<ul>
+<li><code>model_id</code> — confirms which model this result belongs to (<code>84</code>).</li>
+<li><code>geoserver_layer_name</code> (<code>model_84</code>) and <code>geoserver_workspace</code> (<code>fire_risk</code>).</li>
+<li><code>geoserver_status: configured</code> — the layer is ready to view.</li>
+</ul>
+<p><img alt="GET /models/84/results — the result id is data[0].id = 43" src="images/test-models-results.png" /></p>
+<h3 id="step-2-get-the-map-layer-using-that-result_id">Step 2 — Get the map layer using that <code>result_id</code><a class="headerlink" href="#step-2-get-the-map-layer-using-that-result_id" title="Permanent link">&para;</a></h3>
+<p>Take the <code>id</code> from Step 1 (<code>43</code>) and send:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>GET http://localhost:8000/api/results/43/layer
+</span></code></pre></div>
+<p>The response is the WMS layer info you plug into QGIS or a web map:</p>
+<ul>
+<li><code>wms_url</code> — <code>http://localhost:8083/api/geoserver-proxy/fire_risk/wms</code></li>
+<li><code>layer_name</code> — <code>fire_risk:model_84</code></li>
+<li><code>workspace</code> — <code>fire_risk</code></li>
+<li><code>status</code> — <code>configured</code></li>
+<li><code>bounds</code> — <code>minx/miny/maxx/maxy</code> with <code>crs: EPSG:4326</code></li>
+</ul>
+<p><img alt="GET /results/43/layer — WMS layer info" src="images/test-result-layer.png" /></p>
+<blockquote>
+<p>Remember: <code>GET /results/84/layer</code> would fail with <code>404 Result not found</code>,
+because <code>84</code> is the <strong>model id</strong>, not the <strong>result id</strong>. Always take the
+<code>result_id</code> from <code>GET /models/{model_id}/results</code> first.</p>
+</blockquote>
+
+
+
+
+
+
+
+  
+    
+  
+  
+    
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Last update">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 18, 2026 15:06:41 UTC">June 18, 2026</span>
+  </span>
+
+    
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Created">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 18, 2026 15:06:41 UTC">June 18, 2026</span>
+  </span>
+
+    
+    
+    
+  </aside>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 <a href="https://github.com/THD-Spatial-AI"  target="_blank" rel="noopener">BigGeoData & Spatial AI, Technische Hochschule Deggendorf</a>
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.prune", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.path", "navigation.tracking", "navigation.sections", "search.highlight", "search.share", "search.suggest", "toc.follow", "toc.integrate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
