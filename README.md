@@ -188,23 +188,6 @@ Copy `wildfire-app/backend/.env.example` to `wildfire-app/backend/.env` and adju
 
 ---
 
-## CI/CD
-
-The GitLab pipeline (`.gitlab-ci.yml`) targets the `stable` branch with manual gates at each stage:
-
-| Stage | Jobs |
-|---|---|
-| `initial` | Verify pipeline, clone external repos |
-| `infrastructure` | Start Postgres/Redis, Keycloak, Keycloak-init |
-| `platform-services` | Start auth-service + webservice |
-| `build` | Build frontend + backend into a single Docker image |
-| `deploy` | Deploy to dev (`wildfire-app-dev.th-deg.de`), run migrations + seed |
-| `production` | Mirror all infra + deploy steps to `wildfire-app.th-deg.de` |
-
-The same Docker image built in `build` is reused for production — no rebuild on promotion.
-
----
-
 ## Project Structure
 
 ```
