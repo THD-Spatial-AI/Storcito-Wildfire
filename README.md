@@ -201,13 +201,19 @@ Copy `wildfire-app/backend/.env.example` to `wildfire-app/backend/.env` and adju
 │           ├── features/ # Feature modules (map, model-dashboard, comparison, …)
 │           ├── components/
 │           └── configuration/
+├── platform-core/        # Platform services (auth-service, webservice, geoserver)
+│   ├── auth-service/     # Authentication microservice
+│   ├── webservice/       # Simulation dispatcher & capacity manager
+│   └── geoserver/        # GeoServer stack
+├── infrastructure/       # Shared Go libraries
+│   ├── common/           # Shared domain models & contracts
+│   └── platform/         # Server, database, worker, email, security
+├── libs/                 # Shared React component libraries
+│   ├── ui/               # @spatialhub/ui components
+│   ├── auth/             # Auth library
+│   ├── forms/            # Forms library
+│   └── i18n/             # Internationalisation
 ├── nginx/                # Reverse proxy config (dev + prod)
 ├── Makefile              # Developer workflow commands
-├── Dockerfile.ci         # Multi-stage build (frontend + backend)
-└── .gitlab-ci.yml        # GitLab CI/CD pipeline
+└── Dockerfile.ci         # Multi-stage build (frontend + backend)
 ```
-
-External repositories pulled at setup/build time:
-- `platform-core/` — auth-service, webservice, Keycloak init
-- `infrastructure/` — shared Go platform + common libraries
-- `libs/` — shared React component libraries
