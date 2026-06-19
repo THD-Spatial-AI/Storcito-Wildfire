@@ -153,6 +153,14 @@ func (ModelShare) TableName() string {
 	return "model_shares"
 }
 
+// ResultLayer represents a single component raster (e.g. NDVI, FWI) that
+// accompanies a simulation result and can be published as a WMS sub-layer.
+type ResultLayer struct {
+	Key      string `json:"key"`
+	Title    string `json:"title"`
+	FilePath string `json:"file_path"`
+}
+
 type ModelResult struct {
 	ID      uint   `gorm:"primaryKey" json:"id"`
 	ModelID uint   `gorm:"not null;index" json:"model_id"`
@@ -172,6 +180,7 @@ type ModelResult struct {
 	GeoserverStatus  string `gorm:"size:32;default:'pending';index" json:"geoserver_status"`
 	ErrorMessage     string `gorm:"type:text" json:"error_message,omitempty"`
 
+	Layers   datatypes.JSON `gorm:"type:jsonb" json:"layers,omitempty"`
 	Metadata datatypes.JSON `gorm:"type:jsonb" json:"metadata,omitempty"`
 
 	CreatedAt time.Time `json:"created_at"`

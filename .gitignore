@@ -13,3 +13,6 @@ site/
 .venv/
 __pycache__/
 venv/
+
+.claude
+.vscode
