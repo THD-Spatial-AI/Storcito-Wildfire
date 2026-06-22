@@ -11,7 +11,7 @@ The application is part of the **SpatialHub** ecosystem at TH Deggendorf, runnin
 
 ### Core Capabilities
 
-- **Interactive Map** — Draw and edit region polygons (OpenLayers 2D + MapLibre GL 3D) with geocoding search and bookmarks
+- **Interactive Map** — Draw and edit region polygons (OpenLayers + MapLibre GL, 2D) with geocoding search and bookmarks
 - **Model Configurator** — Step-by-step wizard to set region, date range, resolution, and optional layers before dispatching a simulation
 - **Risk Metrics** — Weighted risk scoring (Very Low → Very High), affected area (km²), distribution histogram, and trend vs. prior run
 - **Results Viewer** — Per-model results with GeoServer-backed choropleth map and ECharts visualisations
@@ -45,7 +45,7 @@ The full system architecture is documented on the project's MkDocs documentation
 - TailwindCSS 4 + Radix UI components (`@spatialhub/ui`)
 - TanStack Query 5 for server state
 - Zustand 5 for client state
-- OpenLayers 10 (2D GIS) + MapLibre GL JS (3D building layer)
+- OpenLayers 10 + MapLibre GL JS (2D mapping)
 - ECharts 6 for risk distribution charts
 - React Router 7 with lazy-loaded routes
 
