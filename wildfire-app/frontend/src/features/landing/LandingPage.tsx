@@ -229,9 +229,9 @@ export const LandingPage: React.FC = () => {
 
   return (
     <div ref={rootRef} className="h-screen overflow-y-auto bg-white text-slate-800 scroll-smooth">
-      {/* Floating capsule nav */}
-      <div className="floating-capsule-nav-container fixed top-0 left-0 right-0 z-50">
-        <header className="mx-auto max-w-7xl px-5 h-16 flex items-center justify-between floating-capsule-nav">
+      {/* Full-width nav bar */}
+      <div className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-[#23223f]/85 backdrop-blur-md">
+        <header className="mx-auto max-w-screen-2xl px-6 md:px-10 h-16 flex items-center justify-between">
           <a href="#top" className="flex items-center transition-transform hover:scale-[1.02]">
             <img src={`${IMG}/storcito-logo-white.webp`} alt="Storcito" className="h-7 w-auto" />
           </a>
@@ -250,7 +250,7 @@ export const LandingPage: React.FC = () => {
             <LanguageMenu />
             <Link
               to="/app/map"
-              className="group inline-flex items-center gap-2 text-sm font-semibold rounded-xl bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 shadow-lg shadow-amber-500/25 transition-all btn-glow-amber"
+              className="group inline-flex items-center gap-2 text-sm font-semibold rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 px-5 py-2 transition-colors"
             >
               <span className="hidden sm:inline">{t("landing.openApp")}</span>
               <span className="sm:hidden">{t("landing.nav.platform")}</span>
@@ -262,137 +262,118 @@ export const LandingPage: React.FC = () => {
 
       {/* Hero Section */}
       <section id="top" className="relative overflow-hidden pt-28 pb-24 md:pt-36 md:pb-32 border-b border-white/5 bg-slate-950">
-        {/* AI Background Image */}
-        <div 
-          className="absolute inset-0 bg-[url('/images/landing-page/hero-fire-bg.jpg')] bg-cover bg-center bg-no-repeat opacity-40 mix-blend-luminosity"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-900/60 to-slate-950/90" />
-        
-        {/* Glow Spheres */}
-        <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-amber-500/20 rounded-full filter blur-[100px] animate-drift-slow-1 pointer-events-none mix-blend-screen" />
-        <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-[450px] h-[450px] bg-rose-600/15 rounded-full filter blur-[120px] animate-drift-slow-2 pointer-events-none mix-blend-screen" />
-        
-        {/* Decorative sparks */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="spark-particle"></div>
-          <div className="spark-particle"></div>
-          <div className="spark-particle"></div>
-          <div className="spark-particle"></div>
-          <div className="spark-particle"></div>
-        </div>
+        {/* Background photograph — visible, with directional overlays for legibility */}
+        <div className="absolute inset-0 bg-[url('/images/landing-page/hero-fire-bg.jpg')] bg-cover bg-center bg-no-repeat" />
+        <div className="absolute inset-0 bg-slate-950/45" />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/85 to-slate-950/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/70" />
 
         <div className="relative mx-auto max-w-7xl px-5">
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
             {/* Text column */}
             <div className="lg:col-span-7 space-y-6">
-              <div className="flex items-center gap-3">
-                <span className="inline-flex items-center gap-2 rounded-full bg-amber-500/15 text-amber-300 text-xs font-semibold px-3 py-1.5 ring-1 ring-amber-400/30 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
+              <div className="flex flex-wrap items-center gap-2.5">
+                <span className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 text-amber-300 text-xs font-semibold px-3 py-1.5 ring-1 ring-amber-400/20">
                   <Flame className="h-3.5 w-3.5" /> {t("landing.hero.badge")}
                 </span>
-                <span className="inline-flex items-center gap-2 rounded-full bg-blue-500/15 text-blue-300 text-xs font-semibold px-3 py-1.5 ring-1 ring-blue-400/30 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
-                  <Globe className="h-3.5 w-3.5" /> Horizon Europe Project
+                <span className="inline-flex items-center gap-2 rounded-full bg-white/5 text-slate-300 text-xs font-semibold px-3 py-1.5 ring-1 ring-white/10">
+                  <Globe className="h-3.5 w-3.5 text-blue-300" /> Horizon Europe Project
                 </span>
               </div>
               
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.05] text-white">
-                <span className="bg-gradient-to-r from-white via-amber-100 to-orange-200 bg-clip-text text-transparent block pb-2 drop-shadow-2xl">
-                  {t("landing.hero.title")}
-                </span>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] text-white max-w-2xl">
+                {t("landing.hero.title")}
               </h1>
-              
-              <p className="text-lg md:text-xl text-slate-300/90 leading-relaxed max-w-2xl font-medium tracking-wide">
+
+              <p className="text-base md:text-lg text-slate-300/80 leading-relaxed max-w-xl">
                 {t("landing.hero.subtitle")}
               </p>
               
-              <div className="flex flex-wrap gap-4 pt-4">
+              <div className="flex flex-wrap gap-3 pt-1">
                 <Link
                   to="/app/map"
-                  className="group inline-flex items-center gap-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-3.5 btn-glow-amber transition-all duration-300 hover:scale-[1.02]"
+                  className="group inline-flex items-center gap-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold px-6 py-3 transition-colors"
                 >
                   {t("landing.hero.explore")}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                 </Link>
                 <a
                   href="#challenge"
-                  className="inline-flex items-center gap-2 rounded-xl bg-white/5 hover:bg-white/10 text-white font-semibold px-6 py-3.5 ring-1 ring-white/10 backdrop-blur-md transition-all duration-300 hover:scale-[1.02]"
+                  className="inline-flex items-center gap-2 rounded-lg hover:bg-white/5 text-white font-semibold px-6 py-3 ring-1 ring-white/15 transition-colors"
                 >
                   {t("landing.hero.why")}
                 </a>
+              </div>
+
+              {/* EU funding credibility cue */}
+              <div className="flex items-center gap-3 pt-6 mt-2 border-t border-white/10 max-w-xl">
+                <div className="flex h-9 w-12 shrink-0 items-center justify-center rounded-[3px] bg-[#003399]">
+                  <span className="text-amber-300 text-sm leading-none">★</span>
+                </div>
+                <p className="text-xs text-slate-400 leading-snug">
+                  Funded by the European Union under the Horizon Europe research &amp; innovation programme.
+                </p>
               </div>
             </div>
 
             {/* Recent Simulations Panel */}
             <div className="lg:col-span-5 relative w-full flex items-center justify-center lg:justify-end">
-              <div className="w-full max-w-md rounded-2xl border border-white/10 bg-slate-950/60 backdrop-blur-xl p-6 shadow-[0_0_40px_rgba(0,0,0,0.5)] transform hover:-translate-y-1 transition-transform duration-500 flex flex-col gap-5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-white">
-                    <Activity className="w-5 h-5 text-amber-500 animate-pulse" />
-                    <h3 className="font-bold tracking-tight">Recent Simulations</h3>
+              <div className="w-full max-w-md rounded-2xl border border-white/10 bg-slate-900/70 backdrop-blur-md shadow-2xl shadow-black/40 overflow-hidden">
+                {/* Header */}
+                <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/15 text-amber-400 ring-1 ring-amber-400/20">
+                      <Activity className="w-4 h-4" />
+                    </span>
+                    <div className="leading-tight">
+                      <h3 className="text-sm font-semibold text-white tracking-tight">Recent Simulations</h3>
+                      <p className="text-[11px] text-slate-400">Galicia · last 7 days</p>
+                    </div>
                   </div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Live Feed</span>
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-400/20 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Live
+                  </span>
                 </div>
 
-                {/* Live AI Map Preview */}
-                <div className="w-full h-36 rounded-xl overflow-hidden border border-white/10 relative group">
-                  <img src="/images/landing-page/live-map-preview.jpg" alt="Live Map UI" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent pointer-events-none" />
-                  <div className="absolute bottom-3 left-3 text-white text-[10px] font-bold flex items-center gap-1.5 tracking-wide uppercase">
-                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" /> Active Risk Zone
+                {/* Map preview */}
+                <div className="px-5 pt-5">
+                  <div className="w-full h-36 rounded-xl overflow-hidden border border-white/10 relative group">
+                    <img src="/images/landing-page/live-map-preview.jpg" alt="Live wildfire risk map" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent pointer-events-none" />
+                    <div className="absolute top-2.5 right-2.5 inline-flex items-center gap-1.5 rounded-md bg-slate-950/70 backdrop-blur-sm px-2 py-1 ring-1 ring-white/10">
+                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                      <span className="text-[10px] font-semibold text-white">High risk</span>
+                    </div>
+                    <div className="absolute bottom-2.5 left-3 flex items-center gap-1.5 text-white text-[10px] font-semibold tracking-wide uppercase">
+                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" /> Active Risk Zone
+                    </div>
                   </div>
                 </div>
-                
-                <div className="space-y-3">
-                  {/* Model 1 */}
-                  <div className="bg-white/5 rounded-xl p-3 border border-white/5 transition-colors hover:bg-white/10 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-                        <CheckCircle2 className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-white text-sm font-bold">O Porriño Region</div>
-                        <div className="text-[10px] text-slate-400">21 May 2026, 16:39</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-emerald-400 text-[10px] font-bold uppercase tracking-wider">Completed</div>
-                      <div className="text-xs text-slate-300 font-mono mt-0.5">21s</div>
-                    </div>
-                  </div>
 
-                  {/* Model 2 */}
-                  <div className="bg-white/5 rounded-xl p-3 border border-white/5 transition-colors hover:bg-white/10 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-                        <CheckCircle2 className="w-4 h-4" />
+                {/* Simulation list */}
+                <div className="px-3 py-3 divide-y divide-white/5">
+                  {[
+                    { region: "O Porriño Region", date: "21 May 2026, 16:39", duration: "21s", risk: "High", dot: "bg-rose-500", pill: "bg-rose-500/15 text-rose-300" },
+                    { region: "Vigo Metro East", date: "21 May 2026, 14:46", duration: "20s", risk: "Moderate", dot: "bg-amber-500", pill: "bg-amber-500/15 text-amber-300" },
+                    { region: "Pontevedra South", date: "18 May 2026, 19:11", duration: "9m 20s", risk: "Low", dot: "bg-emerald-500", pill: "bg-emerald-500/15 text-emerald-300" },
+                  ].map((s) => (
+                    <div key={s.region} className="group flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-white/5">
+                      <span className={`w-2 h-2 rounded-full shrink-0 ${s.dot}`} />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-semibold text-white truncate">{s.region}</span>
+                          <span className={`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${s.pill}`}>{s.risk}</span>
+                        </div>
+                        <div className="text-[11px] text-slate-500 mt-0.5">{s.date}</div>
                       </div>
-                      <div>
-                        <div className="text-white text-sm font-bold">Vigo Metro East</div>
-                        <div className="text-[10px] text-slate-400">21 May 2026, 14:46</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-emerald-400 text-[10px] font-bold uppercase tracking-wider">Completed</div>
-                      <div className="text-xs text-slate-300 font-mono mt-0.5">20s</div>
-                    </div>
-                  </div>
-
-                  {/* Model 3 */}
-                  <div className="bg-white/5 rounded-xl p-3 border border-white/5 transition-colors hover:bg-white/10 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-                        <CheckCircle2 className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-white text-sm font-bold">Pontevedra South</div>
-                        <div className="text-[10px] text-slate-400">18 May 2026, 19:11</div>
+                      <div className="text-right shrink-0">
+                        <div className="inline-flex items-center gap-1 text-emerald-400 text-[10px] font-semibold uppercase tracking-wider">
+                          <CheckCircle2 className="w-3 h-3" /> Done
+                        </div>
+                        <div className="text-xs text-slate-400 font-mono mt-0.5">{s.duration}</div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-emerald-400 text-[10px] font-bold uppercase tracking-wider">Completed</div>
-                      <div className="text-xs text-slate-300 font-mono mt-0.5">9m 20s</div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -401,23 +382,32 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* Stats Ribbon */}
-      <section className="relative z-20 -mt-10 max-w-7xl mx-auto px-5">
-        <div className="rounded-3xl border border-white/10 bg-[#2E2D52]/95 backdrop-blur-md p-6 md:p-8 shadow-2xl grid grid-cols-2 lg:grid-cols-4 gap-6 items-center divide-y lg:divide-y-0 lg:divide-x divide-white/10 text-center">
-          <div className="pt-2 lg:pt-0 first:pt-0">
-            <div className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-amber-200 via-orange-400 to-rose-500 bg-clip-text text-transparent tracking-tight leading-none">Km²</div>
-            <div className="text-[11px] font-extrabold text-slate-300 uppercase tracking-wider mt-2">{t("landing.stats.affectedArea")}</div>
-          </div>
-          <div className="pt-4 lg:pt-0 lg:pl-6">
-            <div className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-amber-200 via-orange-400 to-rose-500 bg-clip-text text-transparent tracking-tight leading-none">313</div>
-            <div className="text-[11px] font-extrabold text-slate-300 uppercase tracking-wider mt-2">{t("landing.stats.municipalities")}</div>
-          </div>
-          <div className="pt-4 lg:pt-0 lg:pl-6">
-            <div className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-amber-200 via-orange-400 to-rose-500 bg-clip-text text-transparent tracking-tight leading-none">5-Tier</div>
-            <div className="text-[11px] font-extrabold text-slate-300 uppercase tracking-wider mt-2">{t("landing.stats.riskDistribution")}</div>
-          </div>
-          <div className="pt-4 lg:pt-0 lg:pl-6">
-            <div className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-amber-200 via-orange-400 to-rose-500 bg-clip-text text-transparent tracking-tight leading-none">Live</div>
-            <div className="text-[11px] font-extrabold text-slate-300 uppercase tracking-wider mt-2">{t("landing.stats.trendAnalysis")}</div>
+      <section className="relative z-20 -mt-12 max-w-7xl mx-auto px-5">
+        <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-[#2E2D52]/95 to-[#23223f]/95 backdrop-blur-xl p-2 shadow-[0_24px_70px_-20px_rgba(0,0,0,0.7)]">
+          <div className="grid grid-cols-2 lg:grid-cols-4">
+            {[
+              { icon: MapIcon, value: "29,574", unit: "km²", label: t("landing.stats.affectedArea") },
+              { icon: Users, value: "313", unit: "", label: t("landing.stats.municipalities") },
+              { icon: ShieldCheck, value: "5", unit: "tiers", label: t("landing.stats.riskDistribution") },
+              { icon: Activity, value: "Live", unit: "", label: t("landing.stats.trendAnalysis"), live: true },
+            ].map(({ icon: Icon, value, unit, label, live }) => (
+              <div
+                key={label}
+                className="group flex items-center gap-4 p-5 lg:p-6 rounded-2xl transition-colors hover:bg-white/5 lg:border-l lg:border-white/10 lg:first:border-l-0"
+              >
+                <div className="shrink-0 w-11 h-11 rounded-xl bg-amber-500/10 ring-1 ring-amber-400/20 flex items-center justify-center text-amber-400 transition-transform duration-300 group-hover:scale-110">
+                  <Icon className="w-5 h-5" />
+                </div>
+                <div className="text-left min-w-0">
+                  <div className="flex items-baseline gap-1.5">
+                    {live && <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.7)]" />}
+                    <span className="text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-none">{value}</span>
+                    {unit && <span className="text-sm font-bold text-amber-400">{unit}</span>}
+                  </div>
+                  <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mt-1.5 truncate">{label}</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

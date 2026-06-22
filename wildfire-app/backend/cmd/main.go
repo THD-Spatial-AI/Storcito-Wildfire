@@ -289,7 +289,8 @@ func buildRouteDeps(cfg *config.Config, deps *AppDependencies) routes.Deps {
 	modelHandler := modelhandler.NewModelHandlerWithCache(deps.DB, deps.AsynqClient, deps.AdminTokenProvider, cfg.Auth.BaseURL, cfg.Auth.Realm, deps.WebserviceClient, deps.KeycloakCache, deps.SyncCache, deps.NotificationService)
 	resultHandler := resulthandler.NewResultHandler(deps.DB, deps.NotificationService, deps.WebserviceClient, cfg.CallbackSecret, deps.AsynqClient, deps.GeoserverClient, cfg.GeoserverPublicURL)
 	riskStore := riskmetricsservice.NewGormResultStore(deps.DB)
-	riskService := riskmetricsservice.NewService(riskStore, deps.GeoserverClient)
+	riskService := riskmetricsservice.NewService(riskStore, deps.GeoserverClient).
+		WithCache(riskmetricsservice.NewRedisCache(deps.RedisClient, 0))
 	riskHandler := riskmetricshandler.NewHandler(riskService, resultStore.NewStore(deps.DB))
 	weatherHandler := weather.NewWeatherHandler()
 
