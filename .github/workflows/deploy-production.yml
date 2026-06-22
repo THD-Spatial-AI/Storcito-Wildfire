@@ -1,0 +1,27 @@
+name: Deploy to production
+
+# Runs on a self-hosted runner installed on the production VM, so the image is
+# built straight into the local Docker daemon — no registry push, no SSH.
+on:
+  push:
+    branches: [stable]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted   # matches the default runner label; add more labels if you run several runners
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image (into local Docker daemon)
+        run: docker build -f Dockerfile.ci -t wildfire-app:${{ github.sha }} -t wildfire-app:latest .
+
+      - name: Recreate only the prod backend with the new image
+        run: |
+          cd ~/deploy/wildfire-app           # persistent dir holding backend/.env.prod, nginx, etc.
+          export APP_IMAGE=wildfire-app:${{ github.sha }}
+          docker network create spatialhub-net 2>/dev/null || true
+          # --no-deps + naming app-backend-prod keeps nginx, app-backend-dev and
+          # the rest of the stack untouched; only the prod backend is swapped.
+          docker compose -f docker-compose.deploy.yml up -d --no-deps --force-recreate app-backend-prod
+          docker image prune -f              # keep the VM disk from filling with old layers
