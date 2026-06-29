@@ -7,6 +7,7 @@ import { polygon, lineString } from "@turf/helpers";
 import { Button } from "@spatialhub/ui";
 import { cn } from "@/lib/utils";
 import { settingsService } from "@/features/settings/services/settings";
+import { dateRangeHasOnlyAvailableDates } from "@/features/configurator/utils/dateAvailability";
 import type { AreaSelectState, AreaSelectActions } from "@/features/configurator/types/area-select";
 
 import {
@@ -42,31 +43,33 @@ interface StepLayout {
 }
 
 const getStepLayout = (step: number): StepLayout => {
-    const basePanel = "left-3 top-3 max-h-[calc(100%-1.5rem)] max-w-[calc(100vw-1.5rem)] rounded-xl";
+    // Docked flush against the sidebar (top-left), sized to its content (not full
+    // height), only the right edge rounded so it reads as part of the navigation.
+    const basePanel = "left-0 top-0 max-h-full max-w-[calc(100vw-1.5rem)] rounded-r-2xl";
 
     switch (step) {
         case 1:
             return {
-                panel: cn(basePanel, "w-[360px]"),
+                panel: cn(basePanel, "w-[300px]"),
                 body: "px-4 py-4",
                 nav: "px-3 py-2",
             };
         case 2:
             return {
-                panel: cn(basePanel, "w-[360px]"),
+                panel: cn(basePanel, "w-[300px]"),
                 body: "px-3 py-3",
                 nav: "px-3 py-2",
             };
         case 4:
         case 5:
             return {
-                panel: cn(basePanel, "w-[360px]"),
+                panel: cn(basePanel, "w-[300px]"),
                 body: "px-4 py-3",
                 nav: "px-3 py-2",
             };
         default:
             return {
-                panel: cn(basePanel, "w-[420px]"),
+                panel: cn(basePanel, "w-[300px]"),
                 body: "px-4 py-4",
                 nav: "px-3 py-2",
             };
@@ -202,6 +205,26 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                 if (state.calculationMode === "static" && state.fromDate && !state.availableStaticDates.includes(state.fromDate)) {
                     return "Select an available static date.";
                 }
+                if (state.calculationMode === "dynamic" && state.isLoadingDynamicDates) {
+                    return "Loading available dynamic dates.";
+                }
+                if (state.calculationMode === "dynamic" && state.dynamicDatesError) {
+                    return state.dynamicDatesError;
+                }
+                if (state.calculationMode === "dynamic" && state.availableDynamicDates.length === 0) {
+                    return "No dynamic dates are currently available.";
+                }
+                if (state.calculationMode === "dynamic" && state.fromDate && state.toDate && state.fromDate > state.toDate) {
+                    return "Dynamic mode requires the start date to be before or equal to the end date.";
+                }
+                if (
+                    state.calculationMode === "dynamic" &&
+                    state.fromDate &&
+                    state.toDate &&
+                    !dateRangeHasOnlyAvailableDates(state.fromDate, state.toDate, state.availableDynamicDates)
+                ) {
+                    return "Select a fully available dynamic date range.";
+                }
                 return missing.length ? `Please add ${missing.join(" and ")} to continue.` : null;
             }
             case 2:
@@ -224,8 +247,11 @@ export const LayerStepper: FC<LayerStepperProps> = ({
         state.toDate,
         state.calculationMode,
         state.availableStaticDates,
+        state.availableDynamicDates,
         state.isLoadingStaticDates,
+        state.isLoadingDynamicDates,
         state.staticDatesError,
+        state.dynamicDatesError,
         state.areaInputMode,
         state.uploadedGeoJsonName,
         allPolygonsCount,
@@ -241,6 +267,11 @@ export const LayerStepper: FC<LayerStepperProps> = ({
             (state.isLoadingStaticDates ||
                 Boolean(state.staticDatesError) ||
                 !state.availableStaticDates.includes(state.fromDate))) ||
+        (state.calculationMode === "dynamic" &&
+            (state.fromDate > state.toDate ||
+                state.isLoadingDynamicDates ||
+                Boolean(state.dynamicDatesError) ||
+                !dateRangeHasOnlyAvailableDates(state.fromDate, state.toDate, state.availableDynamicDates))) ||
         state.isSaving ||
         allPolygonsCount === 0 ||
         (state.areaInputMode === "upload" && !state.uploadedGeoJsonName);
@@ -360,30 +391,39 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                 aria-label="Configurator layers"
                 data-tour="configurator-steps"
             >
-                <ol className="grid grid-cols-5 gap-1">
-                    {LAYERS.map((l) => {
+                <ol className="flex items-center">
+                    {LAYERS.map((l, idx) => {
                         const done = completed.has(l.id) && l.id !== step;
                         const isCurrent = l.id === step;
                         const reachable = editMode || l.id <= step || completed.has(l.id);
+                        const connectorActive = completed.has(l.id) || l.id < step;
                         return (
-                            <li key={l.id}>
+                            <li key={l.id} className={cn("flex items-center", idx < LAYERS.length - 1 && "flex-1")}>
                                 <button
                                     type="button"
                                     onClick={() => reachable && jumpTo(l.id)}
                                     disabled={!reachable}
                                     title={`${l.id}. ${l.title}`}
                                     className={cn(
-                                        "flex h-8 w-full items-center justify-center rounded-md border text-xs font-semibold transition-colors",
-                                        isCurrent && "border-foreground bg-foreground text-background shadow-sm",
-                                        done && !isCurrent && "border-emerald-500 bg-emerald-500 text-white hover:bg-emerald-600",
-                                        !isCurrent && !done && reachable && "border-border bg-background text-foreground hover:bg-muted",
-                                        !reachable && "cursor-not-allowed border-border bg-background/60 text-muted-foreground/50",
+                                        "relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-all",
+                                        isCurrent && "bg-foreground text-background ring-4 ring-foreground/15",
+                                        done && "bg-foreground text-background hover:bg-foreground/90",
+                                        !isCurrent && !done && reachable && "border-2 border-border bg-background text-muted-foreground hover:border-foreground/40 hover:text-foreground",
+                                        !isCurrent && !done && !reachable && "cursor-not-allowed border-2 border-dashed border-border bg-background text-muted-foreground/40",
                                     )}
                                     aria-current={isCurrent ? "step" : undefined}
                                     aria-label={`Step ${l.id}: ${l.title}`}
                                 >
-                                    {done ? <CheckCircle2 className="h-3.5 w-3.5" /> : l.id}
+                                    {done ? <CheckCircle2 className="h-4 w-4" /> : l.id}
                                 </button>
+                                {idx < LAYERS.length - 1 && (
+                                    <span
+                                        className={cn(
+                                            "mx-1.5 h-0.5 flex-1 rounded-full transition-colors",
+                                            connectorActive ? "bg-foreground" : "bg-border",
+                                        )}
+                                    />
+                                )}
                             </li>
                         );
                     })}

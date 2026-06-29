@@ -39,8 +39,11 @@ export interface AreaSelectState {
 	bufferDistance: number;
 	calculationMode: CalculationMode;
 	availableStaticDates: string[];
+	availableDynamicDates: string[];
 	isLoadingStaticDates: boolean;
+	isLoadingDynamicDates: boolean;
 	staticDatesError?: string;
+	dynamicDatesError?: string;
 	isSaving: boolean;
 	isLoadingModel: boolean;
 	showAreaSelectTour: boolean;
@@ -53,6 +56,11 @@ export interface AreaSelectState {
 	clearTrigger: number;
 	cursorPos: { x: number; y: number } | null;
 	optionalLayers: Record<OptionalLayerKey, boolean>;
+	// Optional per-model uploads (station data + DTM)
+	stationDataName?: string;
+	stationDataError?: string;
+	dtmName?: string;
+	dtmError?: string;
 }
 
 export interface AreaSelectActions {
@@ -73,4 +81,6 @@ export interface AreaSelectActions {
 	handleClearAllPolygons: () => void;
 	setIsDrawing: (isDrawing: boolean) => void;
 	toggleOptionalLayer: (key: OptionalLayerKey) => void;
+	setStationDataFile: (file: File | null) => void;
+	setDtmFile: (file: File | null) => void;
 }

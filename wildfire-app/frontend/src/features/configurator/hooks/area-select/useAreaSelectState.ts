@@ -22,8 +22,11 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
     const [bufferDistance, setBufferDistanceRaw] = useState<number>(DEFAULT_BUFFER_DISTANCE);
     const [calculationMode, setCalculationMode] = useState<CalculationMode>('static');
     const [availableStaticDates, setAvailableStaticDates] = useState<string[]>([]);
+    const [availableDynamicDates, setAvailableDynamicDates] = useState<string[]>([]);
     const [isLoadingStaticDates, setIsLoadingStaticDates] = useState(true);
+    const [isLoadingDynamicDates, setIsLoadingDynamicDates] = useState(true);
     const [staticDatesError, setStaticDatesError] = useState<string | undefined>();
+    const [dynamicDatesError, setDynamicDatesError] = useState<string | undefined>();
     const [originalConfig, setOriginalConfig] = useState<Record<string, unknown> | undefined>(undefined);
 
     const [areaInputMode, setAreaInputModeRaw] = useState<AreaInputMode>('draw');
@@ -38,6 +41,46 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
     }, []);
     const toggleOptionalLayer = useCallback((key: OptionalLayerKey) => {
         setOptionalLayersState((prev) => ({ ...prev, [key]: !prev[key] }));
+    }, []);
+
+    // Optional per-model data uploads
+    const [stationDataFile, setStationDataFileRaw] = useState<File | null>(null);
+    const [stationDataName, setStationDataName] = useState<string | undefined>();
+    const [stationDataError, setStationDataError] = useState<string | undefined>();
+    const [dtmFile, setDtmFileRaw] = useState<File | null>(null);
+    const [dtmName, setDtmName] = useState<string | undefined>();
+    const [dtmError, setDtmError] = useState<string | undefined>();
+
+    const setStationDataFile = useCallback((file: File | null) => {
+        if (!file) {
+            setStationDataFileRaw(null);
+            setStationDataName(undefined);
+            setStationDataError(undefined);
+            return;
+        }
+        if (!/\.(xlsx|xls|csv|txt)$/i.test(file.name)) {
+            setStationDataError('Use an Excel (.xlsx/.xls) or CSV (.csv) file.');
+            return;
+        }
+        setStationDataError(undefined);
+        setStationDataFileRaw(file);
+        setStationDataName(file.name);
+    }, []);
+
+    const setDtmFile = useCallback((file: File | null) => {
+        if (!file) {
+            setDtmFileRaw(null);
+            setDtmName(undefined);
+            setDtmError(undefined);
+            return;
+        }
+        if (!/\.(tif|tiff)$/i.test(file.name)) {
+            setDtmError('Use a GeoTIFF (.tif/.tiff) elevation raster.');
+            return;
+        }
+        setDtmError(undefined);
+        setDtmFileRaw(file);
+        setDtmName(file.name);
     }, []);
 
     const [isDrawing, setIsDrawing] = useState(false);
@@ -66,19 +109,28 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
         (async () => {
             try {
                 setIsLoadingStaticDates(true);
+                setIsLoadingDynamicDates(true);
                 setStaticDatesError(undefined);
-                const dates = await webservicesService.getAvailableStaticDates();
+                setDynamicDatesError(undefined);
+                const [staticDates, dynamicDates] = await Promise.all([
+                    webservicesService.getAvailableStaticDates(),
+                    webservicesService.getAvailableDynamicDates(),
+                ]);
                 if (!cancelled) {
-                    setAvailableStaticDates([...new Set(dates)].sort());
+                    setAvailableStaticDates([...new Set(staticDates)].sort());
+                    setAvailableDynamicDates([...new Set(dynamicDates)].sort());
                 }
             } catch {
                 if (!cancelled) {
                     setAvailableStaticDates([]);
+                    setAvailableDynamicDates([]);
                     setStaticDatesError('Unable to load available static dates.');
+                    setDynamicDatesError('Unable to load available dynamic dates.');
                 }
             } finally {
                 if (!cancelled) {
                     setIsLoadingStaticDates(false);
+                    setIsLoadingDynamicDates(false);
                 }
             }
         })();
@@ -128,7 +180,9 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
         toDate, setToDate,
         bufferDistance, setBufferDistance, setBufferDistanceRaw,
         calculationMode, setCalculationMode,
-        availableStaticDates, isLoadingStaticDates, staticDatesError,
+        availableStaticDates, availableDynamicDates,
+        isLoadingStaticDates, isLoadingDynamicDates,
+        staticDatesError, dynamicDatesError,
         originalConfig, setOriginalConfig,
         // area input
         areaInputMode, setAreaInputMode, setAreaInputModeRaw,
@@ -136,6 +190,9 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
         geoJsonUploadError, setGeoJsonUploadError,
         // optional layers (forwarded to STORCITO as parameters.optional_layers)
         optionalLayers, setOptionalLayers, toggleOptionalLayer,
+        // optional per-model data uploads
+        stationDataFile, stationDataName, stationDataError, setStationDataFile,
+        dtmFile, dtmName, dtmError, setDtmFile,
         // drawing flags
         isDrawing, setIsDrawing,
         cursorPos, setCursorPos,

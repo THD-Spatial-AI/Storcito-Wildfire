@@ -183,16 +183,16 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
                 <TooltipTrigger asChild>
                     <button
                         onClick={() => setIsOpen(!isOpen)}
-                        className="group flex items-center gap-2.5 px-3 py-1.5 bg-card border border-border rounded-lg hover:border-muted-foreground/50 hover:shadow-sm transition-all duration-200"
+                        className="group flex items-center gap-1.5 px-2 py-1 bg-card border border-border rounded hover:border-muted-foreground/50 hover:shadow-sm transition-all duration-200"
                         disabled={isLoading}
                     >
-                        <div className="flex items-center justify-center w-6 h-6 bg-muted rounded">
-                            <Folder className="w-3.5 h-3.5 text-muted-foreground" />
+                        <div className="flex items-center justify-center w-5 h-5 bg-muted rounded-sm">
+                            <Folder className="w-3 h-3 text-muted-foreground" />
                         </div>
-                        <span className="font-normal text-foreground max-w-[140px] truncate text-sm">
+                        <span className="font-normal text-foreground max-w-[120px] truncate text-xs">
                             {isLoading ? t('common.loading') : getWorkspaceDisplayName(selectedWorkspace)}
                         </span>
-                        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                        <ChevronDown className={`w-3 h-3 text-muted-foreground transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
                     </button>
                 </TooltipTrigger>
                 <TooltipContent>{t('workspace.selectWorkspace')}</TooltipContent>

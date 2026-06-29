@@ -40,8 +40,11 @@ export const useAreaSelect = ({
         bufferDistance: state.bufferDistance,
         calculationMode: state.calculationMode,
         availableStaticDates: state.availableStaticDates,
+        availableDynamicDates: state.availableDynamicDates,
         isLoadingStaticDates: state.isLoadingStaticDates,
+        isLoadingDynamicDates: state.isLoadingDynamicDates,
         staticDatesError: state.staticDatesError,
+        dynamicDatesError: state.dynamicDatesError,
         isSaving: creation.isSaving,
         isLoadingModel: creation.isLoadingModel,
         showAreaSelectTour: state.showAreaSelectTour,
@@ -54,6 +57,10 @@ export const useAreaSelect = ({
         clearTrigger: drawing.clearTrigger,
         cursorPos: state.cursorPos,
         optionalLayers: state.optionalLayers,
+        stationDataName: state.stationDataName,
+        stationDataError: state.stationDataError,
+        dtmName: state.dtmName,
+        dtmError: state.dtmError,
     };
 
     const actions: AreaSelectActions = {
@@ -74,6 +81,8 @@ export const useAreaSelect = ({
         handleClearAllPolygons: drawing.handleClearAllPolygons,
         setIsDrawing: state.setIsDrawing,
         toggleOptionalLayer: state.toggleOptionalLayer,
+        setStationDataFile: state.setStationDataFile,
+        setDtmFile: state.setDtmFile,
     };
 
     return {

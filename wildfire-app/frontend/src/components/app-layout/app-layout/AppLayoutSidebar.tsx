@@ -7,6 +7,7 @@ import { LayersSheet } from "./LayersSheet";
 import { ProfileMenu } from "./ProfileMenu";
 import { HelpMenu } from "./HelpMenu";
 import type { NavigationHandlers, SidebarItem, UserMenuItem } from "./types";
+import { APP_VERSION } from "@/version";
 
 type BaseLayerInfo = {
   id: string;
@@ -97,6 +98,10 @@ export const AppLayoutSidebar: React.FC<AppLayoutSidebarProps> = ({
         </Authorized>
 
         <ProfileMenu userMenuItems={userMenuItems} getUserInitial={getUserInitial} />
+
+        <span className="text-[9px] font-medium tabular-nums text-muted-foreground/60" title={`App version ${APP_VERSION}`}>
+          v{APP_VERSION}
+        </span>
       </div>
     </aside>
   );

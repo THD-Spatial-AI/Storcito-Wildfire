@@ -872,7 +872,8 @@
       "hint": "Rozsah 0–2000 m v krocích po 100 m. Rozšiřuje oblast kolem polygonu.",
       "increase": "Zvětšit vzdálenost bufferu",
       "label": "Vzdálenost bufferu (metry)"
-    }
+    },
+    "staticDateInfo": "Statická data se vybírají automaticky – pro každý dostupný rok se vybere den s nejvyšší teplotou."
   },
   "mapLayers": {
     "title": "Mapové vrstvy",

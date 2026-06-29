@@ -138,6 +138,10 @@ services:
       # CALLBACK_SECRET must match the backend's value.
       BACKEND_INTERNAL_URL: ${BACKEND_INTERNAL_URL:-http://app-backend:8000}
       CALLBACK_SECRET: ${CALLBACK_SECRET:-}
+    extra_hosts:
+      # Reach a backend running on the Docker host (e.g. `go run` on :8000)
+      # via http://host.docker.internal:8000.
+      - "host.docker.internal:host-gateway"
     depends_on:
       postgres:
         condition: service_healthy

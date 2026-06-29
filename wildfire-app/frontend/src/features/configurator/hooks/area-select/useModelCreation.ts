@@ -4,6 +4,7 @@ import { modelService } from '@/features/model-dashboard/services/modelService';
 import { useCreateModelMutation, useUpdateModelMutation2 } from '@/features/model-dashboard/hooks/useModelsQuery';
 import { useWorkspaceStore } from '@/components/workspace';
 import { clampBuffer } from '@/features/configurator/constants/buffer-distance';
+import { dateRangeHasOnlyAvailableDates } from '@/features/configurator/utils/dateAvailability';
 import type {
     AreaData,
     UseAreaSelectProps,
@@ -48,8 +49,9 @@ export const useModelCreation = ({
     const [isLoadingModel, setIsLoadingModel] = useState(false);
 
     const {
-        modelName, fromDate, toDate, bufferDistance, calculationMode, availableStaticDates,
+        modelName, fromDate, toDate, bufferDistance, calculationMode, availableStaticDates, availableDynamicDates,
         areaInputMode, uploadedGeoJsonName, originalConfig, optionalLayers,
+        stationDataFile, dtmFile,
         setModelName, setBufferDistanceRaw, setCalculationMode, setOriginalConfig,
         setAreaInputModeRaw, setUploadedGeoJsonName, setFromDate, setToDate, setOptionalLayers,
     } = state;
@@ -122,6 +124,8 @@ export const useModelCreation = ({
         if (!fromDate || !toDate || !modelName.trim() || allPolygons.length === 0) return;
         if (calculationMode === 'static' && fromDate !== toDate) return;
         if (calculationMode === 'static' && !availableStaticDates.includes(fromDate)) return;
+        if (calculationMode === 'dynamic' && fromDate > toDate) return;
+        if (calculationMode === 'dynamic' && !dateRangeHasOnlyAvailableDates(fromDate, toDate, availableDynamicDates)) return;
         setIsSaving(true);
         try {
             await new Promise((resolve) => setTimeout(resolve, SAVE_DELAY_MS));
@@ -176,6 +180,16 @@ export const useModelCreation = ({
                 savedModelId = created?.data?.id;
             }
 
+            // Upload optional input files (station data + DTM) before any calculation.
+            if (savedModelId && (stationDataFile || dtmFile)) {
+                try {
+                    await modelService.uploadModelInputs(savedModelId, {
+                        stationData: stationDataFile,
+                        dtm: dtmFile,
+                    });
+                } catch { /* ignore — model still saved */ }
+            }
+
             if (opts?.runAfterSave && savedModelId) {
                 try {
                     await modelService.startCalculation(savedModelId);
@@ -188,9 +202,9 @@ export const useModelCreation = ({
         } finally {
             setIsSaving(false);
         }
-    }, [fromDate, toDate, modelName, bufferDistance, calculationMode, availableStaticDates, editMode, modelId, onAreaSelected,
+    }, [fromDate, toDate, modelName, bufferDistance, calculationMode, availableStaticDates, availableDynamicDates, editMode, modelId, onAreaSelected,
         allPolygons, areaInputMode, uploadedGeoJsonName, currentWorkspace?.id, originalConfig, optionalLayers,
-        updateModelMutation, createModelMutation, navigate]);
+        stationDataFile, dtmFile, updateModelMutation, createModelMutation, navigate]);
 
     return {
         isSaving,

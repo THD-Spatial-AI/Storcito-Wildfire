@@ -630,21 +630,24 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
         <div className="flex items-center gap-2 flex-shrink-0">
           {hasRiskLayers && availableLayers.length > 1 && (
-            <div className="h-8 px-2 inline-flex items-center gap-1.5 text-xs border border-border rounded-lg bg-card">
-              <Layers className="w-4 h-4 text-muted-foreground" />
-              <select
-                value={selectedLayerKey}
-                onChange={(e) => handleSelectLayer(e.target.value)}
-                className="bg-transparent text-foreground font-medium focus:outline-none cursor-pointer pr-1"
+            <Select value={selectedLayerKey} onValueChange={handleSelectLayer}>
+              <SelectTrigger
+                className="w-[200px] h-9"
                 aria-label={t("modelResults.layer.dataset", "Layer")}
               >
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <Layers className="w-4 h-4 text-muted-foreground shrink-0" />
+                  <SelectValue />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
                 {availableLayers.map((l) => (
-                  <option key={l.key} value={l.key}>
+                  <SelectItem key={l.key} value={l.key}>
                     {l.title}
-                  </option>
+                  </SelectItem>
                 ))}
-              </select>
-            </div>
+              </SelectContent>
+            </Select>
           )}
           {hasRiskLayers && (
             <>

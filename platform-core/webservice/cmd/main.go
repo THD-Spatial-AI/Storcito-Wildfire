@@ -211,6 +211,7 @@ func registerRoutes(r *gin.Engine, deps *appDependencies) {
 		api.POST("/webservices", wsHandler.CreateWebservice)
 		api.GET("/webservices", wsHandler.GetWebserviceList)
 		api.GET("/webservices/available-static-dates", wsHandler.GetAvailableStaticDates)
+		api.GET("/webservices/available-dynamic-dates", wsHandler.GetAvailableDynamicDates)
 		api.GET("/webservices/available-data-coverage", wsHandler.GetAvailableDataCoverage)
 		api.GET("/webservices/:id", wsHandler.GetWebserviceByID)
 		api.PUT("/webservices/:id", wsHandler.UpdateWebservice)

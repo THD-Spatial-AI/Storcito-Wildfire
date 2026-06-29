@@ -11,7 +11,6 @@ import {
 import { HelpCircle, type LucideIcon } from "lucide-react";
 
 import { Authorized } from "@/middleware/authorized";
-import { APP_VERSION } from "@/version";
 
 interface HelpMenuProps {
   documentationIcon: LucideIcon;
@@ -63,9 +62,6 @@ export const HelpMenu: React.FC<HelpMenuProps> = ({
             <FeedbackIcon className="w-4 h-4" />
             {t("common.tooltips.feedback")}
           </DropdownMenuItem>
-          <div className="mt-1 border-t border-border px-2 py-1.5 text-[11px] text-muted-foreground">
-            {t("common.appVersion", "App version")} v{APP_VERSION}
-          </div>
         </DropdownMenuContent>
       </DropdownMenu>
       <TooltipContent side="right">{t("common.tooltips.help", "Help")}</TooltipContent>

@@ -1032,7 +1032,8 @@
       "hint": "Range 0–2000 m in 100 m steps. Expands the area considered around your polygon.",
       "decrease": "Decrease buffer distance",
       "increase": "Increase buffer distance"
-    }
+    },
+    "staticDateInfo": "Static dates are chosen automatically — for each available year, the day with the highest temperature is selected."
   },
   "mapLayers": {
     "title": "Map Layers",

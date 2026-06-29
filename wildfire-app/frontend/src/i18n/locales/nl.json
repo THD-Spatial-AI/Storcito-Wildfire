@@ -872,7 +872,8 @@
       "hint": "Bereik 0–2000 m in stappen van 100 m. Vergroot het gebied rond uw polygoon.",
       "increase": "Bufferafstand vergroten",
       "label": "Bufferafstand (meter)"
-    }
+    },
+    "staticDateInfo": "Statische datums worden automatisch gekozen: voor elk beschikbaar jaar wordt de dag met de hoogste temperatuur geselecteerd."
   },
   "mapLayers": {
     "title": "Kaartlagen",

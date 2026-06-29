@@ -1032,7 +1032,8 @@
       "hint": "Bereich 0–2000 m in 100-m-Schritten. Erweitert das um Ihr Polygon berücksichtigte Gebiet.",
       "increase": "Pufferabstand vergrößern",
       "label": "Pufferabstand (Meter)"
-    }
+    },
+    "staticDateInfo": "Statische Termine werden automatisch gewählt – für jedes verfügbare Jahr wird der Tag mit der höchsten Temperatur ausgewählt."
   },
   "mapLayers": {
     "title": "Kartenebenen",

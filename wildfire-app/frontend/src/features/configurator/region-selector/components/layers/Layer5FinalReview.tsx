@@ -1,6 +1,7 @@
 import type { FC, ReactNode } from "react";
 import { CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { dateRangeHasOnlyAvailableDates } from "@/features/configurator/utils/dateAvailability";
 import { LayerShell } from "./shared/LayerShell";
 import type { ConfiguratorContext } from "./types";
 
@@ -53,11 +54,25 @@ const buildChecks = (ctx: ConfiguratorContext): CheckResult[] => {
             checks.push({ label: "Timeframe", status: "pass", detail: `Static run on ${state.fromDate}.` });
         }
     } else {
-        checks.push({
-            label: "Timeframe",
-            status: "pass",
-            detail: `Dynamic ${state.fromDate} → ${state.toDate}.`,
-        });
+        if (state.isLoadingDynamicDates) {
+            checks.push({ label: "Timeframe", status: "warn", detail: "Loading available dynamic dates…" });
+        } else if (state.dynamicDatesError) {
+            checks.push({ label: "Timeframe", status: "fail", detail: state.dynamicDatesError });
+        } else if (state.fromDate > state.toDate) {
+            checks.push({ label: "Timeframe", status: "fail", detail: "Dynamic mode requires start before end." });
+        } else if (!dateRangeHasOnlyAvailableDates(state.fromDate, state.toDate, state.availableDynamicDates)) {
+            checks.push({
+                label: "Timeframe",
+                status: "fail",
+                detail: "The selected dynamic date range contains unavailable dates.",
+            });
+        } else {
+            checks.push({
+                label: "Timeframe",
+                status: "pass",
+                detail: `Dynamic ${state.fromDate} → ${state.toDate}.`,
+            });
+        }
     }
 
     if (allPolygonsCount === 0) {
