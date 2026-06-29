@@ -61,6 +61,8 @@ export const useAreaSelect = ({
         stationDataError: state.stationDataError,
         dtmName: state.dtmName,
         dtmError: state.dtmError,
+        dtmFootprint: state.dtmFootprint,
+        dtmProcessing: state.dtmProcessing,
     };
 
     const actions: AreaSelectActions = {

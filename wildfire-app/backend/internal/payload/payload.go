@@ -44,6 +44,7 @@ func BuildCalculationPayload(model *models.Model) interface{} {
 		Lkr:         model.Region,
 		Parameters:  map[string]interface{}{},
 	}
+	payload.Parameters["source_model_id"] = fmt.Sprintf("%d", model.ID)
 
 	var configMap map[string]interface{}
 	if len(model.Config) > 0 && json.Unmarshal(model.Config, &configMap) == nil && configMap != nil {
@@ -52,6 +53,7 @@ func BuildCalculationPayload(model *models.Model) interface{} {
 		}
 		if params, ok := configMap["parameters"].(map[string]interface{}); ok {
 			payload.Parameters = params
+			payload.Parameters["source_model_id"] = fmt.Sprintf("%d", model.ID)
 		}
 		if bd, ok := extractBufferDistance(configMap["buffer_distance"]); ok {
 			payload.BufferDistance = &bd

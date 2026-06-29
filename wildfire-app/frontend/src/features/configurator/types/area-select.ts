@@ -61,6 +61,8 @@ export interface AreaSelectState {
 	stationDataError?: string;
 	dtmName?: string;
 	dtmError?: string;
+	dtmFootprint?: [number, number][];
+	dtmProcessing?: boolean;
 }
 
 export interface AreaSelectActions {

@@ -82,15 +82,11 @@ func (h *ModelHandler) GetModelInput(c *gin.Context) {
 		return
 	}
 
-	dir := modelInputsDir(model.ID)
-	entries, err := os.ReadDir(dir)
-	if err != nil {
-		httputil.NotFound(c, "No uploaded inputs for this model")
-		return
-	}
-	for _, entry := range entries {
-		if strings.HasPrefix(entry.Name(), kind+".") {
-			c.File(filepath.Join(dir, entry.Name()))
+	inputs := modelInputConfig(model.Config)
+	if filename, ok := inputs[kind]; ok && filename != "" {
+		target := filepath.Join(modelInputsDir(model.ID), filename)
+		if _, err := os.Stat(target); err == nil {
+			c.File(target)
 			return
 		}
 	}
@@ -107,7 +103,18 @@ func (h *ModelHandler) recordModelInputs(modelID uint, saved map[string]string) 
 	if len(model.Config) > 0 {
 		_ = json.Unmarshal(model.Config, &config)
 	}
-	config["user_inputs"] = saved
+	existing := map[string]string{}
+	if rawExisting, ok := config["user_inputs"].(map[string]any); ok {
+		for kind, filename := range rawExisting {
+			if filenameString, ok := filename.(string); ok && filenameString != "" {
+				existing[kind] = filenameString
+			}
+		}
+	}
+	for kind, filename := range saved {
+		existing[kind] = filename
+	}
+	config["user_inputs"] = existing
 
 	encoded, err := json.Marshal(config)
 	if err != nil {
@@ -119,7 +126,6 @@ func (h *ModelHandler) recordModelInputs(modelID uint, saved map[string]string) 
 func modelInputsDir(modelID uint) string {
 	return filepath.Join(constants.StorageDataDir, modelInputsSubdir, fmt.Sprintf("model_%d", modelID))
 }
-
 
 func saveModelInputFile(c *gin.Context, field, dir string, allowedExt map[string]bool) (string, error) {
 	fileHeader, err := c.FormFile(field)
@@ -133,8 +139,29 @@ func saveModelInputFile(c *gin.Context, field, dir string, allowedExt map[string
 	}
 
 	name := field + ext
+	for oldExt := range allowedExt {
+		_ = os.Remove(filepath.Join(dir, field+oldExt))
+	}
 	if err := c.SaveUploadedFile(fileHeader, filepath.Join(dir, name)); err != nil {
 		return "", fmt.Errorf("failed to save %s", field)
 	}
 	return name, nil
+}
+
+func modelInputConfig(rawConfig datatypes.JSON) map[string]string {
+	config := map[string]any{}
+	if len(rawConfig) > 0 {
+		_ = json.Unmarshal(rawConfig, &config)
+	}
+	rawInputs, ok := config["user_inputs"].(map[string]any)
+	if !ok {
+		return nil
+	}
+	inputs := make(map[string]string, len(rawInputs))
+	for kind, filename := range rawInputs {
+		if filenameString, ok := filename.(string); ok && filenameString != "" {
+			inputs[kind] = filenameString
+		}
+	}
+	return inputs
 }

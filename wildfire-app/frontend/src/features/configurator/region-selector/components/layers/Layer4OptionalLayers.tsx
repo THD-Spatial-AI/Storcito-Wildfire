@@ -1,80 +1,9 @@
 import type { FC } from "react";
-import { CloudRain, Mountain, Flame, AlertCircle, FileCheck2, X, Info } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@spatialhub/ui";
+import { CloudRain, Mountain, Flame, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LayerShell } from "./shared/LayerShell";
+import { FileUploadField } from "./shared/FileUploadField";
 import type { ConfiguratorContext, OptionalLayerKey } from "./types";
-
-interface FileUploadFieldProps {
-    label: string;
-    accept: string;
-    hint: string;
-    info: string;
-    icon: typeof CloudRain;
-    fileName?: string;
-    error?: string;
-    onSelect: (file: File | null) => void;
-}
-
-const FileUploadField: FC<FileUploadFieldProps> = ({ label, accept, hint, info, icon: Icon, fileName, error, onSelect }) => (
-    <div className={cn("rounded-lg border px-3 py-2.5", error ? "border-red-500/50 bg-red-500/5" : "border-border bg-card")}>
-        <div className="flex items-center gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border bg-background/60 text-muted-foreground">
-                <Icon className="h-4 w-4" />
-            </span>
-            <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-1 text-xs font-medium text-foreground">
-                    {label}
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <button type="button" aria-label={`About ${label}`} className="text-muted-foreground transition-colors hover:text-foreground focus:outline-none">
-                                <Info className="h-3 w-3" />
-                            </button>
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-[260px] text-xs">{info}</TooltipContent>
-                    </Tooltip>
-                </div>
-                <div className="truncate text-[11px] text-muted-foreground">
-                    {fileName ? (
-                        <span className="inline-flex items-center gap-1 text-foreground">
-                            <FileCheck2 className="h-3 w-3 text-emerald-500" /> {fileName}
-                        </span>
-                    ) : (
-                        hint
-                    )}
-                </div>
-            </div>
-            {fileName ? (
-                <button
-                    type="button"
-                    onClick={() => onSelect(null)}
-                    aria-label={`Remove ${label}`}
-                    className="shrink-0 rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
-                >
-                    <X className="h-3.5 w-3.5" />
-                </button>
-            ) : (
-                <label className="shrink-0 cursor-pointer rounded-lg border border-border bg-background px-2.5 py-1.5 text-[11px] font-semibold text-foreground hover:bg-muted">
-                    Choose
-                    <input
-                        type="file"
-                        accept={accept}
-                        className="hidden"
-                        onChange={(e) => {
-                            onSelect(e.target.files?.[0] ?? null);
-                            e.target.value = "";
-                        }}
-                    />
-                </label>
-            )}
-        </div>
-        {error && (
-            <p className="mt-1.5 flex items-center gap-1 text-[11px] text-red-600 dark:text-red-400">
-                <AlertCircle className="h-3 w-3" /> {error}
-            </p>
-        )}
-    </div>
-);
 
 interface OptionalLayerItem {
     id: OptionalLayerKey;
@@ -187,7 +116,8 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
             <div className="mt-4 border-t border-border pt-4">
                 <h4 className="text-xs font-semibold text-foreground">Custom data (optional)</h4>
                 <p className="mb-2 mt-0.5 text-[11px] leading-snug text-muted-foreground">
-                    Bring your own inputs for this area. If left empty, the bundled regional data is used.
+                    Bring your own weather inputs for this area. If left empty, the bundled regional data is used.
+                    {/* The DTM is uploaded earlier, in the Area Selection step. */}
                 </p>
                 <div className="space-y-2">
                     <FileUploadField
@@ -199,16 +129,6 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
                         fileName={ctx.state.stationDataName}
                         error={ctx.state.stationDataError}
                         onSelect={(f) => ctx.actions.setStationDataFile(f)}
-                    />
-                    <FileUploadField
-                        label="Terrain model (DTM)"
-                        accept=".tif,.tiff"
-                        hint="GeoTIFF elevation raster (.tif)"
-                        info="A Digital Terrain Model — a GeoTIFF where each pixel is the ground elevation. Used to derive slope and aspect and as the spatial reference grid for the area. If omitted, the bundled regional terrain is used."
-                        icon={Mountain}
-                        fileName={ctx.state.dtmName}
-                        error={ctx.state.dtmError}
-                        onSelect={(f) => ctx.actions.setDtmFile(f)}
                     />
                 </div>
             </div>

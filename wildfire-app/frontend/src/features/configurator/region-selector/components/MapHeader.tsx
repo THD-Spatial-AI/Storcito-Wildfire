@@ -47,6 +47,7 @@ export const MapHeader: FC<MapHeaderProps> = ({
                                     reloadKey={wsReloadKey}
                                     initialWorkspaceId={normalizedWorkspaceId ?? preferredWorkspaceId ?? undefined}
                                     activeWorkspace={currentWorkspace}
+                                    compact={true}
                                 />
                             </div>
                         </TooltipTrigger>

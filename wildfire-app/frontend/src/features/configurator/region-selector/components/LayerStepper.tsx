@@ -8,6 +8,7 @@ import { Button } from "@spatialhub/ui";
 import { cn } from "@/lib/utils";
 import { settingsService } from "@/features/settings/services/settings";
 import { dateRangeHasOnlyAvailableDates } from "@/features/configurator/utils/dateAvailability";
+import { ringWithinFootprint } from "@/features/configurator/utils/dtmFootprint";
 import type { AreaSelectState, AreaSelectActions } from "@/features/configurator/types/area-select";
 
 import {
@@ -235,6 +236,15 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                 }
                 if (state.areaInputMode === "upload" && !state.uploadedGeoJsonName) {
                     return "Upload a GeoJSON boundary file or switch back to draw.";
+                }
+                return null;
+            case 3:
+                if (
+                    state.dtmFootprint &&
+                    polygonCoordinates.length > 0 &&
+                    !polygonCoordinates.every((ring) => ringWithinFootprint(ring, state.dtmFootprint!))
+                ) {
+                    return "Your area is outside the uploaded DTM coverage. Move/redraw it within the DTM footprint shown on the map, or remove the DTM.";
                 }
                 return null;
             default:

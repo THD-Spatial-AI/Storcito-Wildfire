@@ -19,6 +19,7 @@ import { MapOverlays } from "./components/MapOverlays";
 import { MapHeader } from "./components/MapHeader";
 import { LayerStepper } from "./components/LayerStepper";
 import { StorcitoCoverageOverlay } from "./components/StorcitoCoverageOverlay";
+import { DtmFootprintOverlay } from "./components/DtmFootprintOverlay";
 import { useAuthStore } from "@/store/auth-store";
 import { useMapProvider } from "@/providers/map-context";
 import { transformExtent } from "ol/proj";
@@ -176,6 +177,7 @@ export const AreaSelect: FC<AreaSelectProps> = ({
                 mapOverlays={
                     <>
                         <StorcitoCoverageOverlay map={map} />
+                        <DtmFootprintOverlay map={map} footprint={state.dtmFootprint} />
                         <MapOverlays
                             showDrawHint={Boolean(showDrawHint)}
                             cursorPos={state.cursorPos}

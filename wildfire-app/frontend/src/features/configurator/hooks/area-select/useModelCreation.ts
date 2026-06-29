@@ -54,6 +54,7 @@ export const useModelCreation = ({
         stationDataFile, dtmFile,
         setModelName, setBufferDistanceRaw, setCalculationMode, setOriginalConfig,
         setAreaInputModeRaw, setUploadedGeoJsonName, setFromDate, setToDate, setOptionalLayers,
+        setStoredStationDataName, setStoredDtmName,
     } = state;
 
     const { allPolygons, loadedCoordinates, setAllPolygons, setLoadedCoordinates } = drawing;
@@ -91,6 +92,15 @@ export const useModelCreation = ({
                         terrain_analysis: Boolean(loadedOptional.terrain_analysis),
                         historical_fires: Boolean(loadedOptional.historical_fires),
                     });
+                }
+                const loadedUserInputs = cfg ? asRecord(cfg.user_inputs) : undefined;
+                if (loadedUserInputs) {
+                    if (typeof loadedUserInputs.station_data === 'string') {
+                        setStoredStationDataName(loadedUserInputs.station_data);
+                    }
+                    if (typeof loadedUserInputs.dtm === 'string') {
+                        setStoredDtmName(loadedUserInputs.dtm);
+                    }
                 }
                 const loadedFromDate = getDateInputValue(model.from_date);
                 if (loadedFromDate) setFromDate(loadedFromDate);

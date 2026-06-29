@@ -37,7 +37,7 @@ services:
       WEBSERVICE_SERVICE_URL: http://webservice:8082
       RATE_LIMIT_PER_MIN: 1000
     volumes:
-      - backend-storage-prod:/app/storage
+      - ./backend/storage:/app/storage
     networks:
       - spatialhub-net
 

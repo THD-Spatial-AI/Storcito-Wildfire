@@ -4,6 +4,7 @@ import { DEFAULT_BUFFER_DISTANCE, clampBuffer } from '@/features/configurator/co
 import { webservicesService } from '@/features/admin-dashboard/services/webservices';
 import type { AreaInputMode, CalculationMode, DateRangeSelection } from '@/features/configurator/types/area-select';
 import type { OptionalLayerKey } from '@/features/configurator/region-selector/components/layers/types';
+import { readDtmFootprint } from '@/features/configurator/utils/dtmFootprint';
 
 const DEFAULT_OPTIONAL_LAYERS: Record<OptionalLayerKey, boolean> = {
     weather_overlay: true,
@@ -50,6 +51,8 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
     const [dtmFile, setDtmFileRaw] = useState<File | null>(null);
     const [dtmName, setDtmName] = useState<string | undefined>();
     const [dtmError, setDtmError] = useState<string | undefined>();
+    const [dtmFootprint, setDtmFootprint] = useState<[number, number][] | undefined>();
+    const [dtmProcessing, setDtmProcessing] = useState(false);
 
     const setStationDataFile = useCallback((file: File | null) => {
         if (!file) {
@@ -67,11 +70,18 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
         setStationDataName(file.name);
     }, []);
 
+    const setStoredStationDataName = useCallback((name?: string) => {
+        setStationDataFileRaw(null);
+        setStationDataName(name);
+        setStationDataError(undefined);
+    }, []);
+
     const setDtmFile = useCallback((file: File | null) => {
         if (!file) {
             setDtmFileRaw(null);
             setDtmName(undefined);
             setDtmError(undefined);
+            setDtmFootprint(undefined);
             return;
         }
         if (!/\.(tif|tiff)$/i.test(file.name)) {
@@ -81,6 +91,24 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
         setDtmError(undefined);
         setDtmFileRaw(file);
         setDtmName(file.name);
+        setDtmFootprint(undefined);
+        // Read the DTM coverage (downsampled mask) so we can show it on the map
+        // and validate the drawn area against it before the run.
+        setDtmProcessing(true);
+        void readDtmFootprint(file)
+            .then((ring) => {
+                if (ring) setDtmFootprint(ring);
+                else setDtmError('Could not read this GeoTIFF’s coverage/CRS; area validation is unavailable.');
+            })
+            .finally(() => setDtmProcessing(false));
+    }, []);
+
+    const setStoredDtmName = useCallback((name?: string) => {
+        setDtmFileRaw(null);
+        setDtmName(name);
+        setDtmError(undefined);
+        setDtmFootprint(undefined);
+        setDtmProcessing(false);
     }, []);
 
     const [isDrawing, setIsDrawing] = useState(false);
@@ -191,8 +219,8 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
         // optional layers (forwarded to STORCITO as parameters.optional_layers)
         optionalLayers, setOptionalLayers, toggleOptionalLayer,
         // optional per-model data uploads
-        stationDataFile, stationDataName, stationDataError, setStationDataFile,
-        dtmFile, dtmName, dtmError, setDtmFile,
+        stationDataFile, stationDataName, stationDataError, setStationDataFile, setStoredStationDataName,
+        dtmFile, dtmName, dtmError, dtmFootprint, dtmProcessing, setDtmFile, setStoredDtmName,
         // drawing flags
         isDrawing, setIsDrawing,
         cursorPos, setCursorPos,

@@ -1,9 +1,10 @@
 import type { ChangeEvent, FC } from "react";
-import { AlertCircle, Download, FileCheck2, MapPin, Pencil, Ruler, UploadCloud } from "lucide-react";
+import { AlertCircle, Download, FileCheck2, MapPin, MapPinned, Mountain, Pencil, Ruler, UploadCloud } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { BufferDistanceField } from "../BufferDistanceField";
 import { LayerShell } from "./shared/LayerShell";
+import { FileUploadField } from "./shared/FileUploadField";
 import type { ConfiguratorContext } from "./types";
 
 const modeButtonClass = (active: boolean) =>
@@ -97,9 +98,29 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
 
     return (
         <LayerShell
-            purpose="Define the area the wildfire model should cover. Draw it on the map or upload a GeoJSON Polygon/MultiPolygon boundary."
+            purpose="Optionally upload your terrain (DTM) first to see its coverage on the map, then draw the area inside it. Or just draw on the bundled regional data."
             nextStepHint="Next we'll validate the selected area and model inputs."
         >
+            <div className="mb-3 rounded-lg border border-border bg-muted/30 p-2.5">
+                <FileUploadField
+                    label="Terrain model (DTM)"
+                    accept=".tif,.tiff"
+                    hint="Optional GeoTIFF (.tif) — its coverage is shown on the map"
+                    info="A Digital Terrain Model — a GeoTIFF where each pixel is the ground elevation. Upload it first to see its coverage outline on the map, then draw your area inside it. Used to derive slope/aspect and as the spatial reference grid. If omitted, the bundled regional terrain is used."
+                    icon={Mountain}
+                    fileName={ctx.state.dtmName}
+                    error={ctx.state.dtmError}
+                    processing={ctx.state.dtmProcessing}
+                    processingLabel="Reading DTM coverage…"
+                    onSelect={(f) => ctx.actions.setDtmFile(f)}
+                />
+                {ctx.state.dtmFootprint && !ctx.state.dtmProcessing && (
+                    <p className="mt-1.5 flex items-center gap-1 text-[11px] leading-snug text-emerald-600 dark:text-emerald-400">
+                        <MapPinned className="h-3 w-3 shrink-0" /> Coverage shown on the map — draw your area inside the outline.
+                    </p>
+                )}
+            </div>
+
             <div className="grid grid-cols-2 gap-2" data-tour="area-input-mode">
                 <button
                     type="button"
