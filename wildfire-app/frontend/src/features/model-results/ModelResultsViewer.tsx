@@ -81,7 +81,7 @@ const EPSG_32629 = "EPSG:32629";
 const POLL_INTERVAL_MS = 10_000;
 // Raster transparency is applied only here; users adjust it with the opacity slider.
 const FIRE_RISK_DEFAULT_OPACITY = 0.7;
-const FIRE_RISK_STYLE_VERSION = "risk-style-vivid-v5";
+const FIRE_RISK_STYLE_VERSION = "risk-style-storcito-v7";
 const MAP_REFERENCE_DARK_OPACITY = 0.95;
 const MAP_REFERENCE_LIGHT_ROADS_OPACITY = 0.82;
 const MAP_REFERENCE_LIGHT_LABELS_OPACITY = 0.62;
@@ -97,10 +97,10 @@ const ESRI_PLACES_REFERENCE_URL =
 const ESRI_ATTRIBUTION = "Sources: OpenStreetMap contributors, Esri, HERE, Garmin";
 
 const RISK_LEVELS = [
-  { label: "Very Low", color: "#2563eb", value: 1, style: FIRE_RISK_STYLE_VERY_LOW, metricKey: "veryLow" },
+  { label: "Very Low", color: "#9ca3af", value: 1, style: FIRE_RISK_STYLE_VERY_LOW, metricKey: "veryLow" },
   { label: "Low", color: "#16a34a", value: 2, style: FIRE_RISK_STYLE_LOW, metricKey: "low" },
   { label: "Moderate", color: "#eab308", value: 3, style: FIRE_RISK_STYLE_MODERATE, metricKey: "moderate" },
-  { label: "High", color: "#ea580c", value: 4, style: FIRE_RISK_STYLE_HIGH, metricKey: "high" },
+  { label: "High", color: "#f97316", value: 4, style: FIRE_RISK_STYLE_HIGH, metricKey: "high" },
   { label: "Very High", color: "#dc2626", value: 5, style: FIRE_RISK_STYLE_VERY_HIGH, metricKey: "veryHigh" },
 ] as const;
 
@@ -871,7 +871,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
             })}
           </div>
           <div className="px-3 pb-3 pt-0.5">
-            <div className="h-1.5 rounded-full bg-gradient-to-r from-[#2563eb] via-[#16a34a] via-[#eab308] via-[#ea580c] to-[#dc2626] shadow-inner" />
+            <div className="h-1.5 rounded-full bg-gradient-to-r from-[#9ca3af] via-[#16a34a] via-[#eab308] via-[#f97316] to-[#dc2626] shadow-inner" />
           </div>
         </div>
       )}

@@ -21,11 +21,11 @@ const LEVEL_THEME: Record<
 > = {
   very_low: {
     label: 'Very Low',
-    heroBg: 'from-blue-500/10 to-blue-500/5',
-    heroText: 'text-blue-700 dark:text-blue-300',
-    heroRing: 'ring-blue-500/20',
-    dot: 'bg-blue-500',
-    bar: 'bg-blue-500',
+    heroBg: 'from-slate-500/10 to-slate-500/5',
+    heroText: 'text-slate-700 dark:text-slate-300',
+    heroRing: 'ring-slate-500/20',
+    dot: 'bg-slate-400',
+    bar: 'bg-slate-400',
   },
   low: {
     label: 'Low',
@@ -117,7 +117,7 @@ export const RiskMetricsCard: React.FC<RiskMetricsCardProps> = ({
 
   const buckets = dist
     ? ([
-        { key: 'veryLow', label: 'Very Low', value: dist.veryLow, dot: 'bg-blue-500' },
+        { key: 'veryLow', label: 'Very Low', value: dist.veryLow, dot: 'bg-slate-400' },
         { key: 'low', label: 'Low', value: dist.low, dot: 'bg-emerald-500' },
         { key: 'moderate', label: 'Moderate', value: dist.moderate, dot: 'bg-amber-400' },
         { key: 'high', label: 'High', value: dist.high, dot: 'bg-orange-500' },

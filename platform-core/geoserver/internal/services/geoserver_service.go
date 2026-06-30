@@ -617,10 +617,10 @@ func buildRiskStyleSLD(def riskStyleDefinition) string {
 	// Classes render at full strength; transparency is applied once, client-side, by the opacity slider.
 	entries := []riskColorMapEntry{
 		{quantity: 0, label: "No data", color: "#000000", opacity: 0},
-		{quantity: 1, label: "Very Low", color: "#2563eb", opacity: 1},
+		{quantity: 1, label: "Very Low", color: "#9ca3af", opacity: 1},
 		{quantity: 2, label: "Low", color: "#16a34a", opacity: 1},
 		{quantity: 3, label: "Moderate", color: "#eab308", opacity: 1},
-		{quantity: 4, label: "High", color: "#ea580c", opacity: 1},
+		{quantity: 4, label: "High", color: "#f97316", opacity: 1},
 		{quantity: 5, label: "Very High", color: "#dc2626", opacity: 1},
 	}
 
