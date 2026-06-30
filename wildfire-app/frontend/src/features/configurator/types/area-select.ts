@@ -62,6 +62,8 @@ export interface AreaSelectState {
 	dtmName?: string;
 	dtmError?: string;
 	dtmFootprint?: [number, number][];
+	dtmImageUrl?: string;
+	dtmImageExtent?: [number, number, number, number];
 	dtmProcessing?: boolean;
 }
 

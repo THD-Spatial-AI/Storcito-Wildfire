@@ -24,21 +24,21 @@ export const BufferDistanceField: FC<BufferDistanceFieldProps> = ({ value, onCha
 
     return (
         <fieldset className="relative border-0 p-0 m-0" data-tour="buffer-distance">
-            <legend className="block text-sm font-medium text-foreground mb-2">
+            <legend className="block text-xs font-medium text-foreground mb-1">
                 {t("simulation.bufferDistance.label")}
             </legend>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
                 <button
                     type="button"
                     onClick={decrement}
                     aria-label={t("simulation.bufferDistance.decrease")}
                     disabled={atMin}
-                    className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-border bg-background dark:bg-gray-700 text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center justify-center w-7 h-7 rounded-md border border-border bg-background dark:bg-gray-700 text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    <Minus className="w-4 h-4" />
+                    <Minus className="w-3.5 h-3.5" />
                 </button>
                 <div
-                    className="flex-1 min-w-[7rem] select-none text-center px-3 py-2 rounded-lg border border-border bg-background dark:bg-gray-700 text-sm font-semibold text-foreground"
+                    className="flex-1 min-w-[5rem] select-none text-center px-3 py-1 rounded-md border border-border bg-background dark:bg-gray-700 text-xs font-semibold text-foreground"
                     aria-live="polite"
                 >
                     {value} m
@@ -48,12 +48,12 @@ export const BufferDistanceField: FC<BufferDistanceFieldProps> = ({ value, onCha
                     onClick={increment}
                     aria-label={t("simulation.bufferDistance.increase")}
                     disabled={atMax}
-                    className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-border bg-background dark:bg-gray-700 text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center justify-center w-7 h-7 rounded-md border border-border bg-background dark:bg-gray-700 text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-3.5 h-3.5" />
                 </button>
             </div>
-            <div className="text-xs text-muted-foreground mt-1">
+            <div className="text-[11px] text-muted-foreground mt-1 leading-snug">
                 {t("simulation.bufferDistance.hint")}
             </div>
         </fieldset>

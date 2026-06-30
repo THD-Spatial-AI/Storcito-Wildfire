@@ -4,53 +4,65 @@ import Feature from "ol/Feature";
 import Polygon from "ol/geom/Polygon";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { Fill, Stroke, Style, Text } from "ol/style";
+import ImageLayer from "ol/layer/Image";
+import Static from "ol/source/ImageStatic";
+import { Stroke, Style } from "ol/style";
 import { fromLonLat } from "ol/proj";
 
 interface DtmFootprintOverlayProps {
     map: Map | null;
     footprint?: [number, number][];
+    imageUrl?: string;
+    imageExtent?: [number, number, number, number];
 }
 
+const DTM_IMAGE_Z_INDEX = 2090;
 const DTM_FOOTPRINT_Z_INDEX = 2100;
 
-// Draws the uploaded DTM's coverage on the map and fits the view to it, so the
-// user can see exactly where a valid area can be drawn.
-export const DtmFootprintOverlay = ({ map, footprint }: DtmFootprintOverlayProps) => {
+// Renders the uploaded DTM as a colored elevation raster on the map (plus a thin
+// outline of its valid-data coverage) and fits the view to it, so the user sees
+// the actual terrain and exactly where a valid area can be drawn.
+export const DtmFootprintOverlay = ({ map, footprint, imageUrl, imageExtent }: DtmFootprintOverlayProps) => {
     useEffect(() => {
-        if (!map || !footprint || footprint.length < 4) return;
+        if (!map) return;
+        const layers: Array<VectorLayer<VectorSource> | ImageLayer<Static>> = [];
 
-        const ring = footprint.map(([lon, lat]) => fromLonLat([lon, lat]));
-        const feature = new Feature(new Polygon([ring]));
+        // Colored elevation raster (georeferenced in the map projection).
+        if (imageUrl && imageExtent) {
+            const imageLayer = new ImageLayer({
+                source: new Static({ url: imageUrl, imageExtent, projection: "EPSG:3857" }),
+                opacity: 0.85,
+                zIndex: DTM_IMAGE_Z_INDEX,
+                className: "ol-layer dtm-image-layer ol-visible-in-maplibre",
+            });
+            map.addLayer(imageLayer);
+            layers.push(imageLayer);
+        }
 
-        const layer = new VectorLayer({
-            source: new VectorSource({ features: [feature], wrapX: false }),
-            className: "ol-layer dtm-footprint-layer ol-visible-in-maplibre",
-            zIndex: DTM_FOOTPRINT_Z_INDEX,
-            style: new Style({
-                fill: new Fill({ color: "rgba(15, 23, 42, 0.06)" }),
-                stroke: new Stroke({ color: "rgba(15, 23, 42, 0.9)", width: 2, lineDash: [8, 5] }),
-                text: new Text({
-                    text: "Uploaded DTM coverage",
-                    font: "600 12px Inter, system-ui, sans-serif",
-                    fill: new Fill({ color: "#0f172a" }),
-                    stroke: new Stroke({ color: "rgba(255,255,255,0.92)", width: 4 }),
-                    overflow: true,
-                }),
-            }),
-        });
-        map.addLayer(layer);
+        // Thin outline of the valid-data coverage.
+        if (footprint && footprint.length >= 4) {
+            const ring = footprint.map(([lon, lat]) => fromLonLat([lon, lat]));
+            const feature = new Feature(new Polygon([ring]));
+            const outline = new VectorLayer({
+                source: new VectorSource({ features: [feature], wrapX: false }),
+                className: "ol-layer dtm-footprint-layer ol-visible-in-maplibre",
+                zIndex: DTM_FOOTPRINT_Z_INDEX,
+                style: new Style({ stroke: new Stroke({ color: "rgba(15, 23, 42, 0.85)", width: 1.5 }) }),
+            });
+            map.addLayer(outline);
+            layers.push(outline);
+        }
 
-        // Frame the footprint so the user sees where to draw.
-        const extent = feature.getGeometry()?.getExtent();
-        if (extent) {
-            map.getView().fit(extent, { padding: [80, 80, 80, 80], duration: 400, maxZoom: 15 });
+        // Frame the DTM so the user sees where to draw.
+        const fitExtent = imageExtent ?? layers[0]?.getExtent?.();
+        if (fitExtent) {
+            map.getView().fit(fitExtent, { padding: [80, 80, 80, 80], duration: 400, maxZoom: 16 });
         }
 
         return () => {
-            map.removeLayer(layer);
+            layers.forEach((l) => map.removeLayer(l));
         };
-    }, [map, footprint]);
+    }, [map, footprint, imageUrl, imageExtent]);
 
     return null;
 };

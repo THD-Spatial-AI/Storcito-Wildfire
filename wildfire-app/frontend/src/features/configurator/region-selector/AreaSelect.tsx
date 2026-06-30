@@ -177,7 +177,12 @@ export const AreaSelect: FC<AreaSelectProps> = ({
                 mapOverlays={
                     <>
                         <StorcitoCoverageOverlay map={map} />
-                        <DtmFootprintOverlay map={map} footprint={state.dtmFootprint} />
+                        <DtmFootprintOverlay
+                            map={map}
+                            footprint={state.dtmFootprint}
+                            imageUrl={state.dtmImageUrl}
+                            imageExtent={state.dtmImageExtent}
+                        />
                         <MapOverlays
                             showDrawHint={Boolean(showDrawHint)}
                             cursorPos={state.cursorPos}

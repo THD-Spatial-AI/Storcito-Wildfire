@@ -76,7 +76,7 @@ export const AssessmentDetailsSidebar = ({
   const statusKey = (model.status ?? '').toLowerCase();
 
   return (
-    <aside className="relative h-full w-80 border-l border-border bg-background flex flex-col">
+    <aside className="relative h-full w-full border-l border-border bg-background flex flex-col">
       {/* Title */}
       <div className="px-4 pt-4 pb-3 border-b border-border flex-shrink-0">
         <div className="flex items-center gap-2">

@@ -75,7 +75,7 @@ export const LayersSheet: React.FC<LayersSheetProps> = ({
                 } as React.CSSProperties
               }
               className={cn(
-                "cursor-pointer w-11 h-11 rounded-button flex items-center justify-center transition-all duration-normal relative group",
+                "cursor-pointer w-9 h-9 rounded-button flex items-center justify-center transition-all duration-normal relative group",
                 "border-2 border-transparent hover:bg-muted"
               )}
             >

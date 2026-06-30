@@ -49,15 +49,15 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 					...(modal ? { paddingTop: `${headerOffsetPx}px` } : {}),
 					// Expose sidebar width as a CSS variable so overlays (MapControls) can offset
 					// @ts-expect-error: CSS custom property for sidebar offset
-					['--sidebar-offset']: showSidebar ? '20rem' : '0rem',
+					['--sidebar-offset']: showSidebar ? '18rem' : '0rem',
 				}}
 			>
-				<div className={`flex-shrink-0 ${showSidebar ? 'pr-80' : ''}`}>
+				<div className={`flex-shrink-0 ${showSidebar ? 'pr-72' : ''}`}>
 					{topBar}
 				</div>
 
 				{mapHeader && (
-					<div className={`flex-shrink-0 ${showSidebar ? 'pr-80' : ''}`}>
+					<div className={`flex-shrink-0 ${showSidebar ? 'pr-72' : ''}`}>
 						{mapHeader}
 					</div>
 				)}
@@ -90,7 +90,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
 				{showSidebar && (
 					<div
-						className="absolute right-0 w-80 z-40 bg-white border-l border-gray-200"
+						className="absolute right-0 w-72 z-40 bg-white border-l border-gray-200"
 						style={modal ? { top: `${headerOffsetPx}px`, height: `calc(100% - ${headerOffsetPx}px)` } : { top: 0, height: '100%' }}
 					>
 						{sidebar}

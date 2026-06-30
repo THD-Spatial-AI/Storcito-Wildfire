@@ -553,7 +553,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
   const header = (
     <header className="bg-card border-b border-border flex-shrink-0">
-      <div className="px-4 py-3 flex items-center justify-between gap-3">
+      <div className="px-4 py-1.5 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <button
             type="button"
@@ -761,9 +761,9 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
       {/* Optional map overlays. */}
       {map && (
         <div
-          className="absolute top-20 left-6 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-lg rounded-2xl overflow-hidden w-[180px] transition-all duration-300"
+          className="absolute top-4 left-2 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-lg rounded-2xl overflow-hidden w-[156px] transition-all duration-300"
         >
-          <div className="px-3 py-2 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border-b border-emerald-500/10 flex items-center gap-2">
+          <div className="px-2.5 py-1.5 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border-b border-emerald-500/10 flex items-center gap-2">
             <div className="w-5 h-5 rounded-md bg-gradient-to-br from-emerald-500 to-teal-500 shadow-sm flex items-center justify-center">
               <Layers className="w-3 h-3 text-white" />
             </div>
@@ -771,8 +771,8 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
               {t("modelResults.layers.title", "Overlays")}
             </span>
           </div>
-          <div className="p-1.5 space-y-0.5">
-            <label className="flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
+          <div className="p-1 space-y-0">
+            <label className="flex items-center gap-2 px-2 py-0.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
               <div className="relative flex items-center justify-center">
                 <input
                   type="checkbox"
@@ -787,7 +787,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
                 {t("modelResults.layers.roads", "Roads")}
               </span>
             </label>
-            <label className="flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
+            <label className="flex items-center gap-2 px-2 py-0.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
               <div className="relative flex items-center justify-center">
                 <input
                   type="checkbox"
@@ -808,8 +808,8 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
       {/* Risk legend */}
       {hasRiskLayers && (
-        <div className="absolute bottom-16 left-6 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-lg rounded-2xl overflow-hidden w-[180px] transition-all duration-300">
-          <div className="px-3 py-2 bg-gradient-to-r from-orange-500/10 to-red-500/10 border-b border-orange-500/10 flex items-center gap-2">
+        <div className="absolute bottom-4 left-2 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-lg rounded-2xl overflow-hidden w-[156px] transition-all duration-300">
+          <div className="px-2.5 py-1.5 bg-gradient-to-r from-orange-500/10 to-red-500/10 border-b border-orange-500/10 flex items-center gap-2">
             <div className="w-5 h-5 rounded-md bg-gradient-to-br from-orange-500 to-red-500 shadow-sm flex items-center justify-center">
               <Layers className="w-3 h-3 text-white" />
             </div>
@@ -817,8 +817,8 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
               {t("modelResults.legend.title", "Fire Risk")}
             </span>
           </div>
-          <div className="p-1.5 space-y-0.5">
-            <label className="flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer border-b border-border/40 mb-1.5 pb-2 group">
+          <div className="p-1 space-y-0">
+            <label className="flex items-center gap-2 px-2 py-0.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer border-b border-border/40 mb-1.5 pb-2 group">
               <div className="relative flex items-center justify-center">
                 <input
                   type="checkbox"
@@ -844,7 +844,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
               return (
                 <label
                   key={lvl.value}
-                  className={`flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group ${levelStateClass}`}
+                  className={`flex items-center gap-2 px-2 py-0.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group ${levelStateClass}`}
                 >
                   <div className="relative flex items-center justify-center">
                     <input

@@ -4,7 +4,7 @@ import { DEFAULT_BUFFER_DISTANCE, clampBuffer } from '@/features/configurator/co
 import { webservicesService } from '@/features/admin-dashboard/services/webservices';
 import type { AreaInputMode, CalculationMode, DateRangeSelection } from '@/features/configurator/types/area-select';
 import type { OptionalLayerKey } from '@/features/configurator/region-selector/components/layers/types';
-import { readDtmFootprint } from '@/features/configurator/utils/dtmFootprint';
+import { readDtmPreview } from '@/features/configurator/utils/dtmFootprint';
 
 const DEFAULT_OPTIONAL_LAYERS: Record<OptionalLayerKey, boolean> = {
     weather_overlay: true,
@@ -52,6 +52,8 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
     const [dtmName, setDtmName] = useState<string | undefined>();
     const [dtmError, setDtmError] = useState<string | undefined>();
     const [dtmFootprint, setDtmFootprint] = useState<[number, number][] | undefined>();
+    const [dtmImageUrl, setDtmImageUrl] = useState<string | undefined>();
+    const [dtmImageExtent, setDtmImageExtent] = useState<[number, number, number, number] | undefined>();
     const [dtmProcessing, setDtmProcessing] = useState(false);
 
     const setStationDataFile = useCallback((file: File | null) => {
@@ -82,6 +84,8 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
             setDtmName(undefined);
             setDtmError(undefined);
             setDtmFootprint(undefined);
+            setDtmImageUrl(undefined);
+            setDtmImageExtent(undefined);
             return;
         }
         if (!/\.(tif|tiff)$/i.test(file.name)) {
@@ -92,13 +96,22 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
         setDtmFileRaw(file);
         setDtmName(file.name);
         setDtmFootprint(undefined);
-        // Read the DTM coverage (downsampled mask) so we can show it on the map
-        // and validate the drawn area against it before the run.
+        setDtmImageUrl(undefined);
+        setDtmImageExtent(undefined);
+        // Read the DTM once (downsampled): colored elevation image for the map +
+        // valid-data outline used to validate the drawn area before the run.
         setDtmProcessing(true);
-        void readDtmFootprint(file)
-            .then((ring) => {
-                if (ring) setDtmFootprint(ring);
-                else setDtmError('Could not read this GeoTIFF’s coverage/CRS; area validation is unavailable.');
+        void readDtmPreview(file)
+            .then((preview) => {
+                if (!preview) {
+                    setDtmError('Could not read this GeoTIFF’s coverage/CRS; map preview is unavailable.');
+                    return;
+                }
+                if (preview.footprint) setDtmFootprint(preview.footprint);
+                if (preview.imageDataUrl && preview.imageExtent3857) {
+                    setDtmImageUrl(preview.imageDataUrl);
+                    setDtmImageExtent(preview.imageExtent3857);
+                }
             })
             .finally(() => setDtmProcessing(false));
     }, []);
@@ -108,6 +121,8 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
         setDtmName(name);
         setDtmError(undefined);
         setDtmFootprint(undefined);
+        setDtmImageUrl(undefined);
+        setDtmImageExtent(undefined);
         setDtmProcessing(false);
     }, []);
 
@@ -220,7 +235,7 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
         optionalLayers, setOptionalLayers, toggleOptionalLayer,
         // optional per-model data uploads
         stationDataFile, stationDataName, stationDataError, setStationDataFile, setStoredStationDataName,
-        dtmFile, dtmName, dtmError, dtmFootprint, dtmProcessing, setDtmFile, setStoredDtmName,
+        dtmFile, dtmName, dtmError, dtmFootprint, dtmImageUrl, dtmImageExtent, dtmProcessing, setDtmFile, setStoredDtmName,
         // drawing flags
         isDrawing, setIsDrawing,
         cursorPos, setCursorPos,

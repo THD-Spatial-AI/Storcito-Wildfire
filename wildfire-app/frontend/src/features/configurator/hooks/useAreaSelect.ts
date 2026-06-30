@@ -62,6 +62,8 @@ export const useAreaSelect = ({
         dtmName: state.dtmName,
         dtmError: state.dtmError,
         dtmFootprint: state.dtmFootprint,
+        dtmImageUrl: state.dtmImageUrl,
+        dtmImageExtent: state.dtmImageExtent,
         dtmProcessing: state.dtmProcessing,
     };
 
