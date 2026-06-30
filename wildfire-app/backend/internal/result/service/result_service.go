@@ -103,6 +103,14 @@ func (s *ResultService) ProcessModelResult(_ context.Context, modelID uint, user
 		}
 	}
 
+	if metadata := findResultMetadata(extractDir); len(metadata) > 0 {
+		if encoded, err := json.Marshal(metadata); err != nil {
+			log.Warnf("failed to encode result metadata model_id=%d err=%v", modelID, err)
+		} else {
+			result.Metadata = datatypes.JSON(encoded)
+		}
+	}
+
 	if err := s.db.Create(result).Error; err != nil {
 		log.Errorf("Failed to save result to database model_id=%d err=%v", modelID, err)
 		return nil, fmt.Errorf("failed to save result: %w", err)

@@ -9,6 +9,7 @@ import {
   Layers,
   Loader2,
   MapPin,
+  Mountain,
   RefreshCw,
   Route,
 } from "lucide-react";
@@ -36,6 +37,7 @@ import { type Workspace } from "@/components/workspace";
 import { useWorkspaceStore } from "@/components/workspace";
 import { useRiskMetrics } from "./hooks/useRiskMetrics";
 import { AssessmentDetailsSidebar } from "./components/AssessmentDetailsSidebar";
+import { Wildfire3DView } from "./components/Wildfire3DView";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -109,6 +111,10 @@ type VisibleRiskLevels = Record<RiskLevelValue, boolean>;
 interface RiskLayerEntry {
   value: RiskLevelValue;
   layer: TileLayer<TileWMS>;
+}
+interface RiskLayerSelection {
+  key: string;
+  layerName: string;
 }
 
 const DEFAULT_VISIBLE_RISK_LEVELS: VisibleRiskLevels = {
@@ -202,6 +208,8 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   const [layerOpacity, setLayerOpacity] = useState(FIRE_RISK_DEFAULT_OPACITY);
   const [visibleRiskLevels, setVisibleRiskLevels] = useState<VisibleRiskLevels>(DEFAULT_VISIBLE_RISK_LEVELS);
   const [tileErrors, setTileErrors] = useState(0);
+  const [show3D, setShow3D] = useState(false);
+  const [wms3D, setWms3D] = useState<{ wmsUrl: string; layerName: string } | null>(null);
 
   const [roadsVisible, setRoadsVisible] = useState(true);
   const [labelsVisible, setLabelsVisible] = useState(false);
@@ -228,6 +236,48 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   const riskLayerEntriesRef = useRef<RiskLayerEntry[]>([]);
   const visibleRiskLevelsRef = useRef<VisibleRiskLevels>(DEFAULT_VISIBLE_RISK_LEVELS);
   const pollTimerRef = useRef<number | null>(null);
+  const attachLayerRequestRef = useRef(0);
+  const renderRefreshRafRef = useRef<number | null>(null);
+  const renderRefreshTimeoutsRef = useRef<number[]>([]);
+
+  const clearScheduledMapRenderRefreshes = useCallback(() => {
+    if (renderRefreshRafRef.current !== null) {
+      cancelAnimationFrame(renderRefreshRafRef.current);
+      renderRefreshRafRef.current = null;
+    }
+    renderRefreshTimeoutsRef.current.forEach((id) => clearTimeout(id));
+    renderRefreshTimeoutsRef.current = [];
+  }, []);
+
+  const scheduleMapRenderRefresh = useCallback(() => {
+    if (!map) return;
+
+    clearScheduledMapRenderRefreshes();
+    const refresh = () => {
+      if (!map.getTarget()) return;
+      map.getLayers().forEach((layer) => {
+        layer.changed();
+      });
+      map.updateSize();
+      map.renderSync();
+    };
+
+    renderRefreshRafRef.current = requestAnimationFrame(() => {
+      renderRefreshRafRef.current = null;
+      refresh();
+    });
+    [80, 250, 600, 1200].forEach((delay) => {
+      renderRefreshTimeoutsRef.current.push(window.setTimeout(refresh, delay));
+    });
+  }, [clearScheduledMapRenderRefreshes, map]);
+
+  const removeRiskLayerEntries = useCallback(() => {
+    if (!map) return;
+    riskLayerEntriesRef.current.forEach(({ layer }) => map.removeLayer(layer));
+    riskLayerEntriesRef.current = [];
+    setRiskLayerEntries([]);
+    scheduleMapRenderRefresh();
+  }, [map, scheduleMapRenderRefresh]);
 
   // -------------------------------------------------------------------------
   // Data loading
@@ -267,8 +317,12 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   const attachLayer = useCallback(
     async (result: ModelResult) => {
       if (!map || result.geoserver_status !== "configured") return;
+      const requestId = ++attachLayerRequestRef.current;
+      const requestedLayerKey = selectedLayerKeyRef.current;
       try {
         const resp = await axios.get(`/results/${result.id}/layer`);
+        if (requestId !== attachLayerRequestRef.current) return;
+
         const info: LayerInfo | undefined = resp.data?.data;
         if (!info?.wms_url || !info.layer_name) {
           setError(t("modelResults.errors.layerIncomplete", "Layer configuration is incomplete"));
@@ -278,23 +332,42 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
         const layerOptions = info.available_layers ?? [];
         setAvailableLayers(layerOptions);
         // Render the currently selected component layer (defaults to the risk map).
-        const activeLayerName =
-          layerOptions.find((l) => l.key === selectedLayerKeyRef.current)?.layer_name ?? info.layer_name;
-        const activeInfo: LayerInfo = { ...info, layer_name: activeLayerName };
+        const selectedLayer = layerOptions.find((l) => l.key === requestedLayerKey);
+        const fallbackLayer = layerOptions.find((l) => l.key === "risk");
+        const activeLayer: RiskLayerSelection = selectedLayer
+          ? { key: selectedLayer.key, layerName: selectedLayer.layer_name }
+          : { key: fallbackLayer?.key ?? "risk", layerName: fallbackLayer?.layer_name ?? info.layer_name };
+        if (activeLayer.key !== requestedLayerKey) {
+          selectedLayerKeyRef.current = activeLayer.key;
+          setSelectedLayerKey(activeLayer.key);
+        }
+
+        removeRiskLayerEntries();
+
+        const activeInfo: LayerInfo = { ...info, layer_name: activeLayer.layerName };
+        setWms3D({ wmsUrl: info.wms_url, layerName: activeLayer.layerName });
 
         const newRiskLayerEntries = RISK_LEVELS.map((riskLevel) => {
           const riskLayer = buildWMSLayer(activeInfo, riskLevel.style, 450 + riskLevel.value);
           riskLayer.setVisible(layerVisible && visibleRiskLevelsRef.current[riskLevel.value]);
-          map.addLayer(riskLayer);
-          riskLayer.getSource()?.on("tileloaderror", () => {
-            setTileErrors((n) => n + 1);
+          const source = riskLayer.getSource();
+          source?.updateParams({
+            VIEWER_LAYER_KEY: activeLayer.key,
+            VIEWER_LAYER_REFRESH: String(requestId),
           });
+          source?.on("tileloadend", scheduleMapRenderRefresh);
+          source?.on("tileloaderror", () => {
+            setTileErrors((n) => n + 1);
+            scheduleMapRenderRefresh();
+          });
+          map.addLayer(riskLayer);
           return { value: riskLevel.value, layer: riskLayer };
         });
         setRiskLayerEntries(newRiskLayerEntries);
         riskLayerEntriesRef.current = newRiskLayerEntries;
 
         if (info.bounds) fitMapToBounds(map, info.bounds);
+        scheduleMapRenderRefresh();
       } catch (err) {
         setError(
           extractErrorMessage(
@@ -304,7 +377,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
         );
       }
     },
-    [layerVisible, map, t]
+    [layerVisible, map, removeRiskLayerEntries, scheduleMapRenderRefresh, t]
   );
 
   // Switch the visualized dataset (risk map vs. a component layer such as
@@ -314,12 +387,10 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
       setSelectedLayerKey(key);
       selectedLayerKeyRef.current = key;
       if (!map || !activeResult || activeResult.geoserver_status !== "configured") return;
-      riskLayerEntriesRef.current.forEach(({ layer }) => map.removeLayer(layer));
-      riskLayerEntriesRef.current = [];
-      setRiskLayerEntries([]);
+      removeRiskLayerEntries();
       attachLayer(activeResult);
     },
-    [map, activeResult, attachLayer]
+    [map, activeResult, attachLayer, removeRiskLayerEntries]
   );
 
   // -------------------------------------------------------------------------
@@ -417,13 +488,15 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     riskLayerEntries.forEach(({ value, layer: riskLayer }) => {
       riskLayer.setVisible(layerVisible && visibleRiskLevels[value]);
     });
-  }, [layerVisible, riskLayerEntries, visibleRiskLevels]);
+    scheduleMapRenderRefresh();
+  }, [layerVisible, riskLayerEntries, scheduleMapRenderRefresh, visibleRiskLevels]);
 
   useEffect(() => {
     riskLayerEntries.forEach(({ layer: riskLayer }) => {
       riskLayer.setOpacity(layerOpacity);
     });
-  }, [layerOpacity, riskLayerEntries]);
+    scheduleMapRenderRefresh();
+  }, [layerOpacity, riskLayerEntries, scheduleMapRenderRefresh]);
 
   // Transparent ESRI road/label tiles above the risk raster so the map stays readable.
   const roadsLayerRef = useRef<TileLayer<XYZ> | null>(null);
@@ -457,14 +530,15 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
       className: "ol-layer ol-visible-in-maplibre",
     });
 
-    roadsLayer.setVisible(roadsVisible);
-    labelsLayer.setVisible(labelsVisible);
+    roadsLayer.setVisible(false);
+    labelsLayer.setVisible(false);
     roadsLayer.setZIndex(500);
     labelsLayer.setZIndex(510);
     map.addLayer(roadsLayer);
     map.addLayer(labelsLayer);
     roadsLayerRef.current = roadsLayer;
     labelsLayerRef.current = labelsLayer;
+    scheduleMapRenderRefresh();
 
     return () => {
       map.removeLayer(roadsLayer);
@@ -472,12 +546,13 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
       if (roadsLayerRef.current === roadsLayer) roadsLayerRef.current = null;
       if (labelsLayerRef.current === labelsLayer) labelsLayerRef.current = null;
     };
-  }, [isDarkBaseLayer, map]);
+  }, [isDarkBaseLayer, map, scheduleMapRenderRefresh]);
 
   useEffect(() => {
     roadsLayerRef.current?.setVisible(roadsVisible);
     labelsLayerRef.current?.setVisible(labelsVisible);
-  }, [labelsVisible, roadsVisible]);
+    scheduleMapRenderRefresh();
+  }, [labelsVisible, roadsVisible, scheduleMapRenderRefresh]);
 
   // Detach on unmount / id change.
   useEffect(() => {
@@ -487,9 +562,11 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
           map.removeLayer(riskLayer);
         });
       }
+      attachLayerRequestRef.current += 1;
       riskLayerEntriesRef.current = [];
+      clearScheduledMapRenderRefreshes();
     };
-  }, [map, resolvedModelId]);
+  }, [clearScheduledMapRenderRefreshes, map, resolvedModelId]);
 
   // -------------------------------------------------------------------------
   // Derived UI state
@@ -664,6 +741,18 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
                 </span>
               </button>
 
+              <button
+                type="button"
+                onClick={() => setShow3D((v) => !v)}
+                disabled={!wms3D}
+                className={`h-8 px-3 inline-flex items-center gap-1.5 text-xs border rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                  show3D ? "border-emerald-500 bg-emerald-500 text-white" : "border-border bg-card hover:bg-muted"
+                }`}
+              >
+                <Mountain className="w-4 h-4" />
+                <span>{show3D ? t("modelResults.layer.view2d", "2D") : t("modelResults.layer.view3d", "3D")}</span>
+              </button>
+
               <div className="h-8 px-3 inline-flex items-center gap-2 text-xs border border-border rounded-lg bg-card">
                 <label htmlFor="mr-opacity" className="font-medium text-foreground">
                   {t("modelResults.layer.opacity", "Opacity")}
@@ -707,6 +796,16 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
   const mapOverlays = (
     <>
+      {show3D && wms3D && (
+        <Wildfire3DView
+          wmsUrl={wms3D.wmsUrl}
+          layerName={wms3D.layerName}
+          aoi={model?.coordinates}
+          anchorEl={map?.getViewport() ?? null}
+          rightInset={model ? 288 : 0}
+          onClose={() => setShow3D(false)}
+        />
+      )}
       {!map && (
         <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-[2000] flex items-center justify-center">
           <div className="text-center">

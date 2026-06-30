@@ -41,6 +41,41 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 		initializeMap(mapRef, initMapInstance, setMuted);
 	}, [initMapInstance, mapRef]);
 
+	useEffect(() => {
+		const container = mapRef.current;
+		if (!container || !map) return;
+
+		let rafId = 0;
+		const timeoutIds: number[] = [];
+		const refreshMapSize = () => {
+			if (rafId) cancelAnimationFrame(rafId);
+			rafId = requestAnimationFrame(() => {
+				rafId = 0;
+				if (map.getTarget() !== container) return;
+				map.updateSize();
+				map.renderSync();
+			});
+		};
+
+		refreshMapSize();
+		[100, 300, 700].forEach((delay) => {
+			timeoutIds.push(window.setTimeout(refreshMapSize, delay));
+		});
+
+		const observer = typeof ResizeObserver !== 'undefined'
+			? new ResizeObserver(refreshMapSize)
+			: null;
+		observer?.observe(container);
+		window.addEventListener('resize', refreshMapSize);
+
+		return () => {
+			if (rafId) cancelAnimationFrame(rafId);
+			timeoutIds.forEach((id) => clearTimeout(id));
+			observer?.disconnect();
+			window.removeEventListener('resize', refreshMapSize);
+		};
+	}, [map, mapRef]);
+
 	return (
 		<div className={`${modal ? 'fixed inset-0 bg-black bg-opacity-50 z-40' : 'relative w-full h-full'} ${className}`}>
 			<div
