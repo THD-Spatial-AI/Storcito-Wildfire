@@ -8,10 +8,9 @@ on:
         required: true
         type: string
       backend_url:
-        description: 'Feedback API base URL'
-        required: false
+        description: 'Feedback API base URL (e.g. https://feedback-api.th-deg.de)'
+        required: true
         type: string
-        default: 'http://localhost:9000'
 
 jobs:
   generate-report:
