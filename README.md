@@ -138,6 +138,8 @@ Open `http://localhost:3000`. Default credentials after seeding:
 | Email    | `admin@spatialai.de`|
 | Password | `12345678`          |
 
+or just run the dev-start.ps1 file and everything will be set it up for you
+
 ### Docker Compose
 
 ```bash
