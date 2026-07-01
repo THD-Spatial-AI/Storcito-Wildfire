@@ -105,6 +105,7 @@ func registerInternalRoutes(r *gin.Engine, deps Deps) {
 	internal.POST("/models/:id/mark-running", deps.ModelHandler.MarkRunning)
 	internal.POST("/models/:id/mark-failed", deps.ModelHandler.MarkFailed)
 	internal.PATCH("/models/:id/run-session", deps.ModelHandler.SetRunSession)
+	internal.GET("/models/:id/inputs/:kind", deps.ModelHandler.GetModelInput)
 }
 
 func RegisterProtected(r *gin.Engine, deps Deps) {

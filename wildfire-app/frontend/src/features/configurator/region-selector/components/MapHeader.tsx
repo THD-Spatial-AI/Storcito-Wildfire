@@ -35,7 +35,7 @@ export const MapHeader: FC<MapHeaderProps> = ({
 }) => {
     const { t } = useTranslation();
     return (
-        <div className="bg-background dark:bg-gray-800 border-b border-border px-2 py-1.5 flex items-center justify-between">
+        <div className="bg-background dark:bg-gray-800 border-b border-border px-2 py-1 flex items-center justify-between h-10">
             <div className="flex items-center gap-2">
                 {!isLoadingPreference && (
                     <Tooltip>
@@ -47,6 +47,7 @@ export const MapHeader: FC<MapHeaderProps> = ({
                                     reloadKey={wsReloadKey}
                                     initialWorkspaceId={normalizedWorkspaceId ?? preferredWorkspaceId ?? undefined}
                                     activeWorkspace={currentWorkspace}
+                                    compact={true}
                                 />
                             </div>
                         </TooltipTrigger>

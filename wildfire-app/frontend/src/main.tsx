@@ -8,14 +8,9 @@ import { initI18n } from "@/i18n";
 
 initI18n({ storageKey: 'wildfire-app_language' });
 
-import { FeedbackOverlay } from "@spatialhub/feedback";
+// Feedback overlay temporarily disabled: @spatialhub/feedback not available locally.
+// import { FeedbackOverlay } from "@spatialhub/feedback";
 
 createRoot(document.getElementById("root")!).render(
-  <FeedbackOverlay
-    apiUrl={import.meta.env.VITE_FEEDBACK_API_URL ?? "http://localhost:8000"}
-    workshopToken={import.meta.env.VITE_WORKSHOP_TOKEN ?? ""}
-    workshopTag={import.meta.env.VITE_WORKSHOP_TAG ?? "workshop"}
-  >
-    <App />
-  </FeedbackOverlay>
+  <App />
 );

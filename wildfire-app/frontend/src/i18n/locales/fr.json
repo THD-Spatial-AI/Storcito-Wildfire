@@ -1032,7 +1032,8 @@
       "hint": "Plage de 0 à 2000 m par pas de 100 m. Étend la zone prise en compte autour de votre polygone.",
       "increase": "Augmenter la distance de tampon",
       "label": "Distance de tampon (mètres)"
-    }
+    },
+    "staticDateInfo": "Les dates statiques sont choisies automatiquement : pour chaque année disponible, le jour le plus chaud est sélectionné."
   },
   "mapLayers": {
     "title": "Couches de carte",

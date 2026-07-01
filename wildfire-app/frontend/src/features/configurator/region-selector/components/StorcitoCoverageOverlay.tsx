@@ -37,8 +37,8 @@ const COVERAGE_CARD_ANIMATION_CSS = `
 }
 
 @keyframes wildfireCoverageGlow {
-    0%, 100% { box-shadow: inset 0 0 0 1px rgba(20, 184, 166, 0.18), 0 0 0 rgba(20, 184, 166, 0); }
-    50% { box-shadow: inset 0 0 0 1px rgba(20, 184, 166, 0.34), 0 0 24px rgba(20, 184, 166, 0.18); }
+    0%, 100% { box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.15), 0 0 0 rgba(15, 23, 42, 0); }
+    50% { box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.3), 0 0 24px rgba(15, 23, 42, 0.14); }
 }
 
 @keyframes wildfireCoverageSheen {
@@ -65,16 +65,16 @@ const COVERAGE_CARD_ANIMATION_CSS = `
 `;
 
 const createCoverageStyle = () => new Style({
-    fill: new Fill({ color: "rgba(20, 184, 166, 0.12)" }),
+    fill: new Fill({ color: "rgba(15, 23, 42, 0.10)" }),
     stroke: new Stroke({
-        color: "rgba(13, 148, 136, 0.95)",
+        color: "rgba(15, 23, 42, 0.95)",
         width: 2.5,
         lineDash: [10, 6],
     }),
     text: new Text({
         text: "Wildfire data available",
         font: "600 13px Inter, system-ui, sans-serif",
-        fill: new Fill({ color: "#0f766e" }),
+        fill: new Fill({ color: "#0f172a" }),
         stroke: new Stroke({ color: "rgba(255,255,255,0.92)", width: 4 }),
         overflow: true,
     }),
@@ -153,11 +153,11 @@ export const StorcitoCoverageOverlay = ({ map }: StorcitoCoverageOverlayProps) =
     return (
         <>
             <style>{COVERAGE_CARD_ANIMATION_CSS}</style>
-            <div className="wildfire-coverage-animated hidden lg:block absolute bottom-4 right-4 z-20 w-[340px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-teal-500/25 bg-white/95 text-xs text-slate-950 shadow-2xl shadow-black/10 backdrop-blur-md">
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-400/80 to-transparent wildfire-coverage-sheen" />
-                <div className="flex items-start gap-3 border-b border-teal-500/15 bg-teal-50/90 px-3.5 py-3">
-                    <div className="relative grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-teal-500/25 bg-teal-500/12 text-teal-700 overflow-hidden">
-                        {coverage && <span className="wildfire-coverage-icon-pulse absolute inset-1 rounded-lg bg-teal-400/35" />}
+            <div className="wildfire-coverage-animated hidden lg:block absolute bottom-4 right-4 z-20 w-[340px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-slate-300/60 bg-slate-100/95 text-xs text-slate-950 shadow-2xl shadow-black/10 backdrop-blur-md">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-400/80 to-transparent wildfire-coverage-sheen" />
+                <div className="flex items-start gap-3 border-b border-slate-200 bg-slate-200/70 px-3.5 py-3">
+                    <div className="relative grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-slate-300/60 bg-slate-900/10 text-slate-900 overflow-hidden">
+                        {coverage && <span className="wildfire-coverage-icon-pulse absolute inset-1 rounded-lg bg-slate-900/15" />}
                         {coverage ? <MapPinned className="relative h-5 w-5" /> : <AlertTriangle className="relative h-5 w-5 text-amber-600" />}
                     </div>
                     <div className="min-w-0 flex-1">
@@ -166,7 +166,7 @@ export const StorcitoCoverageOverlay = ({ map }: StorcitoCoverageOverlayProps) =
                         </div>
                         {coverage && (
                             <div className="mt-1 flex flex-wrap gap-1.5">
-                                <span className="rounded-full border border-teal-500/20 bg-teal-500/10 px-2 py-0.5 text-[10px] font-medium text-teal-700">
+                                <span className="rounded-full border border-slate-300 bg-slate-900/5 px-2 py-0.5 text-[10px] font-medium text-slate-700">
                                     Exact raster footprint
                                 </span>
                                 {footprintShare && (
@@ -184,10 +184,10 @@ export const StorcitoCoverageOverlay = ({ map }: StorcitoCoverageOverlayProps) =
                         <div className="relative h-[104px] overflow-hidden rounded-xl border border-slate-200 bg-slate-100 wildfire-coverage-glow">
                             <div className="absolute inset-0 opacity-70 [background-image:linear-gradient(90deg,rgba(148,163,184,0.25)_1px,transparent_1px),linear-gradient(rgba(148,163,184,0.25)_1px,transparent_1px)] [background-size:16px_16px]" />
                             <div
-                                className="absolute inset-3 overflow-hidden bg-teal-500/28"
+                                className="absolute inset-3 overflow-hidden bg-slate-900/20"
                                 style={{ clipPath: FOOTPRINT_CLIP_PATH }}
                             >
-                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_22%,rgba(255,255,255,0.42),transparent_28%),radial-gradient(circle_at_70%_68%,rgba(13,148,136,0.28),transparent_35%)]" />
+                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_22%,rgba(255,255,255,0.42),transparent_28%),radial-gradient(circle_at_70%_68%,rgba(15,23,42,0.25),transparent_35%)]" />
                                 <div className="wildfire-coverage-scan absolute -left-12 top-0 h-full w-12 bg-gradient-to-r from-transparent via-white/70 to-transparent" />
                             </div>
                             <svg className="pointer-events-none absolute inset-3" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
@@ -195,7 +195,7 @@ export const StorcitoCoverageOverlay = ({ map }: StorcitoCoverageOverlayProps) =
                                     className="wildfire-coverage-dash"
                                     points={FOOTPRINT_POINTS}
                                     fill="transparent"
-                                    stroke="rgba(15,118,110,0.96)"
+                                    stroke="rgba(15,23,42,0.92)"
                                     strokeWidth="3"
                                     strokeDasharray="7 5"
                                     strokeLinecap="round"
@@ -205,8 +205,8 @@ export const StorcitoCoverageOverlay = ({ map }: StorcitoCoverageOverlayProps) =
                             </svg>
                             <div className="absolute left-8 top-7 h-4 w-7 rounded-md border border-white/80 bg-white/95 shadow-sm" />
                             <div className="absolute bottom-7 right-5 h-5 w-8 rounded-md border border-white/80 bg-white/95 shadow-sm" />
-                            <span className="absolute left-3 top-3 h-2 w-2 rounded-full bg-teal-500 shadow-[0_0_0_4px_rgba(20,184,166,0.18)]" />
-                            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[9px] font-semibold text-teal-800">
+                            <span className="absolute left-3 top-3 h-2 w-2 rounded-full bg-slate-900 shadow-[0_0_0_4px_rgba(15,23,42,0.15)]" />
+                            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[9px] font-semibold text-slate-700">
                                 <span>Data</span>
                                 <span className="text-slate-600">No data</span>
                             </div>
@@ -214,9 +214,9 @@ export const StorcitoCoverageOverlay = ({ map }: StorcitoCoverageOverlayProps) =
 
                         <div className="space-y-2.5 text-[11px] leading-snug">
                             <div className="flex gap-2">
-                                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-teal-600" />
+                                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-900" />
                                 <div>
-                                    <div className="font-medium text-slate-950">Use teal areas</div>
+                                    <div className="font-medium text-slate-950">Use shaded areas</div>
                                     <div className="text-slate-600">
                                         Required wildfire inputs are available{dateRange ? ` for ${dateRange}` : ""}.
                                     </div>

@@ -9,6 +9,7 @@ import {
   Layers,
   Loader2,
   MapPin,
+  Mountain,
   RefreshCw,
   Route,
 } from "lucide-react";
@@ -36,6 +37,7 @@ import { type Workspace } from "@/components/workspace";
 import { useWorkspaceStore } from "@/components/workspace";
 import { useRiskMetrics } from "./hooks/useRiskMetrics";
 import { AssessmentDetailsSidebar } from "./components/AssessmentDetailsSidebar";
+import { Wildfire3DView } from "./components/Wildfire3DView";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -81,7 +83,7 @@ const EPSG_32629 = "EPSG:32629";
 const POLL_INTERVAL_MS = 10_000;
 // Raster transparency is applied only here; users adjust it with the opacity slider.
 const FIRE_RISK_DEFAULT_OPACITY = 0.7;
-const FIRE_RISK_STYLE_VERSION = "risk-style-vivid-v5";
+const FIRE_RISK_STYLE_VERSION = "risk-style-storcito-v7";
 const MAP_REFERENCE_DARK_OPACITY = 0.95;
 const MAP_REFERENCE_LIGHT_ROADS_OPACITY = 0.82;
 const MAP_REFERENCE_LIGHT_LABELS_OPACITY = 0.62;
@@ -97,10 +99,10 @@ const ESRI_PLACES_REFERENCE_URL =
 const ESRI_ATTRIBUTION = "Sources: OpenStreetMap contributors, Esri, HERE, Garmin";
 
 const RISK_LEVELS = [
-  { label: "Very Low", color: "#2563eb", value: 1, style: FIRE_RISK_STYLE_VERY_LOW, metricKey: "veryLow" },
+  { label: "Very Low", color: "#9ca3af", value: 1, style: FIRE_RISK_STYLE_VERY_LOW, metricKey: "veryLow" },
   { label: "Low", color: "#16a34a", value: 2, style: FIRE_RISK_STYLE_LOW, metricKey: "low" },
   { label: "Moderate", color: "#eab308", value: 3, style: FIRE_RISK_STYLE_MODERATE, metricKey: "moderate" },
-  { label: "High", color: "#ea580c", value: 4, style: FIRE_RISK_STYLE_HIGH, metricKey: "high" },
+  { label: "High", color: "#f97316", value: 4, style: FIRE_RISK_STYLE_HIGH, metricKey: "high" },
   { label: "Very High", color: "#dc2626", value: 5, style: FIRE_RISK_STYLE_VERY_HIGH, metricKey: "veryHigh" },
 ] as const;
 
@@ -109,6 +111,10 @@ type VisibleRiskLevels = Record<RiskLevelValue, boolean>;
 interface RiskLayerEntry {
   value: RiskLevelValue;
   layer: TileLayer<TileWMS>;
+}
+interface RiskLayerSelection {
+  key: string;
+  layerName: string;
 }
 
 const DEFAULT_VISIBLE_RISK_LEVELS: VisibleRiskLevels = {
@@ -202,6 +208,8 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   const [layerOpacity, setLayerOpacity] = useState(FIRE_RISK_DEFAULT_OPACITY);
   const [visibleRiskLevels, setVisibleRiskLevels] = useState<VisibleRiskLevels>(DEFAULT_VISIBLE_RISK_LEVELS);
   const [tileErrors, setTileErrors] = useState(0);
+  const [show3D, setShow3D] = useState(false);
+  const [wms3D, setWms3D] = useState<{ wmsUrl: string; layerName: string } | null>(null);
 
   const [roadsVisible, setRoadsVisible] = useState(true);
   const [labelsVisible, setLabelsVisible] = useState(false);
@@ -228,6 +236,48 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   const riskLayerEntriesRef = useRef<RiskLayerEntry[]>([]);
   const visibleRiskLevelsRef = useRef<VisibleRiskLevels>(DEFAULT_VISIBLE_RISK_LEVELS);
   const pollTimerRef = useRef<number | null>(null);
+  const attachLayerRequestRef = useRef(0);
+  const renderRefreshRafRef = useRef<number | null>(null);
+  const renderRefreshTimeoutsRef = useRef<number[]>([]);
+
+  const clearScheduledMapRenderRefreshes = useCallback(() => {
+    if (renderRefreshRafRef.current !== null) {
+      cancelAnimationFrame(renderRefreshRafRef.current);
+      renderRefreshRafRef.current = null;
+    }
+    renderRefreshTimeoutsRef.current.forEach((id) => clearTimeout(id));
+    renderRefreshTimeoutsRef.current = [];
+  }, []);
+
+  const scheduleMapRenderRefresh = useCallback(() => {
+    if (!map) return;
+
+    clearScheduledMapRenderRefreshes();
+    const refresh = () => {
+      if (!map.getTarget()) return;
+      map.getLayers().forEach((layer) => {
+        layer.changed();
+      });
+      map.updateSize();
+      map.renderSync();
+    };
+
+    renderRefreshRafRef.current = requestAnimationFrame(() => {
+      renderRefreshRafRef.current = null;
+      refresh();
+    });
+    [80, 250, 600, 1200].forEach((delay) => {
+      renderRefreshTimeoutsRef.current.push(window.setTimeout(refresh, delay));
+    });
+  }, [clearScheduledMapRenderRefreshes, map]);
+
+  const removeRiskLayerEntries = useCallback(() => {
+    if (!map) return;
+    riskLayerEntriesRef.current.forEach(({ layer }) => map.removeLayer(layer));
+    riskLayerEntriesRef.current = [];
+    setRiskLayerEntries([]);
+    scheduleMapRenderRefresh();
+  }, [map, scheduleMapRenderRefresh]);
 
   // -------------------------------------------------------------------------
   // Data loading
@@ -267,8 +317,12 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   const attachLayer = useCallback(
     async (result: ModelResult) => {
       if (!map || result.geoserver_status !== "configured") return;
+      const requestId = ++attachLayerRequestRef.current;
+      const requestedLayerKey = selectedLayerKeyRef.current;
       try {
         const resp = await axios.get(`/results/${result.id}/layer`);
+        if (requestId !== attachLayerRequestRef.current) return;
+
         const info: LayerInfo | undefined = resp.data?.data;
         if (!info?.wms_url || !info.layer_name) {
           setError(t("modelResults.errors.layerIncomplete", "Layer configuration is incomplete"));
@@ -278,23 +332,42 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
         const layerOptions = info.available_layers ?? [];
         setAvailableLayers(layerOptions);
         // Render the currently selected component layer (defaults to the risk map).
-        const activeLayerName =
-          layerOptions.find((l) => l.key === selectedLayerKeyRef.current)?.layer_name ?? info.layer_name;
-        const activeInfo: LayerInfo = { ...info, layer_name: activeLayerName };
+        const selectedLayer = layerOptions.find((l) => l.key === requestedLayerKey);
+        const fallbackLayer = layerOptions.find((l) => l.key === "risk");
+        const activeLayer: RiskLayerSelection = selectedLayer
+          ? { key: selectedLayer.key, layerName: selectedLayer.layer_name }
+          : { key: fallbackLayer?.key ?? "risk", layerName: fallbackLayer?.layer_name ?? info.layer_name };
+        if (activeLayer.key !== requestedLayerKey) {
+          selectedLayerKeyRef.current = activeLayer.key;
+          setSelectedLayerKey(activeLayer.key);
+        }
+
+        removeRiskLayerEntries();
+
+        const activeInfo: LayerInfo = { ...info, layer_name: activeLayer.layerName };
+        setWms3D({ wmsUrl: info.wms_url, layerName: activeLayer.layerName });
 
         const newRiskLayerEntries = RISK_LEVELS.map((riskLevel) => {
           const riskLayer = buildWMSLayer(activeInfo, riskLevel.style, 450 + riskLevel.value);
           riskLayer.setVisible(layerVisible && visibleRiskLevelsRef.current[riskLevel.value]);
-          map.addLayer(riskLayer);
-          riskLayer.getSource()?.on("tileloaderror", () => {
-            setTileErrors((n) => n + 1);
+          const source = riskLayer.getSource();
+          source?.updateParams({
+            VIEWER_LAYER_KEY: activeLayer.key,
+            VIEWER_LAYER_REFRESH: String(requestId),
           });
+          source?.on("tileloadend", scheduleMapRenderRefresh);
+          source?.on("tileloaderror", () => {
+            setTileErrors((n) => n + 1);
+            scheduleMapRenderRefresh();
+          });
+          map.addLayer(riskLayer);
           return { value: riskLevel.value, layer: riskLayer };
         });
         setRiskLayerEntries(newRiskLayerEntries);
         riskLayerEntriesRef.current = newRiskLayerEntries;
 
         if (info.bounds) fitMapToBounds(map, info.bounds);
+        scheduleMapRenderRefresh();
       } catch (err) {
         setError(
           extractErrorMessage(
@@ -304,7 +377,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
         );
       }
     },
-    [layerVisible, map, t]
+    [layerVisible, map, removeRiskLayerEntries, scheduleMapRenderRefresh, t]
   );
 
   // Switch the visualized dataset (risk map vs. a component layer such as
@@ -314,12 +387,10 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
       setSelectedLayerKey(key);
       selectedLayerKeyRef.current = key;
       if (!map || !activeResult || activeResult.geoserver_status !== "configured") return;
-      riskLayerEntriesRef.current.forEach(({ layer }) => map.removeLayer(layer));
-      riskLayerEntriesRef.current = [];
-      setRiskLayerEntries([]);
+      removeRiskLayerEntries();
       attachLayer(activeResult);
     },
-    [map, activeResult, attachLayer]
+    [map, activeResult, attachLayer, removeRiskLayerEntries]
   );
 
   // -------------------------------------------------------------------------
@@ -417,13 +488,15 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     riskLayerEntries.forEach(({ value, layer: riskLayer }) => {
       riskLayer.setVisible(layerVisible && visibleRiskLevels[value]);
     });
-  }, [layerVisible, riskLayerEntries, visibleRiskLevels]);
+    scheduleMapRenderRefresh();
+  }, [layerVisible, riskLayerEntries, scheduleMapRenderRefresh, visibleRiskLevels]);
 
   useEffect(() => {
     riskLayerEntries.forEach(({ layer: riskLayer }) => {
       riskLayer.setOpacity(layerOpacity);
     });
-  }, [layerOpacity, riskLayerEntries]);
+    scheduleMapRenderRefresh();
+  }, [layerOpacity, riskLayerEntries, scheduleMapRenderRefresh]);
 
   // Transparent ESRI road/label tiles above the risk raster so the map stays readable.
   const roadsLayerRef = useRef<TileLayer<XYZ> | null>(null);
@@ -457,14 +530,15 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
       className: "ol-layer ol-visible-in-maplibre",
     });
 
-    roadsLayer.setVisible(roadsVisible);
-    labelsLayer.setVisible(labelsVisible);
+    roadsLayer.setVisible(false);
+    labelsLayer.setVisible(false);
     roadsLayer.setZIndex(500);
     labelsLayer.setZIndex(510);
     map.addLayer(roadsLayer);
     map.addLayer(labelsLayer);
     roadsLayerRef.current = roadsLayer;
     labelsLayerRef.current = labelsLayer;
+    scheduleMapRenderRefresh();
 
     return () => {
       map.removeLayer(roadsLayer);
@@ -472,12 +546,13 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
       if (roadsLayerRef.current === roadsLayer) roadsLayerRef.current = null;
       if (labelsLayerRef.current === labelsLayer) labelsLayerRef.current = null;
     };
-  }, [isDarkBaseLayer, map]);
+  }, [isDarkBaseLayer, map, scheduleMapRenderRefresh]);
 
   useEffect(() => {
     roadsLayerRef.current?.setVisible(roadsVisible);
     labelsLayerRef.current?.setVisible(labelsVisible);
-  }, [labelsVisible, roadsVisible]);
+    scheduleMapRenderRefresh();
+  }, [labelsVisible, roadsVisible, scheduleMapRenderRefresh]);
 
   // Detach on unmount / id change.
   useEffect(() => {
@@ -487,9 +562,11 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
           map.removeLayer(riskLayer);
         });
       }
+      attachLayerRequestRef.current += 1;
       riskLayerEntriesRef.current = [];
+      clearScheduledMapRenderRefreshes();
     };
-  }, [map, resolvedModelId]);
+  }, [clearScheduledMapRenderRefreshes, map, resolvedModelId]);
 
   // -------------------------------------------------------------------------
   // Derived UI state
@@ -553,7 +630,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
   const header = (
     <header className="bg-card border-b border-border flex-shrink-0">
-      <div className="px-4 py-3 flex items-center justify-between gap-3">
+      <div className="px-4 py-1.5 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <button
             type="button"
@@ -630,21 +707,24 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
         <div className="flex items-center gap-2 flex-shrink-0">
           {hasRiskLayers && availableLayers.length > 1 && (
-            <div className="h-8 px-2 inline-flex items-center gap-1.5 text-xs border border-border rounded-lg bg-card">
-              <Layers className="w-4 h-4 text-muted-foreground" />
-              <select
-                value={selectedLayerKey}
-                onChange={(e) => handleSelectLayer(e.target.value)}
-                className="bg-transparent text-foreground font-medium focus:outline-none cursor-pointer pr-1"
+            <Select value={selectedLayerKey} onValueChange={handleSelectLayer}>
+              <SelectTrigger
+                className="w-[200px] h-9"
                 aria-label={t("modelResults.layer.dataset", "Layer")}
               >
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <Layers className="w-4 h-4 text-muted-foreground shrink-0" />
+                  <SelectValue />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
                 {availableLayers.map((l) => (
-                  <option key={l.key} value={l.key}>
+                  <SelectItem key={l.key} value={l.key}>
                     {l.title}
-                  </option>
+                  </SelectItem>
                 ))}
-              </select>
-            </div>
+              </SelectContent>
+            </Select>
           )}
           {hasRiskLayers && (
             <>
@@ -659,6 +739,18 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
                     ? t("modelResults.layer.visible", "Visible")
                     : t("modelResults.layer.hidden", "Hidden")}
                 </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShow3D((v) => !v)}
+                disabled={!wms3D}
+                className={`h-8 px-3 inline-flex items-center gap-1.5 text-xs border rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                  show3D ? "border-emerald-500 bg-emerald-500 text-white" : "border-border bg-card hover:bg-muted"
+                }`}
+              >
+                <Mountain className="w-4 h-4" />
+                <span>{show3D ? t("modelResults.layer.view2d", "2D") : t("modelResults.layer.view3d", "3D")}</span>
               </button>
 
               <div className="h-8 px-3 inline-flex items-center gap-2 text-xs border border-border rounded-lg bg-card">
@@ -704,6 +796,16 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
   const mapOverlays = (
     <>
+      {show3D && wms3D && (
+        <Wildfire3DView
+          wmsUrl={wms3D.wmsUrl}
+          layerName={wms3D.layerName}
+          aoi={model?.coordinates}
+          anchorEl={map?.getViewport() ?? null}
+          rightInset={model ? 288 : 0}
+          onClose={() => setShow3D(false)}
+        />
+      )}
       {!map && (
         <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-[2000] flex items-center justify-center">
           <div className="text-center">
@@ -758,9 +860,9 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
       {/* Optional map overlays. */}
       {map && (
         <div
-          className="absolute top-20 left-6 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-lg rounded-2xl overflow-hidden w-[180px] transition-all duration-300"
+          className="absolute top-4 left-2 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-lg rounded-2xl overflow-hidden w-[156px] transition-all duration-300"
         >
-          <div className="px-3 py-2 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border-b border-emerald-500/10 flex items-center gap-2">
+          <div className="px-2.5 py-1.5 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border-b border-emerald-500/10 flex items-center gap-2">
             <div className="w-5 h-5 rounded-md bg-gradient-to-br from-emerald-500 to-teal-500 shadow-sm flex items-center justify-center">
               <Layers className="w-3 h-3 text-white" />
             </div>
@@ -768,8 +870,8 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
               {t("modelResults.layers.title", "Overlays")}
             </span>
           </div>
-          <div className="p-1.5 space-y-0.5">
-            <label className="flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
+          <div className="p-1 space-y-0">
+            <label className="flex items-center gap-2 px-2 py-0.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
               <div className="relative flex items-center justify-center">
                 <input
                   type="checkbox"
@@ -784,7 +886,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
                 {t("modelResults.layers.roads", "Roads")}
               </span>
             </label>
-            <label className="flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
+            <label className="flex items-center gap-2 px-2 py-0.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
               <div className="relative flex items-center justify-center">
                 <input
                   type="checkbox"
@@ -805,8 +907,8 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
       {/* Risk legend */}
       {hasRiskLayers && (
-        <div className="absolute bottom-16 left-6 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-lg rounded-2xl overflow-hidden w-[180px] transition-all duration-300">
-          <div className="px-3 py-2 bg-gradient-to-r from-orange-500/10 to-red-500/10 border-b border-orange-500/10 flex items-center gap-2">
+        <div className="absolute bottom-4 left-2 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-lg rounded-2xl overflow-hidden w-[156px] transition-all duration-300">
+          <div className="px-2.5 py-1.5 bg-gradient-to-r from-orange-500/10 to-red-500/10 border-b border-orange-500/10 flex items-center gap-2">
             <div className="w-5 h-5 rounded-md bg-gradient-to-br from-orange-500 to-red-500 shadow-sm flex items-center justify-center">
               <Layers className="w-3 h-3 text-white" />
             </div>
@@ -814,8 +916,8 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
               {t("modelResults.legend.title", "Fire Risk")}
             </span>
           </div>
-          <div className="p-1.5 space-y-0.5">
-            <label className="flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer border-b border-border/40 mb-1.5 pb-2 group">
+          <div className="p-1 space-y-0">
+            <label className="flex items-center gap-2 px-2 py-0.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer border-b border-border/40 mb-1.5 pb-2 group">
               <div className="relative flex items-center justify-center">
                 <input
                   type="checkbox"
@@ -841,7 +943,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
               return (
                 <label
                   key={lvl.value}
-                  className={`flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group ${levelStateClass}`}
+                  className={`flex items-center gap-2 px-2 py-0.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group ${levelStateClass}`}
                 >
                   <div className="relative flex items-center justify-center">
                     <input
@@ -868,7 +970,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
             })}
           </div>
           <div className="px-3 pb-3 pt-0.5">
-            <div className="h-1.5 rounded-full bg-gradient-to-r from-[#2563eb] via-[#16a34a] via-[#eab308] via-[#ea580c] to-[#dc2626] shadow-inner" />
+            <div className="h-1.5 rounded-full bg-gradient-to-r from-[#9ca3af] via-[#16a34a] via-[#eab308] via-[#f97316] to-[#dc2626] shadow-inner" />
           </div>
         </div>
       )}

@@ -28,7 +28,7 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
             onClick={onClick}
             data-tour={dataTour}
             className={cn(
-              "cursor-pointer w-11 h-11 rounded-button flex items-center justify-center transition-all duration-normal relative",
+              "cursor-pointer w-9 h-9 rounded-button flex items-center justify-center transition-all duration-normal relative",
               "hover:bg-muted",
               className
             )}

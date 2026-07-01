@@ -7,6 +7,7 @@ import { SimulationProgress } from "@/components/ui/SimulationProgress";
 import CompletedTimer from "@/components/ui/CompletedTimer";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@spatialhub/ui";
 import ModelActions from "@/components/ui/ModelActions";
+import RiskLevelBadge from "./RiskLevelBadge";
 import { formatDateTime } from "@/utils/dateHelpers";
 import { useTranslation } from "@/i18n";
 import { useFavoriteModelsStore } from "@/features/model-dashboard/store/favorite-models";
@@ -214,6 +215,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
 						isParent={isParent}
 						hasChildren={hasChildren}
 					/>
+					{model.status === "completed" && <RiskLevelBadge modelId={model.id} />}
 				</div>
 			</td>
 

@@ -1032,7 +1032,8 @@
       "hint": "Rango de 0 a 2000 m en pasos de 100 m. Amplía el área considerada alrededor de su polígono.",
       "increase": "Aumentar distancia de búfer",
       "label": "Distancia de búfer (metros)"
-    }
+    },
+    "staticDateInfo": "Las fechas estáticas se eligen automáticamente: para cada año disponible se selecciona el día con la temperatura más alta."
   },
   "mapLayers": {
     "title": "Capas del mapa",

@@ -18,6 +18,7 @@ func registerModelRoutes(api *gin.RouterGroup, modelHandler *modelhandler.ModelH
 	api.PUT(routeModelByID+"/activation", modelHandler.UpdateModelActivation)
 	api.PATCH(routeModelByID+"/move", modelHandler.MoveModel)
 	api.POST(routeModelByID+"/share", modelHandler.ShareModel)
+	api.POST(routeModelByID+"/inputs", modelHandler.UploadModelInputs)
 	api.GET(routeModelByID+"/results", resultHandler.GetModelResults)
 	api.GET(routeModelByID+"/risk-metrics", riskHandler.Get)
 	api.GET(routeModelByID+"/risk-map-samples", riskHandler.GetMapSamples)

@@ -10,10 +10,10 @@ interface RiskDistributionDonutProps {
 }
 
 const LEVELS: Array<{ key: keyof RiskDistribution; label: string; color: string }> = [
-  { key: 'veryLow', label: 'Very Low', color: '#2563eb' },
+  { key: 'veryLow', label: 'Very Low', color: '#9ca3af' },
   { key: 'low', label: 'Low', color: '#16a34a' },
   { key: 'moderate', label: 'Moderate', color: '#eab308' },
-  { key: 'high', label: 'High', color: '#ea580c' },
+  { key: 'high', label: 'High', color: '#f97316' },
   { key: 'veryHigh', label: 'Very High', color: '#dc2626' },
 ];
 

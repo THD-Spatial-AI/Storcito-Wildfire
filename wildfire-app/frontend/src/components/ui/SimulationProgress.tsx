@@ -7,7 +7,7 @@ interface SimulationProgressProps {
 
 const STAGES = [
   { key: "queued", label: "Queued" },
-  { key: "simulating", label: "Simulating" },
+  { key: "assessing", label: "Assessing" },
   { key: "done", label: "Done" },
 ] as const;
 

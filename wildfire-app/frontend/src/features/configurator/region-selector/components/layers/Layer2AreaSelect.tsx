@@ -1,14 +1,15 @@
 import type { ChangeEvent, FC } from "react";
-import { AlertCircle, Download, FileCheck2, MapPin, Pencil, Ruler, UploadCloud } from "lucide-react";
+import { AlertCircle, Download, MapPin, MapPinned, Mountain, Pencil, Ruler, UploadCloud } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { BufferDistanceField } from "../BufferDistanceField";
 import { LayerShell } from "./shared/LayerShell";
+import { FileUploadField } from "./shared/FileUploadField";
 import type { ConfiguratorContext } from "./types";
 
 const modeButtonClass = (active: boolean) =>
     cn(
-        "flex items-center gap-2 rounded-lg border px-3 py-2 text-left transition-colors",
+        "flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-left transition-colors",
         active
             ? "border-foreground bg-foreground text-background shadow-sm"
             : "border-border bg-card text-foreground hover:bg-muted/60",
@@ -97,25 +98,45 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
 
     return (
         <LayerShell
-            purpose="Define the area the wildfire model should cover. Draw it on the map or upload a GeoJSON Polygon/MultiPolygon boundary."
+            purpose="Optionally upload a DTM to see its coverage, then draw inside it — or just draw on the bundled data."
             nextStepHint="Next we'll validate the selected area and model inputs."
         >
+            <div className="mb-3 rounded-lg border border-border bg-muted/30 p-2.5">
+                <FileUploadField
+                    label="Terrain model (DTM)"
+                    accept=".tif,.tiff"
+                    hint="Optional GeoTIFF (.tif) — its coverage is shown on the map"
+                    info="A Digital Terrain Model — a GeoTIFF where each pixel is the ground elevation. Upload it first to see its coverage outline on the map, then draw your area inside it. Used to derive slope/aspect and as the spatial reference grid. If omitted, the bundled regional terrain is used."
+                    icon={Mountain}
+                    fileName={ctx.state.dtmName}
+                    error={ctx.state.dtmError}
+                    processing={ctx.state.dtmProcessing}
+                    processingLabel="Reading DTM coverage…"
+                    onSelect={(f) => ctx.actions.setDtmFile(f)}
+                />
+                {ctx.state.dtmFootprint && !ctx.state.dtmProcessing && (
+                    <p className="mt-1.5 flex items-center gap-1 text-[11px] leading-snug text-emerald-600 dark:text-emerald-400">
+                        <MapPinned className="h-3 w-3 shrink-0" /> Coverage shown on the map — draw your area inside the outline.
+                    </p>
+                )}
+            </div>
+
             <div className="grid grid-cols-2 gap-2" data-tour="area-input-mode">
                 <button
                     type="button"
                     onClick={() => actions.setAreaInputMode("draw")}
                     className={modeButtonClass(isDrawMode)}
                 >
-                    <Pencil className="h-3.5 w-3.5 shrink-0" />
-                    <span className="min-w-0 text-xs font-semibold">Draw area</span>
+                    <Pencil className="h-3 w-3 shrink-0" />
+                    <span className="text-[11px] font-semibold leading-tight whitespace-nowrap">Draw area</span>
                 </button>
 
                 <label
                     onClick={() => actions.setAreaInputMode("upload")}
                     className={cn(modeButtonClass(isUploadMode), "cursor-pointer")}
                 >
-                    <UploadCloud className="h-3.5 w-3.5 shrink-0" />
-                    <span className="min-w-0 text-xs font-semibold">Upload GeoJSON</span>
+                    <UploadCloud className="h-3 w-3 shrink-0" />
+                    <span className="text-[11px] font-semibold leading-tight whitespace-nowrap">Upload GeoJSON</span>
                     <input
                         type="file"
                         accept=".geojson,.json,application/geo+json,application/json"
@@ -177,16 +198,6 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                         >
                             {drawn ? (isUploadMode ? "Uploaded" : "Drawn") : "Not set"}
                         </span>
-                    </SummaryRow>
-                    <SummaryRow label="Source">
-                        {isUploadMode ? (
-                            <span className="inline-flex min-w-0 items-center justify-end gap-1">
-                                <FileCheck2 className="h-3 w-3 shrink-0 text-muted-foreground" />
-                                <span className="truncate">{state.uploadedGeoJsonName ?? "GeoJSON"}</span>
-                            </span>
-                        ) : (
-                            "Map drawing"
-                        )}
                     </SummaryRow>
                     <SummaryRow label="Area">{areaStats?.area ?? "—"}</SummaryRow>
                     <SummaryRow label="Perimeter">{areaStats?.perimeter ?? "—"}</SummaryRow>

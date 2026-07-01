@@ -872,7 +872,8 @@
       "hint": "Intervallo 0–2000 m a passi di 100 m. Espande l'area considerata intorno al poligono.",
       "increase": "Aumenta la distanza di buffer",
       "label": "Distanza di buffer (metri)"
-    }
+    },
+    "staticDateInfo": "Le date statiche vengono scelte automaticamente: per ogni anno disponibile viene selezionato il giorno con la temperatura più alta."
   },
   "mapLayers": {
     "title": "Livelli mappa",

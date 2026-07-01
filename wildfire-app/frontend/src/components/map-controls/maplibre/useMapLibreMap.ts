@@ -118,6 +118,25 @@ export function useMapLibreMap(olMap: OlMap, visible: boolean, isDrawing: boolea
 
       mapRef.current = map;
       const createdMap = map;
+      let resizeRaf = 0;
+      let resizeObserver: ResizeObserver | null = null;
+
+      const resizeMaps = () => {
+        if (resizeRaf) return;
+        resizeRaf = requestAnimationFrame(() => {
+          resizeRaf = 0;
+          if (cancelled || mapRef.current !== createdMap) return;
+          try {
+            createdMap.resize();
+          } catch {
+            // Ignore resize errors during fast route transitions.
+          }
+          if (olMap.getTarget()) {
+            olMap.updateSize();
+            olMap.render();
+          }
+        });
+      };
 
       let tuneRaf = 0;
       const applyStyleTuning = () => {
@@ -138,16 +157,20 @@ export function useMapLibreMap(olMap: OlMap, visible: boolean, isDrawing: boolea
       const scheduleResize = (delayMs: number) => {
         const id = window.setTimeout(() => {
           if (cancelled || mapRef.current !== createdMap) return;
-          try {
-            createdMap.resize();
-          } catch {
-            // Ignore resize errors during fast route transitions.
-          }
+          resizeMaps();
         }, delayMs);
         resizeTimeoutIds.push(id);
       };
       scheduleResize(100);
       scheduleResize(500);
+
+      resizeObserver = typeof ResizeObserver !== 'undefined'
+        ? new ResizeObserver(resizeMaps)
+        : null;
+      resizeObserver?.observe(container);
+      window.addEventListener('resize', resizeMaps);
+      createdMap.on('styledata', resizeMaps);
+      createdMap.on('load', resizeMaps);
 
       const olViewport = olMap.getViewport();
       const mlCanvas = container.querySelector('canvas') as HTMLCanvasElement | null;
@@ -266,7 +289,12 @@ export function useMapLibreMap(olMap: OlMap, visible: boolean, isDrawing: boolea
       cleanupFns.push(
         () => { createdMap.off('styledata', applyStyleTuning); },
         () => { createdMap.off('load', applyStyleTuning); },
+        () => { createdMap.off('styledata', resizeMaps); },
+        () => { createdMap.off('load', resizeMaps); },
         () => { if (tuneRaf) cancelAnimationFrame(tuneRaf); },
+        () => { if (resizeRaf) cancelAnimationFrame(resizeRaf); },
+        () => { resizeObserver?.disconnect(); },
+        () => { window.removeEventListener('resize', resizeMaps); },
         () => { olViewport.removeEventListener('wheel', onWheel, { capture: true }); },
         () => { olViewport.removeEventListener('mousedown', onMouseDown); },
         () => { olViewport.removeEventListener('mousemove', onMouseMove); },

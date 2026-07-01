@@ -451,6 +451,14 @@ func (s *WebserviceService) GetSummary(ctx context.Context) (map[string]interfac
 }
 
 func (s *WebserviceService) GetAvailableStaticDates(ctx context.Context) ([]string, error) {
+	return s.getAvailableDates(ctx, "/available-static-dates", "static")
+}
+
+func (s *WebserviceService) GetAvailableDynamicDates(ctx context.Context) ([]string, error) {
+	return s.getAvailableDates(ctx, "/available-dynamic-dates", "dynamic")
+}
+
+func (s *WebserviceService) getAvailableDates(ctx context.Context, path string, label string) ([]string, error) {
 	var instance models.WebserviceInstance
 	if err := s.db.
 		Where("status = ?", models.StatusActive).
@@ -459,7 +467,7 @@ func (s *WebserviceService) GetAvailableStaticDates(ctx context.Context) ([]stri
 		return nil, err
 	}
 
-	url := buildURL(&instance, "/available-static-dates")
+	url := buildURL(&instance, path)
 	status, _, respBytes, err := s.doJSON(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
@@ -472,7 +480,7 @@ func (s *WebserviceService) GetAvailableStaticDates(ctx context.Context) ([]stri
 		Dates []string `json:"dates"`
 	}
 	if err := json.Unmarshal(respBytes, &result); err != nil {
-		return nil, fmt.Errorf("invalid available static dates response: %w", err)
+		return nil, fmt.Errorf("invalid available %s dates response: %w", label, err)
 	}
 	return result.Dates, nil
 }

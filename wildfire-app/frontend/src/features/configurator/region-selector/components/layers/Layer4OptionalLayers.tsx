@@ -2,6 +2,7 @@ import type { FC } from "react";
 import { CloudRain, Mountain, Flame, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LayerShell } from "./shared/LayerShell";
+import { FileUploadField } from "./shared/FileUploadField";
 import type { ConfiguratorContext, OptionalLayerKey } from "./types";
 
 interface OptionalLayerItem {
@@ -55,7 +56,7 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
                         <div
                             key={it.id}
                             className={cn(
-                                "group relative flex items-center gap-3 rounded-xl border bg-gradient-to-br p-3.5 transition-all",
+                                "group relative flex items-start gap-2.5 rounded-xl border bg-gradient-to-br p-3 transition-all",
                                 enabled
                                     ? cn("border-foreground/15 shadow-sm", it.accent)
                                     : "border-border bg-muted/30 from-transparent to-transparent",
@@ -63,7 +64,7 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
                         >
                             <span
                                 className={cn(
-                                    "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors",
+                                    "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border transition-colors",
                                     enabled
                                         ? "border-current bg-background/60"
                                         : "border-border bg-background/40 text-muted-foreground",
@@ -72,32 +73,32 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
                                 <Icon className="h-4 w-4" />
                             </span>
                             <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center justify-between gap-2">
                                     <span className="text-sm font-medium text-foreground">{it.label}</span>
-                                    <span className="rounded-full border border-border bg-background/70 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-muted-foreground">
-                                        {it.weight}
-                                    </span>
+                                    <button
+                                        type="button"
+                                        onClick={() => ctx.toggleOptionalLayer(it.id)}
+                                        role="switch"
+                                        aria-checked={enabled}
+                                        aria-label={`Toggle ${it.label}`}
+                                        className={cn(
+                                            "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                                            enabled ? "bg-emerald-500" : "bg-muted-foreground/30 hover:bg-muted-foreground/40",
+                                        )}
+                                    >
+                                        <span
+                                            className={cn(
+                                                "inline-block h-4 w-4 transform rounded-full bg-white shadow-md ring-1 ring-black/5 transition-transform",
+                                                enabled ? "translate-x-[18px]" : "translate-x-0.5",
+                                            )}
+                                        />
+                                    </button>
                                 </div>
-                                <span className="mt-0.5 block text-[11px] leading-snug text-muted-foreground">{it.hint}</span>
+                                <span className="mt-1 inline-block rounded-full border border-border bg-background/70 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-muted-foreground">
+                                    {it.weight}
+                                </span>
+                                <span className="mt-1 block text-[11px] leading-snug text-muted-foreground">{it.hint}</span>
                             </div>
-                            <button
-                                type="button"
-                                onClick={() => ctx.toggleOptionalLayer(it.id)}
-                                role="switch"
-                                aria-checked={enabled}
-                                aria-label={`Toggle ${it.label}`}
-                                className={cn(
-                                    "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                                    enabled ? "bg-emerald-500" : "bg-muted-foreground/30 hover:bg-muted-foreground/40",
-                                )}
-                            >
-                                <span
-                                    className={cn(
-                                        "inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-1 ring-black/5 transition-transform",
-                                        enabled ? "translate-x-[22px]" : "translate-x-0.5",
-                                    )}
-                                />
-                            </button>
                         </div>
                     );
                 })}
@@ -111,6 +112,26 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
                     </span>
                 </div>
             )}
+
+            <div className="mt-4 border-t border-border pt-4">
+                <h4 className="text-xs font-semibold text-foreground">Custom data (optional)</h4>
+                <p className="mb-2 mt-0.5 text-[11px] leading-snug text-muted-foreground">
+                    Bring your own weather inputs for this area. If left empty, the bundled regional data is used.
+                    {/* The DTM is uploaded earlier, in the Area Selection step. */}
+                </p>
+                <div className="space-y-2">
+                    <FileUploadField
+                        label="Weather station data"
+                        accept=".xlsx,.xls,.csv"
+                        hint="Excel or CSV station export (.xlsx / .csv)"
+                        info="Hourly weather measurements from a local station — temperature, humidity, wind and precipitation. Used to compute the Fire Weather Index for this area. Upload an Excel or CSV export; if omitted, the bundled regional weather data is used."
+                        icon={CloudRain}
+                        fileName={ctx.state.stationDataName}
+                        error={ctx.state.stationDataError}
+                        onSelect={(f) => ctx.actions.setStationDataFile(f)}
+                    />
+                </div>
+            </div>
         </LayerShell>
     );
 };

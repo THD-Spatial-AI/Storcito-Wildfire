@@ -2,7 +2,6 @@ import { useTranslation } from '@/i18n';
 import { Flame, Loader2 } from 'lucide-react';
 
 import type { RiskLevel, RiskMetrics } from '../hooks/useRiskMetrics';
-import { RiskDistributionDonut } from './RiskDistributionDonut';
 
 interface RiskMetricsCardProps {
   metrics: RiskMetrics;
@@ -21,11 +20,11 @@ const LEVEL_THEME: Record<
 > = {
   very_low: {
     label: 'Very Low',
-    heroBg: 'from-blue-500/10 to-blue-500/5',
-    heroText: 'text-blue-700 dark:text-blue-300',
-    heroRing: 'ring-blue-500/20',
-    dot: 'bg-blue-500',
-    bar: 'bg-blue-500',
+    heroBg: 'from-slate-500/10 to-slate-500/5',
+    heroText: 'text-slate-700 dark:text-slate-300',
+    heroRing: 'ring-slate-500/20',
+    dot: 'bg-slate-400',
+    bar: 'bg-slate-400',
   },
   low: {
     label: 'Low',
@@ -113,18 +112,6 @@ export const RiskMetricsCard: React.FC<RiskMetricsCardProps> = ({
   }
 
   const theme = metrics.overallRiskLevel ? LEVEL_THEME[metrics.overallRiskLevel] : null;
-  const dist = metrics.riskDistribution;
-
-  const buckets = dist
-    ? ([
-        { key: 'veryLow', label: 'Very Low', value: dist.veryLow, dot: 'bg-blue-500' },
-        { key: 'low', label: 'Low', value: dist.low, dot: 'bg-emerald-500' },
-        { key: 'moderate', label: 'Moderate', value: dist.moderate, dot: 'bg-amber-400' },
-        { key: 'high', label: 'High', value: dist.high, dot: 'bg-orange-500' },
-        { key: 'veryHigh', label: 'Very High', value: dist.veryHigh, dot: 'bg-red-500' },
-      ] as const)
-    : [];
-
   return (
     <Wrap>
       {theme && (
@@ -181,70 +168,35 @@ export const RiskMetricsCard: React.FC<RiskMetricsCardProps> = ({
       {(metrics.affectedAreaKm2 !== null || metrics.totalAreaKm2 !== null) && (
         <div className="grid grid-cols-2 divide-x divide-border border-b border-border">
           {(metrics.affectedAreaKm2 !== null || metrics.affectedAreaHectares !== null) && (
-            <div className="px-4 py-3">
-              <p className="text-[10px] font-semibold tracking-[0.12em] uppercase text-muted-foreground">
+            <div className="px-3 py-1.5">
+              <p className="text-[9px] font-semibold tracking-[0.1em] uppercase text-muted-foreground">
                 {t('modelResults.risk.highRiskArea', 'High + Very High area')}
               </p>
-              <p className="mt-0.5 text-sm font-semibold text-foreground inline-flex items-center gap-1.5">
-                <Flame className="w-3.5 h-3.5 text-orange-500" />
+              <p className="mt-0.5 text-xs font-semibold text-foreground inline-flex items-center gap-1">
+                <Flame className="w-3 h-3 text-orange-500" />
                 {formatArea(metrics.affectedAreaHectares, metrics.affectedAreaKm2)}
+                {metrics.affectedFraction !== null && (
+                  <span className="text-[10px] font-normal text-muted-foreground">
+                    ({(metrics.affectedFraction * 100).toFixed(1)}%)
+                  </span>
+                )}
               </p>
-              {metrics.affectedFraction !== null && (
-                <p className="mt-0.5 text-[10px] text-muted-foreground">
-                  {(metrics.affectedFraction * 100).toFixed(1)}%{' '}
-                  {t('modelResults.risk.ofArea', 'of area')}
-                </p>
-              )}
             </div>
           )}
           {metrics.totalAreaKm2 !== null && (
-            <div className="px-4 py-3">
-              <p className="text-[10px] font-semibold tracking-[0.12em] uppercase text-muted-foreground">
+            <div className="px-3 py-1.5">
+              <p className="text-[9px] font-semibold tracking-[0.1em] uppercase text-muted-foreground">
                 {t('modelResults.risk.totalArea', 'Analyzed area')}
               </p>
-              <p className="mt-0.5 text-sm font-semibold text-foreground">
+              <p className="mt-0.5 text-xs font-semibold text-foreground">
                 {metrics.totalAreaKm2.toFixed(2)} km²
-              </p>
-              <p className="mt-0.5 text-[10px] text-muted-foreground">
-                {t('modelResults.risk.analyzedSurface', 'Valid (non-nodata) pixels')}
               </p>
             </div>
           )}
         </div>
       )}
 
-      {dist && (
-        <div className="px-4 py-4">
-          <p className="text-[10px] font-semibold tracking-[0.14em] uppercase text-muted-foreground mb-2">
-            {t('modelResults.risk.distribution', 'Risk distribution')}
-          </p>
-
-          <RiskDistributionDonut distribution={dist} height={150} />
-
-          <ul className="mt-3 space-y-1.5">
-            {buckets.map((b) => {
-              const isEmpty = b.value <= 0;
-              return (
-                <li key={b.key} className={`flex items-center gap-2 ${isEmpty ? 'opacity-40' : ''}`}>
-                  <span className={`w-2 h-2 rounded-full flex-shrink-0 ${b.dot}`} />
-                  <span className="text-[11px] text-muted-foreground flex-1 truncate">{b.label}</span>
-                  <span className="text-[11px] font-semibold text-foreground tabular-nums">
-                    {b.value.toFixed(1)}%
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-
-          {metrics.sampleCount !== null && metrics.sampleCount > 0 && (
-            <p className="mt-3 text-[10px] text-muted-foreground">
-              {t('modelResults.risk.sampleNote', 'Based on {{count}} sampled pixels', {
-                count: metrics.sampleCount,
-              })}
-            </p>
-          )}
-        </div>
-      )}
+      {/* Per-level distribution is shown by the FIRE RISK legend on the map. */}
     </Wrap>
   );
 };

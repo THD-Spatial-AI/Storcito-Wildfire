@@ -872,7 +872,8 @@
       "hint": "Zakres 0–2000 m w krokach co 100 m. Powiększa obszar wokół wielokąta.",
       "increase": "Zwiększ odległość bufora",
       "label": "Odległość bufora (metry)"
-    }
+    },
+    "staticDateInfo": "Daty statyczne są wybierane automatycznie — dla każdego dostępnego roku wybierany jest dzień o najwyższej temperaturze."
   },
   "mapLayers": {
     "title": "Warstwy mapy",

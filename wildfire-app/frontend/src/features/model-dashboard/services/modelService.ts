@@ -237,6 +237,20 @@ class ModelService {
     return response.data;
   }
 
+  // Upload optional per-model input files (station data + DTM); no-op when none given.
+  async uploadModelInputs(
+    id: number,
+    files: { stationData?: File | null; dtm?: File | null },
+  ): Promise<void> {
+    if (!files.stationData && !files.dtm) return;
+    const formData = new FormData();
+    if (files.stationData) formData.append('station_data', files.stationData);
+    if (files.dtm) formData.append('dtm', files.dtm);
+    await axios.post(`${this.baseURL}/${id}/inputs`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  }
+
   async downloadModelResults(id: number): Promise<AxiosResponse<Blob>> {
     return axios.get(`${this.baseURL}/${id}/download`, {
       responseType: 'blob',

@@ -4,6 +4,7 @@ import { DEFAULT_BUFFER_DISTANCE, clampBuffer } from '@/features/configurator/co
 import { webservicesService } from '@/features/admin-dashboard/services/webservices';
 import type { AreaInputMode, CalculationMode, DateRangeSelection } from '@/features/configurator/types/area-select';
 import type { OptionalLayerKey } from '@/features/configurator/region-selector/components/layers/types';
+import { readDtmPreview } from '@/features/configurator/utils/dtmFootprint';
 
 const DEFAULT_OPTIONAL_LAYERS: Record<OptionalLayerKey, boolean> = {
     weather_overlay: true,
@@ -22,8 +23,11 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
     const [bufferDistance, setBufferDistanceRaw] = useState<number>(DEFAULT_BUFFER_DISTANCE);
     const [calculationMode, setCalculationMode] = useState<CalculationMode>('static');
     const [availableStaticDates, setAvailableStaticDates] = useState<string[]>([]);
+    const [availableDynamicDates, setAvailableDynamicDates] = useState<string[]>([]);
     const [isLoadingStaticDates, setIsLoadingStaticDates] = useState(true);
+    const [isLoadingDynamicDates, setIsLoadingDynamicDates] = useState(true);
     const [staticDatesError, setStaticDatesError] = useState<string | undefined>();
+    const [dynamicDatesError, setDynamicDatesError] = useState<string | undefined>();
     const [originalConfig, setOriginalConfig] = useState<Record<string, unknown> | undefined>(undefined);
 
     const [areaInputMode, setAreaInputModeRaw] = useState<AreaInputMode>('draw');
@@ -38,6 +42,88 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
     }, []);
     const toggleOptionalLayer = useCallback((key: OptionalLayerKey) => {
         setOptionalLayersState((prev) => ({ ...prev, [key]: !prev[key] }));
+    }, []);
+
+    // Optional per-model data uploads
+    const [stationDataFile, setStationDataFileRaw] = useState<File | null>(null);
+    const [stationDataName, setStationDataName] = useState<string | undefined>();
+    const [stationDataError, setStationDataError] = useState<string | undefined>();
+    const [dtmFile, setDtmFileRaw] = useState<File | null>(null);
+    const [dtmName, setDtmName] = useState<string | undefined>();
+    const [dtmError, setDtmError] = useState<string | undefined>();
+    const [dtmFootprint, setDtmFootprint] = useState<[number, number][] | undefined>();
+    const [dtmImageUrl, setDtmImageUrl] = useState<string | undefined>();
+    const [dtmImageExtent, setDtmImageExtent] = useState<[number, number, number, number] | undefined>();
+    const [dtmProcessing, setDtmProcessing] = useState(false);
+
+    const setStationDataFile = useCallback((file: File | null) => {
+        if (!file) {
+            setStationDataFileRaw(null);
+            setStationDataName(undefined);
+            setStationDataError(undefined);
+            return;
+        }
+        if (!/\.(xlsx|xls|csv|txt)$/i.test(file.name)) {
+            setStationDataError('Use an Excel (.xlsx/.xls) or CSV (.csv) file.');
+            return;
+        }
+        setStationDataError(undefined);
+        setStationDataFileRaw(file);
+        setStationDataName(file.name);
+    }, []);
+
+    const setStoredStationDataName = useCallback((name?: string) => {
+        setStationDataFileRaw(null);
+        setStationDataName(name);
+        setStationDataError(undefined);
+    }, []);
+
+    const setDtmFile = useCallback((file: File | null) => {
+        if (!file) {
+            setDtmFileRaw(null);
+            setDtmName(undefined);
+            setDtmError(undefined);
+            setDtmFootprint(undefined);
+            setDtmImageUrl(undefined);
+            setDtmImageExtent(undefined);
+            return;
+        }
+        if (!/\.(tif|tiff)$/i.test(file.name)) {
+            setDtmError('Use a GeoTIFF (.tif/.tiff) elevation raster.');
+            return;
+        }
+        setDtmError(undefined);
+        setDtmFileRaw(file);
+        setDtmName(file.name);
+        setDtmFootprint(undefined);
+        setDtmImageUrl(undefined);
+        setDtmImageExtent(undefined);
+        // Read the DTM once (downsampled): colored elevation image for the map +
+        // valid-data outline used to validate the drawn area before the run.
+        setDtmProcessing(true);
+        void readDtmPreview(file)
+            .then((preview) => {
+                if (!preview) {
+                    setDtmError('Could not read this GeoTIFF’s coverage/CRS; map preview is unavailable.');
+                    return;
+                }
+                if (preview.footprint) setDtmFootprint(preview.footprint);
+                if (preview.imageDataUrl && preview.imageExtent3857) {
+                    setDtmImageUrl(preview.imageDataUrl);
+                    setDtmImageExtent(preview.imageExtent3857);
+                }
+            })
+            .finally(() => setDtmProcessing(false));
+    }, []);
+
+    const setStoredDtmName = useCallback((name?: string) => {
+        setDtmFileRaw(null);
+        setDtmName(name);
+        setDtmError(undefined);
+        setDtmFootprint(undefined);
+        setDtmImageUrl(undefined);
+        setDtmImageExtent(undefined);
+        setDtmProcessing(false);
     }, []);
 
     const [isDrawing, setIsDrawing] = useState(false);
@@ -66,19 +152,28 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
         (async () => {
             try {
                 setIsLoadingStaticDates(true);
+                setIsLoadingDynamicDates(true);
                 setStaticDatesError(undefined);
-                const dates = await webservicesService.getAvailableStaticDates();
+                setDynamicDatesError(undefined);
+                const [staticDates, dynamicDates] = await Promise.all([
+                    webservicesService.getAvailableStaticDates(),
+                    webservicesService.getAvailableDynamicDates(),
+                ]);
                 if (!cancelled) {
-                    setAvailableStaticDates([...new Set(dates)].sort());
+                    setAvailableStaticDates([...new Set(staticDates)].sort());
+                    setAvailableDynamicDates([...new Set(dynamicDates)].sort());
                 }
             } catch {
                 if (!cancelled) {
                     setAvailableStaticDates([]);
+                    setAvailableDynamicDates([]);
                     setStaticDatesError('Unable to load available static dates.');
+                    setDynamicDatesError('Unable to load available dynamic dates.');
                 }
             } finally {
                 if (!cancelled) {
                     setIsLoadingStaticDates(false);
+                    setIsLoadingDynamicDates(false);
                 }
             }
         })();
@@ -128,7 +223,9 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
         toDate, setToDate,
         bufferDistance, setBufferDistance, setBufferDistanceRaw,
         calculationMode, setCalculationMode,
-        availableStaticDates, isLoadingStaticDates, staticDatesError,
+        availableStaticDates, availableDynamicDates,
+        isLoadingStaticDates, isLoadingDynamicDates,
+        staticDatesError, dynamicDatesError,
         originalConfig, setOriginalConfig,
         // area input
         areaInputMode, setAreaInputMode, setAreaInputModeRaw,
@@ -136,6 +233,9 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
         geoJsonUploadError, setGeoJsonUploadError,
         // optional layers (forwarded to STORCITO as parameters.optional_layers)
         optionalLayers, setOptionalLayers, toggleOptionalLayer,
+        // optional per-model data uploads
+        stationDataFile, stationDataName, stationDataError, setStationDataFile, setStoredStationDataName,
+        dtmFile, dtmName, dtmError, dtmFootprint, dtmImageUrl, dtmImageExtent, dtmProcessing, setDtmFile, setStoredDtmName,
         // drawing flags
         isDrawing, setIsDrawing,
         cursorPos, setCursorPos,

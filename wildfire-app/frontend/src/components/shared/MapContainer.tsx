@@ -41,6 +41,41 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 		initializeMap(mapRef, initMapInstance, setMuted);
 	}, [initMapInstance, mapRef]);
 
+	useEffect(() => {
+		const container = mapRef.current;
+		if (!container || !map) return;
+
+		let rafId = 0;
+		const timeoutIds: number[] = [];
+		const refreshMapSize = () => {
+			if (rafId) cancelAnimationFrame(rafId);
+			rafId = requestAnimationFrame(() => {
+				rafId = 0;
+				if (map.getTarget() !== container) return;
+				map.updateSize();
+				map.renderSync();
+			});
+		};
+
+		refreshMapSize();
+		[100, 300, 700].forEach((delay) => {
+			timeoutIds.push(window.setTimeout(refreshMapSize, delay));
+		});
+
+		const observer = typeof ResizeObserver !== 'undefined'
+			? new ResizeObserver(refreshMapSize)
+			: null;
+		observer?.observe(container);
+		window.addEventListener('resize', refreshMapSize);
+
+		return () => {
+			if (rafId) cancelAnimationFrame(rafId);
+			timeoutIds.forEach((id) => clearTimeout(id));
+			observer?.disconnect();
+			window.removeEventListener('resize', refreshMapSize);
+		};
+	}, [map, mapRef]);
+
 	return (
 		<div className={`${modal ? 'fixed inset-0 bg-black bg-opacity-50 z-40' : 'relative w-full h-full'} ${className}`}>
 			<div
@@ -49,15 +84,15 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 					...(modal ? { paddingTop: `${headerOffsetPx}px` } : {}),
 					// Expose sidebar width as a CSS variable so overlays (MapControls) can offset
 					// @ts-expect-error: CSS custom property for sidebar offset
-					['--sidebar-offset']: showSidebar ? '20rem' : '0rem',
+					['--sidebar-offset']: showSidebar ? '18rem' : '0rem',
 				}}
 			>
-				<div className={`flex-shrink-0 ${showSidebar ? 'pr-80' : ''}`}>
+				<div className={`flex-shrink-0 ${showSidebar ? 'pr-72' : ''}`}>
 					{topBar}
 				</div>
 
 				{mapHeader && (
-					<div className={`flex-shrink-0 ${showSidebar ? 'pr-80' : ''}`}>
+					<div className={`flex-shrink-0 ${showSidebar ? 'pr-72' : ''}`}>
 						{mapHeader}
 					</div>
 				)}
@@ -90,7 +125,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
 				{showSidebar && (
 					<div
-						className="absolute right-0 w-80 z-40 bg-white border-l border-gray-200"
+						className="absolute right-0 w-72 z-40 bg-white border-l border-gray-200"
 						style={modal ? { top: `${headerOffsetPx}px`, height: `calc(100% - ${headerOffsetPx}px)` } : { top: 0, height: '100%' }}
 					>
 						{sidebar}

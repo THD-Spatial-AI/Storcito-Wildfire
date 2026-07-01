@@ -121,15 +121,28 @@ type ResultStore interface {
 // configured GeoServer layer (e.g. the run failed or is still pending).
 var ErrNoConfiguredResult = errors.New("risk_metrics: no configured result for model")
 
+// Cache stores computed Metrics keyed by the immutable result ID.
+type Cache interface {
+	Get(ctx context.Context, resultID uint) (*Metrics, bool)
+	Set(ctx context.Context, resultID uint, m *Metrics)
+}
+
 // Service computes risk metrics.
 type Service struct {
 	geo   geoserver.Client
 	store ResultStore
+	cache Cache
 }
 
 // NewService constructs a Service. Both dependencies are required.
 func NewService(store ResultStore, geo geoserver.Client) *Service {
 	return &Service{store: store, geo: geo}
+}
+
+// WithCache attaches a metrics cache and returns the service for chaining.
+func (s *Service) WithCache(c Cache) *Service {
+	s.cache = c
+	return s
 }
 
 // CalculateForModel produces Metrics for the given model by sampling
@@ -148,6 +161,13 @@ func (s *Service) CalculateForModel(ctx context.Context, modelID uint) (*Metrics
 		return nil, fmt.Errorf("risk_metrics: load latest result: %w", err)
 	}
 
+	// Cache hit (keyed by immutable result ID) skips the GeoServer sampling.
+	if s.cache != nil {
+		if cached, ok := s.cache.Get(ctx, result.ID); ok {
+			return cached, nil
+		}
+	}
+
 	sample, err := s.geo.SampleDistribution(ctx, result.ID, defaultSampleCount)
 	if err != nil {
 		return nil, fmt.Errorf("risk_metrics: sample distribution: %w", err)
@@ -160,6 +180,10 @@ func (s *Service) CalculateForModel(ctx context.Context, modelID uint) (*Metrics
 
 	metrics := buildMetrics(modelID, result.ID, sample, bounds)
 	s.applyTrend(ctx, modelID, result.ID, metrics)
+
+	if s.cache != nil {
+		s.cache.Set(ctx, result.ID, metrics)
+	}
 
 	return metrics, nil
 }

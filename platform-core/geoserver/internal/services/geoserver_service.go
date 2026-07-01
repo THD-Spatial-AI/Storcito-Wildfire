@@ -19,6 +19,7 @@ import (
 	"platform.local/common/pkg/models"
 	"platform.local/platform/logger"
 
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -278,46 +279,8 @@ func (s *GeoServerService) CreateLayer(ctx context.Context, result *models.Model
 	layerName := fmt.Sprintf("model_%d", result.ModelID)
 	storeName := fmt.Sprintf("%s_store", layerName)
 
-	relativePath := result.TifFilePath
-	if strings.Contains(relativePath, "storage/data/") {
-		parts := strings.Split(relativePath, "storage/data/")
-		if len(parts) > 1 {
-			relativePath = parts[1]
-		}
-	}
-
-	containerPath := fmt.Sprintf("%s/%s", s.containerMount, relativePath)
-	log.Debugf("creating layer result_id=%d path=%s", result.ID, containerPath)
-
-	// Try to create coverage store
-	if err := s.createCoverageStore(storeName, containerPath); err != nil {
-		// If it already exists, try to delete and recreate
-		if strings.Contains(err.Error(), "resource already exists") || strings.Contains(err.Error(), "already exists") {
-			log.Warnf("store %s already exists, deleting and recreating...", storeName)
-
-			// Delete existing layer and store first
-			_ = s.deleteLayer(layerName)
-			_ = s.deleteCoverageStore(storeName)
-
-			// Retry creation
-			if err := s.createCoverageStore(storeName, containerPath); err != nil {
-				log.Errorf("failed to recreate coverage store result_id=%d err=%v", result.ID, err)
-				s.db.Model(result).Updates(map[string]interface{}{
-					"error_message": err.Error(),
-				})
-				return err
-			}
-		} else {
-			log.Errorf("failed to create coverage store result_id=%d err=%v", result.ID, err)
-			s.db.Model(result).Updates(map[string]interface{}{
-				"error_message": err.Error(),
-			})
-			return err
-		}
-	}
-
-	if err := s.publishLayer(storeName, layerName); err != nil {
-		log.Errorf("failed to publish layer result_id=%d err=%v", result.ID, err)
+	if err := s.createOrReplaceCoverageLayer(result.ID, layerName, storeName, result.TifFilePath); err != nil {
+		log.Errorf("failed to publish primary layer result_id=%d layer=%s err=%v", result.ID, layerName, err)
 		s.db.Model(result).Updates(map[string]interface{}{
 			"geoserver_status": models.ResultGeoserverFailed,
 			"error_message":    err.Error(),
@@ -325,19 +288,132 @@ func (s *GeoServerService) CreateLayer(ctx context.Context, result *models.Model
 		return err
 	}
 
-	if err := s.applyStyleToLayer(layerName); err != nil {
-		log.Warnf("failed to apply style to layer result_id=%d err=%v", result.ID, err)
-	}
-
-	s.db.Model(result).Updates(map[string]interface{}{
+	updates := map[string]interface{}{
 		"geoserver_workspace":  s.workspace,
 		"geoserver_layer_name": layerName,
 		"geoserver_store_name": storeName,
 		"geoserver_status":     models.ResultGeoserverConfigured,
-	})
+	}
+
+	if publishedLayers, ok := s.publishComponentLayers(result, layerName); ok {
+		encoded, err := json.Marshal(publishedLayers)
+		if err != nil {
+			log.Warnf("failed to encode published component layers result_id=%d err=%v", result.ID, err)
+		} else {
+			updates["layers"] = datatypes.JSON(encoded)
+		}
+	}
+
+	s.db.Model(result).Updates(updates)
 
 	log.Debugf("layer created result_id=%d layer=%s", result.ID, layerName)
 	return nil
+}
+
+func (s *GeoServerService) createOrReplaceCoverageLayer(resultID uint, layerName, storeName, filePath string) error {
+	log := logger.ForComponent("geoserver")
+	if strings.TrimSpace(filePath) == "" {
+		return fmt.Errorf("empty raster path for layer %s", layerName)
+	}
+
+	containerPath := s.geoserverDataPath(filePath)
+	log.Debugf("creating layer result_id=%d layer=%s path=%s", resultID, layerName, containerPath)
+
+	if err := s.createCoverageStore(storeName, containerPath); err != nil {
+		if !isResourceAlreadyExists(err) {
+			return err
+		}
+
+		log.Warnf("store %s already exists, deleting and recreating...", storeName)
+		_ = s.deleteLayer(layerName)
+		_ = s.deleteCoverageStore(storeName)
+
+		if err := s.createCoverageStore(storeName, containerPath); err != nil {
+			return err
+		}
+	}
+
+	if err := s.publishLayer(storeName, layerName); err != nil {
+		return err
+	}
+
+	if err := s.applyStyleToLayer(layerName); err != nil {
+		log.Warnf("failed to apply style to layer result_id=%d layer=%s err=%v", resultID, layerName, err)
+	}
+
+	return nil
+}
+
+func (s *GeoServerService) geoserverDataPath(filePath string) string {
+	relativePath := strings.TrimSpace(filePath)
+	if strings.Contains(relativePath, "storage/data/") {
+		parts := strings.SplitN(relativePath, "storage/data/", 2)
+		if len(parts) > 1 {
+			relativePath = parts[1]
+		}
+	}
+
+	relativePath = strings.TrimPrefix(relativePath, "/")
+	return fmt.Sprintf("%s/%s", strings.TrimSuffix(s.containerMount, "/"), relativePath)
+}
+
+func isResourceAlreadyExists(err error) bool {
+	msg := strings.ToLower(err.Error())
+	return strings.Contains(msg, "resource already exists") ||
+		strings.Contains(msg, "already exists") ||
+		strings.Contains(msg, "already exist")
+}
+
+func (s *GeoServerService) publishComponentLayers(result *models.ModelResult, baseLayerName string) ([]models.ResultLayer, bool) {
+	log := logger.ForComponent("geoserver")
+	components, err := decodeResultLayers(result.Layers)
+	if err != nil {
+		log.Warnf("failed to decode component layers result_id=%d err=%v", result.ID, err)
+		return nil, false
+	}
+	if len(components) == 0 {
+		return nil, false
+	}
+
+	published := make([]models.ResultLayer, 0, len(components))
+	for _, component := range components {
+		key := strings.TrimSpace(component.Key)
+		if key == "" || component.FilePath == "" {
+			log.Warnf("skipping incomplete component layer result_id=%d key=%q path=%q", result.ID, component.Key, component.FilePath)
+			continue
+		}
+
+		layerName := componentLayerName(baseLayerName, key)
+		storeName := fmt.Sprintf("%s_store", layerName)
+		if err := s.createOrReplaceCoverageLayer(result.ID, layerName, storeName, component.FilePath); err != nil {
+			log.Warnf("failed to publish component layer result_id=%d key=%s layer=%s err=%v", result.ID, key, layerName, err)
+			continue
+		}
+
+		component.Key = key
+		published = append(published, component)
+	}
+
+	if len(published) != len(components) {
+		log.Warnf("published %d/%d component layers result_id=%d", len(published), len(components), result.ID)
+	}
+	return published, true
+}
+
+func decodeResultLayers(raw datatypes.JSON) ([]models.ResultLayer, error) {
+	if len(raw) == 0 {
+		return nil, nil
+	}
+
+	var layers []models.ResultLayer
+	if err := json.Unmarshal(raw, &layers); err != nil {
+		return nil, err
+	}
+	return layers, nil
+}
+
+func componentLayerName(baseLayerName, key string) string {
+	return fmt.Sprintf("%s_%s", baseLayerName, key)
 }
 
 func (s *GeoServerService) createCoverageStore(storeName, filePath string) error {
@@ -389,6 +465,25 @@ func (s *GeoServerService) DeleteLayer(ctx context.Context, result *models.Model
 
 	if result.GeoserverLayerName == "" {
 		return nil
+	}
+
+	components, err := decodeResultLayers(result.Layers)
+	if err != nil {
+		log.Warnf("failed to decode component layers for deletion result_id=%d err=%v", result.ID, err)
+	}
+	for _, component := range components {
+		key := strings.TrimSpace(component.Key)
+		if key == "" {
+			continue
+		}
+
+		layerName := componentLayerName(result.GeoserverLayerName, key)
+		if err := s.deleteLayer(layerName); err != nil {
+			log.Warnf("failed to delete component layer result_id=%d layer=%s err=%v", result.ID, layerName, err)
+		}
+		if err := s.deleteCoverageStore(fmt.Sprintf("%s_store", layerName)); err != nil {
+			log.Warnf("failed to delete component store result_id=%d layer=%s err=%v", result.ID, layerName, err)
+		}
 	}
 
 	if err := s.deleteLayer(result.GeoserverLayerName); err != nil {
@@ -522,10 +617,10 @@ func buildRiskStyleSLD(def riskStyleDefinition) string {
 	// Classes render at full strength; transparency is applied once, client-side, by the opacity slider.
 	entries := []riskColorMapEntry{
 		{quantity: 0, label: "No data", color: "#000000", opacity: 0},
-		{quantity: 1, label: "Very Low", color: "#2563eb", opacity: 1},
+		{quantity: 1, label: "Very Low", color: "#9ca3af", opacity: 1},
 		{quantity: 2, label: "Low", color: "#16a34a", opacity: 1},
 		{quantity: 3, label: "Moderate", color: "#eab308", opacity: 1},
-		{quantity: 4, label: "High", color: "#ea580c", opacity: 1},
+		{quantity: 4, label: "High", color: "#f97316", opacity: 1},
 		{quantity: 5, label: "Very High", color: "#dc2626", opacity: 1},
 	}
 

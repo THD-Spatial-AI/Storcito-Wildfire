@@ -35,6 +35,11 @@ class WebservicesService {
         return data?.data?.dates ?? [];
     }
 
+    async getAvailableDynamicDates(): Promise<string[]> {
+        const { data } = await axios.get<ApiResponse<{ dates: string[] }>>('/webservices/available-dynamic-dates');
+        return data?.data?.dates ?? [];
+    }
+
 
     async getAvailableDataCoverage(): Promise<StorcitoCoverageFeatureCollection | null> {
         const { data } = await axios.get<ApiResponse<StorcitoCoverageFeatureCollection>>(

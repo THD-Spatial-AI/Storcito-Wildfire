@@ -1,4 +1,5 @@
 import { API_CONFIG } from '@/constants';
+import { APP_VERSION } from '@/version';
 
 export const config = {
   api: {
@@ -7,7 +8,7 @@ export const config = {
   },
   app: {
     name: 'fire',
-    version: '1.0.0',
+    version: APP_VERSION,
     environment: import.meta.env.MODE || 'development',
   },
 } as const;
