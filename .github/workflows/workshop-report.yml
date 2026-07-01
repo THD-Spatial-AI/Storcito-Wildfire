@@ -1,0 +1,34 @@
+name: Generate Workshop Report
+
+on:
+  workflow_dispatch:
+    inputs:
+      workshop_tag:
+        description: 'Workshop label tag (e.g. workshop-2026-munich)'
+        required: true
+        type: string
+      backend_url:
+        description: 'Feedback API base URL'
+        required: false
+        type: string
+        default: 'http://localhost:9000'
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download workshop report from backend
+        run: |
+          curl --fail --silent --show-error \
+            --header "X-Workshop-Token: ${{ secrets.WORKSHOP_TOKEN }}" \
+            "${{ inputs.backend_url }}/api/v1/workshop/report?tag=${{ inputs.workshop_tag }}" \
+            --output "${{ inputs.workshop_tag }}-report.zip"
+          echo "Report downloaded: $(du -h ${{ inputs.workshop_tag }}-report.zip)"
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.workshop_tag }}-report
+          path: ${{ inputs.workshop_tag }}-report.zip
+          retention-days: 90
