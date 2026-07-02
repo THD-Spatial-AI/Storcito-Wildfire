@@ -19,6 +19,7 @@ import {
   Droplets,
   Eye,
   EyeOff,
+  Flame,
   Layers,
   Loader2,
   MapPin,
@@ -105,6 +106,7 @@ interface FrameWeather {
   wind_direction_deg?: number | null;
   temperature_c?: number | null;
   relative_humidity_pct?: number | null;
+  fwi?: number | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -603,6 +605,18 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
   const currentFrameWeather = playingFrameDate ? frameWeather[playingFrameDate] : null;
 
+  // Day with the highest AOI-mean FWI, known once all frames' weather loaded.
+  const peakRiskDay = useMemo(() => {
+    let best: { date: string; fwi: number } | null = null;
+    for (const frame of dailyFrames) {
+      const day = frame.key.slice(5);
+      const fwi = frameWeather[day]?.fwi;
+      if (typeof fwi !== "number") return null;
+      if (!best || fwi > best.fwi) best = { date: day, fwi };
+    }
+    return best;
+  }, [dailyFrames, frameWeather]);
+
   // Swap the WMS layer in place on the existing map layers — no layer-info
   // refetch and no view re-fit, so frames advance without the map jumping.
   const applyDailyFrame = useCallback((frame: AvailableLayer) => {
@@ -1070,11 +1084,66 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
                       tooltipKey="humidity"
                     />
                   </div>
+                  {peakRiskDay && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPlaying(false);
+                        const frame = dailyFrames.find((f) => f.key.slice(5) === peakRiskDay.date);
+                        if (frame) applyDailyFrame(frame);
+                      }}
+                      title={t(
+                        "modelResults.layer.peakDayHint",
+                        "Day with the highest fire-weather danger — click to show it"
+                      )}
+                      className={`flex flex-shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 transition-colors ${
+                        playingFrameDate === peakRiskDay.date
+                          ? "border-red-500 bg-red-500/10"
+                          : "border-border bg-card hover:bg-muted"
+                      }`}
+                    >
+                      <Flame className="h-3.5 w-3.5 text-red-600" />
+                      <span className="flex flex-col items-start leading-tight">
+                        <span className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
+                          {t("modelResults.layer.peakDay", "Peak risk day")}
+                        </span>
+                        <span className="text-xs font-semibold tabular-nums text-foreground whitespace-nowrap">
+                          {formatFrameDate(peakRiskDay.date)}
+                        </span>
+                      </span>
+                    </button>
+                  )}
                 </>
               ) : (
-                <span className="text-xs font-semibold text-foreground">
-                  {t("modelResults.layer.playDaily", "Animate daily risk maps")}
-                </span>
+                <>
+                  <span className="text-xs font-semibold text-foreground">
+                    {t("modelResults.layer.playDaily", "Animate daily risk maps")}
+                  </span>
+                  {peakRiskDay && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const frame = dailyFrames.find((f) => f.key.slice(5) === peakRiskDay.date);
+                        if (frame) applyDailyFrame(frame);
+                      }}
+                      title={t(
+                        "modelResults.layer.peakDayHint",
+                        "Day with the highest fire-weather danger — click to show it"
+                      )}
+                      className="flex flex-shrink-0 items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1 transition-colors hover:bg-muted"
+                    >
+                      <Flame className="h-3.5 w-3.5 text-red-600" />
+                      <span className="flex flex-col items-start leading-tight">
+                        <span className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
+                          {t("modelResults.layer.peakDay", "Peak risk day")}
+                        </span>
+                        <span className="text-xs font-semibold tabular-nums text-foreground whitespace-nowrap">
+                          {formatFrameDate(peakRiskDay.date)}
+                        </span>
+                      </span>
+                    </button>
+                  )}
+                </>
               )}
             </div>
           )}

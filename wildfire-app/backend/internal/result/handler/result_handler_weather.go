@@ -61,6 +61,12 @@ func (h *ResultHandler) GetModelFireWeather(c *gin.Context) {
 			})
 			return
 		}
+	} else if summary, ok := dailyWeatherFromMetadata(latestResult.Metadata, requestedDate); ok {
+		c.JSON(http.StatusOK, gin.H{
+			"data":  gin.H{"weather_summary": summary, "source": "result_metadata_daily"},
+			"ready": true,
+		})
+		return
 	}
 
 	if !modelFireWeatherEnabled(model.Config) {
@@ -95,6 +101,7 @@ func (h *ResultHandler) GetModelFireWeather(c *gin.Context) {
 	source := "database_fallback"
 	if requestedDate != "" {
 		source = "database_daily"
+		h.persistDailyWeatherSummary(latestResult.ID, requestedDate, summary)
 	} else {
 		h.persistWeatherSummary(latestResult.ID, latestResult.Metadata, summary)
 	}
@@ -103,6 +110,53 @@ func (h *ResultHandler) GetModelFireWeather(c *gin.Context) {
 		"data":  gin.H{"weather_summary": summary, "source": source},
 		"ready": true,
 	})
+}
+
+func dailyWeatherFromMetadata(raw datatypes.JSON, day string) (map[string]interface{}, bool) {
+	if len(raw) == 0 {
+		return nil, false
+	}
+	var metadata map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &metadata); err != nil {
+		return nil, false
+	}
+	var daily map[string]map[string]interface{}
+	if err := json.Unmarshal(metadata["weather_summary_daily"], &daily); err != nil {
+		return nil, false
+	}
+	summary, ok := daily[day]
+	return summary, ok && len(summary) > 0
+}
+
+// persistDailyWeatherSummary caches a per-day summary under
+// metadata.weather_summary_daily[date]; reads the current row to avoid
+// clobbering concurrent writers of other dates.
+func (h *ResultHandler) persistDailyWeatherSummary(resultID uint, day string, summary map[string]interface{}) {
+	var current commonModels.ModelResult
+	if err := h.store.DB().Select("metadata").First(&current, resultID).Error; err != nil {
+		return
+	}
+	metadata := map[string]interface{}{}
+	if len(current.Metadata) > 0 {
+		_ = json.Unmarshal(current.Metadata, &metadata)
+	}
+	daily, _ := metadata["weather_summary_daily"].(map[string]interface{})
+	if daily == nil {
+		daily = map[string]interface{}{}
+	}
+	daily[day] = summary
+	metadata["weather_summary_daily"] = daily
+
+	encoded, err := json.Marshal(metadata)
+	if err != nil {
+		return
+	}
+	if err := h.store.DB().
+		Model(&commonModels.ModelResult{}).
+		Where("id = ?", resultID).
+		Update("metadata", datatypes.JSON(encoded)).Error; err != nil {
+		logger.ForComponent("result").Warnf("failed to persist daily weather result_id=%d err=%v", resultID, err)
+	}
 }
 
 func weatherSummaryFromMetadata(raw datatypes.JSON) (map[string]interface{}, bool) {
