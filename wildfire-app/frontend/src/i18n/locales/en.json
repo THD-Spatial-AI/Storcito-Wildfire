@@ -1811,5 +1811,61 @@
     "Spain": "Spain",
     "Galicia": "Galicia",
     "Vedra": "Vedra"
+  },
+  "configurator": {
+    "registry": {
+      "layer1Title": "Model Initialization",
+      "layer1Subtitle": "Name and simulation timeframe",
+      "layer2Title": "Area Selection",
+      "layer2Subtitle": "Define where the model lives",
+      "layer3Title": "Risk Components",
+      "layer3Subtitle": "Choose which signals feed the model",
+      "layer4Title": "Final Review",
+      "layer4Subtitle": "Sanity check before run",
+      "layer5Title": "Save & Calculate",
+      "layer5Subtitle": "Persist and start the run"
+    },
+    "stepper": {
+      "stepOf": "Step {{step}} of {{total}}",
+      "back": "Back",
+      "continue": "Continue",
+      "update": "Update",
+      "save": "Save",
+      "saving": "Saving...",
+      "starting": "Starting...",
+      "saveAndRun": "Save & run",
+      "introTitle": "New wildfire model",
+      "introSubtitle": "Let's set up your simulation",
+      "introDesc": "Six guided steps to define your area, validate inputs and launch a wildfire-risk simulation.",
+      "introProgressSaved": "Your progress is saved as you go",
+      "introDontShow": "Don't show this intro again",
+      "introCancel": "Cancel",
+      "introStart": "Get started",
+      "step": "STEP"
+    },
+    "layer1": {
+      "purpose": "Name this wildfire simulation and choose the date window you want to assess.",
+      "nextStepHint": "Next you'll outline the geographic area on the map.",
+      "modelNameLabel": "Model name",
+      "modelNamePlaceholder": "e.g. Galicia Summer 2026 Wildfire Risk",
+      "modelNameHint": "A descriptive name so you can find this model later.",
+      "calcModeLabel": "Calculation mode",
+      "calcModeStatic": "static",
+      "calcModeDynamic": "dynamic",
+      "calcModeHint": "Static uses the AOI risk workflow for one date. Dynamic keeps the selected mode in the model payload for the dynamic workflow.",
+      "staticHint": "Static runs use one available weather date, from 16:00 to 17:00.",
+      "dynamicHint": "Dynamic runs keep the selected date range and use the 16:00 to 17:00 window.",
+      "staticLoading": "Loading available static dates...",
+      "staticEmpty": "No static dates available.",
+      "staticHottest": "Highest-temperature static date: {{date}}",
+      "staticRange": "Available static dates: {{start}} to {{end}}",
+      "dynamicLoading": "Loading available dynamic dates...",
+      "dynamicEmpty": "No dynamic dates available.",
+      "dynamicSelected": "Selected range: {{start}} to {{end}} ({{days}} days).",
+      "dynamicSelectedOne": "Selected range: {{start}} to {{end}} (1 day).",
+      "dynamicSelectInside": "Select a range inside available dynamic dates: {{start}} to {{end}}",
+      "dynamicAvailable": "Available dynamic dates: {{start}} to {{end}}",
+      "hottest": "Hottest"
+    }
   }
 }

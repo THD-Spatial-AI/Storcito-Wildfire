@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type ChangeEvent, type FC } from "react";
 import { ChevronLeft, ChevronRight, Loader2, CheckCircle2, Sparkles, X, Play, RotateCcw } from "lucide-react";
+import { useTranslation } from "@/i18n";
 import area from "@turf/area";
 import length from "@turf/length";
 import { polygon, lineString } from "@turf/helpers";
@@ -102,6 +103,7 @@ export const LayerStepper: FC<LayerStepperProps> = ({
 
     const { optionalLayers } = state;
     const { toggleOptionalLayer } = actions;
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (editMode) return;
@@ -376,16 +378,16 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                     </span>
                     <div className="min-w-0">
                         <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-                            Step {step} of {LAYER_COUNT}
+                            {t("configurator.stepper.stepOf", { step, total: LAYER_COUNT }, `Step ${step} of ${LAYER_COUNT}`)}
                         </div>
                         <h2 className="truncate text-base font-semibold leading-tight text-foreground">
-                            {currentLayer.title}
+                            {t(currentLayer.titleKey, currentLayer.title)}
                         </h2>
                     </div>
                 </div>
 
                 <div className="mb-2 flex items-center justify-between gap-3 text-[11px]">
-                    <span className="text-muted-foreground">{currentLayer.subtitle}</span>
+                    <span className="text-muted-foreground">{t(currentLayer.subtitleKey, currentLayer.subtitle)}</span>
                     <span className="font-medium tabular-nums text-foreground">{progressPercent}%</span>
                 </div>
                 <div className="h-1.5 overflow-hidden rounded-full bg-muted">
@@ -467,12 +469,12 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                         disabled={step === 1}
                         className="h-9 cursor-pointer text-xs"
                     >
-                        <ChevronLeft className="w-3.5 h-3.5" /> Back
+                        <ChevronLeft className="w-3.5 h-3.5" /> {t("configurator.stepper.back", "Back")}
                     </Button>
 
                     {step < LAYER_COUNT ? (
                         <Button size="sm" onClick={goNext} disabled={!canAdvance} className="h-9 cursor-pointer text-xs">
-                            Continue <ChevronRight className="w-3.5 h-3.5" />
+                            {t("configurator.stepper.continue", "Continue")} <ChevronRight className="w-3.5 h-3.5" />
                         </Button>
                     ) : (
                         <div className="flex items-center gap-2">
@@ -486,12 +488,12 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                                 {state.isSaving ? (
                                     <>
                                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                        Saving...
+                                        {t("configurator.stepper.saving", "Saving...")}
                                     </>
                                 ) : (
                                     <>
                                         <CheckCircle2 className="w-3.5 h-3.5" />
-                                        {editMode ? "Update" : "Save"}
+                                        {editMode ? t("configurator.stepper.update", "Update") : t("configurator.stepper.save", "Save")}
                                     </>
                                 )}
                             </Button>
@@ -505,12 +507,12 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                                 {state.isSaving ? (
                                     <>
                                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                        Starting...
+                                        {t("configurator.stepper.starting", "Starting...")}
                                     </>
                                 ) : (
                                     <>
                                         <Play className="w-3.5 h-3.5" />
-                                        Save & run
+                                        {t("configurator.stepper.saveAndRun", "Save & run")}
                                     </>
                                 )}
                             </Button>
@@ -533,7 +535,9 @@ const IntroCard: FC<{
     dismissIntroCard: boolean;
     isSavingPreference: boolean;
     onDismissIntroPreferenceChange: (checked: boolean) => void;
-}> = ({ onStart, onCancel, dismissIntroCard, isSavingPreference, onDismissIntroPreferenceChange }) => (
+}> = ({ onStart, onCancel, dismissIntroCard, isSavingPreference, onDismissIntroPreferenceChange }) => {
+    const { t } = useTranslation();
+    return (
     <div className="pointer-events-auto absolute inset-0 z-30 flex items-center justify-center px-4">
         <div className="absolute inset-0 bg-foreground/20 backdrop-blur-sm" onClick={onCancel} />
         <div className="relative w-[min(760px,100%)] overflow-hidden rounded-2xl border border-border bg-background shadow-2xl dark:bg-gray-900">
@@ -546,13 +550,13 @@ const IntroCard: FC<{
                     </span>
                     <div className="min-w-0 flex-1">
                         <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground font-semibold">
-                            New wildfire model
+                            {t("configurator.stepper.introTitle", "New wildfire model")}
                         </div>
                         <h2 className="mt-0.5 text-[22px] font-semibold leading-tight tracking-tight text-foreground">
-                            Let's set up your simulation
+                            {t("configurator.stepper.introSubtitle", "Let's set up your simulation")}
                         </h2>
                         <p className="mt-2 max-w-prose text-[13px] leading-relaxed text-muted-foreground">
-                            Six guided steps to define your area, validate inputs and launch a wildfire-risk simulation.
+                            {t("configurator.stepper.introDesc", "Six guided steps to define your area, validate inputs and launch a wildfire-risk simulation.")}
                         </p>
                     </div>
                     <button
@@ -580,14 +584,14 @@ const IntroCard: FC<{
                             <div className="min-w-0 flex-1">
                                 <div className="flex items-baseline gap-1.5">
                                     <span className="text-[10px] font-semibold text-muted-foreground">
-                                        STEP {l.id}
+                                        {t("configurator.stepper.step", "STEP")} {l.id}
                                     </span>
                                 </div>
                                 <div className="truncate text-[13px] font-semibold leading-tight text-foreground">
-                                    {l.title}
+                                    {t(l.titleKey, l.title)}
                                 </div>
                                 <div className="mt-0.5 truncate text-[11px] text-muted-foreground">
-                                    {l.subtitle}
+                                    {t(l.subtitleKey, l.subtitle)}
                                 </div>
                             </div>
                         </div>
@@ -600,7 +604,7 @@ const IntroCard: FC<{
                 <div className="space-y-2">
                     <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
                         <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                        Your progress is saved as you go
+                        {t("configurator.stepper.introProgressSaved", "Your progress is saved as you go")}
                     </div>
                     <label className="flex cursor-pointer items-center gap-2 text-[11px] text-foreground">
                         <input
@@ -609,23 +613,24 @@ const IntroCard: FC<{
                             onChange={(event) => onDismissIntroPreferenceChange(event.target.checked)}
                             className="h-3.5 w-3.5 rounded border-border accent-foreground"
                         />
-                        <span>Don't show this intro again</span>
+                        <span>{t("configurator.stepper.introDontShow", "Don't show this intro again")}</span>
                         {isSavingPreference && <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />}
                     </label>
                 </div>
                 <div className="flex items-center gap-2">
                     <Button variant="ghost" size="sm" onClick={onCancel} className="cursor-pointer text-xs">
-                        Cancel
+                        {t("configurator.stepper.introCancel", "Cancel")}
                     </Button>
                     <Button
                         size="sm"
                         onClick={onStart}
                         className="cursor-pointer border-0 bg-foreground text-background hover:bg-foreground/90"
                     >
-                        Get started <ChevronRight className="ml-0.5 h-4 w-4" />
+                        {t("configurator.stepper.introStart", "Get started")} <ChevronRight className="ml-0.5 h-4 w-4" />
                     </Button>
                 </div>
             </div>
         </div>
     </div>
 );
+};

@@ -18,12 +18,13 @@ function getStaticDateStatus(
     staticDatesError: string | undefined,
     isLoadingStaticDates: boolean,
     availableStaticDates: string[],
+    t: (key: string, data?: any) => string
 ) {
     if (staticDatesError) return staticDatesError;
-    if (isLoadingStaticDates) return "Loading available static dates...";
-    if (availableStaticDates.length === 0) return "No static dates available.";
-    if (availableStaticDates.length === 1) return `Highest-temperature static date: ${availableStaticDates[0]}`;
-    return `Available static dates: ${availableStaticDates[0]} to ${availableStaticDates.at(-1)}`;
+    if (isLoadingStaticDates) return t("configurator.layer1.staticLoading", "Loading available static dates...");
+    if (availableStaticDates.length === 0) return t("configurator.layer1.staticEmpty", "No static dates available.");
+    if (availableStaticDates.length === 1) return t("configurator.layer1.staticHottest", { date: availableStaticDates[0] }, `Highest-temperature static date: ${availableStaticDates[0]}`);
+    return t("configurator.layer1.staticRange", { start: availableStaticDates[0], end: availableStaticDates.at(-1) }, `Available static dates: ${availableStaticDates[0]} to ${availableStaticDates.at(-1)}`);
 }
 
 function formatDateValue(value: { year: number; month: number; day: number }) {
@@ -37,17 +38,19 @@ function getDynamicDateStatus(
     fromDate: string,
     toDate: string,
     days: number,
+    t: (key: string, data?: any) => string
 ) {
     if (dynamicDatesError) return dynamicDatesError;
-    if (isLoadingDynamicDates) return "Loading available dynamic dates...";
-    if (availableDynamicDates.length === 0) return "No dynamic dates available.";
+    if (isLoadingDynamicDates) return t("configurator.layer1.dynamicLoading", "Loading available dynamic dates...");
+    if (availableDynamicDates.length === 0) return t("configurator.layer1.dynamicEmpty", "No dynamic dates available.");
     if (fromDate && toDate && dateRangeHasOnlyAvailableDates(fromDate, toDate, availableDynamicDates)) {
-        return `Selected range: ${fromDate} to ${toDate} (${days} day${days === 1 ? "" : "s"}).`;
+        if (days === 1) return t("configurator.layer1.dynamicSelectedOne", { start: fromDate, end: toDate }, `Selected range: ${fromDate} to ${toDate} (1 day).`);
+        return t("configurator.layer1.dynamicSelected", { start: fromDate, end: toDate, days }, `Selected range: ${fromDate} to ${toDate} (${days} days).`);
     }
     if (fromDate || toDate) {
-        return `Select a range inside available dynamic dates: ${availableDynamicDates[0]} to ${availableDynamicDates.at(-1)}`;
+        return t("configurator.layer1.dynamicSelectInside", { start: availableDynamicDates[0], end: availableDynamicDates.at(-1) }, `Select a range inside available dynamic dates: ${availableDynamicDates[0]} to ${availableDynamicDates.at(-1)}`);
     }
-    return `Available dynamic dates: ${availableDynamicDates[0]} to ${availableDynamicDates.at(-1)}`;
+    return t("configurator.layer1.dynamicAvailable", { start: availableDynamicDates[0], end: availableDynamicDates.at(-1) }, `Available dynamic dates: ${availableDynamicDates[0]} to ${availableDynamicDates.at(-1)}`);
 }
 
 interface StaticDateDropdownProps {
@@ -55,6 +58,7 @@ interface StaticDateDropdownProps {
     isLoadingStaticDates: boolean;
     selectedDate: string;
     onSelectDate: (date: string) => void;
+    t: (key: string, data?: any) => string;
 }
 
 const StaticDateDropdown: FC<StaticDateDropdownProps> = ({
@@ -62,6 +66,7 @@ const StaticDateDropdown: FC<StaticDateDropdownProps> = ({
     isLoadingStaticDates,
     selectedDate,
     onSelectDate,
+    t,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -84,8 +89,8 @@ const StaticDateDropdown: FC<StaticDateDropdownProps> = ({
     const orderedDates = useMemo(() => [...availableStaticDates].reverse(), [availableStaticDates]);
 
     const displayValue = isLoadingStaticDates
-        ? "Loading available dates..."
-        : selectedDate || "Select a static date";
+        ? t("configurator.layer1.staticLoading", "Loading available static dates...")
+        : selectedDate || t("configurator.layer1.staticEmpty", "Select a static date");
 
     const handleSelect = (date: string) => {
         onSelectDate(date);
@@ -144,7 +149,7 @@ const StaticDateDropdown: FC<StaticDateDropdownProps> = ({
                                                     </span>
                                                     {availableStaticDates.length === 1 && (
                                                         <span className="rounded bg-blue-100 px-1 py-0.5 text-[9px] font-medium text-blue-600 dark:bg-blue-900/30 dark:text-blue-300">
-                                                            Hottest
+                                                            {t("configurator.layer1.hottest", "Hottest")}
                                                         </span>
                                                     )}
                                                 </div>
@@ -216,6 +221,7 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
         state.staticDatesError,
         state.isLoadingStaticDates,
         state.availableStaticDates,
+        t
     );
     const dynamicDateStatus = getDynamicDateStatus(
         state.dynamicDatesError,
@@ -224,32 +230,33 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
         state.fromDate,
         state.toDate,
         days,
+        t
     );
 
     return (
         <LayerShell
-            purpose="Name this wildfire simulation and choose the date window you want to assess."
-            nextStepHint="Next you'll outline the geographic area on the map."
+            purpose={t("configurator.layer1.purpose", "Name this wildfire simulation and choose the date window you want to assess.")}
+            nextStepHint={t("configurator.layer1.nextStepHint", "Next you'll outline the geographic area on the map.")}
         >
             <div className="space-y-3">
                 <div data-tour="model-name">
                     <label htmlFor="layer-model-name" className="block text-xs font-medium text-foreground mb-1">
-                        Model name <span className="text-red-500">*</span>
+                        {t("configurator.layer1.modelNameLabel", "Model name")} <span className="text-red-500">*</span>
                     </label>
                     <input
                         id="layer-model-name"
                         type="text"
                         value={state.modelName}
                         onChange={handleModelNameChange}
-                        placeholder="e.g. Galicia Summer 2026 Wildfire Risk"
+                        placeholder={t("configurator.layer1.modelNamePlaceholder", "e.g. Galicia Summer 2026 Wildfire Risk")}
                         className="w-full px-2.5 py-1.5 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-background dark:bg-gray-700 text-foreground text-sm transition-colors"
                     />
-                    <p className="text-[11px] text-muted-foreground mt-1">A descriptive name so you can find this model later.</p>
+                    <p className="text-[11px] text-muted-foreground mt-1">{t("configurator.layer1.modelNameHint", "A descriptive name so you can find this model later.")}</p>
                 </div>
 
                 <div data-tour="calculation-mode">
                     <label className="block text-xs font-medium text-foreground mb-1">
-                        Calculation mode
+                        {t("configurator.layer1.calcModeLabel", "Calculation mode")}
                     </label>
                     <div className="grid grid-cols-2 overflow-hidden rounded-md border border-border">
                         {(["static", "dynamic"] as const).map((mode) => {
@@ -266,13 +273,13 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                                             : "bg-background text-foreground hover:bg-muted",
                                     )}
                                 >
-                                    {mode}
+                                    {mode === "static" ? t("configurator.layer1.calcModeStatic", "static") : t("configurator.layer1.calcModeDynamic", "dynamic")}
                                 </button>
                             );
                         })}
                     </div>
                     <p className="text-[11px] text-muted-foreground mt-1">
-                        Static uses the AOI risk workflow for one date. Dynamic keeps the selected mode in the model payload for the dynamic workflow.
+                        {t("configurator.layer1.calcModeHint", "Static uses the AOI risk workflow for one date. Dynamic keeps the selected mode in the model payload for the dynamic workflow.")}
                     </p>
                 </div>
 
@@ -299,7 +306,7 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                                 </Tooltip>
                             </div>
                             <p className="mb-1 mt-0.5 text-[11px] leading-snug text-muted-foreground">
-                                Static runs use one available weather date, from 16:00 to 17:00.
+                                {t("configurator.layer1.staticHint", "Static runs use one available weather date, from 16:00 to 17:00.")}
                             </p>
                             <StaticDateDropdown
                                 availableStaticDates={state.availableStaticDates}
@@ -309,6 +316,7 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                                     const selectedDate = parseDate(day);
                                     actions.handleUpdateRange({ start: selectedDate, end: selectedDate });
                                 }}
+                                t={t}
                             />
                             <p className="mt-1 text-[11px] text-muted-foreground" data-tour="calculation-status">
                                 {staticDateStatus}
@@ -330,7 +338,7 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                                     {t("simulation.simulationPeriod")} <span className="text-red-500">*</span>
                                 </Label>
                                 <p className="mb-1 mt-0.5 text-[11px] leading-snug text-muted-foreground">
-                                    Dynamic runs keep the selected date range and use the 16:00 to 17:00 window.
+                                    {t("configurator.layer1.dynamicHint", "Dynamic runs keep the selected date range and use the 16:00 to 17:00 window.")}
                                 </p>
                                 <div className="flex">
                                     <Group className={cn(DATE_INPUT_STYLE, "xl:px-0 lg:px-2 relative dark:bg-gray-700 dark:border-gray-600")}>

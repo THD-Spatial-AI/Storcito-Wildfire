@@ -1811,5 +1811,61 @@
     "Spain": "Spanje",
     "Galicia": "Galicië",
     "Vedra": "Vedra"
+  },
+  "configurator": {
+    "registry": {
+      "layer1Title": "Model Initialisatie",
+      "layer1Subtitle": "Naam en simulatieperiode",
+      "layer2Title": "Gebiedsselectie",
+      "layer2Subtitle": "Definieer het gebied",
+      "layer3Title": "Risicocomponenten",
+      "layer3Subtitle": "Kies de signalen",
+      "layer4Title": "Eindcontrole",
+      "layer4Subtitle": "Controle voor de start",
+      "layer5Title": "Opslaan & Berekenen",
+      "layer5Subtitle": "Opslaan en uitvoeren"
+    },
+    "stepper": {
+      "stepOf": "Stap {{step}} van {{total}}",
+      "back": "Terug",
+      "continue": "Doorgaan",
+      "update": "Bijwerken",
+      "save": "Opslaan",
+      "saving": "Opslaan...",
+      "starting": "Starten...",
+      "saveAndRun": "Opslaan & uitvoeren",
+      "introTitle": "Nieuw natuurbrandmodel",
+      "introSubtitle": "Laten we uw simulatie instellen",
+      "introDesc": "Zes begeleide stappen om uw gebied te definiëren, invoer te valideren en te starten.",
+      "introProgressSaved": "Uw voortgang wordt opgeslagen",
+      "introDontShow": "Toon deze intro niet meer",
+      "introCancel": "Annuleren",
+      "introStart": "Aan de slag",
+      "step": "STAP"
+    },
+    "layer1": {
+      "purpose": "Geef deze simulatie een naam en kies de gewenste datumvenster.",
+      "nextStepHint": "Hierna tekent u het geografische gebied op de kaart.",
+      "modelNameLabel": "Modelnaam",
+      "modelNamePlaceholder": "bijv. Galicië Zomer 2026 Risico",
+      "modelNameHint": "Een beschrijvende naam zodat u dit model later kunt terugvinden.",
+      "calcModeLabel": "Berekeningsmodus",
+      "calcModeStatic": "statisch",
+      "calcModeDynamic": "dynamisch",
+      "calcModeHint": "Statisch gebruikt de workflow voor één datum. Dynamisch behoudt de modus voor de dynamische workflow.",
+      "staticHint": "Statische runs gebruiken één beschikbare weerdatum, van 16:00 tot 17:00.",
+      "dynamicHint": "Dynamische runs behouden het geselecteerde bereik (venster 16:00 - 17:00).",
+      "staticLoading": "Laden van statische data...",
+      "staticEmpty": "Geen statische data beschikbaar.",
+      "staticHottest": "Heetste statische datum: {{date}}",
+      "staticRange": "Beschikbare statische data: {{start}} tot {{end}}",
+      "dynamicLoading": "Laden van dynamische data...",
+      "dynamicEmpty": "Geen dynamische data beschikbaar.",
+      "dynamicSelected": "Geselecteerd bereik: {{start}} tot {{end}} ({{days}} dagen).",
+      "dynamicSelectedOne": "Geselecteerd bereik: {{start}} tot {{end}} (1 dag).",
+      "dynamicSelectInside": "Selecteer een bereik binnen beschikbare data: {{start}} tot {{end}}",
+      "dynamicAvailable": "Beschikbare dynamische data: {{start}} tot {{end}}",
+      "hottest": "Heetste"
+    }
   }
 }

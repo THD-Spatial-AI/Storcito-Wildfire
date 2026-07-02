@@ -1811,5 +1811,61 @@
     "Spain": "España",
     "Galicia": "Galicia",
     "Vedra": "Vedra"
+  },
+  "configurator": {
+    "registry": {
+      "layer1Title": "Inicialización del modelo",
+      "layer1Subtitle": "Nombre y período de simulación",
+      "layer2Title": "Selección de área",
+      "layer2Subtitle": "Define dónde vive el modelo",
+      "layer3Title": "Componentes de riesgo",
+      "layer3Subtitle": "Elige qué señales alimentan el modelo",
+      "layer4Title": "Revisión final",
+      "layer4Subtitle": "Comprobación antes de ejecutar",
+      "layer5Title": "Guardar y Calcular",
+      "layer5Subtitle": "Persistir e iniciar la ejecución"
+    },
+    "stepper": {
+      "stepOf": "Paso {{step}} de {{total}}",
+      "back": "Volver",
+      "continue": "Continuar",
+      "update": "Actualizar",
+      "save": "Guardar",
+      "saving": "Guardando...",
+      "starting": "Iniciando...",
+      "saveAndRun": "Guardar y ejecutar",
+      "introTitle": "Nuevo modelo de incendio forestal",
+      "introSubtitle": "Vamos a configurar tu simulación",
+      "introDesc": "Seis pasos guiados para definir tu área, validar entradas y lanzar una simulación.",
+      "introProgressSaved": "Tu progreso se guarda automáticamente",
+      "introDontShow": "No volver a mostrar esta intro",
+      "introCancel": "Cancelar",
+      "introStart": "Empezar",
+      "step": "PASO"
+    },
+    "layer1": {
+      "purpose": "Nombra esta simulación de incendio y elige la ventana de fechas que quieres evaluar.",
+      "nextStepHint": "A continuación, delinearás el área geográfica en el mapa.",
+      "modelNameLabel": "Nombre del modelo",
+      "modelNamePlaceholder": "ej. Galicia Verano 2026 Riesgo de Incendio",
+      "modelNameHint": "Un nombre descriptivo para que puedas encontrar este modelo más tarde.",
+      "calcModeLabel": "Modo de cálculo",
+      "calcModeStatic": "estático",
+      "calcModeDynamic": "dinámico",
+      "calcModeHint": "Estático usa el flujo de trabajo de riesgo AOI para una fecha. Dinámico mantiene el modo para el flujo de trabajo dinámico.",
+      "staticHint": "Las ejecuciones estáticas usan una fecha meteorológica disponible, de 16:00 a 17:00.",
+      "dynamicHint": "Las ejecuciones dinámicas mantienen el rango seleccionado (ventana 16:00 a 17:00).",
+      "staticLoading": "Cargando fechas estáticas disponibles...",
+      "staticEmpty": "No hay fechas estáticas disponibles.",
+      "staticHottest": "Fecha estática con temperatura más alta: {{date}}",
+      "staticRange": "Fechas estáticas disponibles: {{start}} a {{end}}",
+      "dynamicLoading": "Cargando fechas dinámicas disponibles...",
+      "dynamicEmpty": "No hay fechas dinámicas disponibles.",
+      "dynamicSelected": "Rango seleccionado: {{start}} a {{end}} ({{days}} días).",
+      "dynamicSelectedOne": "Rango seleccionado: {{start}} a {{end}} (1 día).",
+      "dynamicSelectInside": "Selecciona un rango dentro de las fechas disponibles: {{start}} a {{end}}",
+      "dynamicAvailable": "Fechas dinámicas disponibles: {{start}} a {{end}}",
+      "hottest": "Más caluroso"
+    }
   }
 }

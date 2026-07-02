@@ -1811,5 +1811,61 @@
     "Spain": "Španělsko",
     "Galicia": "Galicie",
     "Vedra": "Vedra"
+  },
+  "configurator": {
+    "registry": {
+      "layer1Title": "Inicializace Modelu",
+      "layer1Subtitle": "Název a doba simulace",
+      "layer2Title": "Výběr Oblasti",
+      "layer2Subtitle": "Definujte oblast",
+      "layer3Title": "Komponenty Rizika",
+      "layer3Subtitle": "Vyberte signály",
+      "layer4Title": "Závěrečná Kontrola",
+      "layer4Subtitle": "Kontrola před spuštěním",
+      "layer5Title": "Uložit a Vypočítat",
+      "layer5Subtitle": "Uložit a spustit"
+    },
+    "stepper": {
+      "stepOf": "Krok {{step}} z {{total}}",
+      "back": "Zpět",
+      "continue": "Pokračovat",
+      "update": "Aktualizovat",
+      "save": "Uložit",
+      "saving": "Ukládání...",
+      "starting": "Spouštění...",
+      "saveAndRun": "Uložit a spustit",
+      "introTitle": "Nový model",
+      "introSubtitle": "Pojďme nastavit vaši simulaci",
+      "introDesc": "Šest kroků k definování oblasti, ověření vstupů a spuštění.",
+      "introProgressSaved": "Váš postup se ukládá",
+      "introDontShow": "Znovu nezobrazovat",
+      "introCancel": "Zrušit",
+      "introStart": "Začít",
+      "step": "KROK"
+    },
+    "layer1": {
+      "purpose": "Pojmenujte tuto simulaci a vyberte časové okno.",
+      "nextStepHint": "Následně vyznačíte geografickou oblast na mapě.",
+      "modelNameLabel": "Název modelu",
+      "modelNamePlaceholder": "např. Galicie Léto 2026 Riziko",
+      "modelNameHint": "Popisný název, abyste model později snadno našli.",
+      "calcModeLabel": "Režim výpočtu",
+      "calcModeStatic": "statický",
+      "calcModeDynamic": "dynamický",
+      "calcModeHint": "Statický používá workflow pro jedno datum. Dynamický zachová režim pro dynamický workflow.",
+      "staticHint": "Statické běhy využívají dostupné datum od 16:00 do 17:00.",
+      "dynamicHint": "Dynamické běhy zachovávají vybraný rozsah (okno 16:00 - 17:00).",
+      "staticLoading": "Načítání statických dat...",
+      "staticEmpty": "Žádná statická data nejsou k dispozici.",
+      "staticHottest": "Nejteplejší statické datum: {{date}}",
+      "staticRange": "Dostupná statická data: {{start}} až {{end}}",
+      "dynamicLoading": "Načítání dynamických dat...",
+      "dynamicEmpty": "Žádná dynamická data nejsou k dispozici.",
+      "dynamicSelected": "Vybraný rozsah: {{start}} až {{end}} ({{days}} dnů).",
+      "dynamicSelectedOne": "Vybraný rozsah: {{start}} až {{end}} (1 den).",
+      "dynamicSelectInside": "Vyberte rozsah v rámci dostupných dat: {{start}} až {{end}}",
+      "dynamicAvailable": "Dostupná dynamická data: {{start}} až {{end}}",
+      "hottest": "Nejteplejší"
+    }
   }
 }

@@ -1811,5 +1811,61 @@
     "Spain": "Spanien",
     "Galicia": "Galicien",
     "Vedra": "Vedra"
+  },
+  "configurator": {
+    "registry": {
+      "layer1Title": "Modell-Initialisierung",
+      "layer1Subtitle": "Name und Simulationszeitraum",
+      "layer2Title": "Bereichsauswahl",
+      "layer2Subtitle": "Definieren Sie das Modellgebiet",
+      "layer3Title": "Risikokomponenten",
+      "layer3Subtitle": "Wählen Sie die Signale",
+      "layer4Title": "Abschließende Prüfung",
+      "layer4Subtitle": "Prüfung vor dem Start",
+      "layer5Title": "Speichern & Berechnen",
+      "layer5Subtitle": "Speichern und Lauf starten"
+    },
+    "stepper": {
+      "stepOf": "Schritt {{step}} von {{total}}",
+      "back": "Zurück",
+      "continue": "Weiter",
+      "update": "Aktualisieren",
+      "save": "Speichern",
+      "saving": "Wird gespeichert...",
+      "starting": "Startet...",
+      "saveAndRun": "Speichern & Ausführen",
+      "introTitle": "Neues Waldbrandmodell",
+      "introSubtitle": "Lassen Sie uns Ihre Simulation einrichten",
+      "introDesc": "Sechs geführte Schritte zur Definition, Validierung und zum Start einer Simulation.",
+      "introProgressSaved": "Ihr Fortschritt wird fortlaufend gespeichert",
+      "introDontShow": "Dieses Intro nicht mehr anzeigen",
+      "introCancel": "Abbrechen",
+      "introStart": "Loslegen",
+      "step": "SCHRITT"
+    },
+    "layer1": {
+      "purpose": "Benennen Sie diese Waldbrandsimulation und wählen Sie den Zeitraum.",
+      "nextStepHint": "Als nächstes zeichnen Sie das geografische Gebiet auf der Karte ein.",
+      "modelNameLabel": "Modellname",
+      "modelNamePlaceholder": "z.B. Galicia Sommer 2026 Waldbrandrisiko",
+      "modelNameHint": "Ein beschreibender Name, damit Sie dieses Modell später wiederfinden.",
+      "calcModeLabel": "Berechnungsmodus",
+      "calcModeStatic": "Statisch",
+      "calcModeDynamic": "Dynamisch",
+      "calcModeHint": "Statisch verwendet den Risiko-Workflow für ein Datum. Dynamisch speichert den Modus für den dynamischen Workflow.",
+      "staticHint": "Statische Läufe verwenden ein verfügbares Wetterdatum, von 16:00 bis 17:00 Uhr.",
+      "dynamicHint": "Dynamische Läufe behalten den ausgewählten Zeitraum bei (16:00 - 17:00 Uhr).",
+      "staticLoading": "Lade verfügbare statische Daten...",
+      "staticEmpty": "Keine statischen Daten verfügbar.",
+      "staticHottest": "Statisches Datum mit höchster Temperatur: {{date}}",
+      "staticRange": "Verfügbare statische Daten: {{start}} bis {{end}}",
+      "dynamicLoading": "Lade verfügbare dynamische Daten...",
+      "dynamicEmpty": "Keine dynamischen Daten verfügbar.",
+      "dynamicSelected": "Ausgewählter Zeitraum: {{start}} bis {{end}} ({{days}} Tage).",
+      "dynamicSelectedOne": "Ausgewählter Zeitraum: {{start}} bis {{end}} (1 Tag).",
+      "dynamicSelectInside": "Wählen Sie einen Zeitraum innerhalb der verfügbaren Daten: {{start}} bis {{end}}",
+      "dynamicAvailable": "Verfügbare dynamische Daten: {{start}} bis {{end}}",
+      "hottest": "Heißeste"
+    }
   }
 }

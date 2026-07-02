@@ -1811,5 +1811,61 @@
     "Spain": "Espagne",
     "Galicia": "Galice",
     "Vedra": "Vedra"
+  },
+  "configurator": {
+    "registry": {
+      "layer1Title": "Initialisation du modèle",
+      "layer1Subtitle": "Nom et période de simulation",
+      "layer2Title": "Sélection de la zone",
+      "layer2Subtitle": "Définissez la zone du modèle",
+      "layer3Title": "Composants de risque",
+      "layer3Subtitle": "Choisissez les signaux",
+      "layer4Title": "Examen final",
+      "layer4Subtitle": "Vérification avant exécution",
+      "layer5Title": "Enregistrer et Calculer",
+      "layer5Subtitle": "Enregistrer et lancer"
+    },
+    "stepper": {
+      "stepOf": "Étape {{step}} sur {{total}}",
+      "back": "Retour",
+      "continue": "Continuer",
+      "update": "Mettre à jour",
+      "save": "Enregistrer",
+      "saving": "Enregistrement...",
+      "starting": "Démarrage...",
+      "saveAndRun": "Enregistrer et exécuter",
+      "introTitle": "Nouveau modèle d'incendie",
+      "introSubtitle": "Configurons votre simulation",
+      "introDesc": "Six étapes guidées pour définir, valider et lancer une simulation.",
+      "introProgressSaved": "Votre progression est enregistrée",
+      "introDontShow": "Ne plus afficher cette intro",
+      "introCancel": "Annuler",
+      "introStart": "Commencer",
+      "step": "ÉTAPE"
+    },
+    "layer1": {
+      "purpose": "Nommez cette simulation et choisissez la fenêtre de dates à évaluer.",
+      "nextStepHint": "Ensuite, vous délimiterez la zone géographique sur la carte.",
+      "modelNameLabel": "Nom du modèle",
+      "modelNamePlaceholder": "ex. Galice Été 2026 Risque d'incendie",
+      "modelNameHint": "Un nom descriptif pour retrouver ce modèle plus tard.",
+      "calcModeLabel": "Mode de calcul",
+      "calcModeStatic": "statique",
+      "calcModeDynamic": "dynamique",
+      "calcModeHint": "Statique utilise le flux de travail pour une date. Dynamique conserve le mode sélectionné.",
+      "staticHint": "Les exécutions statiques utilisent une date météo disponible, de 16h à 17h.",
+      "dynamicHint": "Les exécutions dynamiques conservent la plage sélectionnée (16h à 17h).",
+      "staticLoading": "Chargement des dates statiques...",
+      "staticEmpty": "Aucune date statique disponible.",
+      "staticHottest": "Date statique la plus chaude: {{date}}",
+      "staticRange": "Dates statiques disponibles: {{start}} à {{end}}",
+      "dynamicLoading": "Chargement des dates dynamiques...",
+      "dynamicEmpty": "Aucune date dynamique disponible.",
+      "dynamicSelected": "Plage sélectionnée: {{start}} à {{end}} ({{days}} jours).",
+      "dynamicSelectedOne": "Plage sélectionnée: {{start}} à {{end}} (1 jour).",
+      "dynamicSelectInside": "Sélectionnez une plage dans les dates disponibles: {{start}} à {{end}}",
+      "dynamicAvailable": "Dates dynamiques disponibles: {{start}} à {{end}}",
+      "hottest": "Le plus chaud"
+    }
   }
 }

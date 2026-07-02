@@ -1811,5 +1811,61 @@
     "Spain": "Hiszpania",
     "Galicia": "Galicja",
     "Vedra": "Vedra"
+  },
+  "configurator": {
+    "registry": {
+      "layer1Title": "Inicjalizacja Modelu",
+      "layer1Subtitle": "Nazwa i czas symulacji",
+      "layer2Title": "Wybór Obszaru",
+      "layer2Subtitle": "Zdefiniuj obszar modelu",
+      "layer3Title": "Komponenty Ryzyka",
+      "layer3Subtitle": "Wybierz sygnały",
+      "layer4Title": "Przegląd Końcowy",
+      "layer4Subtitle": "Sprawdzenie przed startem",
+      "layer5Title": "Zapisz i Oblicz",
+      "layer5Subtitle": "Zapisz i uruchom"
+    },
+    "stepper": {
+      "stepOf": "Krok {{step}} z {{total}}",
+      "back": "Wstecz",
+      "continue": "Kontynuuj",
+      "update": "Aktualizuj",
+      "save": "Zapisz",
+      "saving": "Zapisywanie...",
+      "starting": "Uruchamianie...",
+      "saveAndRun": "Zapisz i uruchom",
+      "introTitle": "Nowy model",
+      "introSubtitle": "Skonfigurujmy Twoją symulację",
+      "introDesc": "Sześć kroków do zdefiniowania obszaru, weryfikacji i uruchomienia.",
+      "introProgressSaved": "Twoje postępy są zapisywane",
+      "introDontShow": "Nie pokazuj więcej",
+      "introCancel": "Anuluj",
+      "introStart": "Rozpocznij",
+      "step": "KROK"
+    },
+    "layer1": {
+      "purpose": "Nazwij tę symulację i wybierz przedział dat do oceny.",
+      "nextStepHint": "Następnie nakreślisz obszar geograficzny na mapie.",
+      "modelNameLabel": "Nazwa modelu",
+      "modelNamePlaceholder": "np. Galicja Lato 2026 Ryzyko",
+      "modelNameHint": "Opisowa nazwa, aby łatwiej odnaleźć ten model później.",
+      "calcModeLabel": "Tryb obliczeń",
+      "calcModeStatic": "statyczny",
+      "calcModeDynamic": "dynamiczny",
+      "calcModeHint": "Statyczny używa workflow dla jednej daty. Dynamiczny zachowuje tryb dla workflow dynamicznego.",
+      "staticHint": "Uruchomienia statyczne używają dostępnej daty, od 16:00 do 17:00.",
+      "dynamicHint": "Uruchomienia dynamiczne zachowują zakres (od 16:00 do 17:00).",
+      "staticLoading": "Ładowanie dostępnych dat...",
+      "staticEmpty": "Brak dostępnych dat.",
+      "staticHottest": "Najgorętsza data statyczna: {{date}}",
+      "staticRange": "Dostępne daty: {{start}} do {{end}}",
+      "dynamicLoading": "Ładowanie dat dynamicznych...",
+      "dynamicEmpty": "Brak dat dynamicznych.",
+      "dynamicSelected": "Wybrany zakres: {{start}} do {{end}} ({{days}} dni).",
+      "dynamicSelectedOne": "Wybrany zakres: {{start}} do {{end}} (1 dzień).",
+      "dynamicSelectInside": "Wybierz zakres z dostępnych dat: {{start}} do {{end}}",
+      "dynamicAvailable": "Dostępne daty dynamiczne: {{start}} do {{end}}",
+      "hottest": "Najgorętszy"
+    }
   }
 }
