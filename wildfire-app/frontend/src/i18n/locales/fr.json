@@ -1034,7 +1034,12 @@
       "increase": "Augmenter la distance de tampon",
       "label": "Distance de tampon (mètres)"
     },
-    "staticDateInfo": "Les dates statiques sont choisies automatiquement : pour chaque année disponible, le jour le plus chaud est sélectionné."
+    "staticDateInfo": "Les dates statiques sont choisies automatiquement : pour chaque année disponible, le jour le plus chaud est sélectionné.",
+    "progress": {
+      "queued": "En file d'attente",
+      "assessing": "Évaluation",
+      "done": "Terminé"
+    }
   },
   "mapLayers": {
     "title": "Couches de carte",

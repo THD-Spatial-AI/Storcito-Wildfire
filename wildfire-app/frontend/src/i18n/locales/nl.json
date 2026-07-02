@@ -874,7 +874,12 @@
       "increase": "Bufferafstand vergroten",
       "label": "Bufferafstand (meter)"
     },
-    "staticDateInfo": "Statische datums worden automatisch gekozen: voor elk beschikbaar jaar wordt de dag met de hoogste temperatuur geselecteerd."
+    "staticDateInfo": "Statische datums worden automatisch gekozen: voor elk beschikbaar jaar wordt de dag met de hoogste temperatuur geselecteerd.",
+    "progress": {
+      "queued": "In wachtrij",
+      "assessing": "Beoordelen",
+      "done": "Klaar"
+    }
   },
   "mapLayers": {
     "title": "Kaartlagen",

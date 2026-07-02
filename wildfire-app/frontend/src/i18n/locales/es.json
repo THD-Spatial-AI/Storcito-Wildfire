@@ -1034,7 +1034,12 @@
       "increase": "Aumentar distancia de búfer",
       "label": "Distancia de búfer (metros)"
     },
-    "staticDateInfo": "Las fechas estáticas se eligen automáticamente: para cada año disponible se selecciona el día con la temperatura más alta."
+    "staticDateInfo": "Las fechas estáticas se eligen automáticamente: para cada año disponible se selecciona el día con la temperatura más alta.",
+    "progress": {
+      "queued": "En cola",
+      "assessing": "Evaluando",
+      "done": "Listo"
+    }
   },
   "mapLayers": {
     "title": "Capas del mapa",

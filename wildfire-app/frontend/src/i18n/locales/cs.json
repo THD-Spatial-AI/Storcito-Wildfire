@@ -874,7 +874,12 @@
       "increase": "Zvětšit vzdálenost bufferu",
       "label": "Vzdálenost bufferu (metry)"
     },
-    "staticDateInfo": "Statická data se vybírají automaticky – pro každý dostupný rok se vybere den s nejvyšší teplotou."
+    "staticDateInfo": "Statická data se vybírají automaticky – pro každý dostupný rok se vybere den s nejvyšší teplotou.",
+    "progress": {
+      "queued": "Ve frontě",
+      "assessing": "Hodnocení",
+      "done": "Hotovo"
+    }
   },
   "mapLayers": {
     "title": "Mapové vrstvy",

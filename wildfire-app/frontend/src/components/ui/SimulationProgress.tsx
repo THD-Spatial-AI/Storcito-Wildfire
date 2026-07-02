@@ -1,14 +1,15 @@
 import React from "react";
 import type { ModelStatus } from "@/types/models";
+import { useTranslation } from "@/i18n";
 
 interface SimulationProgressProps {
   status: ModelStatus;
 }
 
 const STAGES = [
-  { key: "queued", label: "Queued" },
-  { key: "assessing", label: "Assessing" },
-  { key: "done", label: "Done" },
+  { key: "queued", labelKey: "simulation.progress.queued", defaultLabel: "Queued" },
+  { key: "assessing", labelKey: "simulation.progress.assessing", defaultLabel: "Assessing" },
+  { key: "done", labelKey: "simulation.progress.done", defaultLabel: "Done" },
 ] as const;
 
 const getActiveStage = (status: ModelStatus): number => {
@@ -27,6 +28,7 @@ const getActiveStage = (status: ModelStatus): number => {
 };
 
 export const SimulationProgress: React.FC<SimulationProgressProps> = ({ status }) => {
+  const { t } = useTranslation();
   const activeStage = getActiveStage(status);
   if (activeStage < 0) return null;
 
@@ -64,7 +66,7 @@ export const SimulationProgress: React.FC<SimulationProgressProps> = ({ status }
                     : "text-muted-foreground/50"
                 }`}
               >
-                {stage.label}
+                {t(stage.labelKey, stage.defaultLabel)}
               </span>
             </div>
           </React.Fragment>

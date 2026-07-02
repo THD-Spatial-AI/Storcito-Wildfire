@@ -1034,7 +1034,12 @@
       "increase": "Pufferabstand vergrößern",
       "label": "Pufferabstand (Meter)"
     },
-    "staticDateInfo": "Statische Termine werden automatisch gewählt – für jedes verfügbare Jahr wird der Tag mit der höchsten Temperatur ausgewählt."
+    "staticDateInfo": "Statische Termine werden automatisch gewählt – für jedes verfügbare Jahr wird der Tag mit der höchsten Temperatur ausgewählt.",
+    "progress": {
+      "queued": "In Warteschlange",
+      "assessing": "Bewerten",
+      "done": "Fertig"
+    }
   },
   "mapLayers": {
     "title": "Kartenebenen",

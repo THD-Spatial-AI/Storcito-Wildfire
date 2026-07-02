@@ -1034,7 +1034,12 @@
       "decrease": "Decrease buffer distance",
       "increase": "Increase buffer distance"
     },
-    "staticDateInfo": "Static dates are chosen automatically — for each available year, the day with the highest temperature is selected."
+    "staticDateInfo": "Static dates are chosen automatically — for each available year, the day with the highest temperature is selected.",
+    "progress": {
+      "queued": "Queued",
+      "assessing": "Assessing",
+      "done": "Done"
+    }
   },
   "mapLayers": {
     "title": "Map Layers",
