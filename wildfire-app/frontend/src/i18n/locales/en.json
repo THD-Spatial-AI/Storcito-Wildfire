@@ -70,7 +70,8 @@
       "restartTour": "Restart tour",
       "feedback": "Feedback",
       "theme": "Theme",
-      "searchLocation": "Search for a location"
+      "searchLocation": "Search for a location",
+      "help": "Help"
     },
     "sidebar": {
       "energySimulations": "Energy Simulations",
@@ -1052,7 +1053,8 @@
     "dataLayers": {
       "title": "Data Layers",
       "energySimulation": "Final Energy Simulation layer"
-    }
+    },
+    "tooltip": "Base Maps"
   },
   "tour": {
     "product": {
@@ -1549,7 +1551,11 @@
       "visible": "Visible",
       "hidden": "Hidden",
       "opacity": "Opacity",
-      "publishing": "Publishing layer to GeoServer…"
+      "publishing": "Publishing layer to GeoServer…",
+      "day": "Day",
+      "view3d": "3D Terrain",
+      "view2d": "2D Map",
+      "playDaily": "Animate daily risk maps"
     },
     "map": {
       "initializing": "Initializing map…"
@@ -1565,7 +1571,14 @@
     },
     "legend": {
       "title": "Fire Risk",
-      "allLevels": "All available levels"
+      "allLevels": "All available levels",
+      "levels": {
+        "very_low": "Very Low",
+        "low": "Low",
+        "moderate": "Moderate",
+        "high": "High",
+        "very_high": "Very High"
+      }
     },
     "details": {
       "description": "Description",
@@ -1578,7 +1591,11 @@
       "region": "Region",
       "country": "Country",
       "from": "From",
-      "to": "To"
+      "to": "To",
+      "windSpeed": "Wind speed",
+      "windDirection": "Wind direction",
+      "temperature": "Temperature",
+      "humidity": "Humidity"
     },
     "risk": {
       "notReady": "Metrics will be available once the layer is configured in GeoServer.",
@@ -1592,6 +1609,12 @@
       "sampleNote": "Based on {{count}} sampled pixels",
       "highPlusArea": "High + Very High area",
       "highPlusPixels": "High + Very High pixels"
+    },
+    "metrics": {
+      "overallRisk": "Overall risk",
+      "meanRiskScore": "Mean risk score",
+      "highVeryHighArea": "High + very high area",
+      "analyzedArea": "Analyzed area"
     }
   },
   "landing": {
@@ -1756,5 +1779,32 @@
       "riskDistribution": "Risk Distribution",
       "trendAnalysis": "Risk Trend Analysis"
     }
+  },
+  "tooltips": {
+    "windSpeed": {
+      "title": "Wind Speed",
+      "description": "Average wind speed over the selected area for the given time period.",
+      "example": "Higher wind speeds provide more oxygen to the fire and can rapidly spread embers, significantly increasing the rate of fire spread."
+    },
+    "windDirection": {
+      "title": "Wind Direction",
+      "description": "Average wind direction over the selected area, represented in degrees and compass points.",
+      "example": "N (North), E (East), S (South), W (West), and intermediate points like NNE (North-Northeast) or WSW (West-Southwest)."
+    },
+    "temperature": {
+      "title": "Temperature",
+      "description": "Average ambient temperature over the selected area for the given time period.",
+      "example": "High temperatures dry out vegetation (fuels), making them easier to ignite and allowing the fire to burn more intensely."
+    },
+    "humidity": {
+      "title": "Relative Humidity",
+      "description": "Average relative humidity over the selected area for the given time period.",
+      "example": "Low relative humidity means the air is dry, which draws moisture out of the vegetation, creating highly flammable fuels."
+    }
+  },
+  "locations": {
+    "Spain": "Spain",
+    "Galicia": "Galicia",
+    "Vedra": "Vedra"
   }
 }

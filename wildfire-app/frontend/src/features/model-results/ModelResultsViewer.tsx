@@ -1,20 +1,39 @@
-import { FC, Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  FC,
+  Fragment,
+  ReactNode,
+  Suspense,
+  lazy,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   AlertCircle,
   ArrowLeft,
   Calendar,
+  Compass,
+  Droplets,
   Eye,
   EyeOff,
   Layers,
   Loader2,
   MapPin,
   Mountain,
+  Pause,
+  Play,
   RefreshCw,
   Route,
+  Thermometer,
+  Wind,
+  Check,
+  Layers2,
 } from "lucide-react";
 import { useTranslation } from "@/i18n";
-
+import { cn } from "@/lib/utils";
 import TileLayer from "ol/layer/Tile";
 import TileWMS from "ol/source/TileWMS";
 import XYZ from "ol/source/XYZ";
@@ -23,7 +42,7 @@ import { get as getProj, transformExtent } from "ol/proj";
 import proj4 from "proj4";
 import { register as registerProj4 } from "ol/proj/proj4";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@spatialhub/ui";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Tooltip, TooltipContent, TooltipTrigger } from "@spatialhub/ui";
 
 import axios from "@/lib/axios";
 import { useDocumentTitle } from "@/hooks/use-document-title";
@@ -35,9 +54,14 @@ import { WorkspaceSelector } from "@/components/workspace";
 import { CreateWorkspaceModal } from "@/components/workspace";
 import { type Workspace } from "@/components/workspace";
 import { useWorkspaceStore } from "@/components/workspace";
+import { InfoIcon } from "@/components/ui/InfoTooltip";
+import { type TooltipKey } from "@/components/shared/tooltip-contents";
+import SidebarButton from "@/components/ui/SidebarButton";
 import { useRiskMetrics } from "./hooks/useRiskMetrics";
-import { AssessmentDetailsSidebar } from "./components/AssessmentDetailsSidebar";
-import { Wildfire3DView } from "./components/Wildfire3DView";
+// Cesium is several MB, so load the 3D view (and Cesium with it) only when opened.
+const CesiumWildfire3DView = lazy(() =>
+  import("./components/CesiumWildfire3DView").then((m) => ({ default: m.CesiumWildfire3DView }))
+);
 
 // ---------------------------------------------------------------------------
 // Types
@@ -75,6 +99,14 @@ interface ModelResultsViewerProps {
   modelId?: number;
 }
 
+/** Per-day fire weather data */
+interface FrameWeather {
+  wind_speed_kmh?: number | null;
+  wind_direction_deg?: number | null;
+  temperature_c?: number | null;
+  relative_humidity_pct?: number | null;
+}
+
 // ---------------------------------------------------------------------------
 // Constants & classification legend
 // ---------------------------------------------------------------------------
@@ -92,18 +124,38 @@ const FIRE_RISK_STYLE_LOW = "fire_risk_level_2";
 const FIRE_RISK_STYLE_MODERATE = "fire_risk_level_3";
 const FIRE_RISK_STYLE_HIGH = "fire_risk_level_4";
 const FIRE_RISK_STYLE_VERY_HIGH = "fire_risk_level_5";
-const ESRI_TRANSPORTATION_REFERENCE_URL =
-  "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
+const ESRI_TRANSPORTATION_REFERENCE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 const ESRI_PLACES_REFERENCE_URL =
   "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}";
 const ESRI_ATTRIBUTION = "Sources: OpenStreetMap contributors, Esri, HERE, Garmin";
 
 const RISK_LEVELS = [
-  { label: "Very Low", color: "#9ca3af", value: 1, style: FIRE_RISK_STYLE_VERY_LOW, metricKey: "veryLow" },
-  { label: "Low", color: "#16a34a", value: 2, style: FIRE_RISK_STYLE_LOW, metricKey: "low" },
-  { label: "Moderate", color: "#eab308", value: 3, style: FIRE_RISK_STYLE_MODERATE, metricKey: "moderate" },
-  { label: "High", color: "#f97316", value: 4, style: FIRE_RISK_STYLE_HIGH, metricKey: "high" },
-  { label: "Very High", color: "#dc2626", value: 5, style: FIRE_RISK_STYLE_VERY_HIGH, metricKey: "veryHigh" },
+  {
+    id: "very_low",
+    label: "Very Low",
+    color: "#9ca3af",
+    value: 1,
+    style: FIRE_RISK_STYLE_VERY_LOW,
+    metricKey: "veryLow",
+  },
+  { id: "low", label: "Low", color: "#16a34a", value: 2, style: FIRE_RISK_STYLE_LOW, metricKey: "low" },
+  {
+    id: "moderate",
+    label: "Moderate",
+    color: "#eab308",
+    value: 3,
+    style: FIRE_RISK_STYLE_MODERATE,
+    metricKey: "moderate",
+  },
+  { id: "high", label: "High", color: "#f97316", value: 4, style: FIRE_RISK_STYLE_HIGH, metricKey: "high" },
+  {
+    id: "very_high",
+    label: "Very High",
+    color: "#dc2626",
+    value: 5,
+    style: FIRE_RISK_STYLE_VERY_HIGH,
+    metricKey: "veryHigh",
+  },
 ] as const;
 
 type RiskLevelValue = (typeof RISK_LEVELS)[number]["value"];
@@ -124,6 +176,47 @@ const DEFAULT_VISIBLE_RISK_LEVELS: VisibleRiskLevels = {
   4: true,
   5: true,
 };
+
+const RISK_LEVEL_META: Record<string, { labelKey: string; chip: string }> = {
+  very_low: { labelKey: "modelResults.legend.levels.very_low", chip: "bg-gray-400/15 text-gray-600" },
+  low: { labelKey: "modelResults.legend.levels.low", chip: "bg-green-600/15 text-green-700" },
+  moderate: { labelKey: "modelResults.legend.levels.moderate", chip: "bg-yellow-500/15 text-yellow-700" },
+  high: { labelKey: "modelResults.legend.levels.high", chip: "bg-orange-500/15 text-orange-700" },
+  very_high: { labelKey: "modelResults.legend.levels.very_high", chip: "bg-red-600/15 text-red-700" },
+};
+
+/** Labeled value in the floating player (caption on top, value below). */
+const PlayerStat = ({
+  icon,
+  label,
+  value,
+  unit,
+  tooltipKey,
+  className,
+}: {
+  icon?: ReactNode;
+  label: string;
+  value: string;
+  unit?: string;
+  tooltipKey?: TooltipKey;
+  className?: string;
+}) => (
+  <div className={`flex items-center gap-1.5 ${className || ""}`}>
+    {icon}
+    <div className="flex flex-col leading-tight">
+      <div className="flex items-center gap-1">
+        <span className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
+          {label}
+        </span>
+        {tooltipKey && <InfoIcon tooltipKey={tooltipKey} position="top" />}
+      </div>
+      <span className="text-xs font-semibold tabular-nums text-foreground whitespace-nowrap">
+        {value}
+        {unit ? <span className="font-normal text-muted-foreground"> {unit}</span> : null}
+      </span>
+    </div>
+  </div>
+);
 
 // ---------------------------------------------------------------------------
 // Helpers (pure — safe to unit test)
@@ -171,6 +264,40 @@ function fitMapToBounds(map: Map, bounds: LayerBounds) {
   }
 }
 
+function formatFrameDate(iso: string): string {
+  const [y, m, d] = iso.split("-").map(Number);
+  const dt = new Date(y, m - 1, d);
+  if (Number.isNaN(dt.getTime())) return iso;
+  return dt.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+}
+
+function windCardinal(degrees: number): string {
+  const labels = [
+    "N",
+    "NNE",
+    "NE",
+    "ENE",
+    "E",
+    "ESE",
+    "SE",
+    "SSE",
+    "S",
+    "SSW",
+    "SW",
+    "WSW",
+    "W",
+    "WNW",
+    "NW",
+    "NNW",
+  ];
+  return labels[Math.round(degrees / 22.5) % labels.length];
+}
+
+function formatMetric(value: number | null | undefined, digits = 1): string {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "—";
+  return value.toFixed(digits);
+}
+
 function extractErrorMessage(err: unknown, fallback: string): string {
   if (typeof err === "object" && err && "response" in err) {
     const data = (err as { response?: { data?: { message?: string } } }).response?.data;
@@ -206,10 +333,15 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   const selectedLayerKeyRef = useRef<string>("risk");
   const [layerVisible, setLayerVisible] = useState(true);
   const [layerOpacity, setLayerOpacity] = useState(FIRE_RISK_DEFAULT_OPACITY);
-  const [visibleRiskLevels, setVisibleRiskLevels] = useState<VisibleRiskLevels>(DEFAULT_VISIBLE_RISK_LEVELS);
+  const [visibleRiskLevels, setVisibleRiskLevels] = useState<VisibleRiskLevels>(
+    DEFAULT_VISIBLE_RISK_LEVELS
+  );
   const [tileErrors, setTileErrors] = useState(0);
   const [show3D, setShow3D] = useState(false);
   const [wms3D, setWms3D] = useState<{ wmsUrl: string; layerName: string } | null>(null);
+  // Day-by-day animation over the daily risk maps a dynamic run emits.
+  const [playing, setPlaying] = useState(false);
+  const playFrameRef = useRef(0);
 
   const [roadsVisible, setRoadsVisible] = useState(true);
   const [labelsVisible, setLabelsVisible] = useState(false);
@@ -336,7 +468,10 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
         const fallbackLayer = layerOptions.find((l) => l.key === "risk");
         const activeLayer: RiskLayerSelection = selectedLayer
           ? { key: selectedLayer.key, layerName: selectedLayer.layer_name }
-          : { key: fallbackLayer?.key ?? "risk", layerName: fallbackLayer?.layer_name ?? info.layer_name };
+          : {
+              key: fallbackLayer?.key ?? "risk",
+              layerName: fallbackLayer?.layer_name ?? info.layer_name,
+            };
         if (activeLayer.key !== requestedLayerKey) {
           selectedLayerKeyRef.current = activeLayer.key;
           setSelectedLayerKey(activeLayer.key);
@@ -384,6 +519,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   // vegetation or FWI). All share the 0–5 scale, so the legend/styles apply.
   const handleSelectLayer = useCallback(
     (key: string) => {
+      setPlaying(false);
       setSelectedLayerKey(key);
       selectedLayerKeyRef.current = key;
       if (!map || !activeResult || activeResult.geoserver_status !== "configured") return;
@@ -392,6 +528,109 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     },
     [map, activeResult, attachLayer, removeRiskLayerEntries]
   );
+
+  // -------------------------------------------------------------------------
+  // Daily risk animation (dynamic runs publish layers/risk_<date>.tif per day)
+  // -------------------------------------------------------------------------
+
+  const dailyFrames = useMemo(
+    () =>
+      availableLayers
+        .filter((l) => /^risk_\d{4}-\d{2}-\d{2}$/.test(l.key))
+        .sort((a, b) => a.key.localeCompare(b.key)),
+    [availableLayers]
+  );
+  // Daily frames are driven by the player, so keep them out of the dataset switcher.
+  const switcherLayers = useMemo(
+    () => availableLayers.filter((l) => !/^risk_\d{4}-\d{2}-\d{2}$/.test(l.key)),
+    [availableLayers]
+  );
+  const playingFrameDate = /^risk_(\d{4}-\d{2}-\d{2})$/.exec(selectedLayerKey)?.[1] ?? null;
+  const dailyFrameIndex = dailyFrames.findIndex((f) => f.key === selectedLayerKey);
+
+  // Per-day AOI-mean fire weather for the player readout. Failed fetches are
+  // left unset (not cached as null) so displaying that day retries them.
+  const [frameWeather, setFrameWeather] = useState<Record<string, FrameWeather | null>>({});
+  const frameWeatherRef = useRef<Record<string, FrameWeather | null>>({});
+  const frameWeatherInflightRef = useRef<Set<string>>(new Set());
+  const fetchFrameWeather = useCallback(
+    async (day: string) => {
+      if (!resolvedModelId) return;
+      if (frameWeatherRef.current[day] !== undefined || frameWeatherInflightRef.current.has(day))
+        return;
+      frameWeatherInflightRef.current.add(day);
+      try {
+        const resp = await axios.get(`/models/${resolvedModelId}/fire-weather`, {
+          params: { date: day },
+          // Each day is computed on demand by the risk engine (full moisture
+          // run-up), which can outlast the default 30s axios timeout.
+          timeout: 90_000,
+        });
+        const summary = (resp.data?.data?.weather_summary ?? null) as FrameWeather | null;
+        frameWeatherRef.current[day] = summary;
+        setFrameWeather((m) => ({ ...m, [day]: summary }));
+      } catch (err) {
+        if (import.meta.env.DEV)
+          console.warn(`[ModelResultsViewer] frame weather ${day} failed`, err);
+      } finally {
+        frameWeatherInflightRef.current.delete(day);
+      }
+    },
+    [resolvedModelId]
+  );
+
+  // Prefetch every frame day sequentially once the daily layers are known.
+  useEffect(() => {
+    if (dailyFrames.length < 2) return;
+    let cancelled = false;
+    (async () => {
+      for (const frame of dailyFrames) {
+        if (cancelled) return;
+        await fetchFrameWeather(frame.key.slice(5));
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [dailyFrames, fetchFrameWeather]);
+
+  // Retry on demand when the visible frame still has no weather.
+  useEffect(() => {
+    if (playingFrameDate && frameWeather[playingFrameDate] === undefined) {
+      void fetchFrameWeather(playingFrameDate);
+    }
+  }, [playingFrameDate, frameWeather, fetchFrameWeather]);
+
+  const currentFrameWeather = playingFrameDate ? frameWeather[playingFrameDate] : null;
+
+  // Swap the WMS layer in place on the existing map layers — no layer-info
+  // refetch and no view re-fit, so frames advance without the map jumping.
+  const applyDailyFrame = useCallback((frame: AvailableLayer) => {
+    selectedLayerKeyRef.current = frame.key;
+    setSelectedLayerKey(frame.key);
+    riskLayerEntriesRef.current.forEach(({ layer }) => {
+      layer.getSource()?.updateParams({ LAYERS: frame.layer_name, VIEWER_LAYER_KEY: frame.key });
+    });
+    setWms3D((w) => (w ? { ...w, layerName: frame.layer_name } : w));
+  }, []);
+
+  useEffect(() => {
+    if (!playing) return;
+    if (dailyFrames.length < 2) {
+      setPlaying(false);
+      return;
+    }
+    // Resume from the frame currently shown (or start at the first day).
+    const current = dailyFrames.findIndex((f) => f.key === selectedLayerKeyRef.current);
+    playFrameRef.current = current >= 0 ? current : -1;
+    const tick = () => {
+      playFrameRef.current = (playFrameRef.current + 1) % dailyFrames.length;
+      applyDailyFrame(dailyFrames[playFrameRef.current]);
+    };
+    tick();
+    const id = window.setInterval(tick, 2000);
+    return () => clearInterval(id);
+  }, [playing, dailyFrames, applyDailyFrame]);
 
   // -------------------------------------------------------------------------
   // Workspace + model selector
@@ -503,8 +742,12 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   const labelsLayerRef = useRef<TileLayer<XYZ> | null>(null);
   useEffect(() => {
     if (!map) return;
-    const roadsOpacity = isDarkBaseLayer ? MAP_REFERENCE_DARK_OPACITY : MAP_REFERENCE_LIGHT_ROADS_OPACITY;
-    const labelsOpacity = isDarkBaseLayer ? MAP_REFERENCE_DARK_OPACITY : MAP_REFERENCE_LIGHT_LABELS_OPACITY;
+    const roadsOpacity = isDarkBaseLayer
+      ? MAP_REFERENCE_DARK_OPACITY
+      : MAP_REFERENCE_LIGHT_ROADS_OPACITY;
+    const labelsOpacity = isDarkBaseLayer
+      ? MAP_REFERENCE_DARK_OPACITY
+      : MAP_REFERENCE_LIGHT_LABELS_OPACITY;
     const roadsClassName = isDarkBaseLayer
       ? "ol-layer ol-visible-in-maplibre mix-blend-lighten invert hue-rotate-180 contrast-125"
       : "ol-layer ol-visible-in-maplibre mix-blend-multiply";
@@ -609,20 +852,23 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
   const hasRiskLayers = riskLayerEntries.length > 0;
   const allRiskLevelsVisible = RISK_LEVELS.every(
-    (level) => !riskLevelAvailability[level.value] || visibleRiskLevels[level.value],
+    (level) => !riskLevelAvailability[level.value] || visibleRiskLevels[level.value]
   );
   const toggleRiskLevel = useCallback((value: RiskLevelValue, checked: boolean) => {
     setVisibleRiskLevels((current) => ({ ...current, [value]: checked }));
   }, []);
-  const setAllRiskLevelsVisible = useCallback((checked: boolean) => {
-    setVisibleRiskLevels({
-      1: checked && riskLevelAvailability[1],
-      2: checked && riskLevelAvailability[2],
-      3: checked && riskLevelAvailability[3],
-      4: checked && riskLevelAvailability[4],
-      5: checked && riskLevelAvailability[5],
-    });
-  }, [riskLevelAvailability]);
+  const setAllRiskLevelsVisible = useCallback(
+    (checked: boolean) => {
+      setVisibleRiskLevels({
+        1: checked && riskLevelAvailability[1],
+        2: checked && riskLevelAvailability[2],
+        3: checked && riskLevelAvailability[3],
+        4: checked && riskLevelAvailability[4],
+        5: checked && riskLevelAvailability[5],
+      });
+    },
+    [riskLevelAvailability]
+  );
 
   // -------------------------------------------------------------------------
   // Render
@@ -692,7 +938,12 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
               {model.region && (
                 <span className="flex items-center gap-1 truncate">
                   <MapPin className="w-4 h-4 flex-shrink-0" />
-                  <span className="truncate">{model.region}</span>
+                  <span className="truncate">
+                    {model.region
+                      .split(", ")
+                      .map((part) => t(`locations.${part}`, part))
+                      .join(", ")}
+                  </span>
                 </span>
               )}
               {dateRange && (
@@ -706,87 +957,46 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0">
-          {hasRiskLayers && availableLayers.length > 1 && (
-            <Select value={selectedLayerKey} onValueChange={handleSelectLayer}>
-              <SelectTrigger
-                className="w-[200px] h-9"
-                aria-label={t("modelResults.layer.dataset", "Layer")}
-              >
-                <div className="flex items-center gap-1.5 min-w-0">
-                  <Layers className="w-4 h-4 text-muted-foreground shrink-0" />
-                  <SelectValue />
-                </div>
-              </SelectTrigger>
-              <SelectContent>
-                {availableLayers.map((l) => (
-                  <SelectItem key={l.key} value={l.key}>
-                    {l.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
           {hasRiskLayers && (
-            <>
-              <button
-                type="button"
-                onClick={() => setLayerVisible((v) => !v)}
-                className="h-8 px-3 inline-flex items-center gap-1.5 text-xs border border-border bg-card hover:bg-muted rounded-lg transition-colors"
-              >
-                {layerVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                <span>
-                  {layerVisible
-                    ? t("modelResults.layer.visible", "Visible")
-                    : t("modelResults.layer.hidden", "Hidden")}
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setShow3D((v) => !v)}
-                disabled={!wms3D}
-                className={`h-8 px-3 inline-flex items-center gap-1.5 text-xs border rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-                  show3D ? "border-emerald-500 bg-emerald-500 text-white" : "border-border bg-card hover:bg-muted"
-                }`}
-              >
-                <Mountain className="w-4 h-4" />
-                <span>{show3D ? t("modelResults.layer.view2d", "2D") : t("modelResults.layer.view3d", "3D")}</span>
-              </button>
-
-              <div className="h-8 px-3 inline-flex items-center gap-2 text-xs border border-border rounded-lg bg-card">
-                <label htmlFor="mr-opacity" className="font-medium text-foreground">
-                  {t("modelResults.layer.opacity", "Opacity")}
-                </label>
-                <input
-                  id="mr-opacity"
-                  type="range"
-                  min={0}
-                  max={1}
-                  step={0.05}
-                  value={layerOpacity}
-                  onChange={(e) => setLayerOpacity(Number.parseFloat(e.target.value))}
-                  className="w-24 h-1.5 bg-muted rounded-lg appearance-none cursor-pointer"
-                  style={{
-                    background: `linear-gradient(to right, #ea580c 0%, #ea580c ${layerOpacity * 100}%, var(--muted) ${layerOpacity * 100}%, var(--muted) 100%)`,
-                  }}
-                  aria-label="Layer opacity"
-                />
-                <span className="w-9 text-right font-medium text-muted-foreground">
-                  {Math.round(layerOpacity * 100)}%
-                </span>
-              </div>
-            </>
+            <div className="h-8 px-3 inline-flex items-center gap-2 text-xs border border-border rounded-lg bg-card">
+              <label htmlFor="mr-opacity" className="font-medium text-foreground">
+                {t("modelResults.layer.opacity", "Opacity")}
+              </label>
+              <input
+                id="mr-opacity"
+                type="range"
+                min={0}
+                max={1}
+                step={0.05}
+                value={layerOpacity}
+                onChange={(e) => setLayerOpacity(Number.parseFloat(e.target.value))}
+                className="w-24 h-1.5 bg-muted rounded-lg appearance-none cursor-pointer"
+                style={{
+                  background: `linear-gradient(to right, #ea580c 0%, #ea580c ${layerOpacity * 100}%, var(--muted) ${layerOpacity * 100}%, var(--muted) 100%)`,
+                }}
+                aria-label="Layer opacity"
+              />
+              <span className="w-9 text-right font-medium text-muted-foreground">
+                {Math.round(layerOpacity * 100)}%
+              </span>
+            </div>
           )}
 
-          <button
-            type="button"
-            onClick={() => loadData()}
-            className="h-8 w-8 inline-flex items-center justify-center border border-border bg-card hover:bg-muted rounded-lg transition-colors"
-            aria-label={t("common.refresh", "Refresh")}
-            title={t("common.refresh", "Refresh")}
-          >
-            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-          </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={() => loadData()}
+                className="h-8 w-8 inline-flex items-center justify-center border border-border bg-card hover:bg-muted rounded-lg transition-colors"
+                aria-label={t("common.refresh", "Refresh")}
+              >
+                <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>{t("common.refresh", "Refresh")}</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
     </header>
@@ -796,15 +1006,156 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
   const mapOverlays = (
     <>
+      {layerReady && (
+        <div
+          className="absolute bottom-4 z-[1500] overflow-hidden rounded-2xl border border-border bg-white/95 shadow-lg backdrop-blur"
+          style={{
+            // Center within the visible map area (the sidebar overlays the right edge).
+            left: "calc((100% - var(--sidebar-offset, 0rem)) / 2)",
+            transform: "translateX(-50%)",
+          }}
+        >
+          {/* Row 1 — day player + fire weather (dynamic runs only) */}
+          {dailyFrames.length >= 2 && (
+            <div className="flex items-center gap-4 px-3 py-2">
+              <button
+                type="button"
+                onClick={() => setPlaying((v) => !v)}
+                aria-label={
+                  playing
+                    ? t("modelResults.layer.pause", "Pause")
+                    : t("modelResults.layer.play", "Play")
+                }
+                className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-slate-800 text-white transition-colors hover:bg-slate-950"
+              >
+                {playing ? <Pause className="h-4 w-4" /> : <Play className="ml-0.5 h-4 w-4" />}
+              </button>
+
+              {playingFrameDate && dailyFrameIndex >= 0 ? (
+                <>
+                  <PlayerStat
+                    label={`${t("modelResults.layer.day", "Day")} ${dailyFrameIndex + 1}/${dailyFrames.length}`}
+                    value={`${formatFrameDate(playingFrameDate)} · 16:00–17:00`}
+                  />
+                  <div className="flex items-center gap-4 border-l border-border pl-4">
+                    <PlayerStat
+                      icon={<Wind className="h-4 w-4 text-cyan-600" />}
+                      label={t("modelResults.details.windSpeed", "Wind speed")}
+                      value={formatMetric(currentFrameWeather?.wind_speed_kmh)}
+                      unit="km/h"
+                      tooltipKey="windSpeed"
+                    />
+                    <PlayerStat
+                      icon={<Compass className="h-4 w-4 text-emerald-600" />}
+                      label={t("modelResults.details.windDirection", "Wind direction")}
+                      value={
+                        typeof currentFrameWeather?.wind_direction_deg === "number"
+                          ? `${currentFrameWeather.wind_direction_deg.toFixed(0)}° ${windCardinal(currentFrameWeather.wind_direction_deg)}`
+                          : "—"
+                      }
+                      tooltipKey="windDirection"
+                    />
+                    <PlayerStat
+                      icon={<Thermometer className="h-4 w-4 text-orange-600" />}
+                      label={t("modelResults.details.temperature", "Temperature")}
+                      value={formatMetric(currentFrameWeather?.temperature_c)}
+                      unit="°C"
+                      tooltipKey="temperature"
+                    />
+                    <PlayerStat
+                      icon={<Droplets className="h-4 w-4 text-sky-600" />}
+                      label={t("modelResults.details.humidity", "Humidity")}
+                      value={formatMetric(currentFrameWeather?.relative_humidity_pct)}
+                      unit="%"
+                      tooltipKey="humidity"
+                    />
+                  </div>
+                </>
+              ) : (
+                <span className="text-xs font-semibold text-foreground">
+                  {t("modelResults.layer.playDaily", "Animate daily risk maps")}
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Row 2 — overall assessment (whole run, not per day) */}
+          {legendMetrics && (
+            <div
+              className={`flex items-center gap-4 px-3 py-2 ${dailyFrames.length >= 2 ? "border-t border-border bg-slate-50/80" : ""}`}
+            >
+              <div className="flex flex-col leading-tight">
+                <span className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
+                  {t("modelResults.metrics.overallRisk", "Overall risk")}
+                </span>
+                <span
+                  className={cn(
+                    "text-sm font-bold uppercase",
+                    RISK_LEVEL_META[legendMetrics.overallRiskLevel ?? ""]?.chip
+                  )}
+                >
+                  {legendMetrics.overallRiskLevel && RISK_LEVEL_META[legendMetrics.overallRiskLevel]
+                    ? t(RISK_LEVEL_META[legendMetrics.overallRiskLevel].labelKey, "—")
+                    : "—"}
+                </span>
+              </div>
+
+              <div className="flex flex-col leading-tight border-l border-border pl-4">
+                <span className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
+                  {t("modelResults.metrics.meanRiskScore", "Mean risk score")}
+                </span>
+                <span className="text-xs font-semibold tabular-nums text-foreground">
+                  {formatMetric(legendMetrics.overallRiskScore, 2)}
+                  <span className="font-normal text-muted-foreground"> / 5</span>
+                </span>
+                <div
+                  className="relative mt-1 h-1 w-24 rounded-full"
+                  style={{
+                    background:
+                      "linear-gradient(to right,#9ca3af,#16a34a,#eab308,#f97316,#dc2626)",
+                  }}
+                >
+                  {typeof legendMetrics.overallRiskScore === "number" && (
+                    <span
+                      className="absolute -top-[3px] h-2.5 w-2.5 -translate-x-1/2 rounded-full border-2 border-white bg-slate-800 shadow"
+                      style={{
+                        left: `${Math.min(100, Math.max(0, (legendMetrics.overallRiskScore / 5) * 100))}%`,
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+
+              <PlayerStat
+                className="border-l border-border pl-4"
+                label={t("modelResults.metrics.highVeryHighArea", "High + very high area")}
+                value={`${formatMetric(legendMetrics.affectedAreaKm2, 2)} km²`}
+                unit={
+                  typeof legendMetrics.affectedFraction === "number"
+                    ? `(${(legendMetrics.affectedFraction * 100).toFixed(1)}%)`
+                    : undefined
+                }
+              />
+              <PlayerStat
+                className="border-l border-border pl-4"
+                label={t("modelResults.metrics.analyzedArea", "Analyzed area")}
+                value={`${formatMetric(legendMetrics.totalAreaKm2, 2)} km²`}
+              />
+            </div>
+          )}
+        </div>
+      )}
+      {/* 3D terrain sits inside the map container below the shared overlays
+          (legend, overlays panel, day player), so the layout stays identical. */}
       {show3D && wms3D && (
-        <Wildfire3DView
-          wmsUrl={wms3D.wmsUrl}
-          layerName={wms3D.layerName}
-          aoi={model?.coordinates}
-          anchorEl={map?.getViewport() ?? null}
-          rightInset={model ? 288 : 0}
-          onClose={() => setShow3D(false)}
-        />
+        <Suspense fallback={null}>
+          <CesiumWildfire3DView
+            wmsUrl={wms3D.wmsUrl}
+            layerName={wms3D.layerName}
+            aoi={model?.coordinates}
+            visibleRiskLevels={visibleRiskLevels}
+          />
+        </Suspense>
       )}
       {!map && (
         <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-[2000] flex items-center justify-center">
@@ -859,9 +1210,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
       {/* Optional map overlays. */}
       {map && (
-        <div
-          className="absolute top-4 left-2 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-lg rounded-2xl overflow-hidden w-[156px] transition-all duration-300"
-        >
+        <div className="absolute top-4 left-2 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-lg rounded-2xl overflow-hidden w-[156px] transition-all duration-300">
           <div className="px-2.5 py-1.5 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border-b border-emerald-500/10 flex items-center gap-2">
             <div className="w-5 h-5 rounded-md bg-gradient-to-br from-emerald-500 to-teal-500 shadow-sm flex items-center justify-center">
               <Layers className="w-3 h-3 text-white" />
@@ -879,7 +1228,15 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
                   checked={roadsVisible}
                   onChange={(e) => setRoadsVisible(e.target.checked)}
                 />
-                <svg className="absolute w-2 h-2 text-white opacity-0 peer-checked:opacity-100 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <svg
+                  className="absolute w-2 h-2 text-white opacity-0 peer-checked:opacity-100 pointer-events-none"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
+                </svg>
               </div>
               <Route className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-600 transition-colors" />
               <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 flex-1">
@@ -894,7 +1251,15 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
                   checked={labelsVisible}
                   onChange={(e) => setLabelsVisible(e.target.checked)}
                 />
-                <svg className="absolute w-2 h-2 text-white opacity-0 peer-checked:opacity-100 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <svg
+                  className="absolute w-2 h-2 text-white opacity-0 peer-checked:opacity-100 pointer-events-none"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
+                </svg>
               </div>
               <MapPin className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-600 transition-colors" />
               <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 flex-1">
@@ -925,7 +1290,15 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
                   checked={allRiskLevelsVisible}
                   onChange={(e) => setAllRiskLevelsVisible(e.target.checked)}
                 />
-                <svg className="absolute w-2 h-2 text-white opacity-0 peer-checked:opacity-100 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <svg
+                  className="absolute w-2 h-2 text-white opacity-0 peer-checked:opacity-100 pointer-events-none"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
+                </svg>
               </div>
               <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 flex-1">
                 {t("modelResults.legend.allLevels", "All available levels")}
@@ -953,14 +1326,22 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
                       disabled={!isAvailable}
                       onChange={(e) => toggleRiskLevel(lvl.value, e.target.checked)}
                     />
-                    <svg className="absolute w-2 h-2 text-white opacity-0 peer-checked:opacity-100 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                    <svg
+                      className="absolute w-2 h-2 text-white opacity-0 peer-checked:opacity-100 pointer-events-none"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
+                    </svg>
                   </div>
                   <span
                     className="w-2.5 h-2.5 rounded-full shadow-sm"
                     style={{ backgroundColor: lvl.color, boxShadow: `0 0 6px ${lvl.color}66` }}
                   />
                   <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 flex-1">
-                    {t(`modelResults.legend.levels.${lvl.value}`, lvl.label)}
+                    {t(`modelResults.legend.levels.${lvl.id}`, lvl.label)}
                   </span>
                   <span className="text-[9px] font-bold text-slate-400">
                     {percent === null ? lvl.value : `${percent.toFixed(1)}%`}
@@ -981,15 +1362,64 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
   return (
     <Fragment>
-      <div className="h-full w-full flex flex-col bg-background overflow-hidden">
-        <MapContainer
-          modal={false}
-          showSidebar={!!model}
-          sidebar={model ? <AssessmentDetailsSidebar model={model} results={results} /> : undefined}
-          topBar={header}
-          mapHeader={mapHeader}
-          mapOverlays={mapOverlays}
-        />
+      <div className="h-full w-full flex bg-background overflow-hidden relative">
+        <div className="flex-1 h-full min-w-0" style={{ paddingRight: "var(--sidebar-width)" }}>
+          <MapContainer
+            modal={false}
+            showSidebar={false}
+            hideMapControls={show3D}
+            topBar={header}
+            mapHeader={mapHeader}
+            mapOverlays={mapOverlays}
+          />
+        </div>
+        <aside className="absolute right-0 bottom-0 bg-card border-l border-border shadow-lg z-[51] w-[var(--sidebar-width)] top-0">
+          <div className="flex flex-col items-center gap-3 py-4">
+            <SidebarButton
+              icon={Mountain}
+              tooltip={show3D ? t("modelResults.layer.view2d", "2D") : t("modelResults.layer.view3d", "3D")}
+              onClick={() => setShow3D((v) => !v)}
+              isActive={show3D}
+              disabled={!wms3D}
+            />
+            {hasRiskLayers && (
+              <SidebarButton
+                icon={layerVisible ? Eye : EyeOff}
+                tooltip={layerVisible ? t("modelResults.layer.visible", "Visible") : t("modelResults.layer.hidden", "Hidden")}
+                onClick={() => setLayerVisible((v) => !v)}
+                isActive={layerVisible}
+              />
+            )}
+            {hasRiskLayers && switcherLayers.length > 1 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="relative">
+                    <SidebarButton
+                      icon={Layers2}
+                      tooltip={t("modelResults.layer.dataset", "Layer")}
+                      onClick={() => {}}
+                      isActive={true}
+                    />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent side="left" align="start" sideOffset={16} className="w-48 z-[60]">
+                  {switcherLayers.map((l) => (
+                    <DropdownMenuItem 
+                      key={l.key} 
+                      onClick={() => handleSelectLayer(l.key)}
+                      className="flex items-center justify-between cursor-pointer"
+                    >
+                      <span>{l.title}</span>
+                      {(playingFrameDate ? "risk" : selectedLayerKey) === l.key && (
+                        <Check className="w-4 h-4" />
+                      )}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
+        </aside>
       </div>
 
       <CreateWorkspaceModal

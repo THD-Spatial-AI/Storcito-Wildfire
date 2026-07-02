@@ -84,7 +84,7 @@ export const LayersSheet: React.FC<LayersSheetProps> = ({
           </SheetTrigger>
         </TooltipTrigger>
         <TooltipContent side="right">
-          <p>Layers</p>
+          <p>{t("mapLayers.tooltip", "Base Maps")}</p>
         </TooltipContent>
       </Tooltip>
       <SheetContent

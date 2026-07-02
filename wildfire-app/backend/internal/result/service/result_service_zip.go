@@ -56,7 +56,11 @@ func findResultLayers(extractDir string) []commonModels.ResultLayer {
 		}
 		title := layerTitles[key]
 		if title == "" {
-			title = strings.ToUpper(key[:1]) + key[1:]
+			if d, ok := strings.CutPrefix(key, "risk_"); ok && len(d) == 10 {
+				title = "Fire Risk " + d
+			} else {
+				title = strings.ToUpper(key[:1]) + key[1:]
+			}
 		}
 		out = append(out, commonModels.ResultLayer{
 			Key:      key,

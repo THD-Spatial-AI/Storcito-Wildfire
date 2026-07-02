@@ -14,6 +14,8 @@ interface MapContainerProps {
 	mapContainerClassName?: string;
     modal?: boolean;
     headerOffsetPx?: number;
+    /** Hide the 2D map controls (e.g. while a 3D view covers the map). */
+    hideMapControls?: boolean;
 	onDrop?: (e: React.DragEvent<HTMLDivElement>) => void;
 	onDragOver?: (e: React.DragEvent<HTMLDivElement>) => void;
 }
@@ -28,6 +30,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 	mapContainerClassName = "",
 	modal = true,
 	headerOffsetPx = 56,
+	hideMapControls = false,
 	onDrop,
 	onDragOver,
 }) => {
@@ -115,7 +118,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 									<MapLibreOverlay olMap={map} visible={isMapLibre} />
 								)}
 
-								{map && !muted && <MapControls />}
+								{map && !muted && !hideMapControls && <MapControls />}
 
 								{mapOverlays}
 							</div>

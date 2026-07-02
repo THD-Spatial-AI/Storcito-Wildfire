@@ -65,7 +65,8 @@
       "restartTour": "Restartovat prohlídku",
       "feedback": "Zpětná vazba",
       "theme": "Motiv",
-      "searchLocation": "Hledat místo"
+      "searchLocation": "Hledat místo",
+      "help": "Nápověda"
     },
     "sidebar": {
       "energySimulations": "Energetické Simulace",
@@ -892,7 +893,8 @@
     "dataLayers": {
       "title": "Datové vrstvy",
       "energySimulation": "Konečná vrstva energetické simulace"
-    }
+    },
+    "tooltip": "Základní Mapy"
   },
   "tour": {
     "product": {
@@ -1544,7 +1546,11 @@
       "region": "Region",
       "title": "Název",
       "to": "Do",
-      "updated": "Aktualizováno"
+      "updated": "Aktualizováno",
+      "windSpeed": "Rychlost větru",
+      "windDirection": "Směr větru",
+      "temperature": "Teplota",
+      "humidity": "Vlhkost"
     },
     "empty": {
       "hint": "Výstup simulace se zde zobrazí po dokončení zpracování.",
@@ -1561,7 +1567,11 @@
       "hidden": "Skryto",
       "opacity": "Průhlednost",
       "publishing": "Publikování vrstvy na GeoServer…",
-      "visible": "Viditelné"
+      "visible": "Viditelné",
+      "day": "Den",
+      "view3d": "3D Terén",
+      "view2d": "2D Mapa",
+      "playDaily": "Animovat denní mapy rizik"
     },
     "layers": {
       "labels": "Popisky a místa",
@@ -1570,7 +1580,14 @@
     },
     "legend": {
       "allLevels": "Všechny dostupné úrovně",
-      "title": "Riziko požáru"
+      "title": "Riziko požáru",
+      "levels": {
+        "very_low": "Velmi Nízké",
+        "low": "Nízké",
+        "moderate": "Střední",
+        "high": "Vysoké",
+        "very_high": "Velmi Vysoké"
+      }
     },
     "loadingModels": "Načítání modelů…",
     "loadingWorkspace": "Načítání pracovního prostoru…",
@@ -1592,7 +1609,13 @@
       "totalArea": "Analyzovaná plocha"
     },
     "selectModel": "Vyberte model",
-    "title": "Výsledky modelu"
+    "title": "Výsledky modelu",
+    "metrics": {
+      "overallRisk": "Celkové riziko",
+      "meanRiskScore": "Průměrné skóre rizika",
+      "highVeryHighArea": "Vysoká + velmi vysoká oblast",
+      "analyzedArea": "Analyzovaná oblast"
+    }
   },
   "landing": {
     "nav": {
@@ -1756,5 +1779,32 @@
       "riskDistribution": "Rozložení Rizika",
       "trendAnalysis": "Analýza Trendů Rizika"
     }
+  },
+  "tooltips": {
+    "windSpeed": {
+      "title": "Rychlost větru",
+      "description": "Průměrná rychlost větru nad vybranou oblastí pro dané časové období.",
+      "example": "Vyšší rychlosti větru dodávají ohni více kyslíku a mohou rychle šířit žhavé uhlíky, čímž výrazně zvyšují rychlost šíření požáru."
+    },
+    "windDirection": {
+      "title": "Směr větru",
+      "description": "Průměrný směr větru nad vybranou oblastí, vyjádřený ve stupních a světových stranách.",
+      "example": "N (Sever), E (Východ), S (Jih), W (Západ) a mezilehlé body jako NNE (Severo-severovýchod) nebo WSW (Západo-jihozápad)."
+    },
+    "temperature": {
+      "title": "Teplota",
+      "description": "Průměrná okolní teplota nad vybranou oblastí pro dané časové období.",
+      "example": "Vysoké teploty vysušují vegetaci (paliva), což usnadňuje její vznícení a umožňuje ohni hořet intenzivněji."
+    },
+    "humidity": {
+      "title": "Relativní vlhkost",
+      "description": "Průměrná relativní vlhkost nad vybranou oblastí pro dané časové období.",
+      "example": "Nízká relativní vlhkost znamená, že vzduch je suchý, což odebírá vlhkost z vegetace a vytváří vysoce hořlavá paliva."
+    }
+  },
+  "locations": {
+    "Spain": "Španělsko",
+    "Galicia": "Galicie",
+    "Vedra": "Vedra"
   }
 }

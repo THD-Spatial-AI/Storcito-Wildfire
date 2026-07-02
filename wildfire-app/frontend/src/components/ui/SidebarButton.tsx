@@ -10,6 +10,7 @@ interface SidebarButtonProps {
   isActive?: boolean;
   dataTour?: string;
   className?: string;
+  disabled?: boolean;
 }
 
 const SidebarButton: React.FC<SidebarButtonProps> = ({
@@ -19,6 +20,7 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
   isActive = false,
   dataTour,
   className = "",
+  disabled = false,
 }) => {
   return (
     <div className="relative group">
@@ -27,9 +29,10 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
           <button
             onClick={onClick}
             data-tour={dataTour}
+            disabled={disabled}
             className={cn(
               "cursor-pointer w-9 h-9 rounded-button flex items-center justify-center transition-all duration-normal relative",
-              "hover:bg-muted",
+              "hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed",
               className
             )}
           >

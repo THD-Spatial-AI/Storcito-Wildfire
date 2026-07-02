@@ -510,6 +510,31 @@ func (s *WebserviceService) GetAvailableDataCoverage(ctx context.Context) (map[s
 	return result, nil
 }
 
+func (s *WebserviceService) GetFWIAreaSummary(ctx context.Context, payload map[string]interface{}) (map[string]interface{}, error) {
+	var instance models.WebserviceInstance
+	if err := s.db.
+		Where("status = ?", models.StatusActive).
+		Order("available DESC, current_concurrency ASC, id ASC").
+		First(&instance).Error; err != nil {
+		return nil, err
+	}
+
+	url := buildURL(&instance, "/fwi/area")
+	status, _, respBytes, err := s.doJSON(ctx, http.MethodPost, url, payload)
+	if err != nil {
+		return nil, err
+	}
+	if status < 200 || status >= 300 {
+		return nil, fmt.Errorf("request failed with status %d: %s", status, string(respBytes))
+	}
+
+	var result map[string]interface{}
+	if err := json.Unmarshal(respBytes, &result); err != nil {
+		return nil, fmt.Errorf("invalid FWI area response: %w", err)
+	}
+	return result, nil
+}
+
 func (s *WebserviceService) ReleaseInstance(ctx context.Context, id uint) error {
 	log := logger.ForComponent("webservice")
 

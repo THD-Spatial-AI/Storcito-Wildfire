@@ -34,6 +34,7 @@
 		"@types/node": "^24.0.8",
 		"@types/ol": "^6.5.3",
 		"axios": "^1.10.0",
+		"cesium": "^1.142.0",
 		"clsx": "^2.1.1",
 		"echarts": "^6.0.0",
 		"echarts-for-react": "^3.0.6",
@@ -53,8 +54,10 @@
 		"react-markdown": "^10.1.0",
 		"react-router-dom": "^7.6.3",
 		"remark-gfm": "^4.0.1",
+		"resium": "^1.23.0",
 		"tailwind-merge": "^3.3.1",
 		"tailwindcss": "^4.1.11",
+		"vite-plugin-cesium": "^1.2.23",
 		"zustand": "^5.0.6"
 	},
 	"devDependencies": {

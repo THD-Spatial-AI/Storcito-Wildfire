@@ -526,6 +526,21 @@ func (h *WebserviceHandler) GetAvailableDataCoverage(c *gin.Context) {
 	httputil.SuccessResponse(c, coverage)
 }
 
+func (h *WebserviceHandler) GetFWIAreaSummary(c *gin.Context) {
+	var payload map[string]interface{}
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		httputil.BadRequest(c, "Invalid JSON payload")
+		return
+	}
+
+	summary, err := h.service.GetFWIAreaSummary(c.Request.Context(), payload)
+	if err != nil {
+		httputil.HandleError(c, err)
+		return
+	}
+	httputil.SuccessResponse(c, summary)
+}
+
 // Heartbeat updates last_heartbeat for a webservice instance
 func (h *WebserviceHandler) Heartbeat(c *gin.Context) {
 	id, ok := httputil.ParseUintParam(c, "id", errInvalidID)

@@ -65,7 +65,8 @@
       "restartTour": "Ponownie rozpocznij wycieczkę",
       "feedback": "Opinie",
       "theme": "Motyw",
-      "searchLocation": "Wyszukaj lokalizację"
+      "searchLocation": "Wyszukaj lokalizację",
+      "help": "Pomoc"
     },
     "sidebar": {
       "energySimulations": "Symulacje Energetyczne",
@@ -892,7 +893,8 @@
     "dataLayers": {
       "title": "Warstwy danych",
       "energySimulation": "Końcowa warstwa symulacji energetycznej"
-    }
+    },
+    "tooltip": "Mapy Bazowe"
   },
   "tour": {
     "product": {
@@ -1544,7 +1546,11 @@
       "region": "Region",
       "title": "Tytuł",
       "to": "Do",
-      "updated": "Zaktualizowano"
+      "updated": "Zaktualizowano",
+      "windSpeed": "Prędkość wiatru",
+      "windDirection": "Kierunek wiatru",
+      "temperature": "Temperatura",
+      "humidity": "Wilgotność"
     },
     "empty": {
       "hint": "Wynik symulacji pojawi się tutaj po zakończeniu przetwarzania.",
@@ -1561,7 +1567,11 @@
       "hidden": "Ukryte",
       "opacity": "Krycie",
       "publishing": "Publikowanie warstwy na GeoServer…",
-      "visible": "Widoczne"
+      "visible": "Widoczne",
+      "day": "Dzień",
+      "view3d": "Teren 3D",
+      "view2d": "Mapa 2D",
+      "playDaily": "Animuj codzienne mapy ryzyka"
     },
     "layers": {
       "labels": "Etykiety i miejsca",
@@ -1570,7 +1580,14 @@
     },
     "legend": {
       "allLevels": "Wszystkie dostępne poziomy",
-      "title": "Ryzyko pożaru"
+      "title": "Ryzyko pożaru",
+      "levels": {
+        "very_low": "Bardzo Niski",
+        "low": "Niski",
+        "moderate": "Umiarkowany",
+        "high": "Wysoki",
+        "very_high": "Bardzo Wysoki"
+      }
     },
     "loadingModels": "Ładowanie modeli…",
     "loadingWorkspace": "Ładowanie obszaru roboczego…",
@@ -1592,7 +1609,13 @@
       "totalArea": "Analizowany obszar"
     },
     "selectModel": "Wybierz model",
-    "title": "Wyniki modelu"
+    "title": "Wyniki modelu",
+    "metrics": {
+      "overallRisk": "Ogólne ryzyko",
+      "meanRiskScore": "Średni wynik ryzyka",
+      "highVeryHighArea": "Obszar wysoki + bardzo wysoki",
+      "analyzedArea": "Analizowany obszar"
+    }
   },
   "landing": {
     "nav": {
@@ -1756,5 +1779,32 @@
       "riskDistribution": "Rozkład Ryzyka",
       "trendAnalysis": "Analiza Trendu Ryzyka"
     }
+  },
+  "tooltips": {
+    "windSpeed": {
+      "title": "Prędkość wiatru",
+      "description": "Średnia prędkość wiatru na wybranym obszarze w danym okresie.",
+      "example": "Wyższe prędkości wiatru dostarczają więcej tlenu do ognia i mogą szybko rozprzestrzeniać żar, znacznie zwiększając tempo rozprzestrzeniania się pożaru."
+    },
+    "windDirection": {
+      "title": "Kierunek wiatru",
+      "description": "Średni kierunek wiatru na wybranym obszarze, wyrażony w stopniach i punktach kompasu.",
+      "example": "N (Północ), E (Wschód), S (Południe), W (Zachód) oraz punkty pośrednie, takie jak NNE (Północny-Wschód) lub WSW (Zachodni-Południowy Zachód)."
+    },
+    "temperature": {
+      "title": "Temperatura",
+      "description": "Średnia temperatura otoczenia na wybranym obszarze w danym okresie.",
+      "example": "Wysokie temperatury wysuszają roślinność (paliwa), ułatwiając ich zapłon i pozwalając na bardziej intensywne palenie się ognia."
+    },
+    "humidity": {
+      "title": "Wilgotność względna",
+      "description": "Średnia wilgotność względna na wybranym obszarze w danym okresie.",
+      "example": "Niska wilgotność względna oznacza, że powietrze jest suche, co wyciąga wilgoć z roślinności, tworząc wysoce łatwopalne paliwa."
+    }
+  },
+  "locations": {
+    "Spain": "Hiszpania",
+    "Galicia": "Galicja",
+    "Vedra": "Vedra"
   }
 }

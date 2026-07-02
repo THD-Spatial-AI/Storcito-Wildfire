@@ -65,7 +65,8 @@
       "restartTour": "Tour herstarten",
       "feedback": "Feedback",
       "theme": "Thema",
-      "searchLocation": "Zoek locatie"
+      "searchLocation": "Zoek locatie",
+      "help": "Hulp"
     },
     "sidebar": {
       "energySimulations": "Energiesimulaties",
@@ -892,7 +893,8 @@
     "dataLayers": {
       "title": "Datalagen",
       "energySimulation": "Eindlaag energiesimulatie"
-    }
+    },
+    "tooltip": "Basiskaarten"
   },
   "tour": {
     "product": {
@@ -1544,7 +1546,11 @@
       "region": "Regio",
       "title": "Titel",
       "to": "Tot",
-      "updated": "Bijgewerkt"
+      "updated": "Bijgewerkt",
+      "windSpeed": "Windsnelheid",
+      "windDirection": "Windrichting",
+      "temperature": "Temperatuur",
+      "humidity": "Luchtvochtigheid"
     },
     "empty": {
       "hint": "De simulatie-uitvoer verschijnt hier zodra de verwerking is voltooid.",
@@ -1561,7 +1567,11 @@
       "hidden": "Verborgen",
       "opacity": "Dekking",
       "publishing": "Laag publiceren naar GeoServer…",
-      "visible": "Zichtbaar"
+      "visible": "Zichtbaar",
+      "day": "Dag",
+      "view3d": "3D Terrein",
+      "view2d": "2D Kaart",
+      "playDaily": "Dagelijkse risicokaarten animeren"
     },
     "layers": {
       "labels": "Labels & plaatsen",
@@ -1570,7 +1580,14 @@
     },
     "legend": {
       "allLevels": "Alle beschikbare niveaus",
-      "title": "Brandrisico"
+      "title": "Brandrisico",
+      "levels": {
+        "very_low": "Zeer Laag",
+        "low": "Laag",
+        "moderate": "Gemiddeld",
+        "high": "Hoog",
+        "very_high": "Zeer Hoog"
+      }
     },
     "loadingModels": "Modellen laden…",
     "loadingWorkspace": "Werkruimte laden…",
@@ -1592,7 +1609,13 @@
       "totalArea": "Geanalyseerd gebied"
     },
     "selectModel": "Selecteer een model",
-    "title": "Modelresultaten"
+    "title": "Modelresultaten",
+    "metrics": {
+      "overallRisk": "Algemeen risico",
+      "meanRiskScore": "Gemiddelde risicoscore",
+      "highVeryHighArea": "Hoog + zeer hoog gebied",
+      "analyzedArea": "Geanalyseerd gebied"
+    }
   },
   "landing": {
     "nav": {
@@ -1756,5 +1779,32 @@
       "riskDistribution": "Risicoverdeling",
       "trendAnalysis": "Risicotrendanalyse"
     }
+  },
+  "tooltips": {
+    "windSpeed": {
+      "title": "Windsnelheid",
+      "description": "Gemiddelde windsnelheid over het geselecteerde gebied voor de opgegeven tijdsperiode.",
+      "example": "Hogere windsnelheden leveren meer zuurstof aan het vuur en kunnen sintels snel verspreiden, wat de snelheid van de branduitbreiding aanzienlijk verhoogt."
+    },
+    "windDirection": {
+      "title": "Windrichting",
+      "description": "Gemiddelde windrichting over het geselecteerde gebied, weergegeven in graden en kompasrichtingen.",
+      "example": "N (Noord), E (Oost), S (Zuid), W (West) en tussenliggende punten zoals NNE (Noord-Noordoost) of WSW (West-Zuidwest)."
+    },
+    "temperature": {
+      "title": "Temperatuur",
+      "description": "Gemiddelde omgevingstemperatuur over het geselecteerde gebied voor de opgegeven tijdsperiode.",
+      "example": "Hoge temperaturen drogen de vegetatie (brandstoffen) uit, waardoor deze gemakkelijker ontbrandt en het vuur intenser kan branden."
+    },
+    "humidity": {
+      "title": "Relatieve Vochtigheid",
+      "description": "Gemiddelde relatieve vochtigheid over het geselecteerde gebied voor de opgegeven tijdsperiode.",
+      "example": "Een lage relatieve vochtigheid betekent dat de lucht droog is, wat vocht uit de vegetatie onttrekt en zeer brandbare brandstoffen creëert."
+    }
+  },
+  "locations": {
+    "Spain": "Spanje",
+    "Galicia": "Galicië",
+    "Vedra": "Vedra"
   }
 }
