@@ -4,32 +4,25 @@ import "cesium/Build/Cesium/Widgets/widgets.css";
 import { Plus, Minus } from "lucide-react";
 
 interface CesiumWildfire3DViewProps {
-  /** Workspace-scoped WMS endpoint (the same one the 2D viewer drapes). */
   wmsUrl: string;
-  /** GeoServer layer name to drape on the terrain (swapped by the day player). */
+  /** GeoServer layer name (swapped by the day player). */
   layerName: string;
-  /** Model AOI as a GeoJSON geometry / Feature (EPSG:4326). */
+  /** Model AOI as GeoJSON (EPSG:4326). */
   aoi?: unknown;
-  /** Which risk levels (1–5) are visible — mirrors the shared 2D legend. */
   visibleRiskLevels?: Record<number, boolean>;
-  /** Show the transparent roads reference above the risk drape. */
   roadsVisible?: boolean;
-  /** Show the places/labels reference above the risk drape. */
   labelsVisible?: boolean;
 }
 
-// Transparent-background Esri reference overlays (built for draping over
-// imagery: bold casings, no landuse fill) — kept above the risk layers so
-// infrastructure stays readable through the drape.
+// Transparent-background Esri reference overlays, kept above the risk drape.
 const ESRI_TRANSPORTATION_URL =
   "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}";
 const ESRI_PLACES_URL =
   "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}";
-// Slightly dim the risk drape while roads are shown so casings read clearly.
+// Drape alpha while roads are shown, so casings stay readable.
 const DRAPE_ALPHA_WITH_ROADS = 0.8;
 
-// Same per-level GeoServer styles the 2D viewer uses, so the legend's level
-// checkboxes control the 3D drape identically.
+// Same per-level GeoServer styles as the 2D viewer (legend checkboxes apply).
 const RISK_LEVEL_STYLES: Record<number, string> = {
   1: "fire_risk_level_1",
   2: "fire_risk_level_2",
@@ -38,9 +31,8 @@ const RISK_LEVEL_STYLES: Record<number, string> = {
   5: "fire_risk_level_5",
 };
 
-// Self-hosted quantized-mesh terrain URL (license-clean for EU/funded projects —
-// CesiumJS is Apache-2.0; we deliberately avoid Cesium ion's hosted terrain).
-// When unset, the view uses the smooth ellipsoid (still a 3D perspective).
+// Self-hosted quantized-mesh terrain (no Cesium ion — license-clean for EU
+// projects). Unset -> smooth ellipsoid fallback.
 const TERRAIN_URL = import.meta.env.VITE_CESIUM_TERRAIN_URL as string | undefined;
 
 function collectCoords(node: unknown, out: number[][]): void {
@@ -77,11 +69,7 @@ function aoiRectangle(aoi: unknown): Cesium.Rectangle | null {
   return Cesium.Rectangle.fromDegrees(minX, minY, maxX, maxY);
 }
 
-/**
- * 3D terrain view rendered INSIDE the map container, underneath the shared 2D
- * overlays (legend, overlays panel, day player all sit at higher z-index), so
- * switching to 3D keeps the exact same page layout.
- */
+/** 3D terrain view rendered inside the map container, under the shared 2D overlays. */
 export const CesiumWildfire3DView = ({
   wmsUrl,
   layerName,
@@ -95,8 +83,7 @@ export const CesiumWildfire3DView = ({
   const riskLayersRef = useRef<{ level: number; layer: Cesium.ImageryLayer }[]>([]);
   const removalTimersRef = useRef<number[]>([]);
   const [initError, setInitError] = useState<string | null>(null);
-  // Latest drape target / level visibility — read by init() in case viewer
-  // creation is deferred until the container has a size.
+  // Refs mirror the latest props for init(), which may run deferred.
   const drapeRef = useRef({ wmsUrl, layerName });
   drapeRef.current = { wmsUrl, layerName };
   const aoiRectRef = useRef<Cesium.Rectangle | null>(null);
@@ -151,8 +138,7 @@ export const CesiumWildfire3DView = ({
     }
   };
 
-  // Create the viewer once (waiting for the container to have a size — a
-  // zero-size canvas renders permanently blank).
+  // Create the viewer once the container has a size (zero-size canvas stays blank).
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -186,7 +172,7 @@ export const CesiumWildfire3DView = ({
         );
       });
 
-      // CARTO raster base (keyless, reliable) so we never depend on Ion imagery.
+      // Keyless CARTO base — no Ion imagery dependency.
       const baseLayer = new Cesium.ImageryLayer(
         new Cesium.UrlTemplateImageryProvider({
           url: "https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
@@ -250,9 +236,7 @@ export const CesiumWildfire3DView = ({
       );
       labelsLayerRef.current.show = labelsVisibleRef.current;
 
-      // Open centered on the AOI at a tilted angle: viewBoundingSphere frames
-      // the target for the given pitch/range (a hand-computed flyTo destination
-      // left the AOI at the bottom of the screen).
+      // Open centered on the AOI at a tilted angle.
       const rectangle = aoiRectangle(aoi);
       if (rectangle) {
         const sphere = Cesium.BoundingSphere.fromRectangle3D(rectangle);
@@ -260,8 +244,7 @@ export const CesiumWildfire3DView = ({
           sphere,
           new Cesium.HeadingPitchRange(0, Cesium.Math.toRadians(-40), sphere.radius * 2.6)
         );
-        // Release the lookAt transform so mouse navigation is free again.
-        viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+        viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY); // free navigation
       }
     };
 
@@ -296,18 +279,15 @@ export const CesiumWildfire3DView = ({
   useEffect(() => {
     const viewer = viewerRef.current;
     if (viewer) applyDrape(viewer);
-    // applyDrape reads drapeRef, which already holds the latest props.
   }, [wmsUrl, layerName]);
 
-  // Mirror the legend's level checkboxes onto the per-level drape layers.
   useEffect(() => {
     riskLayersRef.current.forEach(({ level, layer }) => {
       layer.show = visibleRiskLevels?.[level] ?? true;
     });
   }, [visibleRiskLevels]);
 
-  // Mirror the Overlays panel's Roads/Labels toggles; dim the drape while
-  // roads are shown so the casings stay readable.
+  // Roads/Labels toggles from the shared Overlays panel.
   useEffect(() => {
     if (roadsLayerRef.current) roadsLayerRef.current.show = roadsVisible;
     if (labelsLayerRef.current) labelsLayerRef.current.show = labelsVisible;
@@ -334,8 +314,7 @@ export const CesiumWildfire3DView = ({
         </div>
       )}
 
-      {/* Zoom controls for the 3D camera (the 2D map controls underneath
-                target the hidden OpenLayers view, so cover that spot). */}
+      {/* Zoom controls for the 3D camera (the 2D ones target the hidden OL map). */}
       <div
         className="absolute z-[6] flex flex-col overflow-hidden rounded-lg border border-border bg-white/95 shadow-lg backdrop-blur"
         style={{ top: "3.5rem", right: "calc(1rem + var(--sidebar-offset, 0rem))" }}
