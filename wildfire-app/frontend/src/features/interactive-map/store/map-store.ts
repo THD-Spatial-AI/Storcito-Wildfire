@@ -65,7 +65,7 @@ export function isMapLibreDarkLayerId(id: string): boolean {
 	return normalized === MAPLIBRE_DARK_LAYER_ID || normalized === MAPLIBRE_VOYAGER_LAYER_ID;
 }
 
-const OSM_ATTR = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+const OSM_ATTR = '© 2026, Deggendorf Institute of Technology | OpenStreetMap contributors';
 const CARTO_ATTR = '© <a href="https://carto.com/attributions">CARTO</a>';
 
 const baseLayers: BaseLayerInfo[] = [
@@ -111,8 +111,8 @@ const baseLayers: BaseLayerInfo[] = [
 		source: new XYZ({
 			url: "https://{a-d}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
 			attributions: [
-				'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-				'© <a href="https://carto.com/attributions">CARTO</a>',
+				OSM_ATTR,
+				CARTO_ATTR,
 			],
 		}),
 		accessLevel: "expert",

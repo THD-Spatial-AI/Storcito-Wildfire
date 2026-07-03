@@ -31,9 +31,8 @@ const RISK_LEVEL_STYLES: Record<number, string> = {
   5: "fire_risk_level_5",
 };
 
-// Self-hosted quantized-mesh terrain (no Cesium ion — license-clean for EU
-// projects). Unset -> smooth ellipsoid fallback.
 const TERRAIN_URL = import.meta.env.VITE_CESIUM_TERRAIN_URL as string | undefined;
+const SATELLITE_URL = import.meta.env.VITE_CESIUM_SATELLITE_URL as string | undefined;
 
 function collectCoords(node: unknown, out: number[][]): void {
   if (!node) return;
@@ -217,6 +216,18 @@ export const CesiumWildfire3DView = ({
         },
       ];
       cam.zoomEventTypes = [Cesium.CameraEventType.WHEEL, Cesium.CameraEventType.PINCH];
+
+      // Self-hosted Sentinel-2 imagery above the base (regional coverage only;
+      // CARTO stays visible outside it), below the risk drape.
+      if (SATELLITE_URL) {
+        viewer.imageryLayers.addImageryProvider(
+          new Cesium.UrlTemplateImageryProvider({
+            url: `${SATELLITE_URL}/{z}/{x}/{y}.png`,
+            maximumLevel: 14,
+            credit: "Contains modified Copernicus Sentinel data",
+          })
+        );
+      }
 
       applyDrape(viewer);
 

@@ -132,7 +132,7 @@ const ESRI_TRANSPORTATION_REFERENCE_URL =
   "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}";
 const ESRI_PLACES_REFERENCE_URL =
   "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}";
-const ESRI_ATTRIBUTION = "Sources: OpenStreetMap contributors, Esri, HERE, Garmin";
+const ESRI_ATTRIBUTION = "© 2026, Deggendorf Institute of Technology | Esri contribution";
 
 const RISK_LEVELS = [
   {

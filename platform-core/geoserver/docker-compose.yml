@@ -11,6 +11,8 @@ services:
       COMMUNITY_EXTENSIONS: ogcapi-features,ogcapi-maps,ogcapi-tiles
     volumes:
       - geoserver-data:/opt/geoserver/data_dir
+      - ./controlflow.properties:/opt/geoserver/data_dir/controlflow.properties:ro
+
       - ../../wildfire-app/backend/storage/data:/opt/geoserver/data_dir/data/results
     networks:
       - spatialhub-net
