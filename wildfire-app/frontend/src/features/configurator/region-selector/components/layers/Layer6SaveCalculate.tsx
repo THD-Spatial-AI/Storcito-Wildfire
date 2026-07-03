@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from "react";
 import { Sparkles } from "lucide-react";
+import { useTranslation } from "@/i18n";
 
 import { LayerShell } from "./shared/LayerShell";
 import type { ConfiguratorContext } from "./types";
@@ -12,27 +13,28 @@ const Row: FC<{ label: string; value: ReactNode }> = ({ label, value }) => (
 );
 
 export const Layer6SaveCalculate: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
+    const { t } = useTranslation();
     const { state, optionalLayers, allPolygonsCount, areaStats } = ctx;
     const activeMods = Object.entries(optionalLayers)
         .filter(([, v]) => v)
         .map(([k]) => k.replace(/_/g, " "));
 
     return (
-        <LayerShell purpose="Review the model setup before saving. The calculation will use the selected dates, area and data source choices.">
+        <LayerShell purpose={t("configurator.layer5.purpose", "Review the model setup before saving. The calculation will use the selected dates, area and data source choices.")}>
             <div data-tour="save-run-summary" className="space-y-3">
                 <div className="flex items-center gap-2 text-xs text-foreground">
                     <Sparkles className="w-4 h-4 text-amber-500" />
-                    Everything looks good? Hit <span className="font-semibold">Create model</span> below.
+                    {t("configurator.layer5.looksGood", "Everything looks good? Hit ")} <span className="font-semibold">{t("configurator.layer5.createModel", "Create model")}</span> {t("configurator.layer5.below", " below.")}
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-xs">
-                    <Row label="Model name" value={state.modelName} />
-                    <Row label="From" value={state.fromDate} />
-                    <Row label="To" value={state.toDate} />
-                    <Row label="Mode" value={state.calculationMode} />
-                    <Row label="Daily run" value="16:00-17:00" />
-                    <Row label="Buffer" value={`${state.bufferDistance} m`} />
-                    <Row label="Area" value={areaStats?.area ?? (allPolygonsCount > 0 ? "drawn" : "not drawn")} />
-                    <Row label="Risk components" value={activeMods.length ? activeMods.join(", ") : "core only (veg + infra)"} />
+                    <Row label={t("configurator.layer5.labels.modelName", "Model name")} value={state.modelName} />
+                    <Row label={t("configurator.layer5.labels.from", "From")} value={state.fromDate} />
+                    <Row label={t("configurator.layer5.labels.to", "To")} value={state.toDate} />
+                    <Row label={t("configurator.layer5.labels.mode", "Mode")} value={state.calculationMode} />
+                    <Row label={t("configurator.layer5.labels.dailyRun", "Daily run")} value="16:00-17:00" />
+                    <Row label={t("configurator.layer5.labels.buffer", "Buffer")} value={`${state.bufferDistance} m`} />
+                    <Row label={t("configurator.layer5.labels.area", "Area")} value={areaStats?.area ?? (allPolygonsCount > 0 ? t("configurator.layer5.drawn", "drawn") : t("configurator.layer5.notDrawn", "not drawn"))} />
+                    <Row label={t("configurator.layer5.labels.riskComponents", "Risk components")} value={activeMods.length ? activeMods.join(", ") : t("configurator.layer5.coreOnly", "core only (veg + infra)")} />
                 </div>
             </div>
         </LayerShell>

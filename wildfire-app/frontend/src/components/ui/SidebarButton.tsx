@@ -47,7 +47,7 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
             )}
           </button>
         </TooltipTrigger>
-        <TooltipContent side="right">
+        <TooltipContent side="left">
           <p>{tooltip}</p>
         </TooltipContent>
       </Tooltip>

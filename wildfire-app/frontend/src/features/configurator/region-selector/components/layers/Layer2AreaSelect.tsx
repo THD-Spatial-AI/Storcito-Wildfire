@@ -1,5 +1,6 @@
 import type { ChangeEvent, FC } from "react";
 import { AlertCircle, Download, MapPin, MapPinned, Mountain, Pencil, Ruler, UploadCloud } from "lucide-react";
+import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 import { BufferDistanceField } from "../BufferDistanceField";
@@ -21,17 +22,21 @@ const getStatusMessage = (
     isUploadMode: boolean,
     drawn: boolean,
     fileName: string | undefined,
+    t: (key: string, data?: any) => string
 ) => {
     if (hasError) return error;
     if (isUploadMode && drawn) {
-        return `GeoJSON boundary loaded${fileName ? ` from ${fileName}` : ""}.`;
+        return fileName 
+            ? t("configurator.layer2.statusUploaded", { fileName, defaultValue: `GeoJSON boundary loaded from ${fileName}.` })
+            : t("configurator.layer2.statusUploadedNoName", "GeoJSON boundary loaded.");
     }
-    if (isUploadMode) return "Upload a GeoJSON file with Polygon or MultiPolygon geometry.";
-    if (drawn) return "Area defined. You can keep adjusting it or move on.";
-    return "Click on the map to draw your area. Close the polygon to finish.";
+    if (isUploadMode) return t("configurator.layer2.statusUploadPrompt", "Upload a GeoJSON file with Polygon or MultiPolygon geometry.");
+    if (drawn) return t("configurator.layer2.statusDrawn", "Area defined. You can keep adjusting it or move on.");
+    return t("configurator.layer2.statusDrawPrompt", "Click on the map to draw your area. Close the polygon to finish.");
 };
 
 export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
+    const { t } = useTranslation();
     const { state, actions, allPolygonsCount, areaStats } = ctx;
     const drawn = allPolygonsCount > 0;
     const isUploadMode = state.areaInputMode === "upload";
@@ -44,6 +49,7 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
         isUploadMode,
         drawn,
         state.uploadedGeoJsonName,
+        t
     );
 
     const handleUploadChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -98,25 +104,25 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
 
     return (
         <LayerShell
-            purpose="Optionally upload a DTM to see its coverage, then draw inside it — or just draw on the bundled data."
-            nextStepHint="Next we'll validate the selected area and model inputs."
+            purpose={t("configurator.layer2.purpose", "Optionally upload a DTM to see its coverage, then draw inside it — or just draw on the bundled data.")}
+            nextStepHint={t("configurator.layer2.nextStepHint", "Next we'll validate the selected area and model inputs.")}
         >
             <div className="mb-3 rounded-lg border border-border bg-muted/30 p-2.5">
                 <FileUploadField
-                    label="Terrain model (DTM)"
+                    label={t("configurator.layer2.terrainModel", "Terrain model (DTM)")}
                     accept=".tif,.tiff"
-                    hint="Optional GeoTIFF (.tif) — its coverage is shown on the map"
-                    info="A Digital Terrain Model — a GeoTIFF where each pixel is the ground elevation. Upload it first to see its coverage outline on the map, then draw your area inside it. Used to derive slope/aspect and as the spatial reference grid. If omitted, the bundled regional terrain is used."
+                    hint={t("configurator.layer2.dtmHint", "Optional GeoTIFF (.tif) — its coverage is shown on the map")}
+                    info={t("configurator.layer2.dtmInfo", "A Digital Terrain Model — a GeoTIFF where each pixel is the ground elevation. Upload it first to see its coverage outline on the map, then draw your area inside it. Used to derive slope/aspect and as the spatial reference grid. If omitted, the bundled regional terrain is used.")}
                     icon={Mountain}
                     fileName={ctx.state.dtmName}
                     error={ctx.state.dtmError}
                     processing={ctx.state.dtmProcessing}
-                    processingLabel="Reading DTM coverage…"
+                    processingLabel={t("configurator.layer2.readingDtm", "Reading DTM coverage…")}
                     onSelect={(f) => ctx.actions.setDtmFile(f)}
                 />
                 {ctx.state.dtmFootprint && !ctx.state.dtmProcessing && (
                     <p className="mt-1.5 flex items-center gap-1 text-[11px] leading-snug text-emerald-600 dark:text-emerald-400">
-                        <MapPinned className="h-3 w-3 shrink-0" /> Coverage shown on the map — draw your area inside the outline.
+                        <MapPinned className="h-3 w-3 shrink-0" /> {t("configurator.layer2.coverageShown", "Coverage shown on the map — draw your area inside the outline.")}
                     </p>
                 )}
             </div>
@@ -128,7 +134,7 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                     className={modeButtonClass(isDrawMode)}
                 >
                     <Pencil className="h-3 w-3 shrink-0" />
-                    <span className="text-[11px] font-semibold leading-tight whitespace-nowrap">Draw area</span>
+                    <span className="text-[11px] font-semibold leading-tight whitespace-nowrap">{t("configurator.layer2.drawArea", "Draw area")}</span>
                 </button>
 
                 <label
@@ -136,7 +142,7 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                     className={cn(modeButtonClass(isUploadMode), "cursor-pointer")}
                 >
                     <UploadCloud className="h-3 w-3 shrink-0" />
-                    <span className="text-[11px] font-semibold leading-tight whitespace-nowrap">Upload GeoJSON</span>
+                    <span className="text-[11px] font-semibold leading-tight whitespace-nowrap">{t("configurator.layer2.uploadGeoJson", "Upload GeoJSON")}</span>
                     <input
                         type="file"
                         accept=".geojson,.json,application/geo+json,application/json"
@@ -148,9 +154,9 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
 
             <div className="flex items-center justify-between gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-3 py-2 text-xs">
                 <div className="min-w-0">
-                    <p className="font-semibold text-foreground">Not sure about the format?</p>
+                    <p className="font-semibold text-foreground">{t("configurator.layer2.notSureFormat", "Not sure about the format?")}</p>
                     <p className="text-muted-foreground leading-snug">
-                        Polygon or MultiPolygon, WGS84 (EPSG:4326), <code className="font-mono">[lon, lat]</code> order.
+                        {t("configurator.layer2.formatDesc", "Polygon or MultiPolygon, WGS84 (EPSG:4326), [lon, lat] order.")}
                     </p>
                 </div>
                 <button
@@ -159,7 +165,7 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                     className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-foreground bg-foreground px-2.5 py-1.5 text-[11px] font-semibold text-background transition-colors hover:bg-foreground/90"
                 >
                     <Download className="h-3 w-3" />
-                    Sample
+                    {t("configurator.layer2.sample", "Sample")}
                 </button>
             </div>
 
@@ -181,26 +187,26 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
             <div className="rounded-lg border border-border bg-card overflow-hidden" data-tour="area-summary">
                 <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-muted/30">
                     <MapPin className="w-3.5 h-3.5 text-foreground" />
-                    <span className="text-xs font-semibold text-foreground">Area summary</span>
+                    <span className="text-xs font-semibold text-foreground">{t("configurator.layer2.areaSummary", "Area summary")}</span>
                     {areaStats && areaStats.regions > 1 && (
                         <span className="text-[10px] font-medium px-1.5 py-0.5 bg-muted rounded ml-auto">
-                            {areaStats.regions} regions
+                            {t("configurator.layer2.regions", `${areaStats.regions} regions`, { count: areaStats.regions })}
                         </span>
                     )}
                 </div>
                 <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 px-3 py-2.5 text-xs">
-                    <SummaryRow label="Status">
+                    <SummaryRow label={t("configurator.layer2.status", "Status")}>
                         <span
                             className={cn(
                                 "font-medium",
                                 drawn ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground",
                             )}
                         >
-                            {drawn ? (isUploadMode ? "Uploaded" : "Drawn") : "Not set"}
+                            {drawn ? (isUploadMode ? t("configurator.layer2.statusUploadedLabel", "Uploaded") : t("configurator.layer2.statusDrawnLabel", "Drawn")) : t("configurator.layer2.statusNotSet", "Not set")}
                         </span>
                     </SummaryRow>
-                    <SummaryRow label="Area">{areaStats?.area ?? "—"}</SummaryRow>
-                    <SummaryRow label="Perimeter">{areaStats?.perimeter ?? "—"}</SummaryRow>
+                    <SummaryRow label={t("configurator.layer2.area", "Area")}>{areaStats?.area ?? "—"}</SummaryRow>
+                    <SummaryRow label={t("configurator.layer2.perimeter", "Perimeter")}>{areaStats?.perimeter ?? "—"}</SummaryRow>
                 </div>
             </div>
         </LayerShell>

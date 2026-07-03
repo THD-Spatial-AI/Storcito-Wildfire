@@ -5,6 +5,7 @@ import GeoJSON from "ol/format/GeoJSON";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style, Text } from "ol/style";
+import { useTranslation } from "@/i18n";
 
 import {
     webservicesService,
@@ -64,7 +65,7 @@ const COVERAGE_CARD_ANIMATION_CSS = `
 }
 `;
 
-const createCoverageStyle = () => new Style({
+const createCoverageStyle = (t: (key: string, data?: any) => string) => new Style({
     fill: new Fill({ color: "rgba(15, 23, 42, 0.10)" }),
     stroke: new Stroke({
         color: "rgba(15, 23, 42, 0.95)",
@@ -72,7 +73,7 @@ const createCoverageStyle = () => new Style({
         lineDash: [10, 6],
     }),
     text: new Text({
-        text: "Wildfire data available",
+        text: t("configurator.coverage.availableData", "Wildfire data available"),
         font: "600 13px Inter, system-ui, sans-serif",
         fill: new Fill({ color: "#0f172a" }),
         stroke: new Stroke({ color: "rgba(255,255,255,0.92)", width: 4 }),
@@ -96,9 +97,10 @@ function getMainFootprintShare(coverage: StorcitoCoverageFeatureCollection | nul
 }
 
 export const StorcitoCoverageOverlay = ({ map }: StorcitoCoverageOverlayProps) => {
+    const { t } = useTranslation();
     const [coverage, setCoverage] = useState<StorcitoCoverageFeatureCollection | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const coverageStyle = useMemo(() => createCoverageStyle(), []);
+    const coverageStyle = useMemo(() => createCoverageStyle(t), [t]);
 
     useEffect(() => {
         let cancelled = false;
@@ -112,7 +114,7 @@ export const StorcitoCoverageOverlay = ({ map }: StorcitoCoverageOverlayProps) =
             } catch {
                 if (!cancelled) {
                     setCoverage(null);
-                    setError("Coverage unavailable");
+                    setError(t("configurator.coverage.unavailable", "Coverage unavailable"));
                 }
             }
         })();
@@ -162,16 +164,16 @@ export const StorcitoCoverageOverlay = ({ map }: StorcitoCoverageOverlayProps) =
                     </div>
                     <div className="min-w-0 flex-1">
                         <div className="font-semibold leading-tight text-slate-950">
-                            {coverage ? "Wildfire data coverage" : error}
+                            {coverage ? t("configurator.coverage.title", "Wildfire data coverage") : error}
                         </div>
                         {coverage && (
                             <div className="mt-1 flex flex-wrap gap-1.5">
                                 <span className="rounded-full border border-slate-300 bg-slate-900/5 px-2 py-0.5 text-[10px] font-medium text-slate-700">
-                                    Exact raster footprint
+                                    {t("configurator.coverage.exactFootprint", "Exact raster footprint")}
                                 </span>
                                 {footprintShare && (
                                     <span className="rounded-full border border-slate-200 bg-white/80 px-2 py-0.5 text-[10px] font-medium text-slate-600">
-                                        {footprintShare}
+                                        {t("configurator.coverage.mainFootprint", { percent: parseInt(footprintShare) || 0, defaultValue: footprintShare })}
                                     </span>
                                 )}
                             </div>
@@ -207,8 +209,8 @@ export const StorcitoCoverageOverlay = ({ map }: StorcitoCoverageOverlayProps) =
                             <div className="absolute bottom-7 right-5 h-5 w-8 rounded-md border border-white/80 bg-white/95 shadow-sm" />
                             <span className="absolute left-3 top-3 h-2 w-2 rounded-full bg-slate-900 shadow-[0_0_0_4px_rgba(15,23,42,0.15)]" />
                             <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[9px] font-semibold text-slate-700">
-                                <span>Data</span>
-                                <span className="text-slate-600">No data</span>
+                                <span>{t("configurator.coverage.data", "Data")}</span>
+                                <span className="text-slate-600">{t("configurator.coverage.noData", "No data")}</span>
                             </div>
                         </div>
 
@@ -216,18 +218,18 @@ export const StorcitoCoverageOverlay = ({ map }: StorcitoCoverageOverlayProps) =
                             <div className="flex gap-2">
                                 <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-900" />
                                 <div>
-                                    <div className="font-medium text-slate-950">Use shaded areas</div>
+                                    <div className="font-medium text-slate-950">{t("configurator.coverage.useShaded", "Use shaded areas")}</div>
                                     <div className="text-slate-600">
-                                        Required wildfire inputs are available{dateRange ? ` for ${dateRange}` : ""}.
+                                        {dateRange ? t("configurator.coverage.requiredAvailableDates", `Required wildfire inputs are available for ${dateRange}.`, { dates: dateRange }) : t("configurator.coverage.requiredAvailable", "Required wildfire inputs are available.")}
                                     </div>
                                 </div>
                             </div>
                             <div className="flex gap-2">
                                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600" />
                                 <div>
-                                    <div className="font-medium text-slate-950">Avoid blank gaps</div>
+                                    <div className="font-medium text-slate-950">{t("configurator.coverage.avoidBlank", "Avoid blank gaps")}</div>
                                     <div className="text-slate-600">
-                                        Blank areas have no valid source raster data for calculation.
+                                        {t("configurator.coverage.blankDesc", "Blank areas have no valid source raster data for calculation.")}
                                     </div>
                                 </div>
                             </div>

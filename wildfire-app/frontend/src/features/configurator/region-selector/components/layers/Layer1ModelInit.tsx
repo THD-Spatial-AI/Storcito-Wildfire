@@ -23,8 +23,8 @@ function getStaticDateStatus(
     if (staticDatesError) return staticDatesError;
     if (isLoadingStaticDates) return t("configurator.layer1.staticLoading", "Loading available static dates...");
     if (availableStaticDates.length === 0) return t("configurator.layer1.staticEmpty", "No static dates available.");
-    if (availableStaticDates.length === 1) return t("configurator.layer1.staticHottest", { date: availableStaticDates[0] }, `Highest-temperature static date: ${availableStaticDates[0]}`);
-    return t("configurator.layer1.staticRange", { start: availableStaticDates[0], end: availableStaticDates.at(-1) }, `Available static dates: ${availableStaticDates[0]} to ${availableStaticDates.at(-1)}`);
+    if (availableStaticDates.length === 1) return t("configurator.layer1.staticHottest", { date: availableStaticDates[0], defaultValue: `Highest-temperature static date: ${availableStaticDates[0]}` });
+    return t("configurator.layer1.staticRange", { start: availableStaticDates[0], end: availableStaticDates.at(-1), defaultValue: `Available static dates: ${availableStaticDates[0]} to ${availableStaticDates.at(-1)}` });
 }
 
 function formatDateValue(value: { year: number; month: number; day: number }) {
@@ -44,13 +44,13 @@ function getDynamicDateStatus(
     if (isLoadingDynamicDates) return t("configurator.layer1.dynamicLoading", "Loading available dynamic dates...");
     if (availableDynamicDates.length === 0) return t("configurator.layer1.dynamicEmpty", "No dynamic dates available.");
     if (fromDate && toDate && dateRangeHasOnlyAvailableDates(fromDate, toDate, availableDynamicDates)) {
-        if (days === 1) return t("configurator.layer1.dynamicSelectedOne", { start: fromDate, end: toDate }, `Selected range: ${fromDate} to ${toDate} (1 day).`);
-        return t("configurator.layer1.dynamicSelected", { start: fromDate, end: toDate, days }, `Selected range: ${fromDate} to ${toDate} (${days} days).`);
+        if (days === 1) return t("configurator.layer1.dynamicSelectedOne", { start: fromDate, end: toDate, defaultValue: `Selected range: ${fromDate} to ${toDate} (1 day).` });
+        return t("configurator.layer1.dynamicSelected", { start: fromDate, end: toDate, days, defaultValue: `Selected range: ${fromDate} to ${toDate} (${days} days).` });
     }
     if (fromDate || toDate) {
-        return t("configurator.layer1.dynamicSelectInside", { start: availableDynamicDates[0], end: availableDynamicDates.at(-1) }, `Select a range inside available dynamic dates: ${availableDynamicDates[0]} to ${availableDynamicDates.at(-1)}`);
+        return t("configurator.layer1.dynamicSelectInside", { start: availableDynamicDates[0], end: availableDynamicDates.at(-1), defaultValue: `Select a range inside available dynamic dates: ${availableDynamicDates[0]} to ${availableDynamicDates.at(-1)}` });
     }
-    return t("configurator.layer1.dynamicAvailable", { start: availableDynamicDates[0], end: availableDynamicDates.at(-1) }, `Available dynamic dates: ${availableDynamicDates[0]} to ${availableDynamicDates.at(-1)}`);
+    return t("configurator.layer1.dynamicAvailable", { start: availableDynamicDates[0], end: availableDynamicDates.at(-1), defaultValue: `Available dynamic dates: ${availableDynamicDates[0]} to ${availableDynamicDates.at(-1)}` });
 }
 
 interface StaticDateDropdownProps {

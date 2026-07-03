@@ -233,11 +233,11 @@ export const LayerStepper: FC<LayerStepperProps> = ({
             case 2:
                 if (allPolygonsCount === 0) {
                     return state.areaInputMode === "upload"
-                        ? "Upload a GeoJSON boundary file or switch back to draw."
-                        : "Draw an area on the map to continue.";
+                        ? t("configurator.layer2.blockingUploadGeoJson", "Upload a GeoJSON boundary file or switch back to draw.")
+                        : t("configurator.layer2.blockingDrawArea", "Draw an area on the map to continue.");
                 }
                 if (state.areaInputMode === "upload" && !state.uploadedGeoJsonName) {
-                    return "Upload a GeoJSON boundary file or switch back to draw.";
+                    return t("configurator.layer2.blockingUploadGeoJson", "Upload a GeoJSON boundary file or switch back to draw.");
                 }
                 return null;
             case 3:
@@ -378,7 +378,7 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                     </span>
                     <div className="min-w-0">
                         <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-                            {t("configurator.stepper.stepOf", { step, total: LAYER_COUNT }, `Step ${step} of ${LAYER_COUNT}`)}
+                            {t("configurator.stepper.stepOf", `Step ${step} of ${LAYER_COUNT}`, { step, total: LAYER_COUNT })}
                         </div>
                         <h2 className="truncate text-base font-semibold leading-tight text-foreground">
                             {t(currentLayer.titleKey, currentLayer.title)}

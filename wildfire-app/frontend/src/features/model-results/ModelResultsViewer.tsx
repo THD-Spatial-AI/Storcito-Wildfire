@@ -43,7 +43,7 @@ import { get as getProj, transformExtent } from "ol/proj";
 import proj4 from "proj4";
 import { register as registerProj4 } from "ol/proj/proj4";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Tooltip, TooltipContent, TooltipTrigger } from "@spatialhub/ui";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@spatialhub/ui";
 
 import axios from "@/lib/axios";
 import { useDocumentTitle } from "@/hooks/use-document-title";
@@ -126,7 +126,10 @@ const FIRE_RISK_STYLE_LOW = "fire_risk_level_2";
 const FIRE_RISK_STYLE_MODERATE = "fire_risk_level_3";
 const FIRE_RISK_STYLE_HIGH = "fire_risk_level_4";
 const FIRE_RISK_STYLE_VERY_HIGH = "fire_risk_level_5";
-const ESRI_TRANSPORTATION_REFERENCE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
+// Transparent-background transportation overlay (roads with dark casings, no
+// landuse fill) — readable over the risk raster without blend-mode tricks.
+const ESRI_TRANSPORTATION_REFERENCE_URL =
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}";
 const ESRI_PLACES_REFERENCE_URL =
   "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}";
 const ESRI_ATTRIBUTION = "Sources: OpenStreetMap contributors, Esri, HERE, Garmin";
@@ -762,16 +765,15 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     const labelsOpacity = isDarkBaseLayer
       ? MAP_REFERENCE_DARK_OPACITY
       : MAP_REFERENCE_LIGHT_LABELS_OPACITY;
-    const roadsClassName = isDarkBaseLayer
-      ? "ol-layer ol-visible-in-maplibre mix-blend-lighten invert hue-rotate-180 contrast-125"
-      : "ol-layer ol-visible-in-maplibre mix-blend-multiply";
+    // The overlay has a transparent background, so it needs no blending.
+    const roadsClassName = "ol-layer ol-visible-in-maplibre";
 
     const roadsLayer = new TileLayer({
       source: new XYZ({
         url: ESRI_TRANSPORTATION_REFERENCE_URL,
         attributions: ESRI_ATTRIBUTION,
         crossOrigin: "anonymous",
-        maxZoom: 20,
+        maxZoom: 19,
       }),
       opacity: roadsOpacity,
       className: roadsClassName,
@@ -996,21 +998,15 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
             </div>
           )}
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                onClick={() => loadData()}
-                className="h-8 w-8 inline-flex items-center justify-center border border-border bg-card hover:bg-muted rounded-lg transition-colors"
-                aria-label={t("common.refresh", "Refresh")}
-              >
-                <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">
-              <p>{t("common.refresh", "Refresh")}</p>
-            </TooltipContent>
-          </Tooltip>
+          <button
+            type="button"
+            onClick={() => loadData()}
+            className="h-8 px-3 inline-flex items-center gap-2 border border-border bg-card hover:bg-muted rounded-lg transition-colors text-xs font-medium text-foreground"
+            aria-label={t("common.refresh", "Refresh")}
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+            {t("common.refresh", "Refresh")}
+          </button>
         </div>
       </div>
     </header>
@@ -1223,6 +1219,8 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
             layerName={wms3D.layerName}
             aoi={model?.coordinates}
             visibleRiskLevels={visibleRiskLevels}
+            roadsVisible={roadsVisible}
+            labelsVisible={labelsVisible}
           />
         </Suspense>
       )}
@@ -1341,7 +1339,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
       {/* Risk legend */}
       {hasRiskLayers && (
-        <div className="absolute bottom-4 left-2 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-lg rounded-2xl overflow-hidden w-[156px] transition-all duration-300">
+        <div className="absolute bottom-10 left-2 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-lg rounded-2xl overflow-hidden w-[156px] transition-all duration-300">
           <div className="px-2.5 py-1.5 bg-gradient-to-r from-orange-500/10 to-red-500/10 border-b border-orange-500/10 flex items-center gap-2">
             <div className="w-5 h-5 rounded-md bg-gradient-to-br from-orange-500 to-red-500 shadow-sm flex items-center justify-center">
               <Layers className="w-3 h-3 text-white" />
@@ -1446,7 +1444,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
           <div className="flex flex-col items-center gap-3 py-4">
             <SidebarButton
               icon={Mountain}
-              tooltip={show3D ? t("modelResults.layer.view2d", "2D") : t("modelResults.layer.view3d", "3D")}
+              tooltip={show3D ? t("modelResults.layer.viewMap", "Map") : t("modelResults.layer.viewTerrain", "Terrain")}
               onClick={() => setShow3D((v) => !v)}
               isActive={show3D}
               disabled={!wms3D}

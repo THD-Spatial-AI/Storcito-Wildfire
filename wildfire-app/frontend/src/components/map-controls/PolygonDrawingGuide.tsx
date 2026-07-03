@@ -119,8 +119,8 @@ export const PolygonDrawingGuide: FC<PolygonDrawingGuideProps> = ({
 			<div
 				className="absolute z-40 animate-in slide-in-from-right-2 fade-in duration-300 flex flex-col"
 				style={{
-					top: "10rem",
-					maxHeight: "calc(100vh - 14rem)",
+					top: "14rem",
+					maxHeight: "calc(100vh - 18rem)",
 					right: "calc(1rem + var(--sidebar-offset, 0rem))"
 				}}
 			>
