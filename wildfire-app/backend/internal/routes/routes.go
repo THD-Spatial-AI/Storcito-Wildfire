@@ -140,6 +140,7 @@ func RegisterProtected(r *gin.Engine, deps Deps) {
 
 func registerFrontend(r *gin.Engine) {
 	r.Static("/assets", "./www/assets")
+	r.Static("/cesium", "./www/cesium")
 	r.Static("/images", "./www/images")
 	r.StaticFile("/vite.svg", "./www/vite.svg")
 
