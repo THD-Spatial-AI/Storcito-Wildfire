@@ -127,13 +127,23 @@ export const CesiumWildfire3DView = ({
     });
     if (roadsLayerRef.current) viewer.imageryLayers.raiseToTop(roadsLayerRef.current);
     if (labelsLayerRef.current) viewer.imageryLayers.raiseToTop(labelsLayerRef.current);
+    // Keep the previous day's drape until the new tiles are actually loaded
+    // (queue drained), so animation frames never show a half-loaded mix.
     if (previous.length > 0) {
-      const timer = window.setTimeout(() => {
+      let done = false;
+      let unsubscribe: (() => void) | null = null;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        unsubscribe?.();
         if (!viewer.isDestroyed()) {
           previous.forEach(({ layer }) => viewer.imageryLayers.remove(layer, true));
         }
-      }, 1500);
-      removalTimersRef.current.push(timer);
+      };
+      unsubscribe = viewer.scene.globe.tileLoadProgressEvent.addEventListener((queued: number) => {
+        if (queued === 0) finish();
+      });
+      removalTimersRef.current.push(window.setTimeout(finish, 8000));
     }
   };
 
@@ -191,6 +201,7 @@ export const CesiumWildfire3DView = ({
         fullscreenButton: false,
         infoBox: false,
         selectionIndicator: false,
+        useBrowserRecommendedResolution: false,
         terrain,
       });
       viewerRef.current = viewer;
@@ -222,8 +233,8 @@ export const CesiumWildfire3DView = ({
       if (SATELLITE_URL) {
         viewer.imageryLayers.addImageryProvider(
           new Cesium.UrlTemplateImageryProvider({
-            url: `${SATELLITE_URL}/{z}/{x}/{y}.png`,
-            maximumLevel: 14,
+            url: `${SATELLITE_URL}/{z}/{x}/{y}.webp`,
+            maximumLevel: 15,
             credit: "Contains modified Copernicus Sentinel data",
           })
         );
@@ -235,6 +246,7 @@ export const CesiumWildfire3DView = ({
       roadsLayerRef.current = viewer.imageryLayers.addImageryProvider(
         new Cesium.UrlTemplateImageryProvider({
           url: ESRI_TRANSPORTATION_URL,
+          maximumLevel: 19,
           credit: "Esri, HERE, Garmin",
         })
       );
@@ -242,6 +254,7 @@ export const CesiumWildfire3DView = ({
       labelsLayerRef.current = viewer.imageryLayers.addImageryProvider(
         new Cesium.UrlTemplateImageryProvider({
           url: ESRI_PLACES_URL,
+          maximumLevel: 19,
           credit: "Esri, HERE, Garmin",
         })
       );
