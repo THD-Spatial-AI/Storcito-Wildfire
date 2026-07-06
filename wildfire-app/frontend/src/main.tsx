@@ -11,7 +11,7 @@ initI18n({ storageKey: 'wildfire-app_language' });
 
 createRoot(document.getElementById("root")!).render(
   <FeedbackOverlay
-    apiUrl={import.meta.env.VITE_FEEDBACK_API_URL ?? "http://localhost:9000"}
+    apiUrl={import.meta.env.VITE_FEEDBACK_API_URL ?? "http://10.1.66.52:9000"}
     workshopToken={import.meta.env.VITE_WORKSHOP_TOKEN ?? ""}
     workshopTag={import.meta.env.VITE_WORKSHOP_TAG ?? ""}
   >
