@@ -17,7 +17,7 @@ const ALERT_ICONS = {
   info: <MessageCircle className="w-5 h-5" />,
 };
 
-export const Alert: React.FC<{
+const Alert: React.FC<{
   severity: keyof typeof ALERT_STYLES;
   children: React.ReactNode;
   onClose?: () => void;

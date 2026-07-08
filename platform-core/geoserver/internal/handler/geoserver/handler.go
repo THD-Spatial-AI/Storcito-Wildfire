@@ -103,6 +103,32 @@ func (h *Handler) SampleDistribution(c *gin.Context) {
 	})
 }
 
+type dailyDistributionRequest struct {
+	SampleCount int `json:"sample_count"`
+}
+
+// SampleDailyDistributions returns one class histogram per daily risk layer.
+func (h *Handler) SampleDailyDistributions(c *gin.Context) {
+	resultID, ok := parseUintParam(c, "id")
+	if !ok {
+		return
+	}
+
+	var req dailyDistributionRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	}
+
+	days, err := h.service.SampleDailyDistributions(c.Request.Context(), resultID, req.SampleCount)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"days": days})
+}
+
 // SampleGrid returns positioned raster samples for frontend geo charts.
 func (h *Handler) SampleGrid(c *gin.Context) {
 	resultID, ok := parseUintParam(c, "id")

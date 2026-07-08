@@ -1,6 +1,11 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { useTranslation } from "@/i18n";
-import { AlertCircle, ArrowLeftRight, Flame, Loader2 } from "lucide-react";
+import { AlertCircle, ArrowLeftRight, Flame, Loader2, Maximize2, Minimize2 } from "lucide-react";
+import {
+  PlayPauseButton,
+  PlayerStat,
+  formatFrameDate,
+} from "@/features/model-results/components/DailyPlayerControls";
 
 import "ol/ol.css";
 import OLMap from "ol/Map";
@@ -36,12 +41,27 @@ interface LayerBounds {
   crs?: string;
 }
 
+interface AvailableLayer {
+  key: string;
+  title: string;
+  layer_name: string;
+}
+
 interface LayerInfo {
   wms_url: string;
   layer_name: string;
   status: string;
   bounds?: LayerBounds;
+  available_layers?: AvailableLayer[];
 }
+
+// Dynamic runs publish one risk map per day (risk_<date> layers).
+const DAILY_FRAME_KEY = /^risk_\d{4}-\d{2}-\d{2}$/;
+
+const extractDailyFrames = (info: LayerInfo): AvailableLayer[] =>
+  (info.available_layers ?? [])
+    .filter((l) => DAILY_FRAME_KEY.test(l.key))
+    .sort((a, b) => a.key.localeCompare(b.key));
 
 const EPSG_32629 = "EPSG:32629";
 const FIRE_RISK_DEFAULT_OPACITY = 0.65;
@@ -126,6 +146,64 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
   const [leftExtent, setLeftExtent] = useState<number[] | null>(null);
   const [rightExtent, setRightExtent] = useState<number[] | null>(null);
 
+  // ---------- daily frame player (same behaviour as the results viewer) ----------
+  const [leftFrames, setLeftFrames] = useState<AvailableLayer[]>([]);
+  const [rightFrames, setRightFrames] = useState<AvailableLayer[]>([]);
+  // null = the run's overall risk map, as loaded.
+  const [frameIndex, setFrameIndex] = useState<number | null>(null);
+  const [playing, setPlaying] = useState(false);
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const frameCount = Math.max(leftFrames.length, rightFrames.length);
+  const frameForSide = (frames: AvailableLayer[], index: number | null): AvailableLayer | null =>
+    index === null || frames.length === 0 ? null : frames[index % frames.length];
+  const leftFrame = frameForSide(leftFrames, frameIndex);
+  const rightFrame = frameForSide(rightFrames, frameIndex);
+
+  // Swap the WMS layer in place so frames advance without the maps jumping.
+  useEffect(() => {
+    if (leftFrame) leftLayerRef.current?.getSource()?.updateParams({ LAYERS: leftFrame.layer_name });
+  }, [leftFrame]);
+  useEffect(() => {
+    if (rightFrame) rightLayerRef.current?.getSource()?.updateParams({ LAYERS: rightFrame.layer_name });
+  }, [rightFrame]);
+
+  useEffect(() => {
+    if (!playing) return;
+    if (frameCount < 2) {
+      setPlaying(false);
+      return;
+    }
+    const advance = () => setFrameIndex((prev) => ((prev ?? -1) + 1) % frameCount);
+    advance();
+    const id = window.setInterval(advance, 2000);
+    return () => clearInterval(id);
+  }, [playing, frameCount]);
+
+  // ---------- fullscreen ----------
+  useEffect(() => {
+    const onChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+      // OL needs a size refresh once the container has its fullscreen dimensions.
+      window.setTimeout(() => {
+        leftMapRef.current?.updateSize();
+        rightMapRef.current?.updateSize();
+      }, 100);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) {
+      void document.exitFullscreen();
+    } else {
+      void containerRef.current?.requestFullscreen();
+    }
+  };
+
   const fitView = (map: OLMap | null, extent: number[]) => {
     if (!map) return;
     syncingRef.current = true;
@@ -209,9 +287,11 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
     mapRef: React.MutableRefObject<OLMap | null>,
     layerRef: React.MutableRefObject<TileLayer<TileWMS> | null>,
     setState: React.Dispatch<React.SetStateAction<SideState>>,
+    setFrames: React.Dispatch<React.SetStateAction<AvailableLayer[]>>,
     onBoundsLoaded?: (extent: number[]) => void
   ) => {
     setState({ loading: true, error: null, layerReady: false });
+    setFrames([]);
     try {
       const resultsRes = await axios.get(`/models/${model.id}/results`);
       const results: ModelResultStub[] = Array.isArray(resultsRes.data?.data)
@@ -253,6 +333,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
       const newLayer = buildWMSLayer(info);
       map.addLayer(newLayer);
       layerRef.current = newLayer;
+      setFrames(extractDailyFrames(info));
 
       if (info.bounds) {
         const extent = boundsToExtent3857(info.bounds);
@@ -281,7 +362,9 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
   // ---------- react to model changes ----------
   useEffect(() => {
     setLeftExtent(null);
-    loadSide(model1, leftMapRef, leftLayerRef, setLeftState, (extent) => {
+    setPlaying(false);
+    setFrameIndex(null);
+    loadSide(model1, leftMapRef, leftLayerRef, setLeftState, setLeftFrames, (extent) => {
       fitView(leftMapRef.current, extent);
       setLeftExtent(extent);
     });
@@ -297,7 +380,9 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
 
   useEffect(() => {
     setRightExtent(null);
-    loadSide(model2, rightMapRef, rightLayerRef, setRightState, (extent) => {
+    setPlaying(false);
+    setFrameIndex(null);
+    loadSide(model2, rightMapRef, rightLayerRef, setRightState, setRightFrames, (extent) => {
       fitView(rightMapRef.current, extent);
       setRightExtent(extent);
     });
@@ -311,9 +396,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model2.id]);
 
-  // Once both extents are known, decide whether syncing is meaningful. If the
-  // two models cover different areas (extents don't overlap), syncing would hide
-  // one model off-screen — so drop to Independent and refit each to its own area.
+  // Non-overlapping extents: syncing would hide one model, so go Independent.
   useEffect(() => {
     if (!leftExtent || !rightExtent) return;
     if (!extentsIntersect(leftExtent, rightExtent)) {
@@ -324,7 +407,10 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
   }, [leftExtent, rightExtent]);
 
   return (
-    <div className="flex flex-col h-full min-h-[520px]">
+    <div
+      ref={containerRef}
+      className={`flex flex-col h-full min-h-[520px] ${isFullscreen ? "bg-background p-4" : ""}`}
+    >
       <div className="flex items-center justify-between px-1 pb-2">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Flame className="w-3.5 h-3.5 text-orange-500" />
@@ -337,25 +423,94 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
                 )}
           </span>
         </div>
-        <button
-          type="button"
-          onClick={() => setSynced((s) => !s)}
-          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-xs font-medium transition-colors ${
-            synced
-              ? "bg-primary/10 border-primary/30 text-primary"
-              : "bg-card border-border text-muted-foreground hover:bg-muted"
-          }`}
-        >
-          <ArrowLeftRight className="w-3.5 h-3.5" />
-          {synced
-            ? t("simulationComparison.synced", "Synced")
-            : t("simulationComparison.independent", "Independent")}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setSynced((s) => !s)}
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-xs font-medium transition-colors ${
+              synced
+                ? "bg-primary/10 border-primary/30 text-primary"
+                : "bg-card border-border text-muted-foreground hover:bg-muted"
+            }`}
+          >
+            <ArrowLeftRight className="w-3.5 h-3.5" />
+            {synced
+              ? t("simulationComparison.synced", "Synced")
+              : t("simulationComparison.independent", "Independent")}
+          </button>
+          <button
+            type="button"
+            onClick={toggleFullscreen}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border bg-card border-border text-xs font-medium text-muted-foreground transition-colors hover:bg-muted"
+          >
+            {isFullscreen ? (
+              <Minimize2 className="w-3.5 h-3.5" />
+            ) : (
+              <Maximize2 className="w-3.5 h-3.5" />
+            )}
+            {isFullscreen
+              ? t("simulationComparison.exitFullscreen", "Exit fullscreen")
+              : t("simulationComparison.fullscreen", "Fullscreen")}
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 flex-1 min-h-[480px]">
-        <MapPane model={model1} accentColor="blue" state={leftState} mapRef={leftRef} />
-        <MapPane model={model2} accentColor="violet" state={rightState} mapRef={rightRef} />
+      <div className="relative flex-1 min-h-[480px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 h-full">
+          <MapPane
+            model={model1}
+            accentColor="blue"
+            state={leftState}
+            mapRef={leftRef}
+            frameDate={leftFrame ? formatFrameDate(leftFrame.key.slice(5)) : null}
+          />
+          <MapPane
+            model={model2}
+            accentColor="violet"
+            state={rightState}
+            mapRef={rightRef}
+            frameDate={rightFrame ? formatFrameDate(rightFrame.key.slice(5)) : null}
+          />
+        </div>
+
+        {frameCount >= 2 && (
+          <div className="absolute bottom-4 left-1/2 z-[1500] -translate-x-1/2 overflow-hidden rounded-2xl border border-border bg-white/95 shadow-lg backdrop-blur">
+            <div className="flex items-center gap-4 px-3 py-2">
+              <PlayPauseButton
+                playing={playing}
+                onToggle={() => setPlaying((v) => !v)}
+                playLabel={t("modelResults.layer.play", "Play")}
+                pauseLabel={t("modelResults.layer.pause", "Pause")}
+              />
+              {frameIndex !== null ? (
+                <>
+                  <PlayerStat
+                    label={t("modelResults.layer.day", "Day")}
+                    value={`${frameIndex + 1} / ${frameCount}`}
+                  />
+                  {leftFrame && (
+                    <PlayerStat
+                      className="border-l border-border pl-4"
+                      label={t("simulationComparison.baseline", "Baseline")}
+                      value={formatFrameDate(leftFrame.key.slice(5))}
+                    />
+                  )}
+                  {rightFrame && (
+                    <PlayerStat
+                      className="border-l border-border pl-4"
+                      label={t("simulationComparison.comparison", "Comparison")}
+                      value={formatFrameDate(rightFrame.key.slice(5))}
+                    />
+                  )}
+                </>
+              ) : (
+                <span className="text-xs font-semibold text-foreground">
+                  {t("modelResults.layer.playDaily", "Animate daily risk maps")}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="mt-3 bg-card border border-border rounded-xl px-4 py-2.5 flex flex-wrap items-center gap-x-5 gap-y-2">
@@ -378,9 +533,10 @@ interface MapPaneProps {
   accentColor: "blue" | "violet";
   state: SideState;
   mapRef: React.RefObject<HTMLDivElement | null>;
+  frameDate?: string | null;
 }
 
-const MapPane: FC<MapPaneProps> = ({ model, accentColor, state, mapRef }) => {
+const MapPane: FC<MapPaneProps> = ({ model, accentColor, state, mapRef, frameDate }) => {
   const { t } = useTranslation();
   const accent =
     accentColor === "blue"
@@ -409,13 +565,20 @@ const MapPane: FC<MapPaneProps> = ({ model, accentColor, state, mapRef }) => {
             </p>
           </div>
         </div>
-        <span
-          className={`shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium ${accent.tagBg} ${accent.tagText}`}
-        >
-          {accentColor === "blue"
-            ? t("simulationComparison.baseline", "Baseline")
-            : t("simulationComparison.comparison", "Comparison")}
-        </span>
+        <div className="flex items-center gap-1.5 shrink-0">
+          {frameDate && (
+            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-slate-800 text-white tabular-nums">
+              {frameDate}
+            </span>
+          )}
+          <span
+            className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium ${accent.tagBg} ${accent.tagText}`}
+          >
+            {accentColor === "blue"
+              ? t("simulationComparison.baseline", "Baseline")
+              : t("simulationComparison.comparison", "Comparison")}
+          </span>
+        </div>
       </div>
 
       <div className="relative flex-1 min-h-[420px]">

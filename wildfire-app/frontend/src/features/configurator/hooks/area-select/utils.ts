@@ -11,7 +11,7 @@ const stripClosingPoint = (ring: [number, number][]): [number, number][] => {
     return ring;
 };
 
-export const normalizeRing = (ring: unknown): [number, number][] => {
+const normalizeRing = (ring: unknown): [number, number][] => {
     if (!Array.isArray(ring)) return [];
     const coords = ring
         .filter((position): position is [number, number] =>

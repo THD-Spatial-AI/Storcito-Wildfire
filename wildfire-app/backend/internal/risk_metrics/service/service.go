@@ -1,12 +1,4 @@
-// Package riskmetricsservice computes risk analytics for a completed
-// model from GeoServer-published raster outputs.
-//
-// Design:
-//   - Pure computation stays here; I/O lives behind the geoserver.Client
-//     and store interfaces.
-//   - Weighting for the overall score is data-driven (severityWeights)
-//     rather than a chain of if/else so the calibration can be tuned
-//     in one place.
+// Package riskmetricsservice computes risk analytics from published rasters.
 package riskmetricsservice
 
 import (
@@ -44,8 +36,7 @@ const (
 	TrendWorsening Trend = "worsening"
 )
 
-// Distribution mirrors geoserver.Distribution but lives in the domain
-// layer so callers do not need to import the client package.
+// Distribution mirrors geoserver.Distribution in the domain layer.
 type Distribution struct {
 	VeryLow  int `json:"very_low"`
 	Low      int `json:"low"`
@@ -91,6 +82,31 @@ type MapSamples struct {
 	Distribution geoserver.Distribution `json:"distribution"`
 }
 
+// DayAreas is the analyzed surface area per risk class, in km².
+type DayAreas struct {
+	VeryLow  float64 `json:"very_low"`
+	Low      float64 `json:"low"`
+	Moderate float64 `json:"moderate"`
+	High     float64 `json:"high"`
+	VeryHigh float64 `json:"very_high"`
+}
+
+// DayDistribution is one day of a dynamic run, as counts and km² per class.
+type DayDistribution struct {
+	Date         string       `json:"date"`
+	Distribution Distribution `json:"distribution"`
+	AreaKm2      DayAreas     `json:"area_km2"`
+	ValidSamples int          `json:"valid_samples"`
+	TotalSamples int          `json:"total_samples"`
+}
+
+// DailySeries powers the risk-over-time stacked area chart for dynamic runs.
+type DailySeries struct {
+	ModelID  uint              `json:"model_id"`
+	ResultID uint              `json:"result_id"`
+	Days     []DayDistribution `json:"days"`
+}
+
 // severityWeights assigns a normalized risk weight to each bucket
 var severityWeights = map[string]float64{
 	"very_low":  0.20,
@@ -105,26 +121,26 @@ const defaultSampleCount = 2000
 
 const defaultMapSampleCount = 625
 
+// defaultDailySampleCount is small: one GetFeatureInfo request per sample, per day.
+const defaultDailySampleCount = 256
+
 // ResultStore is the minimum surface we need from persistence.
 type ResultStore interface {
-	// LatestConfiguredResult returns the most recent result for the model
-	// whose GeoServer layer has been configured. It returns gorm.ErrRecordNotFound
-	// when no such result exists.
+	// LatestConfiguredResult returns the newest configured result (ErrRecordNotFound when absent).
 	LatestConfiguredResult(ctx context.Context, modelID uint) (*commonModels.ModelResult, error)
-	// PreviousConfiguredResult returns the second-most-recent configured
-	// result (used to compute trend). Returns gorm.ErrRecordNotFound when
-	// there is no prior run to compare against.
+	// PreviousConfiguredResult returns the prior configured result, for the trend.
 	PreviousConfiguredResult(ctx context.Context, modelID, excludeResultID uint) (*commonModels.ModelResult, error)
 }
 
-// ErrNoConfiguredResult is returned when the model has no result with a
-// configured GeoServer layer (e.g. the run failed or is still pending).
+// ErrNoConfiguredResult means the model has no configured GeoServer layer.
 var ErrNoConfiguredResult = errors.New("risk_metrics: no configured result for model")
 
 // Cache stores computed Metrics keyed by the immutable result ID.
 type Cache interface {
 	Get(ctx context.Context, resultID uint) (*Metrics, bool)
 	Set(ctx context.Context, resultID uint, m *Metrics)
+	GetDaily(ctx context.Context, resultID uint) (*DailySeries, bool)
+	SetDaily(ctx context.Context, resultID uint, s *DailySeries)
 }
 
 // Service computes risk metrics.
@@ -145,9 +161,7 @@ func (s *Service) WithCache(c Cache) *Service {
 	return s
 }
 
-// CalculateForModel produces Metrics for the given model by sampling
-// the latest configured layer and (optionally) comparing against the
-// prior run.
+// CalculateForModel computes Metrics for the latest configured result.
 func (s *Service) CalculateForModel(ctx context.Context, modelID uint) (*Metrics, error) {
 	if s == nil || s.store == nil || s.geo == nil {
 		return nil, errors.New("risk_metrics: service not configured")
@@ -188,8 +202,7 @@ func (s *Service) CalculateForModel(ctx context.Context, modelID uint) (*Metrics
 	return metrics, nil
 }
 
-// SampleMapForModel returns geographically positioned raster samples for map
-// visualizations of the latest configured result.
+// SampleMapForModel returns positioned raster samples for map charts.
 func (s *Service) SampleMapForModel(ctx context.Context, modelID uint, sampleCount int) (*MapSamples, error) {
 	if s == nil || s.store == nil || s.geo == nil {
 		return nil, errors.New("risk_metrics: service not configured")
@@ -240,6 +253,72 @@ func (s *Service) SampleMapForModel(ctx context.Context, modelID uint, sampleCou
 	return out, nil
 }
 
+// DailyDistributionsForModel returns per-day class areas (km²), cached by result ID.
+func (s *Service) DailyDistributionsForModel(ctx context.Context, modelID uint) (*DailySeries, error) {
+	if s == nil || s.store == nil || s.geo == nil {
+		return nil, errors.New("risk_metrics: service not configured")
+	}
+
+	result, err := s.store.LatestConfiguredResult(ctx, modelID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrNoConfiguredResult
+		}
+		return nil, fmt.Errorf("risk_metrics: load latest result: %w", err)
+	}
+
+	if s.cache != nil {
+		if cached, ok := s.cache.GetDaily(ctx, result.ID); ok {
+			return cached, nil
+		}
+	}
+
+	days, err := s.geo.SampleDailyDistributions(ctx, result.ID, defaultDailySampleCount)
+	if err != nil {
+		return nil, fmt.Errorf("risk_metrics: sample daily distributions: %w", err)
+	}
+
+	bounds, err := s.geo.GetBounds(ctx, result.ID)
+	if err != nil {
+		return nil, fmt.Errorf("risk_metrics: get bounds: %w", err)
+	}
+	bboxArea := areaKm2(bounds)
+
+	series := &DailySeries{ModelID: modelID, ResultID: result.ID, Days: make([]DayDistribution, 0, len(days))}
+	for _, day := range days {
+		entry := DayDistribution{
+			Date: day.Date,
+			Distribution: Distribution{
+				VeryLow:  day.Distribution.VeryLow,
+				Low:      day.Distribution.Low,
+				Moderate: day.Distribution.Moderate,
+				High:     day.Distribution.High,
+				VeryHigh: day.Distribution.VeryHigh,
+			},
+			ValidSamples: day.ValidSamples,
+			TotalSamples: day.TotalSamples,
+		}
+		if day.ValidSamples > 0 && day.TotalSamples > 0 {
+			analyzed := bboxArea * float64(day.ValidSamples) / float64(day.TotalSamples)
+			perSample := analyzed / float64(day.ValidSamples)
+			entry.AreaKm2 = DayAreas{
+				VeryLow:  round(perSample*float64(day.Distribution.VeryLow), 3),
+				Low:      round(perSample*float64(day.Distribution.Low), 3),
+				Moderate: round(perSample*float64(day.Distribution.Moderate), 3),
+				High:     round(perSample*float64(day.Distribution.High), 3),
+				VeryHigh: round(perSample*float64(day.Distribution.VeryHigh), 3),
+			}
+		}
+		series.Days = append(series.Days, entry)
+	}
+
+	if s.cache != nil {
+		s.cache.SetDaily(ctx, result.ID, series)
+	}
+
+	return series, nil
+}
+
 func (s *Service) applyTrend(ctx context.Context, modelID, currentResultID uint, current *Metrics) {
 	prev, err := s.store.PreviousConfiguredResult(ctx, modelID, currentResultID)
 	if err != nil || prev == nil {
@@ -261,9 +340,7 @@ func buildMetrics(modelID, resultID uint, sample geoserver.SampleResult, bounds 
 	affectedFraction := riskyFraction(dist)
 	bboxArea := areaKm2(bounds)
 
-	// Scale the bounding-box area down to the surface that actually
-	// contains data. Without this, masked-out (nodata) pixels are charged
-	// against the analyzed area and inflate every absolute km² figure.
+	// Scale the bbox area down to the non-nodata surface.
 	validFraction := sample.ValidFraction()
 	analyzedArea := bboxArea
 	if validFraction > 0 {
@@ -290,8 +367,7 @@ func buildMetrics(modelID, resultID uint, sample geoserver.SampleResult, bounds 
 	}
 }
 
-// overallScore is a weighted mean of bucket proportions. Returns 0 when
-// the distribution is empty (unknown layer).
+// overallScore is a weighted mean of bucket proportions (0 when empty).
 func overallScore(d geoserver.Distribution) float64 {
 	total := float64(d.Total())
 	if total == 0 {
@@ -329,9 +405,7 @@ func addToDistribution(d *geoserver.Distribution, level Level) {
 	}
 }
 
-// classifyLevel maps the continuous (mean-class / 5) score to a categorical
-// Level. Thresholds are midpoints between pure-class scores so that, for
-// example, a mean class strictly less than 1.5 maps to very_low.
+// classifyLevel maps the continuous score to a Level at class midpoints.
 func classifyLevel(score float64) Level {
 	switch {
 	case score <= 0:
@@ -349,8 +423,7 @@ func classifyLevel(score float64) Level {
 	}
 }
 
-// classifyTrend decides the trend by comparing current and previous scores.
-// A +/-5% band is treated as stable to avoid noisy UI flapping.
+// classifyTrend compares scores; a ±5% band counts as stable.
 func classifyTrend(current, previous float64) Trend {
 	const band = 0.05
 	delta := current - previous
@@ -364,9 +437,7 @@ func classifyTrend(current, previous float64) Trend {
 	}
 }
 
-// areaKm2 approximates the area of an EPSG:4326 bounding box in square
-// kilometers using a flat-earth approximation scaled by the cosine of
-// the middle latitude. Adequate for dashboard metrics (not geodesy).
+// areaKm2 approximates the EPSG:4326 bbox area (flat-earth, dashboard-grade).
 func areaKm2(b geoserver.Bounds) float64 {
 	dx := math.Abs(b.MaxX - b.MinX)
 	dy := math.Abs(b.MaxY - b.MinY)

@@ -23,6 +23,7 @@ func registerModelRoutes(api *gin.RouterGroup, modelHandler *modelhandler.ModelH
 	api.GET(routeModelByID+"/fire-weather", resultHandler.GetModelFireWeather)
 	api.GET(routeModelByID+"/risk-metrics", riskHandler.Get)
 	api.GET(routeModelByID+"/risk-map-samples", riskHandler.GetMapSamples)
+	api.GET(routeModelByID+"/risk-daily-distribution", riskHandler.GetDailyDistributions)
 	api.GET(routeModelByID+"/download", resultHandler.DownloadModelResult)
 	api.POST("/calculation/start/:id", modelHandler.StartCalculation)
 	api.GET("/results/:id/layer", resultHandler.GetResultLayer)

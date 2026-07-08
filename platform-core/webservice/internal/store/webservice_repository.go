@@ -95,10 +95,3 @@ func (r *WebserviceRepository) Delete(id uint) error {
 	return r.db.Delete(&models.WebserviceInstance{}, id).Error
 }
 
-func (r *WebserviceRepository) UpdateStatus(id uint, status string, more map[string]interface{}) error {
-	if more == nil {
-		more = map[string]interface{}{}
-	}
-	more["status"] = status
-	return r.Update(id, more)
-}

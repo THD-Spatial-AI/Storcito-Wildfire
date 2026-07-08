@@ -47,20 +47,6 @@ export const useModelsQuery = (params?: {
 	});
 };
 
-export const useMissingParentsQuery = (parentIds: number[]) => {
-	return useQuery({
-		queryKey: [...modelKeys.all, "missing-parents", parentIds],
-		queryFn: async () => {
-			const results = await Promise.all(
-				parentIds.map(id => modelService.getModelById(id))
-			);
-			return results.filter(r => r.success).map(r => r.data);
-		},
-		enabled: parentIds.length > 0,
-		staleTime: 60 * 1000,
-	});
-};
-
 export const useModelStatsQuery = () => {
 	return useQuery({
 		queryKey: modelKeys.stats(),

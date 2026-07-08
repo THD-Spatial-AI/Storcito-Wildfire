@@ -5,11 +5,8 @@ import {
   ArrowDownRight,
   ArrowUpRight,
   BarChart3,
-  CalendarDays,
   CircleGauge,
   Flame,
-  Layers as LayersIcon,
-  MapPin,
   Minus,
   ShieldCheck,
   TrendingDown,
@@ -23,7 +20,6 @@ import {
   type RiskLevel,
   type RiskMetrics,
 } from '@/features/model-results/hooks/useRiskMetrics';
-import { RiskMetricsCard } from '@/features/model-results/components/RiskMetricsCard';
 import { ComparisonInsightCharts } from './ComparisonInsightCharts';
 import { DistributionComparisonChart } from './DistributionComparisonChart';
 import { useRiskMapSamples } from './useRiskMapSamples';
@@ -69,17 +65,11 @@ type DominantRiskClass = (typeof DISTRIBUTION_LEVELS)[number] & {
 const formatArea = (km2: number | null): string =>
   km2 === null ? '—' : km2 >= 1 ? `${km2.toFixed(2)} km²` : `${(km2 * 100).toFixed(2)} ha`;
 
-const formatDate = (iso: string | undefined): string =>
-  iso ? new Date(iso).toLocaleDateString() : '—';
-
 const formatScore = (score: number | null): string =>
   score !== null ? `${score.toFixed(2)} / 5` : '—';
 
 const formatPercent = (value: number | null): string =>
   value !== null ? `${value.toFixed(1)}%` : '—';
-
-const formatCount = (value: number | null): string =>
-  value !== null ? value.toLocaleString() : '—';
 
 interface DeltaPillProps {
   delta: number | null;
@@ -116,48 +106,6 @@ const DeltaPill: FC<DeltaPillProps> = ({ delta, suffix = '', invert = false, dig
     </span>
   );
 };
-
-const MetaRow: FC<{
-  icon: ElementType;
-  label: string;
-  left: ReactNode;
-  right: ReactNode;
-}> = ({ icon: Icon, label, left, right }) => (
-  <div className="grid grid-cols-[minmax(120px,1fr)_minmax(140px,1.2fr)_minmax(140px,1.2fr)] items-center gap-3 py-2.5 border-b border-border last:border-b-0">
-    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-      <Icon className="w-3.5 h-3.5 flex-shrink-0" />
-      <span className="truncate">{label}</span>
-    </div>
-    <div className="text-sm text-foreground truncate">{left}</div>
-    <div className="text-sm text-foreground truncate">{right}</div>
-  </div>
-);
-
-const DeltaCell: FC<{
-  label: string;
-  baseline: ReactNode;
-  comparison: ReactNode;
-  deltaPill: ReactNode;
-}> = ({ label, baseline, comparison, deltaPill }) => (
-  <div className="rounded-lg border border-border bg-muted/30 p-3">
-    <div className="flex items-center justify-between mb-2">
-      <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide truncate">
-        {label}
-      </span>
-      {deltaPill}
-    </div>
-    <div className="space-y-1">
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-[10px] text-muted-foreground">Baseline</span>
-        <span className="text-xs font-medium text-foreground truncate">{baseline}</span>
-      </div>
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-[10px] text-muted-foreground">Comparison</span>
-        <span className="text-xs font-semibold text-foreground truncate">{comparison}</span>
-      </div>
-    </div>
-  </div>
-);
 
 const SummaryMetric: FC<{
   icon: ElementType;
@@ -199,7 +147,6 @@ const computeDeltas = (a: RiskMetrics, b: RiskMetrics) => {
   return {
     scoreDelta: pair(a.overallRiskScore, b.overallRiskScore),
     areaDelta: pair(a.affectedAreaKm2, b.affectedAreaKm2),
-    zonesDelta: pair(a.highRiskZones, b.highRiskZones),
     levelDelta: pair(
       a.overallRiskLevel ? LEVEL_SCORE[a.overallRiskLevel] : null,
       b.overallRiskLevel ? LEVEL_SCORE[b.overallRiskLevel] : null,
@@ -260,10 +207,6 @@ export const ComparisonMetrics: FC<ComparisonMetricsProps> = ({ model1, model2 }
     baselineHighRiskShare !== null && comparisonHighRiskShare !== null
       ? comparisonHighRiskShare - baselineHighRiskShare
       : null;
-  const sampleDelta =
-    bothReady && a.metrics.sampleCount !== null && b.metrics.sampleCount !== null
-      ? b.metrics.sampleCount - a.metrics.sampleCount
-      : null;
   const summaryTone = deltas ? getSummaryTone(deltas.scoreDelta, highRiskShareDelta) : 'stable';
   const SummaryIcon =
     summaryTone === 'worse' ? TrendingUp : summaryTone === 'better' ? TrendingDown : ShieldCheck;
@@ -282,40 +225,6 @@ export const ComparisonMetrics: FC<ComparisonMetricsProps> = ({ model1, model2 }
 
   return (
     <div className="space-y-6">
-      <section className="bg-card border border-border rounded-xl p-5 shadow-sm">
-        <header className="flex items-center gap-2 mb-3">
-          <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300">
-            <BarChart3 className="w-4 h-4" />
-          </span>
-          <div>
-            <h3 className="text-sm font-semibold text-foreground tracking-tight">
-              {t('simulationComparison.configuration', 'Configuration')}
-            </h3>
-            <p className="text-[11px] text-muted-foreground">
-              {t('simulationComparison.configurationSub', 'Model metadata side-by-side')}
-            </p>
-          </div>
-        </header>
-
-        <div className="grid grid-cols-[minmax(120px,1fr)_minmax(140px,1.2fr)_minmax(140px,1.2fr)] items-center gap-3 pb-2 border-b border-border">
-          <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-            {t('simulationComparison.field', 'Field')}
-          </span>
-          <span className="text-[10px] font-semibold uppercase tracking-wide text-blue-600 dark:text-blue-400">
-            {t('simulationComparison.baseline', 'Baseline')}
-          </span>
-          <span className="text-[10px] font-semibold uppercase tracking-wide text-violet-600 dark:text-violet-400">
-            {t('simulationComparison.comparison', 'Comparison')}
-          </span>
-        </div>
-
-        <MetaRow icon={LayersIcon} label={t('modelResults.details.title', 'Title')} left={model1.title} right={model2.title} />
-        <MetaRow icon={MapPin} label={t('modelResults.details.region', 'Region')} left={model1.region || '—'} right={model2.region || '—'} />
-        <MetaRow icon={MapPin} label={t('modelResults.details.country', 'Country')} left={model1.country || '—'} right={model2.country || '—'} />
-        <MetaRow icon={CalendarDays} label={t('modelResults.details.from', 'From')} left={formatDate(model1.from_date)} right={formatDate(model2.from_date)} />
-        <MetaRow icon={CalendarDays} label={t('modelResults.details.to', 'To')} left={formatDate(model1.to_date)} right={formatDate(model2.to_date)} />
-      </section>
-
       {(a.isLoading || b.isLoading) && !bothReady && (
         <div className="bg-card border border-border rounded-xl p-8 text-center text-sm text-muted-foreground">
           {t('simulationComparison.loadingMetrics', 'Loading risk metrics…')}
@@ -351,6 +260,18 @@ export const ComparisonMetrics: FC<ComparisonMetricsProps> = ({ model1, model2 }
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
             <SummaryMetric
+              icon={ShieldCheck}
+              label={t('modelResults.risk.overall', 'Overall Risk')}
+              value={
+                <span>
+                  {a.metrics.overallRiskLevel ? LEVEL_LABEL[a.metrics.overallRiskLevel] : '—'}
+                  <span className="mx-1.5 text-muted-foreground">→</span>
+                  {b.metrics.overallRiskLevel ? LEVEL_LABEL[b.metrics.overallRiskLevel] : '—'}
+                </span>
+              }
+              detail={<DeltaPill delta={deltas.levelDelta} digits={0} invert />}
+            />
+            <SummaryMetric
               icon={CircleGauge}
               label={t('modelResults.risk.meanScore', 'Mean Risk Score')}
               value={
@@ -385,24 +306,6 @@ export const ComparisonMetrics: FC<ComparisonMetricsProps> = ({ model1, model2 }
                 </span>
               }
               detail={<DeltaPill delta={highRiskShareDelta} suffix="%" digits={1} invert />}
-            />
-            <SummaryMetric
-              icon={BarChart3}
-              label={t('simulationComparison.sampleCoverage', 'Sample coverage')}
-              value={
-                <span>
-                  {formatCount(a.metrics.sampleCount)}
-                  <span className="mx-1.5 text-muted-foreground">→</span>
-                  {formatCount(b.metrics.sampleCount)}
-                </span>
-              }
-              detail={
-                sampleDelta === null ? (
-                  '—'
-                ) : (
-                  <DeltaPill delta={sampleDelta} digits={0} suffix=" px" />
-                )
-              }
             />
           </div>
 
@@ -478,80 +381,14 @@ export const ComparisonMetrics: FC<ComparisonMetricsProps> = ({ model1, model2 }
         <ComparisonInsightCharts
           baselineMap={aMapSamples.data}
           comparisonMap={bMapSamples.data}
+          baselineAreaKm2={a.metrics.totalAreaKm2}
+          comparisonAreaKm2={b.metrics.totalAreaKm2}
           isMapLoading={aMapSamples.isLoading || bMapSamples.isLoading}
           mapError={aMapSamples.error || bMapSamples.error}
+          baselineLabel={t('simulationComparison.baseline', 'Baseline')}
           comparisonLabel={t('simulationComparison.comparison', 'Comparison')}
         />
       )}
-
-      {bothReady && deltas && (
-        <section className="bg-card border border-border rounded-xl p-5 shadow-sm">
-          <header className="flex items-center gap-2 mb-4">
-            <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300">
-              <Flame className="w-4 h-4" />
-            </span>
-            <div>
-              <h3 className="text-sm font-semibold text-foreground tracking-tight">
-                {t('simulationComparison.deltaTitle', 'Risk Delta')}
-              </h3>
-              <p className="text-[11px] text-muted-foreground">
-                {t('simulationComparison.deltaSub', 'Change from baseline to comparison')}
-              </p>
-            </div>
-          </header>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <DeltaCell
-              label={t('modelResults.risk.overall', 'Overall Risk')}
-              baseline={a.metrics.overallRiskLevel ? LEVEL_LABEL[a.metrics.overallRiskLevel] : '—'}
-              comparison={b.metrics.overallRiskLevel ? LEVEL_LABEL[b.metrics.overallRiskLevel] : '—'}
-              deltaPill={<DeltaPill delta={deltas.levelDelta} digits={0} invert />}
-            />
-            <DeltaCell
-              label={t('modelResults.risk.meanScore', 'Mean Risk Score')}
-              baseline={formatScore(a.metrics.overallRiskScore)}
-              comparison={formatScore(b.metrics.overallRiskScore)}
-              deltaPill={<DeltaPill delta={deltas.scoreDelta} invert />}
-            />
-            <DeltaCell
-              label={t('modelResults.risk.highPlusArea', 'High + Very High area')}
-              baseline={formatArea(a.metrics.affectedAreaKm2)}
-              comparison={formatArea(b.metrics.affectedAreaKm2)}
-              deltaPill={<DeltaPill delta={deltas.areaDelta} suffix=" km²" invert />}
-            />
-            <DeltaCell
-              label={t('modelResults.risk.highPlusPixels', 'High + Very High pixels')}
-              baseline={formatCount(a.metrics.highRiskZones)}
-              comparison={formatCount(b.metrics.highRiskZones)}
-              deltaPill={<DeltaPill delta={deltas.zonesDelta} digits={0} invert />}
-            />
-          </div>
-        </section>
-      )}
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 px-1">
-            <span className="w-2 h-2 rounded-full bg-blue-500" />
-            <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-              {t('simulationComparison.baseline', 'Baseline')}
-            </span>
-            <span className="text-xs text-foreground truncate">{model1.title}</span>
-          </div>
-          <RiskMetricsCard metrics={a.metrics} isLoading={a.isLoading} error={a.error} ready={a.ready} />
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 px-1">
-            <span className="w-2 h-2 rounded-full bg-violet-500" />
-            <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-              {t('simulationComparison.comparison', 'Comparison')}
-            </span>
-            <span className="text-xs text-foreground truncate">{model2.title}</span>
-          </div>
-          <RiskMetricsCard metrics={b.metrics} isLoading={b.isLoading} error={b.error} ready={b.ready} />
-        </div>
-      </div>
 
       {bothReady && a.metrics.riskDistribution && b.metrics.riskDistribution && (
         <section className="bg-card border border-border rounded-xl p-5 shadow-sm">
@@ -566,7 +403,7 @@ export const ComparisonMetrics: FC<ComparisonMetricsProps> = ({ model1, model2 }
               <p className="text-[11px] text-muted-foreground">
                 {t(
                   'simulationComparison.distributionSub',
-                  'Share of pixels per risk level. Lighter bar = baseline, solid = comparison.',
+                  'Share of area per risk class in each model.',
                 )}
               </p>
             </div>

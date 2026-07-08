@@ -1,7 +1,4 @@
-// Package geoserver exposes a strongly-typed client for the GeoServer
-// control-plane microservice. It is intentionally decoupled from any
-// persistence or HTTP framework concerns: the client is a pure
-// outbound adapter.
+// Package geoserver is a typed client for the GeoServer control-plane service.
 package geoserver
 
 // Bounds describes the bounding box (EPSG:4326) of a published layer.
@@ -13,7 +10,6 @@ type Bounds struct {
 }
 
 // Distribution maps severity buckets to pixel counts.
-// Buckets are emitted by the geoservice as a fixed taxonomy.
 type Distribution struct {
 	VeryLow  int `json:"very_low"`
 	Low      int `json:"low"`
@@ -31,8 +27,7 @@ type SampleResult struct {
 	Distribution Distribution
 	// ValidSamples is the number of grid samples that hit a non-nodata pixel.
 	ValidSamples int
-	// TotalSamples is the number of grid samples attempted across the layer
-	// bounding box. ValidSamples / TotalSamples ≈ valid-pixel coverage.
+	// TotalSamples is the number of attempted grid samples.
 	TotalSamples int
 }
 
@@ -55,8 +50,7 @@ type GridSampleResult struct {
 	TotalSamples int          `json:"total_samples"`
 }
 
-// ValidFraction is the share of the layer bounding box that contains
-// real data. Returns 0 when no samples were taken.
+// ValidFraction is the share of samples that hit real data.
 func (r SampleResult) ValidFraction() float64 {
 	if r.TotalSamples <= 0 {
 		return 0
@@ -77,12 +71,9 @@ type BoundsResponse struct {
 // DistributionResponse wraps Distribution as the geoservice does.
 type DistributionResponse struct {
 	Distribution Distribution `json:"distribution"`
-	// ValidSamples is the number of attempted samples that hit a non-nodata
-	// pixel. Zero when the geoservice is an older version that does not
-	// emit this field — callers must treat that as "unknown".
+	// ValidSamples is the number of non-nodata hits (0 on older geoservices).
 	ValidSamples int `json:"valid_samples,omitempty"`
-	// TotalSamples is the total number of attempted samples (grid cells).
-	// Zero when the geoservice is an older version.
+	// TotalSamples is the attempted sample count (0 on older geoservices).
 	TotalSamples int `json:"total_samples,omitempty"`
 }
 
@@ -94,4 +85,22 @@ type SampleDistributionRequest struct {
 // SampleGridRequest is the request body for sample-grid.
 type SampleGridRequest struct {
 	SampleCount int `json:"sample_count"`
+}
+
+// DailyDistributionRequest is the request body for daily-distribution.
+type DailyDistributionRequest struct {
+	SampleCount int `json:"sample_count"`
+}
+
+// DailyDistribution is the class histogram of one day of a dynamic run.
+type DailyDistribution struct {
+	Date         string       `json:"date"`
+	Distribution Distribution `json:"distribution"`
+	ValidSamples int          `json:"valid_samples"`
+	TotalSamples int          `json:"total_samples"`
+}
+
+// DailyDistributionResponse wraps the per-day histograms as the geoservice does.
+type DailyDistributionResponse struct {
+	Days []DailyDistribution `json:"days"`
 }

@@ -115,15 +115,5 @@ export const changeLanguage = async (
   localStorage.setItem(storageKey, code);
 };
 
-/**
- * Get all available languages
- */
-export const getLanguages = (): readonly Language[] => languages;
-
 // Re-export useful items from react-i18next
 export { useTranslation } from "react-i18next";
-export { Trans } from "react-i18next";
-export { i18n };
-
-// Export locale JSON files for apps that want to extend/override
-export { en, de, es, fr, it, nl, pl, cs, el };

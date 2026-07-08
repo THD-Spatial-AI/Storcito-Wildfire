@@ -11,6 +11,8 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -131,9 +133,7 @@ func (s *GeoServerService) GetBoundsForResult(resultID uint) (map[string]interfa
 	return s.GetLayerBounds(result)
 }
 
-// SampleResult is the full output of a sampling pass: bucketed pixel counts
-// plus the number of valid (non-nodata) and total attempted samples so the
-// caller can compute the analyzed-area fraction.
+// SampleResult is one sampling pass: bucketed counts plus valid/total samples.
 type SampleResult struct {
 	Distribution map[string]int `json:"distribution"`
 	ValidSamples int            `json:"valid_samples"`
@@ -150,8 +150,7 @@ type GridSample struct {
 	Column int     `json:"column"`
 }
 
-// GridSampleResult contains geographically positioned raster samples for
-// frontend heatmap and choropleth visualizations.
+// GridSampleResult holds positioned raster samples for frontend charts.
 type GridSampleResult struct {
 	Bounds       map[string]interface{} `json:"bounds"`
 	GridSize     int                    `json:"grid_size"`
@@ -160,21 +159,6 @@ type GridSampleResult struct {
 	TotalSamples int                    `json:"total_samples"`
 }
 
-// SampleDistribution builds a raster distribution by sampling GeoServer pixels.
-// Deprecated: callers should prefer SampleDistributionDetailed which also
-// reports how many of the sampled pixels were valid (non-nodata).
-func (s *GeoServerService) SampleDistribution(ctx context.Context, resultID uint, sampleCount int) (map[string]int, error) {
-	res, err := s.SampleDistributionDetailed(ctx, resultID, sampleCount)
-	if err != nil {
-		return nil, err
-	}
-	return res.Distribution, nil
-}
-
-// SampleDistributionDetailed returns the bucketed distribution alongside the
-// valid- and total-sample counts. The valid/total ratio approximates the
-// fraction of the layer bounding box that contains real (non-nodata) pixels,
-// which is required to compute an accurate analyzed surface area.
 func (s *GeoServerService) SampleDistributionDetailed(ctx context.Context, resultID uint, sampleCount int) (*SampleResult, error) {
 	_ = ctx
 	result, err := s.fetchResult(resultID)
@@ -188,9 +172,7 @@ func (s *GeoServerService) SampleDistributionDetailed(ctx context.Context, resul
 	return &SampleResult{Distribution: dist, ValidSamples: valid, TotalSamples: total}, nil
 }
 
-// SampleGridDetailed returns positioned raster samples. It is intentionally
-// smaller than the metrics sample by default because every cell requires a
-// GeoServer GetFeatureInfo request.
+// SampleGridDetailed returns positioned raster samples (one GetFeatureInfo per cell).
 func (s *GeoServerService) SampleGridDetailed(ctx context.Context, resultID uint, sampleCount int) (*GridSampleResult, error) {
 	result, err := s.fetchResult(resultID)
 	if err != nil {
@@ -512,24 +494,6 @@ func (s *GeoServerService) deleteLayer(layerName string) error {
 func (s *GeoServerService) deleteCoverageStore(storeName string) error {
 	url := fmt.Sprintf("%s/rest/workspaces/%s/coveragestores/%s?recurse=true", s.baseURL, s.workspace, storeName)
 	return s.deleteResource(url)
-}
-
-func (s *GeoServerService) GetWMSUrl(result *models.ModelResult) string {
-	if result.GeoserverStatus != models.ResultGeoserverConfigured {
-		return ""
-	}
-	appURL := os.Getenv("APP_URL")
-	if appURL == "" {
-		appURL = "http://localhost:8000"
-	}
-	return fmt.Sprintf("%s/api/geoserver-proxy/%s/wms", appURL, s.workspace)
-}
-
-func (s *GeoServerService) GetLayerName(result *models.ModelResult) string {
-	if result.GeoserverLayerName == "" {
-		return ""
-	}
-	return fmt.Sprintf("%s:%s", s.workspace, result.GeoserverLayerName)
 }
 
 func (s *GeoServerService) ensureWorkspaceExists() error {
@@ -965,6 +929,109 @@ func (s *GeoServerService) sampleLayerDistribution(result *models.ModelResult, s
 	return distribution, validSamples, totalAttempted, nil
 }
 
+// DailyDistribution is the class histogram of one day of a dynamic run.
+type DailyDistribution struct {
+	Date         string         `json:"date"`
+	Distribution map[string]int `json:"distribution"`
+	ValidSamples int            `json:"valid_samples"`
+	TotalSamples int            `json:"total_samples"`
+}
+
+var dailyRiskLayerKey = regexp.MustCompile(`^risk_(\d{4}-\d{2}-\d{2})$`)
+
+// SampleDailyDistributions returns one class histogram per published risk_<date> layer.
+func (s *GeoServerService) SampleDailyDistributions(ctx context.Context, resultID uint, sampleCount int) ([]DailyDistribution, error) {
+	log := logger.ForComponent("geoserver")
+
+	result, err := s.fetchResult(resultID)
+	if err != nil {
+		return nil, err
+	}
+	components, err := decodeResultLayers(result.Layers)
+	if err != nil {
+		return nil, err
+	}
+
+	type dayLayer struct{ date, layerName string }
+	days := make([]dayLayer, 0, len(components))
+	for _, component := range components {
+		key := strings.TrimSpace(component.Key)
+		match := dailyRiskLayerKey.FindStringSubmatch(key)
+		if match == nil {
+			continue
+		}
+		days = append(days, dayLayer{
+			date:      match[1],
+			layerName: componentLayerName(result.GeoserverLayerName, key),
+		})
+	}
+	if len(days) == 0 {
+		return []DailyDistribution{}, nil
+	}
+	sort.Slice(days, func(i, j int) bool { return days[i].date < days[j].date })
+
+	bounds, err := s.GetLayerBounds(result)
+	if err != nil {
+		return nil, err
+	}
+	minx, ok1 := bounds["minx"].(float64)
+	maxx, ok2 := bounds["maxx"].(float64)
+	miny, ok3 := bounds["miny"].(float64)
+	maxy, ok4 := bounds["maxy"].(float64)
+	if !(ok1 && ok2 && ok3 && ok4) {
+		return nil, fmt.Errorf("invalid bounds data")
+	}
+
+	// Small default: one GetFeatureInfo request per sample, per day.
+	if sampleCount <= 0 {
+		sampleCount = 256
+	}
+	gridSize := int(math.Sqrt(float64(sampleCount)))
+	if gridSize < 1 {
+		gridSize = 1
+	}
+	stepX := (maxx - minx) / float64(gridSize)
+	stepY := (maxy - miny) / float64(gridSize)
+
+	out := make([]DailyDistribution, 0, len(days))
+	for _, day := range days {
+		distribution := map[string]int{
+			"very_low":  0,
+			"low":       0,
+			"moderate":  0,
+			"high":      0,
+			"very_high": 0,
+		}
+		validSamples := 0
+		for i := 0; i < gridSize; i++ {
+			for j := 0; j < gridSize; j++ {
+				select {
+				case <-ctx.Done():
+					return nil, ctx.Err()
+				default:
+				}
+				x := minx + float64(i)*stepX + stepX/2
+				y := miny + float64(j)*stepY + stepY/2
+				value, err := s.getPixelValueForLayer(day.layerName, x, y)
+				if err != nil || value == 0 {
+					continue
+				}
+				distribution[riskLevelFromScore(value)]++
+				validSamples++
+			}
+		}
+		out = append(out, DailyDistribution{
+			Date:         day.date,
+			Distribution: distribution,
+			ValidSamples: validSamples,
+			TotalSamples: gridSize * gridSize,
+		})
+	}
+
+	log.Debugf("sampleDailyDistributions result_id=%d days=%d samples_per_day=%d", result.ID, len(out), gridSize*gridSize)
+	return out, nil
+}
+
 func (s *GeoServerService) sampleLayerGrid(ctx context.Context, result *models.ModelResult, sampleCount int) (*GridSampleResult, error) {
 	log := logger.ForComponent("geoserver")
 
@@ -1037,14 +1104,18 @@ func (s *GeoServerService) sampleLayerGrid(ctx context.Context, result *models.M
 }
 
 func (s *GeoServerService) getPixelValue(result *models.ModelResult, x, y float64) (float64, error) {
+	return s.getPixelValueForLayer(result.GeoserverLayerName, x, y)
+}
+
+func (s *GeoServerService) getPixelValueForLayer(layerName string, x, y float64) (float64, error) {
 	log := logger.ForComponent("geoserver")
 	url := fmt.Sprintf("%s/wms?SERVICE=WMS&VERSION=1.1.0&REQUEST=GetFeatureInfo"+
 		"&LAYERS=%s:%s&QUERY_LAYERS=%s:%s"+
 		"&STYLES=&BBOX=%f,%f,%f,%f&WIDTH=101&HEIGHT=101"+
 		"&X=50&Y=50&SRS=EPSG:4326&INFO_FORMAT=application/json",
 		s.baseURL,
-		s.workspace, result.GeoserverLayerName,
-		s.workspace, result.GeoserverLayerName,
+		s.workspace, layerName,
+		s.workspace, layerName,
 		x-0.01, y-0.01, x+0.01, y+0.01)
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)

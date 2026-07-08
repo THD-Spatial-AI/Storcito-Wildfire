@@ -413,19 +413,6 @@ func (h *WebserviceHandler) MarkIdle(c *gin.Context) {
 	httputil.SuccessResponse(c, toWebserviceDTO(updated))
 }
 
-func (h *WebserviceHandler) updateStatus(c *gin.Context, status, reason string) {
-	id, ok := httputil.ParseUintParam(c, "id", errInvalidID)
-	if !ok {
-		return
-	}
-	updated, err := h.service.UpdateStatus(c.Request.Context(), id, status, reason)
-	if err != nil {
-		httputil.HandleError(c, err)
-		return
-	}
-	httputil.SuccessResponse(c, toWebserviceDTO(updated))
-}
-
 // CheckHealth returns health status for a webservice
 func (h *WebserviceHandler) CheckHealth(c *gin.Context) {
 	id, ok := httputil.ParseUintParam(c, "id", errInvalidID)

@@ -159,15 +159,6 @@ func (s *WebserviceService) Delete(ctx context.Context, id uint) error {
 	return nil
 }
 
-func (s *WebserviceService) UpdateStatus(ctx context.Context, id uint, status string, reason string) (*models.WebserviceInstance, error) {
-	updates := map[string]interface{}{"status_reason": reason}
-
-	if err := s.repo.UpdateStatus(id, status, updates); err != nil {
-		return nil, err
-	}
-	return s.Get(ctx, id)
-}
-
 func (s *WebserviceService) ReserveAvailableInstanceTx(ctx context.Context, tx *gorm.DB, cpuThreshold float64) (*models.WebserviceInstance, error) {
 	log := logger.ForComponent("webservice")
 	var instance models.WebserviceInstance
@@ -277,29 +268,6 @@ func (s *WebserviceService) simpleTCPPing(ws *models.WebserviceInstance) bool {
 	return true
 }
 
-func (s *WebserviceService) CheckIfBusy(ctx context.Context, id uint) (bool, error) {
-	ws, err := s.Get(ctx, id)
-	if err != nil {
-		return false, err
-	}
-
-	log := logger.ForComponent("webservice")
-	url := buildURL(ws, endpointStatus)
-
-	respData, err := fetchStatusData(ctx, s.client, url, ws.ID, log)
-	if err != nil {
-		return ws.Busy, nil
-	}
-
-	busy, err := parseStatusResponse(respData, ws.ID, log)
-	if err != nil {
-		log.Warnf("CheckIfBusy: no valid response, using current DB state id=%d busy=%v", ws.ID, ws.Busy)
-		return ws.Busy, nil
-	}
-
-	return busy, err
-}
-
 func fetchStatusData(ctx context.Context, client *http.Client, url string, wsID uint, log *logrus.Entry) ([]byte, error) {
 	statusCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
@@ -337,98 +305,6 @@ func fetchStatusData(ctx context.Context, client *http.Client, url string, wsID 
 	}
 
 	return data, nil
-}
-
-func parseStatusResponse(data []byte, wsID uint, log *logrus.Entry) (bool, error) {
-	var raw any
-	if err := json.Unmarshal(data, &raw); err != nil {
-		log.Warnf("CheckIfBusy: JSON parse failed id=%d err=%v raw_data=%s", wsID, err, string(data))
-		return false, err
-	}
-
-	switch v := raw.(type) {
-	case map[string]any:
-		return checkMapStatus(v, wsID, log)
-	case []any:
-		return checkArrayStatus(v)
-	}
-
-	return false, fmt.Errorf("unexpected response type")
-}
-
-func checkMapStatus(v map[string]any, wsID uint, log *logrus.Entry) (bool, error) {
-	if statusStr, ok := v["status"].(string); ok {
-		busy, recognized := parseStatusString(statusStr)
-		if recognized {
-			if statusStr == "offline" {
-				log.Warnf("CheckIfBusy: webservice is OFFLINE id=%d", wsID)
-				return false, fmt.Errorf("status offline")
-			}
-			return busy, nil
-		}
-	}
-
-	if active, ok := v["active"].(bool); ok {
-		return active, nil
-	}
-
-	if jobsArr, ok := v["jobs"].([]any); ok {
-		return len(jobsArr) > 0, nil
-	}
-
-	if jobsMap, ok := v["jobs"].(map[string]any); ok {
-		return checkJobsMap(jobsMap), nil
-	}
-
-	return false, fmt.Errorf("no valid status field")
-}
-
-func parseStatusString(statusStr string) (busy bool, recognized bool) {
-	switch strings.ToLower(strings.TrimSpace(statusStr)) {
-	case "calculating", "running", "busy", "processing":
-		return true, true
-	case "online", "idle", "ready", "available":
-		return false, true
-	case "offline":
-		return false, true
-	}
-	return false, false
-}
-
-func checkJobsMap(jobsMap map[string]any) bool {
-	for _, job := range jobsMap {
-		if isJobRunning(job) {
-			return true
-		}
-	}
-	return false
-}
-
-func checkArrayStatus(v []any) (bool, error) {
-	if len(v) == 0 {
-		return false, nil
-	}
-	for _, item := range v {
-		if isJobRunning(item) {
-			return true, nil
-		}
-	}
-	return false, nil
-}
-
-func isJobRunning(job any) bool {
-	if jobData, ok := job.(map[string]any); ok {
-		if dur, ok := jobData["Duration"].(float64); ok && dur == 0 {
-			return true
-		}
-		if status, ok := jobData["status"].(string); ok && strings.EqualFold(status, "running") {
-			return true
-		}
-		if end, ok := jobData["EndTime"].(string); !ok || end == "" {
-			return true
-		}
-	}
-	return false
 }
 
 func (s *WebserviceService) GetSummary(ctx context.Context) (map[string]interface{}, error) {
@@ -550,15 +426,6 @@ func (s *WebserviceService) ReleaseInstance(ctx context.Context, id uint) error 
 
 	log.Debugf("successfully released webservice id=%d (decremented concurrency)", id)
 	return nil
-}
-
-func (s *WebserviceService) MarkIdle(ctx context.Context, id uint) error {
-	updates := map[string]interface{}{
-		"busy":       false,
-		"available":  true,
-		"updated_at": time.Now(),
-	}
-	return s.repo.Update(id, updates)
 }
 
 func (s *WebserviceService) UpdateHeartbeat(ctx context.Context, id uint) error {

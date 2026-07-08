@@ -12,54 +12,32 @@ import (
 	"platform.local/common/pkg/httpclient"
 )
 
-// Client is the contract consumed by application services. Interface-first
-// so the service layer can be unit tested with a fake and so alternative
-// implementations (e.g. in-process, gRPC) can be swapped in.
+// Client is the geoservice contract consumed by application services.
 type Client interface {
 	ConfigureLayer(ctx context.Context, resultID uint) error
 	DeleteLayer(ctx context.Context, resultID uint) error
 	GetBounds(ctx context.Context, resultID uint) (Bounds, error)
 	SampleDistribution(ctx context.Context, resultID uint, sampleCount int) (SampleResult, error)
 	SampleGrid(ctx context.Context, resultID uint, sampleCount int) (GridSampleResult, error)
+	SampleDailyDistributions(ctx context.Context, resultID uint, sampleCount int) ([]DailyDistribution, error)
 }
 
-// ErrNotReady is returned when the geoservice reports the layer is not yet
-// configured. Callers may choose to retry.
+// ErrNotReady means the layer is not configured yet; callers may retry.
 var ErrNotReady = errors.New("geoserver: layer not configured yet")
 
-// HTTPClient is the default Client implementation backed by the shared
-// platform HTTP client. It is safe for concurrent use.
+// HTTPClient is the default Client implementation; safe for concurrent use.
 type HTTPClient struct {
 	rpc *httpclient.Client
 }
 
-// Option configures the HTTPClient.
-type Option func(*httpClientOptions)
-
-type httpClientOptions struct {
-	timeout time.Duration
-}
-
-// WithTimeout overrides the per-request timeout.
-func WithTimeout(d time.Duration) Option {
-	return func(o *httpClientOptions) { o.timeout = d }
-}
-
-// NewHTTPClient constructs an HTTPClient targeting baseURL (e.g.
-// "http://geoservice:8083").
-func NewHTTPClient(baseURL string, opts ...Option) *HTTPClient {
-	options := httpClientOptions{timeout: 60 * time.Second}
-	for _, apply := range opts {
-		apply(&options)
-	}
-	return &HTTPClient{rpc: httpclient.New(baseURL, httpclient.WithTimeout(options.timeout))}
+// NewHTTPClient constructs an HTTPClient targeting baseURL.
+func NewHTTPClient(baseURL string) *HTTPClient {
+	return &HTTPClient{rpc: httpclient.New(baseURL, httpclient.WithTimeout(60*time.Second))}
 }
 
 const basePath = "/api/internal/geoserver/results"
 
-// ConfigureLayer asks the geoservice to publish the result raster as a WMS
-// layer. The geoservice persists geoserver_status and layer_name directly
-// to model_results.
+// ConfigureLayer asks the geoservice to publish the result raster as a WMS layer.
 func (c *HTTPClient) ConfigureLayer(ctx context.Context, resultID uint) error {
 	path := fmt.Sprintf("%s/%d/configure", basePath, resultID)
 	resp, err := c.rpc.DoJSON(ctx, http.MethodPost, path, struct{}{}, nil)
@@ -79,8 +57,7 @@ func (c *HTTPClient) ConfigureLayer(ctx context.Context, resultID uint) error {
 	return nil
 }
 
-// DeleteLayer best-effort removes the published WMS layer. 404 is
-// treated as idempotent success.
+// DeleteLayer removes the published WMS layer; 404 counts as success.
 func (c *HTTPClient) DeleteLayer(ctx context.Context, resultID uint) error {
 	path := fmt.Sprintf("%s/%d/layer", basePath, resultID)
 	resp, err := c.rpc.Do(ctx, http.MethodDelete, path, nil, nil)
@@ -121,11 +98,7 @@ func (c *HTTPClient) GetBounds(ctx context.Context, resultID uint) (Bounds, erro
 	return out.Bounds, nil
 }
 
-// SampleDistribution asks the geoservice for a bucketed pixel distribution
-// together with the count of valid and total attempted samples. The
-// valid/total ratio is required by callers to scale the layer bounding
-// box down to its analyzed (non-nodata) surface area.
-// When sampleCount <= 0 the geoservice default is used.
+// SampleDistribution returns the pixel distribution with valid/total counts.
 func (c *HTTPClient) SampleDistribution(ctx context.Context, resultID uint, sampleCount int) (SampleResult, error) {
 	path := fmt.Sprintf("%s/%d/sample-distribution", basePath, resultID)
 
@@ -175,6 +148,30 @@ func (c *HTTPClient) SampleGrid(ctx context.Context, resultID uint, sampleCount 
 		return GridSampleResult{}, fmt.Errorf("geoserver: decode sample-grid response: %w", err)
 	}
 	return out, nil
+}
+
+// SampleDailyDistributions returns one class histogram per daily risk layer.
+func (c *HTTPClient) SampleDailyDistributions(ctx context.Context, resultID uint, sampleCount int) ([]DailyDistribution, error) {
+	path := fmt.Sprintf("%s/%d/daily-distribution", basePath, resultID)
+
+	resp, err := c.rpc.DoJSON(ctx, http.MethodPost, path, DailyDistributionRequest{SampleCount: sampleCount}, nil)
+	if err != nil {
+		return nil, fmt.Errorf("geoserver: daily-distribution request failed: %w", err)
+	}
+	defer drain(resp.Body)
+
+	if resp.StatusCode == http.StatusNotFound {
+		return nil, ErrNotReady
+	}
+	if resp.StatusCode/100 != 2 {
+		return nil, decodeError(resp, "daily-distribution")
+	}
+
+	var out DailyDistributionResponse
+	if err := decodeJSONLenient(resp.Body, &out); err != nil {
+		return nil, fmt.Errorf("geoserver: decode daily-distribution response: %w", err)
+	}
+	return out.Days, nil
 }
 
 type errorEnvelope struct {

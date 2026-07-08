@@ -53,7 +53,7 @@ interface MapStore {
 }
 
 const LEGACY_MAPLIBRE_LAYER_ID = "maplibre_3d";
-export const MAPLIBRE_DARK_LAYER_ID = "maplibre_dark";
+const MAPLIBRE_DARK_LAYER_ID = "maplibre_dark";
 export const MAPLIBRE_VOYAGER_LAYER_ID = "maplibre_voyager";
 
 export function normalizeBaseLayerId(id: string): string {

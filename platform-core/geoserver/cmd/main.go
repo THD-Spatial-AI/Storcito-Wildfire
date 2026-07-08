@@ -96,5 +96,6 @@ func registerRoutes(r *gin.Engine, deps *appDependencies) {
 		internal.GET("/results/:id/bounds", handler.GetBounds)
 		internal.POST("/results/:id/sample-distribution", handler.SampleDistribution)
 		internal.POST("/results/:id/sample-grid", handler.SampleGrid)
+		internal.POST("/results/:id/daily-distribution", handler.SampleDailyDistributions)
 	}
 }

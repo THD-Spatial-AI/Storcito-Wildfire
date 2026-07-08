@@ -6,7 +6,7 @@ import VectorSource from "ol/source/Vector";
 import buffer from "@turf/buffer";
 import type { Feature as GeoJSONFeature, Polygon as GeoJSONPolygon, Position } from "geojson";
 
-export const processPolygonBuffer = (
+const processPolygonBuffer = (
   lonLatCoords: number[][],
   distanceMeters: number,
   source: VectorSource,

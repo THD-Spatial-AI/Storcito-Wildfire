@@ -13,8 +13,7 @@ import (
 	"platform.local/common/pkg/utils"
 )
 
-// layerTitles maps STORCITO layer keys to human-friendly titles shown in
-// the frontend layer switcher.
+// layerTitles maps STORCITO layer keys to titles for the layer switcher.
 var layerTitles = map[string]string{
 	"ndvi":   "Vegetation (NDVI)",
 	"ftm":    "Fuel Type",
@@ -25,11 +24,12 @@ var layerTitles = map[string]string{
 	"infra":  "Infrastructure",
 	"wui":    "Wildland-Urban Interface",
 	"fhist":  "Fire History",
+	"twi":    "Wetness (TWI)",
+	"ndmi":   "Moisture (NDMI)",
+	"lst":    "Surface Temperature",
 }
 
-// findResultLayers discovers the component rasters in <extractDir>/layers/
-// (vegetation, FWI, etc.) that share the same 0–5 risk scale as the main
-// map and can be published as additional WMS layers.
+// findResultLayers discovers component rasters in <extractDir>/layers/ for WMS publishing.
 func findResultLayers(extractDir string) []commonModels.ResultLayer {
 	layersDir := filepath.Join(extractDir, "layers")
 	entries, err := os.ReadDir(layersDir)
@@ -100,9 +100,7 @@ func isRiskRasterFilename(name string) bool {
 		strings.Contains(lower, "mapa_final")
 }
 
-// findTifFile returns the result raster used by ModelResult.TifFilePath.
-// Risk-named rasters are preferred; the first .tif/.tiff is kept as a
-// back-compat fallback for older simulation archives.
+// findTifFile returns the result raster, preferring risk-named files.
 func findTifFile(extractDir string) (string, string) {
 	var firstTif string
 	var riskTif string

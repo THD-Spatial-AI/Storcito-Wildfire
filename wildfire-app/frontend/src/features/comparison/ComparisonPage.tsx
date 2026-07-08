@@ -7,6 +7,7 @@ import {
   Loader2,
   BarChart3,
   ArrowLeft,
+  CalendarDays,
 } from 'lucide-react';
 import { modelService, Model } from '@/features/model-dashboard/services/modelService';
 import { Workspace } from '@/components/workspace';
@@ -146,12 +147,7 @@ export const ComparisonPage: FC<ComparisonPageProps> = ({ modelId: propModelId }
               .filter(m => String(m.id) !== excludeId)
               .map((model) => (
                 <SelectItem key={model.id} value={String(model.id)}>
-                  <span className="flex items-center justify-between w-full gap-2">
-                    <span className="truncate">{model.title}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(model.created_at).toLocaleDateString()}
-                    </span>
-                  </span>
+                  <span className="truncate">{model.title}</span>
                 </SelectItem>
               ))
           )}
@@ -162,6 +158,11 @@ export const ComparisonPage: FC<ComparisonPageProps> = ({ modelId: propModelId }
 
   const isLoading = loading1 || loading2;
   const hasComparison = Boolean(model1 && model2);
+
+  const formatModelDates = (model: Model): string | null =>
+    model.from_date && model.to_date
+      ? `${new Date(model.from_date).toLocaleDateString()} – ${new Date(model.to_date).toLocaleDateString()}`
+      : null;
 
   return (
     <div className="h-full bg-background flex flex-col overflow-hidden">
@@ -207,6 +208,12 @@ export const ComparisonPage: FC<ComparisonPageProps> = ({ modelId: propModelId }
                     {model1.region || t('simulationComparison.noRegion')}
                   </span>
                 )}
+                {model1 && formatModelDates(model1) && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground shrink-0 ml-auto">
+                    <CalendarDays className="w-3 h-3" />
+                    {formatModelDates(model1)}
+                  </span>
+                )}
               </div>
               <div className="flex gap-2 mt-1.5">
                 <div className="w-1/3 min-w-[120px]">
@@ -241,6 +248,12 @@ export const ComparisonPage: FC<ComparisonPageProps> = ({ modelId: propModelId }
                 {model2 && (
                   <span className="text-[10px] text-muted-foreground truncate">
                     {model2.region || t('simulationComparison.noRegion')}
+                  </span>
+                )}
+                {model2 && formatModelDates(model2) && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground shrink-0 ml-auto">
+                    <CalendarDays className="w-3 h-3" />
+                    {formatModelDates(model2)}
                   </span>
                 )}
               </div>

@@ -1,7 +1,6 @@
 import {
   FC,
   Fragment,
-  ReactNode,
   Suspense,
   lazy,
   useCallback,
@@ -10,41 +9,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import {
-  AlertCircle,
-  ArrowLeft,
-  Calendar,
-  Compass,
-  Droplets,
-  Eye,
-  EyeOff,
-  Flame,
-  Layers,
-  Loader2,
-  MapPin,
-  Mountain,
-  Pause,
-  Play,
-  RefreshCw,
-  Route,
-  ChevronRight,
-  Thermometer,
-  Wind,
-  Check,
-  Layers2,
-} from "lucide-react";
+import { useParams } from "react-router-dom";
 import { useTranslation } from "@/i18n";
-import { cn } from "@/lib/utils";
-import TileLayer from "ol/layer/Tile";
-import TileWMS from "ol/source/TileWMS";
-import XYZ from "ol/source/XYZ";
-import type Map from "ol/Map";
-import { get as getProj, transformExtent } from "ol/proj";
-import proj4 from "proj4";
-import { register as registerProj4 } from "ol/proj/proj4";
-
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@spatialhub/ui";
 
 import axios from "@/lib/axios";
 import { useDocumentTitle } from "@/hooks/use-document-title";
@@ -52,273 +18,43 @@ import { MapContainer } from "@/components/shared/MapContainer";
 import { isMapLibreDarkLayerId, useMapStore } from "@/features/interactive-map/store/map-store";
 import MapSearchBar from "@/features/interactive-map/MapSearchBar";
 import { modelService, Model } from "@/features/model-dashboard/services/modelService";
-import { WorkspaceSelector } from "@/components/workspace";
 import { CreateWorkspaceModal } from "@/components/workspace";
-import { type Workspace } from "@/components/workspace";
-import { useWorkspaceStore } from "@/components/workspace";
-import { InfoIcon } from "@/components/ui/InfoTooltip";
-import { type TooltipKey } from "@/components/shared/tooltip-contents";
-import SidebarButton from "@/components/ui/SidebarButton";
+
 import { useRiskMetrics } from "./hooks/useRiskMetrics";
+import { useRiskLayers } from "./hooks/useRiskLayers";
+import { useFrameWeather } from "./hooks/useFrameWeather";
+import { useReferenceLayers } from "./hooks/useReferenceLayers";
+import { useDailyRiskDistribution } from "./hooks/useDailyRiskDistribution";
+import { useWorkspaceModelSelector } from "./hooks/useWorkspaceModelSelector";
+import {
+  DAILY_FRAME_KEY_PATTERN,
+  DEFAULT_VISIBLE_RISK_LEVELS,
+  FIRE_RISK_DEFAULT_OPACITY,
+  POLL_INTERVAL_MS,
+  RISK_LEVELS,
+  type ModelResult,
+  type RiskLevelValue,
+  type VisibleRiskLevels,
+} from "./viewer-config";
+import { extractErrorMessage } from "./viewer-helpers";
+import { ViewerHeader } from "./components/ViewerHeader";
+import { ViewerPlayerOverlay } from "./components/ViewerPlayerOverlay";
+import { ViewerSidebarRail } from "./components/ViewerSidebarRail";
+import { ViewerStatusBanners } from "./components/ViewerStatusBanners";
+import { OverlaysPanel, RiskLegendPanel } from "./components/ViewerMapPanels";
+import { RiskTimelinePanel } from "./components/RiskTimelinePanel";
+
 // Cesium is several MB, so load the 3D view (and Cesium with it) only when opened.
 const CesiumWildfire3DView = lazy(() =>
   import("./components/CesiumWildfire3DView").then((m) => ({ default: m.CesiumWildfire3DView }))
 );
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-interface ModelResult {
-  id: number;
-  model_id: number;
-  geoserver_status: string;
-}
-
-interface LayerBounds {
-  minx: number;
-  miny: number;
-  maxx: number;
-  maxy: number;
-  crs?: string;
-}
-
-interface AvailableLayer {
-  key: string;
-  title: string;
-  layer_name: string;
-}
-
-interface LayerInfo {
-  wms_url: string;
-  layer_name: string;
-  status: string;
-  bounds?: LayerBounds;
-  available_layers?: AvailableLayer[];
-}
-
 interface ModelResultsViewerProps {
   modelId?: number;
 }
 
-/** Per-day fire weather data */
-interface FrameWeather {
-  wind_speed_kmh?: number | null;
-  wind_direction_deg?: number | null;
-  temperature_c?: number | null;
-  relative_humidity_pct?: number | null;
-  fwi?: number | null;
-}
-
-// ---------------------------------------------------------------------------
-// Constants & classification legend
-// ---------------------------------------------------------------------------
-
-const EPSG_32629 = "EPSG:32629";
-const POLL_INTERVAL_MS = 10_000;
-// Raster transparency is applied only here; users adjust it with the opacity slider.
-const FIRE_RISK_DEFAULT_OPACITY = 0.7;
-const FIRE_RISK_STYLE_VERSION = "risk-style-storcito-v7";
-const MAP_REFERENCE_DARK_OPACITY = 0.95;
-const MAP_REFERENCE_LIGHT_ROADS_OPACITY = 0.82;
-const MAP_REFERENCE_LIGHT_LABELS_OPACITY = 0.62;
-const FIRE_RISK_STYLE_VERY_LOW = "fire_risk_level_1";
-const FIRE_RISK_STYLE_LOW = "fire_risk_level_2";
-const FIRE_RISK_STYLE_MODERATE = "fire_risk_level_3";
-const FIRE_RISK_STYLE_HIGH = "fire_risk_level_4";
-const FIRE_RISK_STYLE_VERY_HIGH = "fire_risk_level_5";
-// Transparent-background transportation overlay (roads with dark casings, no
-// landuse fill) — readable over the risk raster without blend-mode tricks.
-const ESRI_TRANSPORTATION_REFERENCE_URL =
-  "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}";
-const ESRI_PLACES_REFERENCE_URL =
-  "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}";
-const ESRI_ATTRIBUTION = "© 2026, Deggendorf Institute of Technology | Esri contribution";
-
-const RISK_LEVELS = [
-  {
-    id: "very_low",
-    label: "Very Low",
-    color: "#9ca3af",
-    value: 1,
-    style: FIRE_RISK_STYLE_VERY_LOW,
-    metricKey: "veryLow",
-  },
-  { id: "low", label: "Low", color: "#16a34a", value: 2, style: FIRE_RISK_STYLE_LOW, metricKey: "low" },
-  {
-    id: "moderate",
-    label: "Moderate",
-    color: "#eab308",
-    value: 3,
-    style: FIRE_RISK_STYLE_MODERATE,
-    metricKey: "moderate",
-  },
-  { id: "high", label: "High", color: "#f97316", value: 4, style: FIRE_RISK_STYLE_HIGH, metricKey: "high" },
-  {
-    id: "very_high",
-    label: "Very High",
-    color: "#dc2626",
-    value: 5,
-    style: FIRE_RISK_STYLE_VERY_HIGH,
-    metricKey: "veryHigh",
-  },
-] as const;
-
-type RiskLevelValue = (typeof RISK_LEVELS)[number]["value"];
-type VisibleRiskLevels = Record<RiskLevelValue, boolean>;
-interface RiskLayerEntry {
-  value: RiskLevelValue;
-  layer: TileLayer<TileWMS>;
-}
-interface RiskLayerSelection {
-  key: string;
-  layerName: string;
-}
-
-const DEFAULT_VISIBLE_RISK_LEVELS: VisibleRiskLevels = {
-  1: true,
-  2: true,
-  3: true,
-  4: true,
-  5: true,
-};
-
-const RISK_LEVEL_META: Record<string, { labelKey: string; chip: string }> = {
-  very_low: { labelKey: "modelResults.legend.levels.very_low", chip: "bg-gray-400/15 text-gray-600" },
-  low: { labelKey: "modelResults.legend.levels.low", chip: "bg-green-600/15 text-green-700" },
-  moderate: { labelKey: "modelResults.legend.levels.moderate", chip: "bg-yellow-500/15 text-yellow-700" },
-  high: { labelKey: "modelResults.legend.levels.high", chip: "bg-orange-500/15 text-orange-700" },
-  very_high: { labelKey: "modelResults.legend.levels.very_high", chip: "bg-red-600/15 text-red-700" },
-};
-
-/** Labeled value in the floating player (caption on top, value below). */
-const PlayerStat = ({
-  icon,
-  label,
-  value,
-  unit,
-  tooltipKey,
-  className,
-}: {
-  icon?: ReactNode;
-  label: string;
-  value: string;
-  unit?: string;
-  tooltipKey?: TooltipKey;
-  className?: string;
-}) => (
-  <div className={`flex items-center gap-1.5 ${className || ""}`}>
-    {icon}
-    <div className="flex flex-col leading-tight">
-      <div className="flex items-center gap-1">
-        <span className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
-          {label}
-        </span>
-        {tooltipKey && <InfoIcon tooltipKey={tooltipKey} position="top" />}
-      </div>
-      <span className="text-xs font-semibold tabular-nums text-foreground whitespace-nowrap">
-        {value}
-        {unit ? <span className="font-normal text-muted-foreground"> {unit}</span> : null}
-      </span>
-    </div>
-  </div>
-);
-
-// ---------------------------------------------------------------------------
-// Helpers (pure — safe to unit test)
-// ---------------------------------------------------------------------------
-
-function buildWMSLayer(info: LayerInfo, styleName: string, zIndex: number): TileLayer<TileWMS> {
-  const source = new TileWMS({
-    url: info.wms_url,
-    params: {
-      LAYERS: info.layer_name,
-      STYLES: styleName,
-      STYLE_VERSION: FIRE_RISK_STYLE_VERSION,
-      TILED: true,
-      FORMAT: "image/png",
-      TRANSPARENT: true,
-    },
-    serverType: "geoserver",
-    crossOrigin: "anonymous",
-  });
-  const layer = new TileLayer({
-    source,
-    opacity: FIRE_RISK_DEFAULT_OPACITY,
-    className: "ol-layer fire-risk-overlay ol-visible-in-maplibre mix-blend-multiply",
-  });
-  layer.setZIndex(zIndex);
-  return layer;
-}
-
-function fitMapToBounds(map: Map, bounds: LayerBounds) {
-  const { minx, miny, maxx, maxy, crs } = bounds;
-  const sourceCrs = crs || "EPSG:4326";
-
-  if (sourceCrs === EPSG_32629) {
-    registerProj4(proj4);
-    if (!getProj(EPSG_32629)) {
-      proj4.defs(EPSG_32629, "+proj=utm +zone=29 +datum=WGS84 +units=m +no_defs +type=crs");
-    }
-  }
-
-  try {
-    const extent = transformExtent([minx, miny, maxx, maxy], sourceCrs, "EPSG:3857");
-    map.getView().fit(extent, { padding: [50, 50, 50, 50], duration: 250, maxZoom: 14 });
-  } catch (err) {
-    if (import.meta.env.DEV) console.warn("[ModelResultsViewer] bounds fit failed", err);
-  }
-}
-
-function formatFrameDate(iso: string): string {
-  const [y, m, d] = iso.split("-").map(Number);
-  const dt = new Date(y, m - 1, d);
-  if (Number.isNaN(dt.getTime())) return iso;
-  return dt.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
-}
-
-function windCardinal(degrees: number): string {
-  const labels = [
-    "N",
-    "NNE",
-    "NE",
-    "ENE",
-    "E",
-    "ESE",
-    "SE",
-    "SSE",
-    "S",
-    "SSW",
-    "SW",
-    "WSW",
-    "W",
-    "WNW",
-    "NW",
-    "NNW",
-  ];
-  return labels[Math.round(degrees / 22.5) % labels.length];
-}
-
-function formatMetric(value: number | null | undefined, digits = 1): string {
-  if (typeof value !== "number" || !Number.isFinite(value)) return "—";
-  return value.toFixed(digits);
-}
-
-function extractErrorMessage(err: unknown, fallback: string): string {
-  if (typeof err === "object" && err && "response" in err) {
-    const data = (err as { response?: { data?: { message?: string } } }).response?.data;
-    if (data?.message) return data.message;
-  }
-  return fallback;
-}
-
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
-
 export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propModelId }) => {
   const { id: paramId } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const { t } = useTranslation();
   useDocumentTitle(t("modelResults.title", "Model Results"));
 
@@ -333,93 +69,65 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [riskLayerEntries, setRiskLayerEntries] = useState<RiskLayerEntry[]>([]);
-  const [availableLayers, setAvailableLayers] = useState<AvailableLayer[]>([]);
-  const [selectedLayerKey, setSelectedLayerKey] = useState<string>("risk");
-  const selectedLayerKeyRef = useRef<string>("risk");
   const [layerVisible, setLayerVisible] = useState(true);
   const [layerOpacity, setLayerOpacity] = useState(FIRE_RISK_DEFAULT_OPACITY);
   const [visibleRiskLevels, setVisibleRiskLevels] = useState<VisibleRiskLevels>(
     DEFAULT_VISIBLE_RISK_LEVELS
   );
-  const [tileErrors, setTileErrors] = useState(0);
   const [show3D, setShow3D] = useState(false);
-  const [wms3D, setWms3D] = useState<{ wmsUrl: string; layerName: string } | null>(null);
-  // Day-by-day animation over the daily risk maps a dynamic run emits.
   const [playing, setPlaying] = useState(false);
   const playFrameRef = useRef(0);
-
+  const [showTimeline, setShowTimeline] = useState(false);
   const [roadsVisible, setRoadsVisible] = useState(true);
   const [labelsVisible, setLabelsVisible] = useState(false);
 
-  // Workspace + model selector state (mirrors AssessmentViewer).
-  const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace | null>(null);
-  const [workspaceModels, setWorkspaceModels] = useState<Model[]>([]);
-  const [selectedModelId, setSelectedModelId] = useState<number | null>(null);
-  const [isLoadingModels, setIsLoadingModels] = useState(false);
-  const [isCreateWsOpen, setIsCreateWsOpen] = useState(false);
-  const [wsReloadKey, setWsReloadKey] = useState(0);
-  const currentWorkspace = useWorkspaceStore((s) => s.currentWorkspace);
-  const preferredWorkspaceId = useWorkspaceStore((s) => s.preferredWorkspaceId);
-  const isLoadingPreference = useWorkspaceStore((s) => s.isLoading);
-  const setCurrentWorkspace = useWorkspaceStore((s) => s.setCurrentWorkspace);
-  const initializeWorkspace = useWorkspaceStore((s) => s.initializeWorkspace);
+  // Fullscreen the document, not the viewer div: body portals stay visible.
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  useEffect(() => {
+    const onChange = () => setIsFullscreen(Boolean(document.fullscreenElement));
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) {
+      void document.exitFullscreen();
+    } else {
+      void document.documentElement.requestFullscreen();
+    }
+  };
+
+  const workspaceSelector = useWorkspaceModelSelector(model, resolvedModelId);
   const { metrics: legendMetrics } = useRiskMetrics(resolvedModelId);
 
   const activeResult = results[0];
   const layerReady = activeResult?.geoserver_status === "configured";
   const layerPending = Boolean(activeResult && !layerReady);
-
-  // Refs to cleanly detach layers / cancel polling on unmount or id change.
-  const riskLayerEntriesRef = useRef<RiskLayerEntry[]>([]);
-  const visibleRiskLevelsRef = useRef<VisibleRiskLevels>(DEFAULT_VISIBLE_RISK_LEVELS);
   const pollTimerRef = useRef<number | null>(null);
-  const attachLayerRequestRef = useRef(0);
-  const renderRefreshRafRef = useRef<number | null>(null);
-  const renderRefreshTimeoutsRef = useRef<number[]>([]);
 
-  const clearScheduledMapRenderRefreshes = useCallback(() => {
-    if (renderRefreshRafRef.current !== null) {
-      cancelAnimationFrame(renderRefreshRafRef.current);
-      renderRefreshRafRef.current = null;
-    }
-    renderRefreshTimeoutsRef.current.forEach((id) => clearTimeout(id));
-    renderRefreshTimeoutsRef.current = [];
-  }, []);
+  const {
+    riskLayerEntries,
+    riskLayerEntriesRef,
+    availableLayers,
+    selectedLayerKey,
+    selectedLayerKeyRef,
+    tileErrors,
+    wms3D,
+    attachLayer,
+    selectLayer,
+    applyDailyFrame,
+    scheduleMapRenderRefresh,
+  } = useRiskLayers({
+    map,
+    modelId: resolvedModelId,
+    layerVisible,
+    layerOpacity,
+    visibleRiskLevels,
+    onError: setError,
+  });
 
-  const scheduleMapRenderRefresh = useCallback(() => {
-    if (!map) return;
+  useReferenceLayers(map, isDarkBaseLayer, roadsVisible, labelsVisible, scheduleMapRenderRefresh);
 
-    clearScheduledMapRenderRefreshes();
-    const refresh = () => {
-      if (!map.getTarget()) return;
-      map.getLayers().forEach((layer) => {
-        layer.changed();
-      });
-      map.updateSize();
-      map.renderSync();
-    };
-
-    renderRefreshRafRef.current = requestAnimationFrame(() => {
-      renderRefreshRafRef.current = null;
-      refresh();
-    });
-    [80, 250, 600, 1200].forEach((delay) => {
-      renderRefreshTimeoutsRef.current.push(window.setTimeout(refresh, delay));
-    });
-  }, [clearScheduledMapRenderRefreshes, map]);
-
-  const removeRiskLayerEntries = useCallback(() => {
-    if (!map) return;
-    riskLayerEntriesRef.current.forEach(({ layer }) => map.removeLayer(layer));
-    riskLayerEntriesRef.current = [];
-    setRiskLayerEntries([]);
-    scheduleMapRenderRefresh();
-  }, [map, scheduleMapRenderRefresh]);
-
-  // -------------------------------------------------------------------------
-  // Data loading
-  // -------------------------------------------------------------------------
+  // ----- Data loading -----
 
   const loadData = useCallback(async () => {
     if (!resolvedModelId) {
@@ -452,188 +160,58 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     }
   }, [resolvedModelId, t]);
 
-  const attachLayer = useCallback(
-    async (result: ModelResult) => {
-      if (!map || result.geoserver_status !== "configured") return;
-      const requestId = ++attachLayerRequestRef.current;
-      const requestedLayerKey = selectedLayerKeyRef.current;
-      try {
-        const resp = await axios.get(`/results/${result.id}/layer`);
-        if (requestId !== attachLayerRequestRef.current) return;
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
-        const info: LayerInfo | undefined = resp.data?.data;
-        if (!info?.wms_url || !info.layer_name) {
-          setError(t("modelResults.errors.layerIncomplete", "Layer configuration is incomplete"));
-          return;
-        }
+  // Attach the layer once both the map is ready and the result is configured.
+  useEffect(() => {
+    if (!map || !activeResult || riskLayerEntriesRef.current.length > 0) return;
+    if (activeResult.geoserver_status !== "configured") return;
+    attachLayer(activeResult);
+  }, [map, activeResult, attachLayer, riskLayerEntriesRef]);
 
-        const layerOptions = info.available_layers ?? [];
-        setAvailableLayers(layerOptions);
-        // Render the currently selected component layer (defaults to the risk map).
-        const selectedLayer = layerOptions.find((l) => l.key === requestedLayerKey);
-        const fallbackLayer = layerOptions.find((l) => l.key === "risk");
-        const activeLayer: RiskLayerSelection = selectedLayer
-          ? { key: selectedLayer.key, layerName: selectedLayer.layer_name }
-          : {
-              key: fallbackLayer?.key ?? "risk",
-              layerName: fallbackLayer?.layer_name ?? info.layer_name,
-            };
-        if (activeLayer.key !== requestedLayerKey) {
-          selectedLayerKeyRef.current = activeLayer.key;
-          setSelectedLayerKey(activeLayer.key);
-        }
-
-        removeRiskLayerEntries();
-
-        const activeInfo: LayerInfo = { ...info, layer_name: activeLayer.layerName };
-        setWms3D({ wmsUrl: info.wms_url, layerName: activeLayer.layerName });
-
-        const newRiskLayerEntries = RISK_LEVELS.map((riskLevel) => {
-          const riskLayer = buildWMSLayer(activeInfo, riskLevel.style, 450 + riskLevel.value);
-          riskLayer.setVisible(layerVisible && visibleRiskLevelsRef.current[riskLevel.value]);
-          const source = riskLayer.getSource();
-          source?.updateParams({
-            VIEWER_LAYER_KEY: activeLayer.key,
-            VIEWER_LAYER_REFRESH: String(requestId),
-          });
-          source?.on("tileloadend", scheduleMapRenderRefresh);
-          source?.on("tileloaderror", () => {
-            setTileErrors((n) => n + 1);
-            scheduleMapRenderRefresh();
-          });
-          map.addLayer(riskLayer);
-          return { value: riskLevel.value, layer: riskLayer };
-        });
-        setRiskLayerEntries(newRiskLayerEntries);
-        riskLayerEntriesRef.current = newRiskLayerEntries;
-
-        if (info.bounds) fitMapToBounds(map, info.bounds);
-        scheduleMapRenderRefresh();
-      } catch (err) {
-        setError(
-          extractErrorMessage(
-            err,
-            t("modelResults.errors.layerLoad", "Failed to load layer from GeoServer")
-          )
-        );
+  // Poll for readiness while the layer is still being processed server-side.
+  useEffect(() => {
+    if (!layerPending) return;
+    pollTimerRef.current = window.setInterval(() => {
+      loadData();
+    }, POLL_INTERVAL_MS);
+    return () => {
+      if (pollTimerRef.current !== null) {
+        clearInterval(pollTimerRef.current);
+        pollTimerRef.current = null;
       }
-    },
-    [layerVisible, map, removeRiskLayerEntries, scheduleMapRenderRefresh, t]
-  );
+    };
+  }, [layerPending, loadData]);
 
-  // Switch the visualized dataset (risk map vs. a component layer such as
-  // vegetation or FWI). All share the 0–5 scale, so the legend/styles apply.
   const handleSelectLayer = useCallback(
     (key: string) => {
       setPlaying(false);
-      setSelectedLayerKey(key);
-      selectedLayerKeyRef.current = key;
-      if (!map || !activeResult || activeResult.geoserver_status !== "configured") return;
-      removeRiskLayerEntries();
-      attachLayer(activeResult);
+      selectLayer(key, activeResult);
     },
-    [map, activeResult, attachLayer, removeRiskLayerEntries]
+    [activeResult, selectLayer]
   );
 
-  // -------------------------------------------------------------------------
-  // Daily risk animation (dynamic runs publish layers/risk_<date>.tif per day)
-  // -------------------------------------------------------------------------
+  // ----- Daily risk animation (dynamic runs publish layers/risk_<date>.tif per day) -----
 
   const dailyFrames = useMemo(
     () =>
       availableLayers
-        .filter((l) => /^risk_\d{4}-\d{2}-\d{2}$/.test(l.key))
+        .filter((l) => DAILY_FRAME_KEY_PATTERN.test(l.key))
         .sort((a, b) => a.key.localeCompare(b.key)),
     [availableLayers]
   );
   // Daily frames are driven by the player, so keep them out of the dataset switcher.
   const switcherLayers = useMemo(
-    () => availableLayers.filter((l) => !/^risk_\d{4}-\d{2}-\d{2}$/.test(l.key)),
+    () => availableLayers.filter((l) => !DAILY_FRAME_KEY_PATTERN.test(l.key)),
     [availableLayers]
   );
-  const playingFrameDate = /^risk_(\d{4}-\d{2}-\d{2})$/.exec(selectedLayerKey)?.[1] ?? null;
+  const playingFrameDate = DAILY_FRAME_KEY_PATTERN.exec(selectedLayerKey)?.[1] ?? null;
   const dailyFrameIndex = dailyFrames.findIndex((f) => f.key === selectedLayerKey);
 
-  // Per-day AOI-mean fire weather for the player readout. Failed fetches are
-  // left unset (not cached as null) so displaying that day retries them.
-  const [frameWeather, setFrameWeather] = useState<Record<string, FrameWeather | null>>({});
-  const frameWeatherRef = useRef<Record<string, FrameWeather | null>>({});
-  const frameWeatherInflightRef = useRef<Set<string>>(new Set());
-  const fetchFrameWeather = useCallback(
-    async (day: string) => {
-      if (!resolvedModelId) return;
-      if (frameWeatherRef.current[day] !== undefined || frameWeatherInflightRef.current.has(day))
-        return;
-      frameWeatherInflightRef.current.add(day);
-      try {
-        const resp = await axios.get(`/models/${resolvedModelId}/fire-weather`, {
-          params: { date: day },
-          // Each day is computed on demand by the risk engine (full moisture
-          // run-up), which can outlast the default 30s axios timeout.
-          timeout: 90_000,
-        });
-        const summary = (resp.data?.data?.weather_summary ?? null) as FrameWeather | null;
-        frameWeatherRef.current[day] = summary;
-        setFrameWeather((m) => ({ ...m, [day]: summary }));
-      } catch (err) {
-        if (import.meta.env.DEV)
-          console.warn(`[ModelResultsViewer] frame weather ${day} failed`, err);
-      } finally {
-        frameWeatherInflightRef.current.delete(day);
-      }
-    },
-    [resolvedModelId]
-  );
-
-  // Prefetch every frame day sequentially once the daily layers are known.
-  useEffect(() => {
-    if (dailyFrames.length < 2) return;
-    let cancelled = false;
-    (async () => {
-      for (const frame of dailyFrames) {
-        if (cancelled) return;
-        await fetchFrameWeather(frame.key.slice(5));
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [dailyFrames, fetchFrameWeather]);
-
-  // Retry on demand when the visible frame still has no weather.
-  useEffect(() => {
-    if (playingFrameDate && frameWeather[playingFrameDate] === undefined) {
-      void fetchFrameWeather(playingFrameDate);
-    }
-  }, [playingFrameDate, frameWeather, fetchFrameWeather]);
-
-  const currentFrameWeather = playingFrameDate ? frameWeather[playingFrameDate] : null;
-
-  // Days ranked by AOI-mean FWI (desc), known once all frames' weather loaded.
-  // The badge walks this ranking: click shows the day, then offers the next one.
-  const rankedRiskDays = useMemo(() => {
-    const days: { date: string; fwi: number }[] = [];
-    for (const frame of dailyFrames) {
-      const day = frame.key.slice(5);
-      const fwi = frameWeather[day]?.fwi;
-      if (typeof fwi !== "number") return null;
-      days.push({ date: day, fwi });
-    }
-    return days.sort((a, b) => b.fwi - a.fwi);
-  }, [dailyFrames, frameWeather]);
-  const [riskRankIndex, setRiskRankIndex] = useState(0);
-  const riskRankDay = rankedRiskDays?.[riskRankIndex % (rankedRiskDays.length || 1)] ?? null;
-
-  // Swap the WMS layer in place on the existing map layers — no layer-info
-  // refetch and no view re-fit, so frames advance without the map jumping.
-  const applyDailyFrame = useCallback((frame: AvailableLayer) => {
-    selectedLayerKeyRef.current = frame.key;
-    setSelectedLayerKey(frame.key);
-    riskLayerEntriesRef.current.forEach(({ layer }) => {
-      layer.getSource()?.updateParams({ LAYERS: frame.layer_name, VIEWER_LAYER_KEY: frame.key });
-    });
-    setWms3D((w) => (w ? { ...w, layerName: frame.layer_name } : w));
-  }, []);
+  const { currentFrameWeather, rankedRiskDays, riskRankIndex, setRiskRankIndex, riskRankDay } =
+    useFrameWeather(resolvedModelId, dailyFrames, playingFrameDate);
 
   useEffect(() => {
     if (!playing) return;
@@ -651,189 +229,21 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     tick();
     const id = window.setInterval(tick, 2000);
     return () => clearInterval(id);
-  }, [playing, dailyFrames, applyDailyFrame]);
+  }, [playing, dailyFrames, applyDailyFrame, selectedLayerKeyRef]);
 
-  // -------------------------------------------------------------------------
-  // Workspace + model selector
-  // -------------------------------------------------------------------------
+  // Prefetch in the background as soon as the daily layers are known
+  const dailySeries = useDailyRiskDistribution(resolvedModelId, dailyFrames.length >= 2);
 
-  const loadWorkspaceModels = useCallback(async (workspace: Workspace) => {
-    setIsLoadingModels(true);
-    try {
-      const resp = await axios.get("/models", { params: { workspace_id: workspace.id } });
-      const raw = resp.data?.data;
-      const list: Model[] = Array.isArray(raw) ? raw : [];
-      setWorkspaceModels(list.filter((m) => m.status === "completed"));
-    } catch {
-      setWorkspaceModels([]);
-    } finally {
-      setIsLoadingModels(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    initializeWorkspace();
-  }, [initializeWorkspace]);
-
-  useEffect(() => {
-    if (model?.workspace) {
-      const ws = model.workspace as Workspace;
-      setSelectedWorkspace(ws);
-      loadWorkspaceModels(ws);
-    }
-  }, [model, loadWorkspaceModels]);
-
-  useEffect(() => {
-    if (resolvedModelId) setSelectedModelId(resolvedModelId);
-  }, [resolvedModelId]);
-
-  const handleWorkspaceChange = useCallback(
-    async (workspace: Workspace | null) => {
-      setSelectedWorkspace(workspace);
-      setCurrentWorkspace(workspace);
-      if (workspace) {
-        await loadWorkspaceModels(workspace);
-      } else {
-        setWorkspaceModels([]);
-      }
+  const showFrameByDate = useCallback(
+    (date: string, pausePlayback: boolean) => {
+      if (pausePlayback) setPlaying(false);
+      const frame = dailyFrames.find((f) => f.key.slice(5) === date);
+      if (frame) applyDailyFrame(frame);
     },
-    [setCurrentWorkspace, loadWorkspaceModels]
+    [applyDailyFrame, dailyFrames]
   );
 
-  const handleModelChange = useCallback(
-    (mid: string) => {
-      const parsed = Number.parseInt(mid, 10);
-      if (parsed && parsed !== selectedModelId) {
-        navigate(`/app/model-results/${parsed}`);
-      }
-    },
-    [navigate, selectedModelId]
-  );
-
-  // -------------------------------------------------------------------------
-  // Initial load
-  // -------------------------------------------------------------------------
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  // Attach the layer once both the map is ready and the result is configured.
-  useEffect(() => {
-    if (!map || !activeResult || riskLayerEntriesRef.current.length > 0) return;
-    if (activeResult.geoserver_status !== "configured") return;
-    attachLayer(activeResult);
-  }, [map, activeResult, attachLayer]);
-
-  // Poll for readiness while the layer is still being processed server-side.
-  useEffect(() => {
-    if (!layerPending) return;
-    pollTimerRef.current = window.setInterval(() => {
-      loadData();
-    }, POLL_INTERVAL_MS);
-    return () => {
-      if (pollTimerRef.current !== null) {
-        clearInterval(pollTimerRef.current);
-        pollTimerRef.current = null;
-      }
-    };
-  }, [layerPending, loadData]);
-
-  // Reactive layer controls.
-  useEffect(() => {
-    visibleRiskLevelsRef.current = visibleRiskLevels;
-  }, [visibleRiskLevels]);
-
-  useEffect(() => {
-    riskLayerEntries.forEach(({ value, layer: riskLayer }) => {
-      riskLayer.setVisible(layerVisible && visibleRiskLevels[value]);
-    });
-    scheduleMapRenderRefresh();
-  }, [layerVisible, riskLayerEntries, scheduleMapRenderRefresh, visibleRiskLevels]);
-
-  useEffect(() => {
-    riskLayerEntries.forEach(({ layer: riskLayer }) => {
-      riskLayer.setOpacity(layerOpacity);
-    });
-    scheduleMapRenderRefresh();
-  }, [layerOpacity, riskLayerEntries, scheduleMapRenderRefresh]);
-
-  // Transparent ESRI road/label tiles above the risk raster so the map stays readable.
-  const roadsLayerRef = useRef<TileLayer<XYZ> | null>(null);
-  const labelsLayerRef = useRef<TileLayer<XYZ> | null>(null);
-  useEffect(() => {
-    if (!map) return;
-    const roadsOpacity = isDarkBaseLayer
-      ? MAP_REFERENCE_DARK_OPACITY
-      : MAP_REFERENCE_LIGHT_ROADS_OPACITY;
-    const labelsOpacity = isDarkBaseLayer
-      ? MAP_REFERENCE_DARK_OPACITY
-      : MAP_REFERENCE_LIGHT_LABELS_OPACITY;
-    // The overlay has a transparent background, so it needs no blending.
-    const roadsClassName = "ol-layer ol-visible-in-maplibre";
-
-    const roadsLayer = new TileLayer({
-      source: new XYZ({
-        url: ESRI_TRANSPORTATION_REFERENCE_URL,
-        attributions: ESRI_ATTRIBUTION,
-        crossOrigin: "anonymous",
-        maxZoom: 19,
-      }),
-      opacity: roadsOpacity,
-      className: roadsClassName,
-    });
-    const labelsLayer = new TileLayer({
-      source: new XYZ({
-        url: ESRI_PLACES_REFERENCE_URL,
-        attributions: ESRI_ATTRIBUTION,
-        crossOrigin: "anonymous",
-        maxZoom: 20,
-      }),
-      opacity: labelsOpacity,
-      className: "ol-layer ol-visible-in-maplibre",
-    });
-
-    roadsLayer.setVisible(false);
-    labelsLayer.setVisible(false);
-    roadsLayer.setZIndex(500);
-    labelsLayer.setZIndex(510);
-    map.addLayer(roadsLayer);
-    map.addLayer(labelsLayer);
-    roadsLayerRef.current = roadsLayer;
-    labelsLayerRef.current = labelsLayer;
-    scheduleMapRenderRefresh();
-
-    return () => {
-      map.removeLayer(roadsLayer);
-      map.removeLayer(labelsLayer);
-      if (roadsLayerRef.current === roadsLayer) roadsLayerRef.current = null;
-      if (labelsLayerRef.current === labelsLayer) labelsLayerRef.current = null;
-    };
-  }, [isDarkBaseLayer, map, scheduleMapRenderRefresh]);
-
-  useEffect(() => {
-    roadsLayerRef.current?.setVisible(roadsVisible);
-    labelsLayerRef.current?.setVisible(labelsVisible);
-    scheduleMapRenderRefresh();
-  }, [labelsVisible, roadsVisible, scheduleMapRenderRefresh]);
-
-  // Detach on unmount / id change.
-  useEffect(() => {
-    return () => {
-      if (map) {
-        riskLayerEntriesRef.current.forEach(({ layer: riskLayer }) => {
-          map.removeLayer(riskLayer);
-        });
-      }
-      attachLayerRequestRef.current += 1;
-      riskLayerEntriesRef.current = [];
-      clearScheduledMapRenderRefreshes();
-    };
-  }, [clearScheduledMapRenderRefreshes, map, resolvedModelId]);
-
-  // -------------------------------------------------------------------------
-  // Derived UI state
-  // -------------------------------------------------------------------------
+  // ----- Derived UI state -----
 
   const dateRange = useMemo(() => {
     if (!model?.from_date || !model?.to_date) return null;
@@ -841,6 +251,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     const to = new Date(model.to_date).toLocaleDateString();
     return `${from} – ${to}`;
   }, [model]);
+
   const riskDistribution = legendMetrics.riskDistribution;
   const riskLevelAvailability = useMemo<VisibleRiskLevels>(() => {
     if (!riskDistribution) {
@@ -890,354 +301,53 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     [riskLevelAvailability]
   );
 
-  // -------------------------------------------------------------------------
-  // Render
-  // -------------------------------------------------------------------------
+  // ----- Render -----
 
   const header = (
-    <header className="bg-card border-b border-border flex-shrink-0">
-      <div className="px-4 py-1.5 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3 min-w-0">
-          <button
-            type="button"
-            onClick={() => navigate("/app/model-dashboard")}
-            className="p-2 hover:bg-muted rounded-lg transition-colors flex-shrink-0"
-            aria-label={t("common.back", "Back")}
-          >
-            <ArrowLeft className="w-5 h-5 text-muted-foreground" />
-          </button>
-
-          {isLoadingPreference ? (
-            <div className="flex items-center gap-2 px-3 py-1.5 border border-border rounded-lg bg-card text-sm">
-              <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
-              <span className="font-medium text-foreground">
-                {t("modelResults.loadingWorkspace", "Loading workspace…")}
-              </span>
-            </div>
-          ) : (
-            <>
-              <WorkspaceSelector
-                onWorkspaceChange={handleWorkspaceChange}
-                onCreateWorkspace={() => setIsCreateWsOpen(true)}
-                reloadKey={wsReloadKey}
-                initialWorkspaceId={model?.workspace?.id ?? preferredWorkspaceId ?? undefined}
-                activeWorkspace={selectedWorkspace ?? currentWorkspace}
-              />
-
-              {selectedWorkspace && (
-                <Select
-                  value={selectedModelId?.toString() ?? ""}
-                  onValueChange={handleModelChange}
-                  disabled={isLoadingModels || workspaceModels.length === 0}
-                >
-                  <SelectTrigger className="w-[220px] h-9">
-                    <SelectValue
-                      placeholder={
-                        isLoadingModels
-                          ? t("modelResults.loadingModels", "Loading models…")
-                          : workspaceModels.length === 0
-                            ? t("modelResults.noCompletedModels", "No completed models")
-                            : t("modelResults.selectModel", "Select a model")
-                      }
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {workspaceModels.map((m) => (
-                      <SelectItem key={m.id} value={m.id.toString()}>
-                        {m.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            </>
-          )}
-
-          {model && (
-            <div className="hidden md:flex items-center gap-4 text-sm text-muted-foreground border-l border-border pl-4 min-w-0">
-              {model.region && (
-                <span className="flex items-center gap-1 truncate">
-                  <MapPin className="w-4 h-4 flex-shrink-0" />
-                  <span className="truncate">
-                    {model.region
-                      .split(", ")
-                      .map((part) => t(`locations.${part}`, part))
-                      .join(", ")}
-                  </span>
-                </span>
-              )}
-              {dateRange && (
-                <span className="flex items-center gap-1 whitespace-nowrap">
-                  <Calendar className="w-4 h-4 flex-shrink-0" />
-                  {dateRange}
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-
-        <div className="flex items-center gap-2 flex-shrink-0">
-          {hasRiskLayers && (
-            <div className="h-8 px-3 inline-flex items-center gap-2 text-xs border border-border rounded-lg bg-card">
-              <label htmlFor="mr-opacity" className="font-medium text-foreground">
-                {t("modelResults.layer.opacity", "Opacity")}
-              </label>
-              <input
-                id="mr-opacity"
-                type="range"
-                min={0}
-                max={1}
-                step={0.05}
-                value={layerOpacity}
-                onChange={(e) => setLayerOpacity(Number.parseFloat(e.target.value))}
-                className="w-24 h-1.5 bg-muted rounded-lg appearance-none cursor-pointer"
-                style={{
-                  background: `linear-gradient(to right, #ea580c 0%, #ea580c ${layerOpacity * 100}%, var(--muted) ${layerOpacity * 100}%, var(--muted) 100%)`,
-                }}
-                aria-label="Layer opacity"
-              />
-              <span className="w-9 text-right font-medium text-muted-foreground">
-                {Math.round(layerOpacity * 100)}%
-              </span>
-            </div>
-          )}
-
-          <button
-            type="button"
-            onClick={() => loadData()}
-            className="h-8 px-3 inline-flex items-center gap-2 border border-border bg-card hover:bg-muted rounded-lg transition-colors text-xs font-medium text-foreground"
-            aria-label={t("common.refresh", "Refresh")}
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-            {t("common.refresh", "Refresh")}
-          </button>
-        </div>
-      </div>
-    </header>
+    <ViewerHeader
+      model={model}
+      dateRange={dateRange}
+      loading={loading}
+      isLoadingPreference={workspaceSelector.isLoadingPreference}
+      selectedWorkspace={workspaceSelector.selectedWorkspace}
+      currentWorkspace={workspaceSelector.currentWorkspace}
+      preferredWorkspaceId={workspaceSelector.preferredWorkspaceId}
+      workspaceModels={workspaceSelector.workspaceModels}
+      selectedModelId={workspaceSelector.selectedModelId}
+      isLoadingModels={workspaceSelector.isLoadingModels}
+      wsReloadKey={workspaceSelector.wsReloadKey}
+      hasRiskLayers={hasRiskLayers}
+      layerOpacity={layerOpacity}
+      onWorkspaceChange={workspaceSelector.handleWorkspaceChange}
+      onCreateWorkspace={() => workspaceSelector.setIsCreateWsOpen(true)}
+      onModelChange={workspaceSelector.handleModelChange}
+      onOpacityChange={setLayerOpacity}
+      onRefresh={loadData}
+    />
   );
-
-  const mapHeader = null;
 
   const mapOverlays = (
     <>
       {layerReady && (
-        <div
-          className="absolute bottom-4 z-[1500] overflow-hidden rounded-2xl border border-border bg-white/95 shadow-lg backdrop-blur"
-          style={{
-            // Center within the visible map area (the sidebar overlays the right edge).
-            left: "calc((100% - var(--sidebar-offset, 0rem)) / 2)",
-            transform: "translateX(-50%)",
+        <ViewerPlayerOverlay
+          dailyFrames={dailyFrames}
+          playing={playing}
+          onTogglePlay={() => setPlaying((v) => !v)}
+          playingFrameDate={playingFrameDate}
+          dailyFrameIndex={dailyFrameIndex}
+          currentFrameWeather={currentFrameWeather}
+          rankedRiskDays={rankedRiskDays}
+          riskRankDay={riskRankDay}
+          riskRankIndex={riskRankIndex}
+          onSelectRankedDay={(day, pausePlayback) => {
+            showFrameByDate(day.date, pausePlayback);
+            setRiskRankIndex((i) => (i + 1) % (rankedRiskDays?.length ?? 1));
           }}
-        >
-          {/* Row 1 — day player + fire weather (dynamic runs only) */}
-          {dailyFrames.length >= 2 && (
-            <div className="flex items-center gap-4 px-3 py-2">
-              <button
-                type="button"
-                onClick={() => setPlaying((v) => !v)}
-                aria-label={
-                  playing
-                    ? t("modelResults.layer.pause", "Pause")
-                    : t("modelResults.layer.play", "Play")
-                }
-                className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-slate-800 text-white transition-colors hover:bg-slate-950"
-              >
-                {playing ? <Pause className="h-4 w-4" /> : <Play className="ml-0.5 h-4 w-4" />}
-              </button>
-
-              {playingFrameDate && dailyFrameIndex >= 0 ? (
-                <>
-                  <PlayerStat
-                    label={`${t("modelResults.layer.day", "Day")} ${dailyFrameIndex + 1}/${dailyFrames.length}`}
-                    value={`${formatFrameDate(playingFrameDate)} · 16:00–17:00`}
-                  />
-                  <div className="flex items-center gap-4 border-l border-border pl-4">
-                    <PlayerStat
-                      icon={<Wind className="h-4 w-4 text-cyan-600" />}
-                      label={t("modelResults.details.windSpeed", "Wind speed")}
-                      value={formatMetric(currentFrameWeather?.wind_speed_kmh)}
-                      unit="km/h"
-                      tooltipKey="windSpeed"
-                    />
-                    <PlayerStat
-                      icon={<Compass className="h-4 w-4 text-emerald-600" />}
-                      label={t("modelResults.details.windDirection", "Wind direction")}
-                      value={
-                        typeof currentFrameWeather?.wind_direction_deg === "number"
-                          ? `${currentFrameWeather.wind_direction_deg.toFixed(0)}° ${windCardinal(currentFrameWeather.wind_direction_deg)}`
-                          : "—"
-                      }
-                      tooltipKey="windDirection"
-                    />
-                    <PlayerStat
-                      icon={<Thermometer className="h-4 w-4 text-orange-600" />}
-                      label={t("modelResults.details.temperature", "Temperature")}
-                      value={formatMetric(currentFrameWeather?.temperature_c)}
-                      unit="°C"
-                      tooltipKey="temperature"
-                    />
-                    <PlayerStat
-                      icon={<Droplets className="h-4 w-4 text-sky-600" />}
-                      label={t("modelResults.details.humidity", "Humidity")}
-                      value={formatMetric(currentFrameWeather?.relative_humidity_pct)}
-                      unit="%"
-                      tooltipKey="humidity"
-                    />
-                  </div>
-                  {riskRankDay && rankedRiskDays && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPlaying(false);
-                        const frame = dailyFrames.find((f) => f.key.slice(5) === riskRankDay.date);
-                        if (frame) applyDailyFrame(frame);
-                        setRiskRankIndex((i) => (i + 1) % rankedRiskDays.length);
-                      }}
-                      title={t(
-                        "modelResults.layer.peakDayHint",
-                        "Click to show this day, then step to the next-riskiest one"
-                      )}
-                      className={`flex flex-shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 transition-colors ${
-                        playingFrameDate === riskRankDay.date
-                          ? "border-red-500 bg-red-500/10"
-                          : "border-border bg-card hover:bg-muted"
-                      }`}
-                    >
-                      <Flame className="h-3.5 w-3.5 text-red-600" />
-                      <span className="flex flex-col items-start leading-tight">
-                        <span className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
-                          {riskRankIndex % rankedRiskDays.length === 0
-                            ? t("modelResults.layer.peakDay", "Peak risk day")
-                            : t("modelResults.layer.rankDay", "#{{rank}} risk day", {
-                                rank: (riskRankIndex % rankedRiskDays.length) + 1,
-                              })}
-                          {" · "}
-                          {(riskRankIndex % rankedRiskDays.length) + 1}/{rankedRiskDays.length}
-                        </span>
-                        <span className="text-xs font-semibold tabular-nums text-foreground whitespace-nowrap">
-                          {formatFrameDate(riskRankDay.date)}
-                        </span>
-                        <span className="text-[9px] text-muted-foreground whitespace-nowrap">
-                          {t("modelResults.layer.peakDayNext", "Click to view · next day follows")}
-                        </span>
-                      </span>
-                      <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" />
-                    </button>
-                  )}
-                </>
-              ) : (
-                <>
-                  <span className="text-xs font-semibold text-foreground">
-                    {t("modelResults.layer.playDaily", "Animate daily risk maps")}
-                  </span>
-                  {riskRankDay && rankedRiskDays && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const frame = dailyFrames.find((f) => f.key.slice(5) === riskRankDay.date);
-                        if (frame) applyDailyFrame(frame);
-                        setRiskRankIndex((i) => (i + 1) % rankedRiskDays.length);
-                      }}
-                      title={t(
-                        "modelResults.layer.peakDayHint",
-                        "Click to show this day, then step to the next-riskiest one"
-                      )}
-                      className="flex flex-shrink-0 items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1 transition-colors hover:bg-muted"
-                    >
-                      <Flame className="h-3.5 w-3.5 text-red-600" />
-                      <span className="flex flex-col items-start leading-tight">
-                        <span className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
-                          {riskRankIndex % rankedRiskDays.length === 0
-                            ? t("modelResults.layer.peakDay", "Peak risk day")
-                            : t("modelResults.layer.rankDay", "#{{rank}} risk day", {
-                                rank: (riskRankIndex % rankedRiskDays.length) + 1,
-                              })}
-                          {" · "}
-                          {(riskRankIndex % rankedRiskDays.length) + 1}/{rankedRiskDays.length}
-                        </span>
-                        <span className="text-xs font-semibold tabular-nums text-foreground whitespace-nowrap">
-                          {formatFrameDate(riskRankDay.date)}
-                        </span>
-                        <span className="text-[9px] text-muted-foreground whitespace-nowrap">
-                          {t("modelResults.layer.peakDayNext", "Click to view · next day follows")}
-                        </span>
-                      </span>
-                      <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" />
-                    </button>
-                  )}
-                </>
-              )}
-            </div>
-          )}
-
-          {/* Row 2 — overall assessment (whole run, not per day) */}
-          {legendMetrics && (
-            <div
-              className={`flex items-center gap-4 px-3 py-2 ${dailyFrames.length >= 2 ? "border-t border-border bg-slate-50/80" : ""}`}
-            >
-              <div className="flex flex-col leading-tight">
-                <span className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
-                  {t("modelResults.metrics.overallRisk", "Overall risk")}
-                </span>
-                <span
-                  className={cn(
-                    "text-sm font-bold uppercase",
-                    RISK_LEVEL_META[legendMetrics.overallRiskLevel ?? ""]?.chip
-                  )}
-                >
-                  {legendMetrics.overallRiskLevel && RISK_LEVEL_META[legendMetrics.overallRiskLevel]
-                    ? t(RISK_LEVEL_META[legendMetrics.overallRiskLevel].labelKey, "—")
-                    : "—"}
-                </span>
-              </div>
-
-              <div className="flex flex-col leading-tight border-l border-border pl-4">
-                <span className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
-                  {t("modelResults.metrics.meanRiskScore", "Mean risk score")}
-                </span>
-                <span className="text-xs font-semibold tabular-nums text-foreground">
-                  {formatMetric(legendMetrics.overallRiskScore, 2)}
-                  <span className="font-normal text-muted-foreground"> / 5</span>
-                </span>
-                <div
-                  className="relative mt-1 h-1 w-24 rounded-full"
-                  style={{
-                    background:
-                      "linear-gradient(to right,#9ca3af,#16a34a,#eab308,#f97316,#dc2626)",
-                  }}
-                >
-                  {typeof legendMetrics.overallRiskScore === "number" && (
-                    <span
-                      className="absolute -top-[3px] h-2.5 w-2.5 -translate-x-1/2 rounded-full border-2 border-white bg-slate-800 shadow"
-                      style={{
-                        left: `${Math.min(100, Math.max(0, (legendMetrics.overallRiskScore / 5) * 100))}%`,
-                      }}
-                    />
-                  )}
-                </div>
-              </div>
-
-              <PlayerStat
-                className="border-l border-border pl-4"
-                label={t("modelResults.metrics.highVeryHighArea", "High + very high area")}
-                value={`${formatMetric(legendMetrics.affectedAreaKm2, 2)} km²`}
-                unit={
-                  typeof legendMetrics.affectedFraction === "number"
-                    ? `(${(legendMetrics.affectedFraction * 100).toFixed(1)}%)`
-                    : undefined
-                }
-              />
-              <PlayerStat
-                className="border-l border-border pl-4"
-                label={t("modelResults.metrics.analyzedArea", "Analyzed area")}
-                value={`${formatMetric(legendMetrics.totalAreaKm2, 2)} km²`}
-              />
-            </div>
-          )}
-        </div>
+          legendMetrics={legendMetrics}
+        />
       )}
-      {/* 3D terrain sits inside the map container below the shared overlays
-          (legend, overlays panel, day player), so the layout stays identical. */}
+
+      {/* 3D terrain sits inside the map container below the shared overlays. */}
       {show3D && wms3D && (
         <Suspense fallback={null}>
           <CesiumWildfire3DView
@@ -1250,203 +360,45 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
           />
         </Suspense>
       )}
-      {!map && (
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-[2000] flex items-center justify-center">
-          <div className="text-center">
-            <Loader2 className="w-10 h-10 animate-spin mx-auto text-primary" />
-            <p className="mt-3 text-sm text-muted-foreground">
-              {t("modelResults.map.initializing", "Initializing map…")}
-            </p>
-          </div>
-        </div>
-      )}
 
-      {error && (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] max-w-xl bg-destructive text-destructive-foreground rounded-lg shadow-lg px-4 py-2.5 flex items-center gap-2">
-          <AlertCircle className="w-5 h-5 flex-shrink-0" />
-          <span className="text-sm">{error}</span>
-        </div>
-      )}
+      <ViewerStatusBanners
+        mapReady={Boolean(map)}
+        loading={loading}
+        error={error}
+        tileErrors={tileErrors}
+        layerPending={layerPending}
+        hasResults={results.length > 0}
+      />
 
-      {tileErrors > 0 && (
-        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-[1000] bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-300 rounded-lg shadow-lg px-4 py-2 text-xs">
-          {t(
-            "modelResults.errors.tileLoad",
-            "Some tiles failed to load from GeoServer ({{count}})",
-            { count: tileErrors }
-          )}
-        </div>
-      )}
-
-      {layerPending && map && (
-        <div className="absolute bottom-4 right-4 z-[1000] bg-card border border-border rounded-lg shadow-lg px-3 py-2 flex items-center gap-2">
-          <Loader2 className="w-4 h-4 animate-spin" />
-          <span className="text-xs text-foreground">
-            {t("modelResults.layer.publishing", "Publishing layer to GeoServer…")}
-          </span>
-        </div>
-      )}
-
-      {!loading && !error && results.length === 0 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1000] max-w-md bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-300 rounded-lg shadow-lg p-4">
-          <p className="text-sm font-medium">
-            {t("modelResults.empty.title", "No result for this model yet.")}
-          </p>
-          <p className="text-xs mt-1">
-            {t(
-              "modelResults.empty.hint",
-              "The simulation output will appear here once processing finishes."
-            )}
-          </p>
-        </div>
-      )}
-
-      {/* Optional map overlays. */}
       {map && (
-        <div className="absolute top-4 left-2 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-lg rounded-2xl overflow-hidden w-[156px] transition-all duration-300">
-          <div className="px-2.5 py-1.5 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border-b border-emerald-500/10 flex items-center gap-2">
-            <div className="w-5 h-5 rounded-md bg-gradient-to-br from-emerald-500 to-teal-500 shadow-sm flex items-center justify-center">
-              <Layers className="w-3 h-3 text-white" />
-            </div>
-            <span className="text-[11px] font-bold uppercase text-foreground tracking-tight">
-              {t("modelResults.layers.title", "Overlays")}
-            </span>
-          </div>
-          <div className="p-1 space-y-0">
-            <label className="flex items-center gap-2 px-2 py-0.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
-              <div className="relative flex items-center justify-center">
-                <input
-                  type="checkbox"
-                  className="peer appearance-none w-3.5 h-3.5 rounded border border-slate-300 dark:border-slate-600 checked:bg-emerald-500 checked:border-emerald-500 transition-colors cursor-pointer"
-                  checked={roadsVisible}
-                  onChange={(e) => setRoadsVisible(e.target.checked)}
-                />
-                <svg
-                  className="absolute w-2 h-2 text-white opacity-0 peer-checked:opacity-100 pointer-events-none"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
-                </svg>
-              </div>
-              <Route className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-600 transition-colors" />
-              <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 flex-1">
-                {t("modelResults.layers.roads", "Roads")}
-              </span>
-            </label>
-            <label className="flex items-center gap-2 px-2 py-0.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
-              <div className="relative flex items-center justify-center">
-                <input
-                  type="checkbox"
-                  className="peer appearance-none w-3.5 h-3.5 rounded border border-slate-300 dark:border-slate-600 checked:bg-emerald-500 checked:border-emerald-500 transition-colors cursor-pointer"
-                  checked={labelsVisible}
-                  onChange={(e) => setLabelsVisible(e.target.checked)}
-                />
-                <svg
-                  className="absolute w-2 h-2 text-white opacity-0 peer-checked:opacity-100 pointer-events-none"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
-                </svg>
-              </div>
-              <MapPin className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-600 transition-colors" />
-              <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 flex-1">
-                {t("modelResults.layers.labels", "Labels & places")}
-              </span>
-            </label>
-          </div>
-        </div>
+        <OverlaysPanel
+          roadsVisible={roadsVisible}
+          labelsVisible={labelsVisible}
+          onRoadsChange={setRoadsVisible}
+          onLabelsChange={setLabelsVisible}
+        />
       )}
 
-      {/* Risk legend */}
       {hasRiskLayers && (
-        <div className="absolute bottom-10 left-2 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-lg rounded-2xl overflow-hidden w-[156px] transition-all duration-300">
-          <div className="px-2.5 py-1.5 bg-gradient-to-r from-orange-500/10 to-red-500/10 border-b border-orange-500/10 flex items-center gap-2">
-            <div className="w-5 h-5 rounded-md bg-gradient-to-br from-orange-500 to-red-500 shadow-sm flex items-center justify-center">
-              <Layers className="w-3 h-3 text-white" />
-            </div>
-            <span className="text-[11px] font-bold uppercase text-foreground tracking-tight">
-              {t("modelResults.legend.title", "Fire Risk")}
-            </span>
-          </div>
-          <div className="p-1 space-y-0">
-            <label className="flex items-center gap-2 px-2 py-0.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer border-b border-border/40 mb-1.5 pb-2 group">
-              <div className="relative flex items-center justify-center">
-                <input
-                  type="checkbox"
-                  className="peer appearance-none w-3.5 h-3.5 rounded border border-slate-300 dark:border-slate-600 checked:bg-orange-500 checked:border-orange-500 transition-colors cursor-pointer"
-                  checked={allRiskLevelsVisible}
-                  onChange={(e) => setAllRiskLevelsVisible(e.target.checked)}
-                />
-                <svg
-                  className="absolute w-2 h-2 text-white opacity-0 peer-checked:opacity-100 pointer-events-none"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
-                </svg>
-              </div>
-              <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 flex-1">
-                {t("modelResults.legend.allLevels", "All available levels")}
-              </span>
-            </label>
-            {RISK_LEVELS.map((lvl) => {
-              const isAvailable = riskLevelAvailability[lvl.value];
-              const isVisibleInStyle = visibleRiskLevels[lvl.value];
-              const percent = riskDistribution?.[lvl.metricKey] ?? null;
-              const levelStateClass = !isAvailable
-                ? "cursor-not-allowed opacity-[0.4]"
-                : isVisibleInStyle
-                  ? "cursor-pointer"
-                  : "cursor-pointer opacity-[0.6]";
-              return (
-                <label
-                  key={lvl.value}
-                  className={`flex items-center gap-2 px-2 py-0.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group ${levelStateClass}`}
-                >
-                  <div className="relative flex items-center justify-center">
-                    <input
-                      type="checkbox"
-                      className="peer appearance-none w-3.5 h-3.5 rounded border border-slate-300 dark:border-slate-600 checked:bg-orange-500 checked:border-orange-500 transition-colors cursor-pointer disabled:cursor-not-allowed"
-                      checked={isVisibleInStyle && isAvailable}
-                      disabled={!isAvailable}
-                      onChange={(e) => toggleRiskLevel(lvl.value, e.target.checked)}
-                    />
-                    <svg
-                      className="absolute w-2 h-2 text-white opacity-0 peer-checked:opacity-100 pointer-events-none"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                  </div>
-                  <span
-                    className="w-2.5 h-2.5 rounded-full shadow-sm"
-                    style={{ backgroundColor: lvl.color, boxShadow: `0 0 6px ${lvl.color}66` }}
-                  />
-                  <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 flex-1">
-                    {t(`modelResults.legend.levels.${lvl.id}`, lvl.label)}
-                  </span>
-                  <span className="text-[9px] font-bold text-slate-400">
-                    {percent === null ? lvl.value : `${percent.toFixed(1)}%`}
-                  </span>
-                </label>
-              );
-            })}
-          </div>
-          <div className="px-3 pb-3 pt-0.5">
-            <div className="h-1.5 rounded-full bg-gradient-to-r from-[#9ca3af] via-[#16a34a] via-[#eab308] via-[#f97316] to-[#dc2626] shadow-inner" />
-          </div>
-        </div>
+        <RiskLegendPanel
+          visibleRiskLevels={visibleRiskLevels}
+          riskLevelAvailability={riskLevelAvailability}
+          riskDistribution={riskDistribution}
+          allRiskLevelsVisible={allRiskLevelsVisible}
+          onToggleAll={setAllRiskLevelsVisible}
+          onToggleLevel={toggleRiskLevel}
+        />
+      )}
+
+      {showTimeline && dailyFrames.length >= 2 && (
+        <RiskTimelinePanel
+          days={dailySeries.data?.days ?? null}
+          isLoading={dailySeries.isLoading}
+          error={dailySeries.error}
+          currentDate={playingFrameDate}
+          onSelectDate={(date) => showFrameByDate(date, true)}
+          onClose={() => setShowTimeline(false)}
+        />
       )}
 
       <MapSearchBar />
@@ -1462,66 +414,35 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
             showSidebar={false}
             hideMapControls={show3D}
             topBar={header}
-            mapHeader={mapHeader}
+            mapHeader={null}
             mapOverlays={mapOverlays}
           />
         </div>
-        <aside className="absolute right-0 bottom-0 bg-card border-l border-border shadow-lg z-[51] w-[var(--sidebar-width)] top-0">
-          <div className="flex flex-col items-center gap-3 py-4">
-            <SidebarButton
-              icon={Mountain}
-              tooltip={show3D ? t("modelResults.layer.viewMap", "Map") : t("modelResults.layer.viewTerrain", "Terrain")}
-              onClick={() => setShow3D((v) => !v)}
-              isActive={show3D}
-              disabled={!wms3D}
-            />
-            {hasRiskLayers && (
-              <SidebarButton
-                icon={layerVisible ? Eye : EyeOff}
-                tooltip={layerVisible ? t("modelResults.layer.visible", "Visible") : t("modelResults.layer.hidden", "Hidden")}
-                onClick={() => setLayerVisible((v) => !v)}
-                isActive={layerVisible}
-              />
-            )}
-            {hasRiskLayers && switcherLayers.length > 1 && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <div className="relative">
-                    <SidebarButton
-                      icon={Layers2}
-                      tooltip={t("modelResults.layer.dataset", "Layer")}
-                      onClick={() => {}}
-                      isActive={true}
-                    />
-                  </div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent side="left" align="start" sideOffset={16} className="w-48 z-[60]">
-                  {switcherLayers.map((l) => (
-                    <DropdownMenuItem 
-                      key={l.key} 
-                      onClick={() => handleSelectLayer(l.key)}
-                      className="flex items-center justify-between cursor-pointer"
-                    >
-                      <span>{l.title}</span>
-                      {(playingFrameDate ? "risk" : selectedLayerKey) === l.key && (
-                        <Check className="w-4 h-4" />
-                      )}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
-        </aside>
+        <ViewerSidebarRail
+          show3D={show3D}
+          can3D={Boolean(wms3D)}
+          onToggle3D={() => setShow3D((v) => !v)}
+          isFullscreen={isFullscreen}
+          onToggleFullscreen={toggleFullscreen}
+          showTimelineButton={dailyFrames.length >= 2}
+          showTimeline={showTimeline}
+          onToggleTimeline={() => setShowTimeline((v) => !v)}
+          hasRiskLayers={hasRiskLayers}
+          layerVisible={layerVisible}
+          onToggleLayerVisible={() => setLayerVisible((v) => !v)}
+          switcherLayers={switcherLayers}
+          activeLayerKey={playingFrameDate ? "risk" : selectedLayerKey}
+          onSelectLayer={handleSelectLayer}
+        />
       </div>
 
       <CreateWorkspaceModal
-        isOpen={isCreateWsOpen}
-        onClose={() => setIsCreateWsOpen(false)}
+        isOpen={workspaceSelector.isCreateWsOpen}
+        onClose={() => workspaceSelector.setIsCreateWsOpen(false)}
         onSuccess={(newWorkspace) => {
-          setIsCreateWsOpen(false);
-          handleWorkspaceChange(newWorkspace);
-          setWsReloadKey((k) => k + 1);
+          workspaceSelector.setIsCreateWsOpen(false);
+          workspaceSelector.handleWorkspaceChange(newWorkspace);
+          workspaceSelector.setWsReloadKey((k) => k + 1);
         }}
       />
     </Fragment>
