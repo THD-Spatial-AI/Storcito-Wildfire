@@ -982,9 +982,14 @@ func (s *GeoServerService) SampleDailyDistributions(ctx context.Context, resultI
 		return nil, fmt.Errorf("invalid bounds data")
 	}
 
-	// Small default: one GetFeatureInfo request per sample, per day.
 	if sampleCount <= 0 {
-		sampleCount = 256
+		sampleCount = 4096 / len(days)
+		if sampleCount > 256 {
+			sampleCount = 256
+		}
+		if sampleCount < 64 {
+			sampleCount = 64
+		}
 	}
 	gridSize := int(math.Sqrt(float64(sampleCount)))
 	if gridSize < 1 {

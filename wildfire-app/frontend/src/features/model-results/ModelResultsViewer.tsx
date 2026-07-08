@@ -231,8 +231,16 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     return () => clearInterval(id);
   }, [playing, dailyFrames, applyDailyFrame, selectedLayerKeyRef]);
 
-  // Prefetch in the background as soon as the daily layers are known
-  const dailySeries = useDailyRiskDistribution(resolvedModelId, dailyFrames.length >= 2);
+  const [prefetchReady, setPrefetchReady] = useState(false);
+  useEffect(() => {
+    if (dailyFrames.length < 2) return;
+    const id = window.setTimeout(() => setPrefetchReady(true), 15_000);
+    return () => clearTimeout(id);
+  }, [dailyFrames.length]);
+  const dailySeries = useDailyRiskDistribution(
+    resolvedModelId,
+    dailyFrames.length >= 2 && (showTimeline || prefetchReady)
+  );
 
   const showFrameByDate = useCallback(
     (date: string, pausePlayback: boolean) => {

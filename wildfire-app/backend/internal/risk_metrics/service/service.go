@@ -121,8 +121,7 @@ const defaultSampleCount = 2000
 
 const defaultMapSampleCount = 625
 
-// defaultDailySampleCount is small: one GetFeatureInfo request per sample, per day.
-const defaultDailySampleCount = 256
+const defaultDailySampleCount = 0
 
 // ResultStore is the minimum surface we need from persistence.
 type ResultStore interface {
