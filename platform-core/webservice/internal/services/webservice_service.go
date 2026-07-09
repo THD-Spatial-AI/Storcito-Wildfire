@@ -18,10 +18,11 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
+	"spatialhub_webservice/internal/store"
+
 	apperrors "platform.local/common/pkg/errors"
 	"platform.local/common/pkg/models"
 	"platform.local/platform/logger"
-	"spatialhub_webservice/internal/store"
 )
 
 const (
@@ -509,7 +510,7 @@ func (s *WebserviceService) SendCalculationRequest(
 ) (map[string]interface{}, error) {
 
 	log := logger.ForComponent("webservice")
-	ep := ensureEndpoint(endpoint, "/calliope/start")
+	ep := ensureEndpoint(endpoint, "/assessment/start")
 	url := buildURL(ws, ep)
 
 	log.Debugf("📤 Sending calculation request to %s", url)
