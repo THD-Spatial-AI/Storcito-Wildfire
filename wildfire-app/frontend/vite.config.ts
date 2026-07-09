@@ -25,6 +25,9 @@ export default defineConfig({
 	},
 	plugins: [react(), tailwindcss()],
 	server: {
+		watch: {
+			ignored: ["!**/feeedback_pipeline/frontend_overlay/src/**"],
+		},
 		port: 3000,
 		proxy: {
 			"/api": {
