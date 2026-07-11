@@ -41,6 +41,12 @@ class WebservicesService {
     }
 
 
+    async getAvailablePrecomputedDates(): Promise<string[]> {
+        const { data } = await axios.get<ApiResponse<{ dates: string[] }>>('/webservices/available-precomputed-dates');
+        return data?.data?.dates ?? [];
+    }
+
+
     async getAvailableDataCoverage(): Promise<StorcitoCoverageFeatureCollection | null> {
         const { data } = await axios.get<ApiResponse<StorcitoCoverageFeatureCollection>>(
             '/webservices/available-data-coverage',

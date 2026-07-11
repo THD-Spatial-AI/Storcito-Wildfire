@@ -19,6 +19,7 @@ export interface AreaData {
 	toDate: string;
 	bufferDistance: number;
 	calculationMode: CalculationMode;
+	usePrecomputed: boolean;
 	modelName: string;
 	timestamp: string;
 	region?: string;
@@ -38,6 +39,8 @@ export interface AreaSelectState {
 	toDate: string;
 	bufferDistance: number;
 	calculationMode: CalculationMode;
+	usePrecomputed: boolean;
+	availablePrecomputedDates: string[];
 	availableStaticDates: string[];
 	availableDynamicDates: string[];
 	isLoadingStaticDates: boolean;
@@ -71,6 +74,7 @@ export interface AreaSelectActions {
 	setModelName: (name: string) => void;
 	setBufferDistance: (distance: number) => void;
 	setCalculationMode: (mode: CalculationMode) => void;
+	setUsePrecomputed: (value: boolean) => void;
 	handleUpdateRange: (range: DateRangeSelection) => void;
 	setShowAreaSelectTour: (show: boolean) => void;
 	handleTourComplete: () => void;

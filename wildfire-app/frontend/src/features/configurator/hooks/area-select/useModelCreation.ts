@@ -49,7 +49,7 @@ export const useModelCreation = ({
     const [isLoadingModel, setIsLoadingModel] = useState(false);
 
     const {
-        modelName, fromDate, toDate, bufferDistance, calculationMode, availableStaticDates, availableDynamicDates,
+        modelName, fromDate, toDate, bufferDistance, calculationMode, usePrecomputed, availablePrecomputedDates, availableStaticDates, availableDynamicDates,
         areaInputMode, uploadedGeoJsonName, originalConfig, optionalLayers,
         stationDataFile, dtmFile,
         setModelName, setBufferDistanceRaw, setCalculationMode, setOriginalConfig,
@@ -143,6 +143,7 @@ export const useModelCreation = ({
                 fromDate, toDate,
                 bufferDistance,
                 calculationMode,
+                usePrecomputed,
                 modelName: modelName.trim(),
                 timestamp: new Date().toISOString(),
             };
@@ -173,6 +174,13 @@ export const useModelCreation = ({
                         ...(originalParameters ?? {}),
                         calculation_mode: areaData.calculationMode,
                         optional_layers: optionalLayers,
+                        // off (or date not precomputed) = compute all steps fresh
+                        force_compute: !(
+                            areaData.usePrecomputed
+                            && areaData.calculationMode === 'dynamic'
+                            && fromDate === toDate
+                            && availablePrecomputedDates.includes(fromDate)
+                        ),
                     },
                     area_input: {
                         method: areaInputMode,

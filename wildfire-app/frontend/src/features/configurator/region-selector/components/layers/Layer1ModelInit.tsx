@@ -283,6 +283,7 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                     </p>
                 </div>
 
+
                 <div data-tour="date-range">
                     {state.calculationMode === "static" ? (
                         <>
