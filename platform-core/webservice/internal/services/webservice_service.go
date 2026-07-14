@@ -335,6 +335,10 @@ func (s *WebserviceService) GetAvailableDynamicDates(ctx context.Context) ([]str
 	return s.getAvailableDates(ctx, "/available-dynamic-dates", "dynamic")
 }
 
+func (s *WebserviceService) GetAvailablePrecomputedDates(ctx context.Context) ([]string, error) {
+	return s.getAvailableDates(ctx, "/available-precomputed-dates", "precomputed")
+}
+
 func (s *WebserviceService) getAvailableDates(ctx context.Context, path string, label string) ([]string, error) {
 	var instance models.WebserviceInstance
 	if err := s.db.

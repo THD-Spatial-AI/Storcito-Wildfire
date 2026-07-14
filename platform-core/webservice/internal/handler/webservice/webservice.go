@@ -504,6 +504,15 @@ func (h *WebserviceHandler) GetAvailableDynamicDates(c *gin.Context) {
 	httputil.SuccessResponse(c, gin.H{"dates": dates})
 }
 
+func (h *WebserviceHandler) GetAvailablePrecomputedDates(c *gin.Context) {
+	dates, err := h.service.GetAvailablePrecomputedDates(c.Request.Context())
+	if err != nil {
+		httputil.HandleError(c, err)
+		return
+	}
+	httputil.SuccessResponse(c, gin.H{"dates": dates})
+}
+
 func (h *WebserviceHandler) GetAvailableDataCoverage(c *gin.Context) {
 	coverage, err := h.service.GetAvailableDataCoverage(c.Request.Context())
 	if err != nil {

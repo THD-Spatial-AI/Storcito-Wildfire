@@ -200,8 +200,8 @@ func modelFWIAreaPayload(c *gin.Context, model *commonModels.Model, dateOverride
 
 	return map[string]interface{}{
 		"date":       summaryDate,
+		"start_date": model.FromDate.Format("2006-01-02"),
 		"aoi":        aoi,
-		"hour_index": 15,
 	}, true
 }
 

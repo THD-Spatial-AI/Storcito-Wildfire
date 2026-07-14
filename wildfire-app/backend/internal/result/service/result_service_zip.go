@@ -15,18 +15,19 @@ import (
 
 // layerTitles maps STORCITO layer keys to titles for the layer switcher.
 var layerTitles = map[string]string{
-	"ndvi":   "Vegetation (NDVI)",
-	"ftm":    "Fuel Type",
-	"meteo":  "Fire Weather Index",
-	"mdt":    "Elevation",
-	"slope":  "Slope",
-	"aspect": "Aspect",
-	"infra":  "Infrastructure",
-	"wui":    "Wildland-Urban Interface",
-	"fhist":  "Fire History",
-	"twi":    "Wetness (TWI)",
-	"ndmi":   "Moisture (NDMI)",
-	"lst":    "Surface Temperature",
+	"ndvi":          "Vegetation (NDVI)",
+	"ftm":           "Fuel Type",
+	"meteo":         "Fire Weather Index",
+	"mdt":           "Elevation",
+	"slope":         "Slope",
+	"aspect":        "Aspect",
+	"infra":         "Infrastructure",
+	"wui":           "Wildland-Urban Interface",
+	"fhist":         "Fire History",
+	"twi":           "Wetness (TWI)",
+	"ndmi":          "Moisture (NDMI)",
+	"lst":           "Surface Temperature",
+	"data_coverage": "Input Data Coverage",
 }
 
 // findResultLayers discovers component rasters in <extractDir>/layers/ for WMS publishing.
