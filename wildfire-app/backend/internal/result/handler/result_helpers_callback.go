@@ -69,7 +69,10 @@ func (h *ResultHandler) handleWebserviceFailure(c *gin.Context, model *commonMod
 	}
 
 	log.Errorf("Model calculation failed model_id=%d error=%s", model.ID, errorMessage)
+}
 
+func (h *ResultHandler) handleWebserviceFailureAndRespond(c *gin.Context, model *commonModels.Model, errorMessage string, log *logrus.Entry) {
+	h.handleWebserviceFailure(c, model, errorMessage, log)
 	c.JSON(http.StatusOK, gin.H{
 		"success":  true,
 		"message":  "Failure status received and model marked as failed",
@@ -144,7 +147,7 @@ func (h *ResultHandler) handleFailureStatusIfNeeded(c *gin.Context, model *commo
 		return false
 	}
 
-	h.handleWebserviceFailure(c, model, errorMsg, log)
+	h.handleWebserviceFailureAndRespond(c, model, errorMsg, log)
 	return true
 }
 
@@ -165,6 +168,7 @@ func (h *ResultHandler) saveResultFile(c *gin.Context, model *commonModels.Model
 
 	if err := os.MkdirAll(constants.StorageDataDir, 0o755); err != nil {
 		log.Errorf("Failed to create base storage directory %s: %v", constants.StorageDataDir, err)
+		h.handleWebserviceFailure(c, model, fmt.Sprintf("Result storage failed: %v", err), log)
 		httputil.InternalError(c, "Failed to create base storage directory")
 		return "", false
 	}
@@ -172,6 +176,7 @@ func (h *ResultHandler) saveResultFile(c *gin.Context, model *commonModels.Model
 	targetDir := fmt.Sprintf("%s/model_%d_%d", constants.StorageDataDir, model.ID, time.Now().Unix())
 	if err := os.MkdirAll(targetDir, 0o755); err != nil {
 		log.Errorf("Failed to create storage directory %s: %v", targetDir, err)
+		h.handleWebserviceFailure(c, model, fmt.Sprintf("Result storage failed: %v", err), log)
 		httputil.InternalError(c, "Failed to create storage directory")
 		return "", false
 	}
@@ -192,6 +197,8 @@ func (h *ResultHandler) saveResultFile(c *gin.Context, model *commonModels.Model
 	}
 	targetPath := filepath.Join(targetDir, sanitized)
 	if err := c.SaveUploadedFile(fileHeader, targetPath); err != nil {
+		log.Errorf("Failed to save uploaded file %s: %v", targetPath, err)
+		h.handleWebserviceFailure(c, model, fmt.Sprintf("Result storage failed: %v", err), log)
 		httputil.InternalError(c, "Failed to save uploaded file")
 		return "", false
 	}

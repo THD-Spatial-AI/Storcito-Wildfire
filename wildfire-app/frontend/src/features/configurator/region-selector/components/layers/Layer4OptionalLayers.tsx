@@ -129,10 +129,20 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
         </div>
         <p className="mt-1.5 text-[11px] leading-snug text-muted-foreground">
           {!precomputedAvailable
-            ? t(
-                "configurator.layer3.precomputedUnavailable",
-                "Not available for the selected date (or date range / static mode) - the nightly analysis has not processed it yet. The model will compute all steps for your area."
-              )
+            ? calculationMode !== "dynamic"
+              ? t(
+                  "configurator.layer3.precomputedStaticMode",
+                  "Precomputed maps exist only for dynamic assessments. The model will compute all steps for your area."
+                )
+              : fromDate !== toDate
+                ? t(
+                    "configurator.layer3.precomputedRange",
+                    "Precomputed maps cover exactly one day - select the same start and end date to use one. For a date range the model computes every day for your area and returns the peak-risk day (~1-2 minutes)."
+                  )
+                : t(
+                    "configurator.layer3.precomputedUnavailable",
+                    "The nightly analysis has not processed this date yet. The model will compute all steps for your area."
+                  )
             : precomputedOn
               ? t(
                   "configurator.layer3.precomputedOnHint",
