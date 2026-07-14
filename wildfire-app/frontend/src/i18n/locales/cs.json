@@ -1964,7 +1964,6 @@
     "layer5": {
       "purpose": "Zkontrolujte nastavení modelu před uložením. Výpočet použije vybraná data, oblast a datové vstupy.",
       "looksGood": "Všechno vypadá dobře? Klikněte na ",
-      "createModel": "Vytvořit model",
       "below": " níže.",
       "drawn": "nakreslena",
       "notDrawn": "nenakreslena",

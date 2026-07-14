@@ -1964,7 +1964,6 @@
     "layer5": {
       "purpose": "Überprüfen Sie die Modelleinstellungen vor dem Speichern. Die Berechnung verwendet die ausgewählten Daten, Gebiete und Datenquellen.",
       "looksGood": "Sieht alles gut aus? Klicken Sie unten auf ",
-      "createModel": "Modell erstellen",
       "below": ".",
       "drawn": "gezeichnet",
       "notDrawn": "nicht gezeichnet",

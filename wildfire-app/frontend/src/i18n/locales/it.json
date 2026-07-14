@@ -1964,7 +1964,6 @@
     "layer5": {
       "purpose": "Rivedi le impostazioni del modello prima di salvare. Il calcolo utilizzerà le date, l'area e i dati selezionati.",
       "looksGood": "Sembra tutto a posto? Clicca ",
-      "createModel": "Crea modello",
       "below": " qui sotto.",
       "drawn": "disegnata",
       "notDrawn": "non disegnata",

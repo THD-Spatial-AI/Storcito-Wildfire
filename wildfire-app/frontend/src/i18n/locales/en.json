@@ -1958,7 +1958,6 @@
     "layer5": {
       "purpose": "Review the model setup before saving. The calculation will use the selected dates, area and data source choices.",
       "looksGood": "Everything looks good? Hit ",
-      "createModel": "Create model",
       "below": " below.",
       "drawn": "drawn",
       "notDrawn": "not drawn",

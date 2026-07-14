@@ -1964,7 +1964,6 @@
     "layer5": {
       "purpose": "Controleer de modelinstellingen voor het opslaan. De berekening gebruikt de geselecteerde datums, het gebied en de data.",
       "looksGood": "Ziet alles er goed uit? Klik op ",
-      "createModel": "Model maken",
       "below": " hieronder.",
       "drawn": "getekend",
       "notDrawn": "niet getekend",

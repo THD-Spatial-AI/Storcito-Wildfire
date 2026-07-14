@@ -1964,7 +1964,6 @@
     "layer5": {
       "purpose": "Révisez la configuration du modèle avant d'enregistrer. Le calcul utilisera les dates, zones et sources de données sélectionnées.",
       "looksGood": "Tout semble correct ? Cliquez sur ",
-      "createModel": "Créer le modèle",
       "below": " ci-dessous.",
       "drawn": "dessinée",
       "notDrawn": "non dessinée",

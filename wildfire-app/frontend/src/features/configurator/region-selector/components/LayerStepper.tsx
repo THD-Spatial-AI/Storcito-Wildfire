@@ -380,7 +380,7 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                         <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                             {t("configurator.stepper.stepOf", `Step ${step} of ${LAYER_COUNT}`, { step, total: LAYER_COUNT })}
                         </div>
-                        <h2 className="truncate text-base font-semibold leading-tight text-foreground">
+                        <h2 className="break-words text-base font-semibold leading-tight text-foreground">
                             {t(currentLayer.titleKey, currentLayer.title)}
                         </h2>
                     </div>
@@ -461,7 +461,7 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                         {blockingReason}
                     </p>
                 )}
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                     <Button
                         variant="outline"
                         size="sm"
@@ -477,7 +477,7 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                             {t("configurator.stepper.continue", "Continue")} <ChevronRight className="w-3.5 h-3.5" />
                         </Button>
                     ) : (
-                        <div className="flex items-center gap-2">
+                        <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
                             <Button
                                 variant="outline"
                                 size="sm"

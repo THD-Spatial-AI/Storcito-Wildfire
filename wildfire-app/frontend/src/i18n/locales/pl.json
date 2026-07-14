@@ -1964,7 +1964,6 @@
     "layer5": {
       "purpose": "Przejrzyj konfigurację modelu przed zapisaniem. Obliczenia użyją wybranych dat, obszaru i danych.",
       "looksGood": "Wszystko wygląda dobrze? Kliknij ",
-      "createModel": "Utwórz model",
       "below": " poniżej.",
       "drawn": "narysowany",
       "notDrawn": "nie narysowany",

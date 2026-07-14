@@ -1964,7 +1964,6 @@
     "layer5": {
       "purpose": "Revise la configuración del modelo antes de guardar. El cálculo usará las fechas seleccionadas, área y elecciones de fuentes de datos.",
       "looksGood": "¿Todo se ve bien? Presione ",
-      "createModel": "Crear modelo",
       "below": " abajo.",
       "drawn": "dibujada",
       "notDrawn": "no dibujada",

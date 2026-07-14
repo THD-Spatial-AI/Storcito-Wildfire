@@ -22,9 +22,13 @@ export const Layer6SaveCalculate: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) =
     return (
         <LayerShell purpose={t("configurator.layer5.purpose", "Review the model setup before saving. The calculation will use the selected dates, area and data source choices.")}>
             <div data-tour="save-run-summary" className="space-y-3">
-                <div className="flex items-center gap-2 text-xs text-foreground">
-                    <Sparkles className="w-4 h-4 text-amber-500" />
-                    {t("configurator.layer5.looksGood", "Everything looks good? Hit ")} <span className="font-semibold">{t("configurator.layer5.createModel", "Create model")}</span> {t("configurator.layer5.below", " below.")}
+                <div className="flex items-start gap-2 text-xs text-foreground">
+                    <Sparkles className="w-4 h-4 shrink-0 text-amber-500" />
+                    <p>
+                        {t("configurator.layer5.looksGood", "Everything looks good? Hit ")}
+                        <span className="font-semibold">{t("configurator.stepper.saveAndRun", "Save & run")}</span>
+                        {t("configurator.layer5.below", " below.")}
+                    </p>
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                     <Row label={t("configurator.layer5.labels.modelName", "Model name")} value={state.modelName} />
