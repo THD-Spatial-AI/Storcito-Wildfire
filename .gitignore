@@ -16,3 +16,8 @@ venv/
 
 .claude
 .vscode
+
+# Generated local terrain tiles
+platform-core/terrain/
+docs/
+upload-example/

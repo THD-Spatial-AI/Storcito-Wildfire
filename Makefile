@@ -35,11 +35,6 @@ help:
 	@echo "  make start-postgres     Start PostgreSQL with pgRouting"
 	@echo "  make stop-postgres      Stop PostgreSQL"
 	@echo "  make remove-postgres    Remove PostgreSQL container"
-	@echo ""
-	@echo "Individual Repository Pull:"
-	@echo "  make pull-platform-core Pull platform-core repository"
-	@echo "  make pull-infrastructure Pull infrastructure repository"
-	@echo "  make pull-libs          Pull libs repository"
 
 .PHONY: up-db
 up-db:
@@ -180,44 +175,8 @@ restart-geoserver: down-geoserver up-geoserver
 	@echo "$(GREEN)GeoServer stack restarted.$(NC)"
 
 .PHONY: setup
-setup: git-credential-cache setup-repos env-setup install pull-images up-db db-create up-keycloak init-keycloak up-services migrate seed setup-complete
+setup: env-setup install pull-images up-db db-create up-keycloak init-keycloak up-services migrate seed setup-complete
 	@echo ""
-
-.PHONY: git-credential-cache
-git-credential-cache:
-	@echo "$(CYAN)Configuring git credential cache for 2 minutes...$(NC)"
-	@git config --global credential.helper 'cache --timeout=120'
-	@echo "Git credentials will be cached for 2 minutes after first entry."
-	@echo ""
-
-.PHONY: setup-repos
-setup-repos:
-	@echo "$(CYAN)Cloning/Updating repositories...$(NC)"
-	@echo "You will be prompted for credentials once (cached for 2 minutes)."
-	@echo ""
-	@[ -d platform-core ] && (echo "Pulling platform-core..." && cd platform-core && git pull) || git clone https://mygit.th-deg.de/thd-spatial-ai/microservices/platform-core.git
-	@[ -d libs ] && (echo "Pulling libs..." && cd libs && git pull) || git clone https://mygit.th-deg.de/thd-spatial-ai/microservices/react-shared-components.git libs
-	@[ -d infrastructure ] && (echo "Pulling infrastructure..." && cd infrastructure && git pull) || git clone https://mygit.th-deg.de/thd-spatial-ai/microservices/backend-infrastructure.git infrastructure
-	@echo "$(GREEN)Repositories updated.$(NC)"
-	@echo ""
-
-.PHONY: pull-platform-core
-pull-platform-core:
-	@echo "$(CYAN)Pulling platform-core...$(NC)"
-	@[ -d platform-core ] && (cd platform-core && git pull) || git clone https://mygit.th-deg.de/thd-spatial-ai/microservices/platform-core.git
-	@echo "$(GREEN)platform-core updated.$(NC)"
-
-.PHONY: pull-infrastructure
-pull-infrastructure:
-	@echo "$(CYAN)Pulling infrastructure...$(NC)"
-	@[ -d infrastructure ] && (cd infrastructure && git pull) || git clone https://mygit.th-deg.de/thd-spatial-ai/microservices/backend-infrastructure.git infrastructure
-	@echo "$(GREEN)infrastructure updated.$(NC)"
-
-.PHONY: pull-libs
-pull-libs:
-	@echo "$(CYAN)Pulling libs...$(NC)"
-	@[ -d libs ] && (cd libs && git pull) || git clone https://mygit.th-deg.de/thd-spatial-ai/microservices/react-shared-components.git libs
-	@echo "$(GREEN)libs updated.$(NC)"
 
 .PHONY: env-setup
 env-setup:
@@ -296,7 +255,7 @@ migrate:
 .PHONY: seed
 seed:
 	@echo "$(CYAN)Seeding Database...$(NC)"
-	@cd wildfire-app/backend && go run cmd/seed/*.go
+	@cd wildfire-app/backend && SEED_KEYCLOAK_USER=true go run cmd/seed/*.go
 	@echo "$(GREEN)Database seeded.$(NC)"
 	@echo ""
 
@@ -322,7 +281,7 @@ setup-complete:
 	@echo "     $(CYAN)make up-geoserver$(NC)"
 	@echo ""
 	@echo "$(YELLOW)Initial Login Credentials:$(NC)"
-	@echo "  Email:    $(CYAN)admin@spatialai.de$(NC)"
+	@echo "  Email:    $(CYAN)admin@storcito.de$(NC)"
 	@echo "  Password: $(CYAN)12345678$(NC)"
 	@echo ""
 	@echo "$(GREEN)============================================$(NC)"

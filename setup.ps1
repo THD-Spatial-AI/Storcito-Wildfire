@@ -86,53 +86,6 @@ function Invoke-Help {
     Write-Host '  stop-postgres        Stop PostgreSQL'
     Write-Host '  remove-postgres      Remove PostgreSQL container'
     Write-Host ''
-    Write-Host 'Individual Repository Pull:'
-    Write-Host '  pull-platform-core   Pull platform-core repository'
-    Write-Host '  pull-infrastructure  Pull infrastructure repository'
-    Write-Host '  pull-libs            Pull libs repository'
-    Write-Host ''
-}
-
-# ---------------------------------------------------------------------------
-function Invoke-GitCredentialCache {
-    Write-Cyan 'Configuring git credential manager for Windows...'
-    # The Unix `cache` helper is not available on Windows.
-    # Windows Credential Manager (manager-core) stores credentials
-    # persistently in the system keychain — no manual timeout needed.
-    git config --global credential.helper 'manager-core'
-    Write-Host 'Git credentials will be stored in Windows Credential Manager.'
-    Write-Host ''
-}
-
-# ---------------------------------------------------------------------------
-function Invoke-SetupRepos {
-    Write-Cyan 'Cloning/Updating repositories...'
-    Write-Host 'You will be prompted for credentials on first clone (stored in Windows Credential Manager).'
-    Write-Host ''
-
-    if (Test-Path 'platform-core') {
-        Write-Host 'Pulling platform-core...'
-        Push-Location 'platform-core'; git pull; Pop-Location
-    } else {
-        git clone 'https://mygit.th-deg.de/thd-spatial-ai/microservices/platform-core.git' 'platform-core'
-    }
-
-    if (Test-Path 'libs') {
-        Write-Host 'Pulling libs...'
-        Push-Location 'libs'; git pull; Pop-Location
-    } else {
-        git clone 'https://mygit.th-deg.de/thd-spatial-ai/microservices/react-shared-components.git' 'libs'
-    }
-
-    if (Test-Path 'infrastructure') {
-        Write-Host 'Pulling infrastructure...'
-        Push-Location 'infrastructure'; git pull; Pop-Location
-    } else {
-        git clone 'https://mygit.th-deg.de/thd-spatial-ai/microservices/backend-infrastructure.git' 'infrastructure'
-    }
-
-    Write-Green 'Repositories updated.'
-    Write-Host ''
 }
 
 # ---------------------------------------------------------------------------
@@ -177,7 +130,7 @@ function Invoke-InstallNpm {
 
     foreach ($t in $targets) {
         if (-not (Test-Path $t.Dir)) {
-            Write-Yellow "  Skipping $($t.Dir) (not found — run setup-repos first)"
+            Write-Yellow "  Skipping $($t.Dir) (not found)"
             continue
         }
         Write-Host "  Installing $($t.Dir)..."
@@ -207,7 +160,7 @@ function Invoke-InstallGo {
 
     foreach ($dir in $dirs) {
         if (-not (Test-Path $dir)) {
-            Write-Yellow "  Skipping $dir (not found — run setup-repos first)"
+            Write-Yellow "  Skipping $dir (not found)"
             continue
         }
         Write-Host "  $dir..."
@@ -423,44 +376,13 @@ function Invoke-Seed {
 
     Push-Location 'wildfire-app/backend'
     $relPaths = $seedFiles | ForEach-Object { "cmd/seed/$($_.Name)" }
+    $env:SEED_KEYCLOAK_USER = 'true'
     go run @relPaths
+    Remove-Item Env:SEED_KEYCLOAK_USER
     Pop-Location
 
     Write-Green 'Database seeded.'
     Write-Host ''
-}
-
-# ---------------------------------------------------------------------------
-function Invoke-PullPlatformCore {
-    Write-Cyan 'Pulling platform-core...'
-    if (Test-Path 'platform-core') {
-        Push-Location 'platform-core'; git pull; Pop-Location
-    } else {
-        git clone 'https://mygit.th-deg.de/thd-spatial-ai/microservices/platform-core.git' 'platform-core'
-    }
-    Write-Green 'platform-core updated.'
-}
-
-# ---------------------------------------------------------------------------
-function Invoke-PullInfrastructure {
-    Write-Cyan 'Pulling infrastructure...'
-    if (Test-Path 'infrastructure') {
-        Push-Location 'infrastructure'; git pull; Pop-Location
-    } else {
-        git clone 'https://mygit.th-deg.de/thd-spatial-ai/microservices/backend-infrastructure.git' 'infrastructure'
-    }
-    Write-Green 'infrastructure updated.'
-}
-
-# ---------------------------------------------------------------------------
-function Invoke-PullLibs {
-    Write-Cyan 'Pulling libs...'
-    if (Test-Path 'libs') {
-        Push-Location 'libs'; git pull; Pop-Location
-    } else {
-        git clone 'https://mygit.th-deg.de/thd-spatial-ai/microservices/react-shared-components.git' 'libs'
-    }
-    Write-Green 'libs updated.'
 }
 
 # ---------------------------------------------------------------------------
@@ -485,7 +407,7 @@ function Invoke-SetupComplete {
     Write-Cyan   '     .\setup.ps1 up-geoserver'
     Write-Host ''
     Write-Yellow 'Initial Login Credentials:'
-    Write-Host   '  Email:    ' -NoNewline; Write-Cyan 'admin@spatialai.de'
+    Write-Host   '  Email:    ' -NoNewline; Write-Cyan 'admin@storcito.de'
     Write-Host   '  Password: ' -NoNewline; Write-Cyan '12345678'
     Write-Host ''
     Write-Green '============================================'
@@ -493,8 +415,6 @@ function Invoke-SetupComplete {
 
 # ---------------------------------------------------------------------------
 function Invoke-Setup {
-    Invoke-GitCredentialCache
-    Invoke-SetupRepos
     Invoke-EnvSetup
     Invoke-Install
     Invoke-PullImages
@@ -515,8 +435,6 @@ function Invoke-Setup {
 $Dispatch = @{
     'help'                 = 'Invoke-Help'
     'setup'                = 'Invoke-Setup'
-    'git-credential-cache' = 'Invoke-GitCredentialCache'
-    'setup-repos'          = 'Invoke-SetupRepos'
     'env-setup'            = 'Invoke-EnvSetup'
     'install'              = 'Invoke-Install'
     'install-npm'          = 'Invoke-InstallNpm'
@@ -542,9 +460,6 @@ $Dispatch = @{
     'remove-postgres'      = 'Invoke-RemovePostgres'
     'migrate'              = 'Invoke-Migrate'
     'seed'                 = 'Invoke-Seed'
-    'pull-platform-core'   = 'Invoke-PullPlatformCore'
-    'pull-infrastructure'  = 'Invoke-PullInfrastructure'
-    'pull-libs'            = 'Invoke-PullLibs'
     'setup-complete'       = 'Invoke-SetupComplete'
 }
 

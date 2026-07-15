@@ -57,7 +57,7 @@ The full system architecture is documented on the project's MkDocs documentation
 - Logrus structured logging
 - Keycloak OIDC token validation + admin token provider
 
-**Platform Core** (separate repositories pulled at build/deploy time)
+**Platform Core** (included in this repository)
 - `platform-core/auth-service` — authentication microservice
 - `platform-core/webservice` — simulation dispatcher and capacity manager
 - `infrastructure/platform` — shared Go libraries (server, database, worker, email, security)
@@ -81,23 +81,18 @@ The full system architecture is documented on the project's MkDocs documentation
 - Docker & Docker Compose
 - Go 1.24+
 - Node.js 20+
-- Access to the TH-DEG GitLab (`mygit.th-deg.de`) for platform-core, libs, and infrastructure repos
 
 ### Quick Start
 
 ```bash
-# 1. Clone all required repositories and copy .env files
-
+make setup
 ```
 
-`make setup` runs the full sequence: clones external repos, copies `.env.example` files, installs npm + Go dependencies, pulls Docker images, starts PostgreSQL + Redis, initialises Keycloak, starts platform services, and runs migrations + seed.
+`make setup` runs the full sequence: copies `.env.example` files, installs npm + Go dependencies, pulls Docker images, starts PostgreSQL + Redis, initialises Keycloak, starts platform services, and runs migrations + seed. All components (platform-core, infrastructure, libs) live inside this repository — nothing is cloned from external repos.
 
 ### Step-by-step
 
 ```bash
-# Clone / update external repos
-make setup-repos
-
 # Copy .env files (edit them before proceeding)
 make env-setup
 
@@ -135,7 +130,7 @@ Open `http://localhost:3000`. Default credentials after seeding:
 
 | Field    | Value               |
 |----------|---------------------|
-| Email    | `admin@spatialai.de`|
+| Email    | `admin@storcito.de` |
 | Password | `12345678`          |
 
 ### Docker Compose
