@@ -934,8 +934,8 @@
         "description": "Zarządzaj zapisanymi lokalizacjami i obszarami zainteresowania. Szybki dostęp do często analizowanych regionów."
       },
       "reports": {
-        "title": "Raporty Symulacji",
-        "description": "Przeglądaj szczegółowe raporty symulacji, eksportuj dane i analizuj historyczne trendy."
+        "title": "Porównanie Modeli",
+        "description": "Porównuj swoje modele symulacji obok siebie i analizuj różnice oraz trendy ryzyka w czasie."
       },
       "technologies": {
         "title": "Parametry Symulacji",
@@ -965,6 +965,15 @@
       }
     },
     "areaSelect": {
+      "precomputed": {
+        "title": "Wstępnie obliczona mapa regionalna",
+        "description": "Każdej nocy cały region jest analizowany ze wszystkimi warstwami ryzyka. Jeśli Twoja pojedyncza data dynamiczna jest objęta analizą, ten przełącznik wycina wynik Twojego obszaru z tej mapy i zwraca go w kilka sekund.",
+        "tip": "Gdy przełącznik jest niedostępny, tekst pod nim wyjaśnia dlaczego; model oblicza wtedy wszystkie kroki dla Twojego obszaru."
+      },
+      "customData": {
+        "title": "Dane własne",
+        "description": "Opcjonalnie prześlij dane stacji pogodowej (Excel lub CSV) dla tego obszaru; służą one do obliczenia wskaźnika Fire Weather Index. Jeśli pole pozostanie puste, używane są dołączone dane regionalne."
+      },
       "welcome": {
         "title": "Przewodnik po symulacji pożarów",
         "description": "Witamy! Ten przewodnik pomoże Ci stworzyć symulację pożaru dla wybranego regionu.",

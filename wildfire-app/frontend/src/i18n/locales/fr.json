@@ -1094,8 +1094,8 @@
         "description": "Gérez vos emplacements enregistrés et zones d'intérêt. Accès rapide aux régions fréquemment analysées."
       },
       "reports": {
-        "title": "Rapports de Simulation",
-        "description": "Consultez des rapports détaillés de simulation, exportez des données et analysez les tendances historiques."
+        "title": "Comparaison de Modèles",
+        "description": "Comparez vos modèles de simulation côte à côte et analysez les différences et les tendances de risque au fil du temps."
       },
       "technologies": {
         "title": "Paramètres de Simulation",
@@ -1125,6 +1125,15 @@
       }
     },
     "areaSelect": {
+      "precomputed": {
+        "title": "Carte régionale précalculée",
+        "description": "Chaque nuit, toute la région est analysée avec toutes les couches de risque activées. Si votre date dynamique unique est couverte, cet interrupteur découpe le résultat de votre zone dans cette carte et le renvoie en quelques secondes.",
+        "tip": "Si l'interrupteur n'est pas disponible, le texte en dessous en explique la raison ; le modèle calcule alors toutes les étapes pour votre zone."
+      },
+      "customData": {
+        "title": "Données personnalisées",
+        "description": "Téléversez éventuellement des données de station météo (Excel ou CSV) pour cette zone ; elles servent à calculer l'indice forêt-météo. Si le champ reste vide, les données régionales fournies sont utilisées."
+      },
       "welcome": {
         "title": "Guide de simulation d'incendies de forêt",
         "description": "Bienvenue ! Ce tour vous guidera dans la création d'une simulation d'incendie de forêt pour la région choisie.",

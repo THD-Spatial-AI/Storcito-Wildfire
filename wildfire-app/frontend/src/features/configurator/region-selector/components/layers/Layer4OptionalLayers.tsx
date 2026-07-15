@@ -71,6 +71,7 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
       )}
     >
       <div
+        data-tour="precomputed-map"
         className={cn(
           "mb-3 rounded-xl border p-3 transition-all",
           precomputedOn
@@ -236,7 +237,7 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
         </div>
       )}
 
-      <div className="mt-4 border-t border-border pt-4">
+      <div className="mt-4 border-t border-border pt-4" data-tour="custom-data">
         <h4 className="text-xs font-semibold text-foreground">
           {t("configurator.layer3.customData", "Custom data (optional)")}
         </h4>

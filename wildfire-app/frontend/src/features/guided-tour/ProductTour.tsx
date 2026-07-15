@@ -114,7 +114,7 @@ const useTourSteps = (): Step[] => {
       target: '[data-tour="reports"]',
       content: (
         <TourStepContent>
-          <TourStepHeader icon={TourIcons.report("w-4 h-4 text-background")} title={t('tour.product.reports.title')} />
+          <TourStepHeader icon={TourIcons.compare("w-4 h-4 text-background")} title={t('tour.product.reports.title')} />
           <TourDescription>{t('tour.product.reports.description')}</TourDescription>
         </TourStepContent>
       ),

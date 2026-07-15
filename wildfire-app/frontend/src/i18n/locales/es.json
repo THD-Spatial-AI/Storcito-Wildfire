@@ -1094,8 +1094,8 @@
         "description": "Gestiona tus ubicaciones guardadas y áreas de interés. Acceso rápido a regiones frecuentemente analizadas."
       },
       "reports": {
-        "title": "Informes de Simulación",
-        "description": "Consulta informes detallados de simulación, exporta datos y analiza tendencias históricas."
+        "title": "Comparación de Modelos",
+        "description": "Compare sus modelos de simulación lado a lado y analice las diferencias y las tendencias de riesgo a lo largo del tiempo."
       },
       "technologies": {
         "title": "Parámetros de Simulación",
@@ -1125,6 +1125,15 @@
       }
     },
     "areaSelect": {
+      "precomputed": {
+        "title": "Mapa regional precalculado",
+        "description": "Cada noche se analiza toda la región con todas las capas de riesgo activadas. Si su única fecha dinámica está cubierta, este interruptor recorta el resultado de su área de ese mapa y lo devuelve en segundos.",
+        "tip": "Cuando el interruptor no está disponible, el texto debajo explica el motivo; el modelo calcula entonces todos los pasos para su área."
+      },
+      "customData": {
+        "title": "Datos personalizados",
+        "description": "Opcionalmente, suba datos de estaciones meteorológicas (Excel o CSV) para esta área; se usan para calcular el índice meteorológico de incendios. Si se deja vacío, se usan los datos regionales incluidos."
+      },
       "welcome": {
         "title": "Guía de simulación de incendios forestales",
         "description": "¡Bienvenido! Este recorrido le guiará para crear una simulación de incendios forestales para su región.",

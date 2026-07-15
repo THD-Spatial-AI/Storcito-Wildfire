@@ -934,8 +934,8 @@
         "description": "Beheer uw opgeslagen locaties en interessegebieden. Snelle toegang tot vaak geanalyseerde regio's."
       },
       "reports": {
-        "title": "Simulatierapporten",
-        "description": "Bekijk gedetailleerde simulatierapporten, exporteer gegevens en analyseer historische trends."
+        "title": "Modelvergelijking",
+        "description": "Vergelijk uw simulatiemodellen naast elkaar en analyseer verschillen en risicotrends in de tijd."
       },
       "technologies": {
         "title": "Simulatieparameters",
@@ -965,6 +965,15 @@
       }
     },
     "areaSelect": {
+      "precomputed": {
+        "title": "Vooraf berekende regiokaart",
+        "description": "Elke nacht wordt de hele regio geanalyseerd met alle risicolagen ingeschakeld. Als uw enkele dynamische datum gedekt is, knipt deze schakelaar het resultaat van uw gebied uit die kaart en levert het in seconden.",
+        "tip": "Als de schakelaar niet beschikbaar is, legt de tekst eronder uit waarom; het model berekent dan alle stappen voor uw gebied."
+      },
+      "customData": {
+        "title": "Eigen gegevens",
+        "description": "Upload optioneel weerstationgegevens (Excel of CSV) voor dit gebied; ze worden gebruikt om de Fire Weather Index te berekenen. Indien leeg worden de meegeleverde regionale gegevens gebruikt."
+      },
       "welcome": {
         "title": "Wildfire-simulatiegids",
         "description": "Welkom! Deze rondleiding begeleidt u bij het maken van een wildfire-simulatie voor uw gekozen regio.",

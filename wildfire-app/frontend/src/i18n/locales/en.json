@@ -1094,8 +1094,8 @@
         "description": "Manage your saved locations and areas of interest. Quick access to frequently analyzed regions."
       },
       "reports": {
-        "title": "Simulation Reports",
-        "description": "View detailed simulation reports, export data, and analyze historical trends and patterns."
+        "title": "Model Comparison",
+        "description": "Compare your simulation models side by side and analyze differences and risk trends over time."
       },
       "technologies": {
         "title": "Simulation Parameters",
@@ -1125,6 +1125,15 @@
       }
     },
     "areaSelect": {
+      "precomputed": {
+        "title": "Precomputed regional map",
+        "description": "Every night the whole region is analysed with all risk layers enabled. If your single dynamic date is covered, this switch clips your area's result from that map and returns it in seconds.",
+        "tip": "When the switch is unavailable, the text below it explains why, and the model computes every step for your area instead."
+      },
+      "customData": {
+        "title": "Custom data",
+        "description": "Optionally upload weather station data (Excel or CSV) for this area; it is used to compute the Fire Weather Index. If left empty, the bundled regional data is used."
+      },
       "welcome": {
         "title": "Wildfire Simulation Guide",
         "description": "Welcome! This tour will guide you through creating a wildfire simulation for your chosen region.",

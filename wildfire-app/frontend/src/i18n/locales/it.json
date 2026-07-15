@@ -934,8 +934,8 @@
         "description": "Gestisci le tue posizioni salvate e aree di interesse. Accesso rapido alle regioni frequentemente analizzate."
       },
       "reports": {
-        "title": "Report di Simulazione",
-        "description": "Visualizza report dettagliati, esporta dati e analizza tendenze storiche."
+        "title": "Confronto Modelli",
+        "description": "Confronta i tuoi modelli di simulazione fianco a fianco e analizza le differenze e le tendenze del rischio nel tempo."
       },
       "technologies": {
         "title": "Parametri di Simulazione",
@@ -965,6 +965,15 @@
       }
     },
     "areaSelect": {
+      "precomputed": {
+        "title": "Mappa regionale precalcolata",
+        "description": "Ogni notte l'intera regione viene analizzata con tutti i livelli di rischio attivi. Se la tua singola data dinamica è coperta, questo interruttore ritaglia il risultato della tua area da quella mappa e lo restituisce in pochi secondi.",
+        "tip": "Quando l'interruttore non è disponibile, il testo sottostante ne spiega il motivo; il modello calcola quindi tutti i passaggi per la tua area."
+      },
+      "customData": {
+        "title": "Dati personalizzati",
+        "description": "Facoltativamente carica dati di stazioni meteo (Excel o CSV) per quest'area; vengono usati per calcolare il Fire Weather Index. Se lasciato vuoto, vengono usati i dati regionali inclusi."
+      },
       "welcome": {
         "title": "Guida alla simulazione degli incendi boschivi",
         "description": "Benvenuto! Questo tour ti guiderà nella creazione di una simulazione di incendi boschivi per la regione scelta.",

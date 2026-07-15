@@ -934,8 +934,8 @@
         "description": "Spravujte uložené lokace a oblasti zájmu. Rychlý přístup k často analyzovaným regionům."
       },
       "reports": {
-        "title": "Zprávy simulací",
-        "description": "Zobrazte podrobné zprávy simulací, exportujte data a analyzujte historické trendy."
+        "title": "Porovnání Modelů",
+        "description": "Porovnávejte své simulační modely vedle sebe a analyzujte rozdíly a trendy rizika v čase."
       },
       "technologies": {
         "title": "Parametry simulace",
@@ -965,6 +965,15 @@
       }
     },
     "areaSelect": {
+      "precomputed": {
+        "title": "Předpočítaná regionální mapa",
+        "description": "Každou noc se analyzuje celý region se všemi vrstvami rizika. Pokud je vaše jediné dynamické datum pokryto, tento přepínač vystřihne výsledek vaší oblasti z této mapy a vrátí jej během sekund.",
+        "tip": "Když přepínač není dostupný, text pod ním vysvětluje proč; model pak spočítá všechny kroky pro vaši oblast."
+      },
+      "customData": {
+        "title": "Vlastní data",
+        "description": "Volitelně nahrajte data meteostanice (Excel nebo CSV) pro tuto oblast; použijí se k výpočtu indexu Fire Weather Index. Pokud pole zůstane prázdné, použijí se přiložená regionální data."
+      },
       "welcome": {
         "title": "Průvodce simulací lesních požárů",
         "description": "Vítejte! Tato prohlídka vás provede vytvořením simulace lesního požáru pro vybraný region.",

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Step } from "react-joyride";
 import { TourController } from "./TourController";
 import { useTranslation } from "@/i18n";
@@ -28,6 +28,8 @@ const CONFIGURATOR_STEP_BY_TOUR_INDEX: Array<number | null> = [
   2,
   2,
   3,
+  3,
+  3,
   4,
   5,
   5,
@@ -35,198 +37,319 @@ const CONFIGURATOR_STEP_BY_TOUR_INDEX: Array<number | null> = [
 
 const useAreaSelectSteps = (): Step[] => {
   const { t } = useTranslation();
-  
-  return [
-    {
-      target: "body",
-      content: (
-        <TourStepContent spacing="large">
-          <TourStepHeader icon={TourIcons.map("w-5 h-5 text-foreground")} title={t('tour.areaSelect.welcome.title')} variant="large" />
-          <TourDescription variant="muted">
-            {t('tour.areaSelect.welcome.description')}
-          </TourDescription>
-          <TourTipBox icon={TourIcons.info("w-4 h-4 text-muted-foreground")}>
-            {t('tour.areaSelect.welcome.tip')}
-          </TourTipBox>
-        </TourStepContent>
-      ),
-      placement: "center",
-      disableBeacon: true,
-    },
-    {
-      target: '[data-tour="model-name"]',
-      content: (
-        <TourStepContent>
-          <TourStepHeader icon={TourIcons.edit("w-4 h-4 text-background")} title={t('tour.areaSelect.modelName.title')} />
-          <TourDescription>
-            {t('tour.areaSelect.modelName.description')}
-          </TourDescription>
-          <TourTipBox icon={TourIcons.pencil("w-4 h-4 text-muted-foreground")} variant="compact">
-            {t('tour.areaSelect.modelName.tip')}
-          </TourTipBox>
-        </TourStepContent>
-      ),
-      placement: "left",
-    },
-    {
-      target: '[data-tour="date-range"]',
-      content: (
-        <TourStepContent>
-          <TourStepHeader icon={TourIcons.calendar("w-4 h-4 text-background")} title={t('tour.areaSelect.dateRange.title')} />
-          <TourDescription>
-            {t('tour.areaSelect.dateRange.description')}
-          </TourDescription>
-          <TourTipBox icon={TourIcons.lightning("w-4 h-4 text-muted-foreground")} variant="compact">
-            {t('tour.areaSelect.dateRange.tip')}
-          </TourTipBox>
-        </TourStepContent>
-      ),
-      placement: "left",
-    },
-    {
-      target: '[data-tour="calculation-status"]',
-      content: (
-        <TourStepContent>
-          <TourStepHeader icon={TourIcons.info("w-4 h-4 text-background")} title={t('tour.areaSelect.calculationStatus.title', 'Calculation status')} />
-          <TourDescription>
-            {t('tour.areaSelect.calculationStatus.description', 'This line tells you whether static dates are loading, unavailable, errored, or ready for selection.')}
-          </TourDescription>
-          <TourTipBox icon={TourIcons.checkCircle("w-4 h-4 text-muted-foreground")} variant="compact">
-            {t('tour.areaSelect.calculationStatus.tip', 'If this shows a blocker, the continue button stays disabled until the date selection is valid.')}
-          </TourTipBox>
-        </TourStepContent>
-      ),
-      placement: "left",
-    },
-    {
-      target: '[data-tour="calculation-mode"]',
-      content: (
-        <TourStepContent>
-          <TourStepHeader icon={TourIcons.settings("w-4 h-4 text-background")} title={t('tour.areaSelect.calculationMode.title', 'Calculation mode')} />
-          <TourDescription>
-            {t('tour.areaSelect.calculationMode.description', 'Choose static mode for one available fire-risk date or dynamic mode for a date range that the backend can process later.')}
-          </TourDescription>
-          <TourTipBox icon={TourIcons.info("w-4 h-4 text-muted-foreground")} variant="compact">
-            {t('tour.areaSelect.calculationMode.tip', 'The status text below the date control tells you whether available static dates are loaded and whether the selected date is valid.')}
-          </TourTipBox>
-        </TourStepContent>
-      ),
-      placement: "left",
-    },
-    {
-      target: '[data-tour="map-container"]',
-      content: (
-        <TourStepContent>
-          <TourStepHeader icon={TourIcons.map("w-4 h-4 text-background")} title={t('tour.areaSelect.mapContainer.title')} />
-          <TourDescription>
-            {t('tour.areaSelect.mapContainer.description')}
-          </TourDescription>
-          <TourTipBox icon={TourIcons.search("w-4 h-4 text-muted-foreground")} variant="compact">
-            {t('tour.areaSelect.mapContainer.tip')}
-          </TourTipBox>
-        </TourStepContent>
-      ),
-      placement: "center",
-      spotlightClicks: true,
-      disableScrolling: false,
-    },
-    {
-      target: '[data-tour="municipality-search"]',
-      content: (
-        <TourStepContent>
-          <TourStepHeader icon={TourIcons.search("w-4 h-4 text-background")} title={t('tour.areaSelect.search.title')} />
-          <TourDescription>
-            {t('tour.areaSelect.search.description')}
-          </TourDescription>
-          <TourTipBox icon={TourIcons.search("w-4 h-4 text-muted-foreground")} variant="compact">
-            {t('tour.areaSelect.search.tip')}
-          </TourTipBox>
-        </TourStepContent>
-      ),
-      placement: "right",
-    },
-    {
-      target: '[data-tour="area-input-mode"]',
-      content: (
-        <TourStepContent>
-          <TourStepHeader icon={TourIcons.pencil("w-4 h-4 text-background")} title={t('tour.areaSelect.areaInput.title', 'Area input')} />
-          <TourDescription>
-            {t('tour.areaSelect.areaInput.description', 'Draw the area directly on the map or upload a GeoJSON Polygon/MultiPolygon boundary.')}
-          </TourDescription>
-          <TourTipBox icon={TourIcons.location("w-4 h-4 text-muted-foreground")} variant="compact">
-            {t('tour.areaSelect.areaInput.tip', 'The model can continue only after one valid area of interest is available.')}
-          </TourTipBox>
-        </TourStepContent>
-      ),
-      placement: "right",
-    },
-    {
-      target: '[data-tour="area-status"]',
-      content: (
-        <TourStepContent>
-          <TourStepHeader icon={TourIcons.info("w-4 h-4 text-background")} title={t('tour.areaSelect.areaStatus.title', 'AOI status')} />
-          <TourDescription>
-            {t('tour.areaSelect.areaStatus.description', 'This status confirms whether the boundary is missing, drawn, uploaded, or blocked by an upload error.')}
-          </TourDescription>
-        </TourStepContent>
-      ),
-      placement: "right",
-    },
-    {
-      target: '[data-tour="optional-layers"]',
-      content: (
-        <TourStepContent>
-          <TourStepHeader icon={TourIcons.layers("w-4 h-4 text-background")} title={t('tour.areaSelect.optionalLayers.title', 'Risk signals')} />
-          <TourDescription>
-            {t('tour.areaSelect.optionalLayers.description', 'These toggles control which optional signals are sent with the model request, including fire-weather, terrain, and historical fires.')}
-          </TourDescription>
-          <TourTipBox icon={TourIcons.fire("w-4 h-4 text-muted-foreground")} variant="compact">
-            {t('tour.areaSelect.optionalLayers.tip', 'Keep fire-weather enabled for normal risk runs; disabling it is useful only for a baseline comparison.')}
-          </TourTipBox>
-        </TourStepContent>
-      ),
-      placement: "right",
-    },
-    {
-      target: '[data-tour="final-review"]',
-      content: (
-        <TourStepContent>
-          <TourStepHeader icon={TourIcons.checkCircle("w-4 h-4 text-background")} title={t('tour.areaSelect.finalReview.title', 'Validation status')} />
-          <TourDescription>
-            {t('tour.areaSelect.finalReview.description', 'The review step checks the model name, date, AOI, risk components, and buffer before the run can start.')}
-          </TourDescription>
-        </TourStepContent>
-      ),
-      placement: "right",
-    },
-    {
-      target: '[data-tour="save-run-summary"]',
-      content: (
-        <TourStepContent>
-          <TourStepHeader icon={TourIcons.clipboard("w-4 h-4 text-background")} title={t('tour.areaSelect.saveSummary.title', 'Save summary')} />
-          <TourDescription>
-            {t('tour.areaSelect.saveSummary.description', 'This final summary shows the values that will be saved with the model and sent to the calculation workflow.')}
-          </TourDescription>
-        </TourStepContent>
-      ),
-      placement: "right",
-    },
-    {
-      target: '[data-tour="save-button"]',
-      content: (
-        <TourStepContent>
-          <TourStepHeader icon={TourIcons.save("w-4 h-4 text-background")} title={t('tour.areaSelect.save.title')} />
-          <TourDescription>
-            {t('tour.areaSelect.save.description')}
-          </TourDescription>
-          <TourTipBox icon={TourIcons.checkCircle("w-4 h-4 text-muted-foreground")} variant="compact">
-            {t('tour.areaSelect.save.tip')}
-          </TourTipBox>
-        </TourStepContent>
-      ),
-      placement: "top",
-    },
-  ];
+
+  return useMemo((): Step[] => {
+    const steps: Step[] = [
+      {
+        target: "body",
+        content: (
+          <TourStepContent spacing="large">
+            <TourStepHeader
+              icon={TourIcons.map("w-5 h-5 text-foreground")}
+              title={t("tour.areaSelect.welcome.title")}
+              variant="large"
+            />
+            <TourDescription variant="muted">
+              {t("tour.areaSelect.welcome.description")}
+            </TourDescription>
+            <TourTipBox icon={TourIcons.info("w-4 h-4 text-muted-foreground")}>
+              {t("tour.areaSelect.welcome.tip")}
+            </TourTipBox>
+          </TourStepContent>
+        ),
+        placement: "center",
+        disableBeacon: true,
+      },
+      {
+        target: '[data-tour="model-name"]',
+        content: (
+          <TourStepContent>
+            <TourStepHeader
+              icon={TourIcons.edit("w-4 h-4 text-background")}
+              title={t("tour.areaSelect.modelName.title")}
+            />
+            <TourDescription>{t("tour.areaSelect.modelName.description")}</TourDescription>
+            <TourTipBox icon={TourIcons.pencil("w-4 h-4 text-muted-foreground")} variant="compact">
+              {t("tour.areaSelect.modelName.tip")}
+            </TourTipBox>
+          </TourStepContent>
+        ),
+        placement: "left",
+      },
+      {
+        target: '[data-tour="calculation-mode"]',
+        content: (
+          <TourStepContent>
+            <TourStepHeader
+              icon={TourIcons.settings("w-4 h-4 text-background")}
+              title={t("tour.areaSelect.calculationMode.title", "Calculation mode")}
+            />
+            <TourDescription>
+              {t(
+                "tour.areaSelect.calculationMode.description",
+                "Choose static mode for one available fire-risk date or dynamic mode for a date range that the backend can process later."
+              )}
+            </TourDescription>
+            <TourTipBox icon={TourIcons.info("w-4 h-4 text-muted-foreground")} variant="compact">
+              {t(
+                "tour.areaSelect.calculationMode.tip",
+                "The status text below the date control tells you whether available static dates are loaded and whether the selected date is valid."
+              )}
+            </TourTipBox>
+          </TourStepContent>
+        ),
+        placement: "left",
+      },
+      {
+        target: '[data-tour="date-range"]',
+        content: (
+          <TourStepContent>
+            <TourStepHeader
+              icon={TourIcons.calendar("w-4 h-4 text-background")}
+              title={t("tour.areaSelect.dateRange.title")}
+            />
+            <TourDescription>{t("tour.areaSelect.dateRange.description")}</TourDescription>
+            <TourTipBox
+              icon={TourIcons.lightning("w-4 h-4 text-muted-foreground")}
+              variant="compact"
+            >
+              {t("tour.areaSelect.dateRange.tip")}
+            </TourTipBox>
+          </TourStepContent>
+        ),
+        placement: "left",
+      },
+      {
+        target: '[data-tour="calculation-status"]',
+        content: (
+          <TourStepContent>
+            <TourStepHeader
+              icon={TourIcons.info("w-4 h-4 text-background")}
+              title={t("tour.areaSelect.calculationStatus.title", "Calculation status")}
+            />
+            <TourDescription>
+              {t(
+                "tour.areaSelect.calculationStatus.description",
+                "This line tells you whether static dates are loading, unavailable, errored, or ready for selection."
+              )}
+            </TourDescription>
+            <TourTipBox
+              icon={TourIcons.checkCircle("w-4 h-4 text-muted-foreground")}
+              variant="compact"
+            >
+              {t(
+                "tour.areaSelect.calculationStatus.tip",
+                "If this shows a blocker, the continue button stays disabled until the date selection is valid."
+              )}
+            </TourTipBox>
+          </TourStepContent>
+        ),
+        placement: "left",
+      },
+      {
+        target: '[data-tour="map-container"]',
+        content: (
+          <TourStepContent>
+            <TourStepHeader
+              icon={TourIcons.map("w-4 h-4 text-background")}
+              title={t("tour.areaSelect.mapContainer.title")}
+            />
+            <TourDescription>{t("tour.areaSelect.mapContainer.description")}</TourDescription>
+            <TourTipBox icon={TourIcons.search("w-4 h-4 text-muted-foreground")} variant="compact">
+              {t("tour.areaSelect.mapContainer.tip")}
+            </TourTipBox>
+          </TourStepContent>
+        ),
+        placement: "center",
+        spotlightClicks: true,
+        disableScrolling: false,
+      },
+      {
+        target: '[data-tour="municipality-search"]',
+        content: (
+          <TourStepContent>
+            <TourStepHeader
+              icon={TourIcons.search("w-4 h-4 text-background")}
+              title={t("tour.areaSelect.search.title")}
+            />
+            <TourDescription>{t("tour.areaSelect.search.description")}</TourDescription>
+            <TourTipBox icon={TourIcons.search("w-4 h-4 text-muted-foreground")} variant="compact">
+              {t("tour.areaSelect.search.tip")}
+            </TourTipBox>
+          </TourStepContent>
+        ),
+        placement: "right",
+      },
+      {
+        target: '[data-tour="area-input-mode"]',
+        content: (
+          <TourStepContent>
+            <TourStepHeader
+              icon={TourIcons.pencil("w-4 h-4 text-background")}
+              title={t("tour.areaSelect.areaInput.title", "Area input")}
+            />
+            <TourDescription>
+              {t(
+                "tour.areaSelect.areaInput.description",
+                "Draw the area directly on the map or upload a GeoJSON Polygon/MultiPolygon boundary."
+              )}
+            </TourDescription>
+            <TourTipBox
+              icon={TourIcons.location("w-4 h-4 text-muted-foreground")}
+              variant="compact"
+            >
+              {t(
+                "tour.areaSelect.areaInput.tip",
+                "The model can continue only after one valid area of interest is available."
+              )}
+            </TourTipBox>
+          </TourStepContent>
+        ),
+        placement: "right",
+      },
+      {
+        target: '[data-tour="area-status"]',
+        content: (
+          <TourStepContent>
+            <TourStepHeader
+              icon={TourIcons.info("w-4 h-4 text-background")}
+              title={t("tour.areaSelect.areaStatus.title", "AOI status")}
+            />
+            <TourDescription>
+              {t(
+                "tour.areaSelect.areaStatus.description",
+                "This status confirms whether the boundary is missing, drawn, uploaded, or blocked by an upload error."
+              )}
+            </TourDescription>
+          </TourStepContent>
+        ),
+        placement: "right",
+      },
+      {
+        target: '[data-tour="precomputed-map"]',
+        content: (
+          <TourStepContent>
+            <TourStepHeader
+              icon={TourIcons.lightning("w-4 h-4 text-background")}
+              title={t("tour.areaSelect.precomputed.title", "Precomputed regional map")}
+            />
+            <TourDescription>
+              {t(
+                "tour.areaSelect.precomputed.description",
+                "Every night the whole region is analysed with all risk layers enabled. If your single dynamic date is covered, this switch clips your area's result from that map and returns it in seconds."
+              )}
+            </TourDescription>
+            <TourTipBox icon={TourIcons.info("w-4 h-4 text-muted-foreground")} variant="compact">
+              {t(
+                "tour.areaSelect.precomputed.tip",
+                "When the switch is unavailable, the text below it explains why, and the model computes every step for your area instead."
+              )}
+            </TourTipBox>
+          </TourStepContent>
+        ),
+        placement: "right",
+      },
+      {
+        target: '[data-tour="optional-layers"]',
+        content: (
+          <TourStepContent>
+            <TourStepHeader
+              icon={TourIcons.layers("w-4 h-4 text-background")}
+              title={t("tour.areaSelect.optionalLayers.title", "Risk signals")}
+            />
+            <TourDescription>
+              {t(
+                "tour.areaSelect.optionalLayers.description",
+                "These toggles control which optional signals are sent with the model request, including fire-weather, terrain, and historical fires."
+              )}
+            </TourDescription>
+            <TourTipBox icon={TourIcons.fire("w-4 h-4 text-muted-foreground")} variant="compact">
+              {t(
+                "tour.areaSelect.optionalLayers.tip",
+                "Keep fire-weather enabled for normal risk runs; disabling it is useful only for a baseline comparison."
+              )}
+            </TourTipBox>
+          </TourStepContent>
+        ),
+        placement: "right",
+      },
+      {
+        target: '[data-tour="custom-data"]',
+        content: (
+          <TourStepContent>
+            <TourStepHeader
+              icon={TourIcons.chart("w-4 h-4 text-background")}
+              title={t("tour.areaSelect.customData.title", "Custom data")}
+            />
+            <TourDescription>
+              {t(
+                "tour.areaSelect.customData.description",
+                "Optionally upload weather station data (Excel or CSV) for this area; it is used to compute the Fire Weather Index. If left empty, the bundled regional data is used."
+              )}
+            </TourDescription>
+          </TourStepContent>
+        ),
+        placement: "right",
+      },
+      {
+        target: '[data-tour="final-review"]',
+        content: (
+          <TourStepContent>
+            <TourStepHeader
+              icon={TourIcons.checkCircle("w-4 h-4 text-background")}
+              title={t("tour.areaSelect.finalReview.title", "Validation status")}
+            />
+            <TourDescription>
+              {t(
+                "tour.areaSelect.finalReview.description",
+                "The review step checks the model name, date, AOI, risk components, and buffer before the run can start."
+              )}
+            </TourDescription>
+          </TourStepContent>
+        ),
+        placement: "right",
+      },
+      {
+        target: '[data-tour="save-run-summary"]',
+        content: (
+          <TourStepContent>
+            <TourStepHeader
+              icon={TourIcons.clipboard("w-4 h-4 text-background")}
+              title={t("tour.areaSelect.saveSummary.title", "Save summary")}
+            />
+            <TourDescription>
+              {t(
+                "tour.areaSelect.saveSummary.description",
+                "This final summary shows the values that will be saved with the model and sent to the calculation workflow."
+              )}
+            </TourDescription>
+          </TourStepContent>
+        ),
+        placement: "right",
+      },
+      {
+        target: '[data-tour="save-button"]',
+        content: (
+          <TourStepContent>
+            <TourStepHeader
+              icon={TourIcons.save("w-4 h-4 text-background")}
+              title={t("tour.areaSelect.save.title")}
+            />
+            <TourDescription>{t("tour.areaSelect.save.description")}</TourDescription>
+            <TourTipBox
+              icon={TourIcons.checkCircle("w-4 h-4 text-muted-foreground")}
+              variant="compact"
+            >
+              {t("tour.areaSelect.save.tip")}
+            </TourTipBox>
+          </TourStepContent>
+        ),
+        placement: "top",
+      },
+    ];
+
+    return steps.map((step) => ({ ...step, disableBeacon: true }));
+  }, [t]);
 };
 
 export const AreaSelectTour: React.FC<AreaSelectTourProps> = ({
@@ -238,6 +361,17 @@ export const AreaSelectTour: React.FC<AreaSelectTourProps> = ({
   const [stepIndex, setStepIndex] = useState(0);
   const [isStepReady, setIsStepReady] = useState(true);
   const areaSelectSteps = useAreaSelectSteps();
+
+  // Change steps through this so `run` (isStepReady) drops to false in the SAME
+  // batched update as the step change. Otherwise react-joyride briefly sees the
+  // new stepIndex while run is still true, searches for a target whose panel
+  // hasn't switched yet, fires TARGET_NOT_FOUND, and the controller jumps
+  // forward — which made the Back button appear to do nothing across a
+  // configurator-step boundary.
+  const changeStep = useCallback((next: number) => {
+    setIsStepReady(false);
+    setStepIndex(next);
+  }, []);
 
   // Reset step index when tour opens
   useEffect(() => {
@@ -255,9 +389,12 @@ export const AreaSelectTour: React.FC<AreaSelectTourProps> = ({
       onConfiguratorStepChange?.(targetConfiguratorStep);
     }
 
-    const timeout = window.setTimeout(() => {
-      setIsStepReady(true);
-    }, targetConfiguratorStep ? 220 : 0);
+    const timeout = window.setTimeout(
+      () => {
+        setIsStepReady(true);
+      },
+      targetConfiguratorStep ? 220 : 0
+    );
 
     return () => window.clearTimeout(timeout);
   }, [isOpen, onConfiguratorStepChange, stepIndex]);
@@ -269,14 +406,14 @@ export const AreaSelectTour: React.FC<AreaSelectTourProps> = ({
     if (typeof currentTarget !== "string" || currentTarget === "body") return;
 
     const timeout = window.setTimeout(() => {
-        const target = document.querySelector(currentTarget);
-        if (target) {
-          target.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
-        }
-      }, 80);
+      const target = document.querySelector(currentTarget);
+      if (target) {
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+    }, 80);
 
     return () => window.clearTimeout(timeout);
   }, [areaSelectSteps, isOpen, isStepReady, stepIndex]);
@@ -286,7 +423,7 @@ export const AreaSelectTour: React.FC<AreaSelectTourProps> = ({
       steps={areaSelectSteps}
       run={isOpen && isStepReady}
       stepIndex={stepIndex}
-      setStepIndex={setStepIndex}
+      setStepIndex={changeStep}
       onComplete={onComplete}
       onSkip={onSkip}
     />

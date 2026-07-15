@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import ReactJoyride, { CallBackProps, STATUS, Step, EVENTS, ACTIONS } from "react-joyride";
 import { buildCurvedPath } from "@/features/guided-tour/utils/tourUtils";
 import { useTranslation } from "@/i18n";
@@ -22,44 +22,68 @@ export const TourController: React.FC<TourControllerProps> = ({
   onSkip,
   children,
 }) => {
-  const [connector, setConnector] = useState<{ path: string; startX: number; startY: number; endX: number; endY: number } | null>(null);
+  const [connector, setConnector] = useState<{
+    path: string;
+    startX: number;
+    startY: number;
+    endX: number;
+    endY: number;
+  } | null>(null);
+  const lastActionRef = useRef<(typeof ACTIONS)[keyof typeof ACTIONS]>(ACTIONS.NEXT);
   const { t } = useTranslation();
+
+  const applyConnector = useCallback(
+    (next: { path: string; startX: number; startY: number; endX: number; endY: number } | null) => {
+      setConnector((prev) => {
+        if (prev === next) return prev;
+        if (!prev || !next) return prev === null && next === null ? prev : next;
+        const unchanged =
+          prev.path === next.path &&
+          prev.startX === next.startX &&
+          prev.startY === next.startY &&
+          prev.endX === next.endX &&
+          prev.endY === next.endY;
+        return unchanged ? prev : next;
+      });
+    },
+    []
+  );
 
   const updateConnector = useCallback(() => {
     // Small delay to ensure DOM is updated
     requestAnimationFrame(() => {
-      const tooltip = document.querySelector('.react-joyride__tooltip');
+      const tooltip = document.querySelector(".react-joyride__tooltip");
       if (!tooltip) {
-        setConnector(null);
+        applyConnector(null);
         return;
       }
 
       // Find target from current step
       const currentStep = steps[stepIndex];
       if (!currentStep?.target) {
-        setConnector(null);
+        applyConnector(null);
         return;
       }
 
       let target: Element | null = null;
-      if (typeof currentStep.target === 'string') {
+      if (typeof currentStep.target === "string") {
         target = document.querySelector(currentStep.target);
       } else if (currentStep.target instanceof Element) {
         target = currentStep.target;
       }
 
-      if (!target || currentStep.target === 'body') {
-        setConnector(null);
+      if (!target || currentStep.target === "body") {
+        applyConnector(null);
         return;
       }
 
       const tooltipRect = tooltip.getBoundingClientRect();
       const targetRect = target.getBoundingClientRect();
-      const placement = currentStep.placement || 'bottom';
+      const placement = currentStep.placement || "bottom";
 
-      setConnector(buildCurvedPath(tooltipRect, targetRect, placement));
+      applyConnector(buildCurvedPath(tooltipRect, targetRect, placement));
     });
-  }, [stepIndex, steps]);
+  }, [applyConnector, stepIndex, steps]);
 
   // Update connector when step changes or window resizes
   useEffect(() => {
@@ -72,17 +96,22 @@ export const TourController: React.FC<TourControllerProps> = ({
       };
 
       updateConnector();
-      window.addEventListener('resize', debouncedUpdate);
-      window.addEventListener('scroll', debouncedUpdate, true);
+      window.addEventListener("resize", debouncedUpdate);
+      window.addEventListener("scroll", debouncedUpdate, true);
 
-      // Mutation observer - only watch for childList changes, not attributes (which cause flickering on hover)
+      // Watch only the configurator panel, not document.body. The map canvas
+      // and react-joyride's own portal mutate the body subtree constantly, and
+      // observing all of it made the connector recompute (and the floater arrow
+      // re-animate) non-stop — that was the blinking. The panel is where the
+      // tour targets live and switch, so it is the only thing worth watching.
+      const observed = document.querySelector('[data-tour="configurator-panel"]') ?? document.body;
       const observer = new MutationObserver(debouncedUpdate);
-      observer.observe(document.body, { childList: true, subtree: true, attributes: false });
+      observer.observe(observed, { childList: true, subtree: true, attributes: false });
 
       return () => {
         clearTimeout(timeoutId);
-        window.removeEventListener('resize', debouncedUpdate);
-        window.removeEventListener('scroll', debouncedUpdate, true);
+        window.removeEventListener("resize", debouncedUpdate);
+        window.removeEventListener("scroll", debouncedUpdate, true);
         observer.disconnect();
       };
     } else {
@@ -90,62 +119,69 @@ export const TourController: React.FC<TourControllerProps> = ({
     }
   }, [run, stepIndex, updateConnector]);
 
+  // Advance forward from `index`, completing the tour past the last step.
+  const goForward = useCallback(
+    (index: number) => {
+      const nextIndex = index + 1;
+      if (nextIndex >= steps.length) {
+        onComplete();
+      } else {
+        setStepIndex(nextIndex);
+      }
+    },
+    [onComplete, setStepIndex, steps.length]
+  );
+
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status, action, index, type } = data;
 
-    // Handle completion states
     const isFinished = status === STATUS.FINISHED || status === STATUS.SKIPPED;
     const isClosed = action === ACTIONS.CLOSE || action === ACTIONS.SKIP;
-    
-	    if (isFinished || isClosed) {
-	      const wasSkipped = action === ACTIONS.SKIP || status === STATUS.SKIPPED;
-	      if (wasSkipped) {
-	        onSkip();
-	      } else {
-	        onComplete();
-	      }
-	      return;
-	    }
+    if (isFinished || isClosed) {
+      if (action === ACTIONS.SKIP || status === STATUS.SKIPPED) {
+        onSkip();
+      } else {
+        onComplete();
+      }
+      return;
+    }
 
-    // Handle target not found - skip to next available step
-	    if (type === EVENTS.TARGET_NOT_FOUND) {
-	      const nextIndex = index + 1;
-	      if (nextIndex >= steps.length) {
-	        onComplete();
-	      } else {
-	        setStepIndex(nextIndex);
-	      }
-	      return;
-	    }
+    // Skip a missing target in the direction the user is travelling. Always
+    // stepping forward here would trap the Back button on any step whose target
+    // has not mounted yet.
+    if (type === EVENTS.TARGET_NOT_FOUND) {
+      if (lastActionRef.current === ACTIONS.PREV) {
+        if (index > 0) setStepIndex(index - 1);
+      } else {
+        goForward(index);
+      }
+      return;
+    }
 
-    // Handle step navigation
     if (type === EVENTS.STEP_AFTER) {
       if (action === ACTIONS.PREV) {
+        lastActionRef.current = ACTIONS.PREV;
         setStepIndex(Math.max(0, index - 1));
-	      } else if (action === ACTIONS.NEXT) {
-	        const nextIndex = index + 1;
-	        if (nextIndex >= steps.length) {
-	          onComplete();
-	        } else {
-	          setStepIndex(nextIndex);
-	        }
-	      }
-	    }
-	  };
+      } else if (action === ACTIONS.NEXT) {
+        lastActionRef.current = ACTIONS.NEXT;
+        goForward(index);
+      }
+    }
+  };
 
   return (
     <>
       {run && connector && (
         <svg
           style={{
-            position: 'fixed',
+            position: "fixed",
             top: 0,
             left: 0,
-            width: '100vw',
-            height: '100vh',
-            pointerEvents: 'none',
+            width: "100vw",
+            height: "100vh",
+            pointerEvents: "none",
             zIndex: 20000,
-            willChange: 'auto',
+            willChange: "auto",
           }}
         >
           <path
@@ -157,8 +193,22 @@ export const TourController: React.FC<TourControllerProps> = ({
             strokeDasharray="6 4"
             style={{ opacity: 0.6 }}
           />
-          <circle cx={connector.startX} cy={connector.startY} r="4" fill="#374151" stroke="white" strokeWidth="2" />
-          <circle cx={connector.endX} cy={connector.endY} r="5" fill="#374151" stroke="white" strokeWidth="2" />
+          <circle
+            cx={connector.startX}
+            cy={connector.startY}
+            r="4"
+            fill="#374151"
+            stroke="white"
+            strokeWidth="2"
+          />
+          <circle
+            cx={connector.endX}
+            cy={connector.endY}
+            r="5"
+            fill="#374151"
+            stroke="white"
+            strokeWidth="2"
+          />
         </svg>
       )}
 
@@ -179,7 +229,7 @@ export const TourController: React.FC<TourControllerProps> = ({
         spotlightClicks={false}
         disableScrollParentFix={true}
         floaterProps={{
-          disableAnimation: false,
+          disableAnimation: true,
         }}
         spotlightPadding={4}
         styles={{
@@ -194,9 +244,9 @@ export const TourController: React.FC<TourControllerProps> = ({
             fontSize: "14px",
             padding: "20px",
             borderRadius: "8px",
-            maxWidth: '440px',
-            maxHeight: '70vh',
-            overflowY: 'auto',
+            maxWidth: "440px",
+            maxHeight: "70vh",
+            overflowY: "auto",
           },
           tooltipContainer: {
             textAlign: "left",

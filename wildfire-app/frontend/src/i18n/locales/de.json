@@ -1094,8 +1094,8 @@
         "description": "Verwalten Sie Ihre gespeicherten Standorte und interessanten Bereiche. Schneller Zugriff auf häufig analysierte Regionen."
       },
       "reports": {
-        "title": "Simulationsberichte",
-        "description": "Detaillierte Simulationsberichte anzeigen, Daten exportieren und historische Trends analysieren."
+        "title": "Modellvergleich",
+        "description": "Vergleichen Sie Ihre Simulationsmodelle nebeneinander und analysieren Sie Unterschiede und Risikotrends im Zeitverlauf."
       },
       "technologies": {
         "title": "Simulationsparameter",
@@ -1125,6 +1125,15 @@
       }
     },
     "areaSelect": {
+      "precomputed": {
+        "title": "Vorberechnete Regionalkarte",
+        "description": "Jede Nacht wird die gesamte Region mit allen Risikoebenen analysiert. Ist Ihr einzelnes dynamisches Datum abgedeckt, schneidet dieser Schalter das Ergebnis Ihres Gebiets aus dieser Karte aus und liefert es in Sekunden.",
+        "tip": "Wenn der Schalter nicht verfügbar ist, erklärt der Text darunter den Grund; das Modell berechnet dann alle Schritte für Ihr Gebiet."
+      },
+      "customData": {
+        "title": "Eigene Daten",
+        "description": "Laden Sie optional Wetterstationsdaten (Excel oder CSV) für dieses Gebiet hoch; sie werden zur Berechnung des Fire Weather Index verwendet. Bleibt das Feld leer, werden die mitgelieferten regionalen Daten verwendet."
+      },
       "welcome": {
         "title": "Wildfire-Simulationsleitfaden",
         "description": "Willkommen! Diese Tour führt Sie durch die Erstellung einer Wildfire-Simulation für Ihre ausgewählte Region.",
