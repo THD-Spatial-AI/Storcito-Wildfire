@@ -28,10 +28,10 @@ export const ProfileMenu: React.FC<ProfileMenuProps> = ({ userMenuItems, getUser
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="cursor-pointer rounded-full size-9 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 hover:from-gray-200 hover:to-gray-300 dark:hover:from-gray-600 dark:hover:to-gray-700 border border-gray-200 dark:border-gray-600 shadow-sm transition-all duration-200 hover:shadow-md group"
+              className="cursor-pointer rounded-full size-7 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 hover:from-gray-200 hover:to-gray-300 dark:hover:from-gray-600 dark:hover:to-gray-700 border border-gray-200 dark:border-gray-600 shadow-sm transition-all duration-200 hover:shadow-md group"
               title={t("common.tooltips.profile")}
             >
-              <div className="text-sm font-semibold text-gray-700 dark:text-gray-200 group-hover:scale-105 transition-transform">
+              <div className="text-xs font-semibold text-gray-700 dark:text-gray-200 group-hover:scale-105 transition-transform">
                 {getUserInitial()}
               </div>
             </button>

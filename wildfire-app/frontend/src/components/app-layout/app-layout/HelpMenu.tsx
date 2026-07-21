@@ -41,9 +41,9 @@ export const HelpMenu: React.FC<HelpMenuProps> = ({
             <button
               type="button"
               aria-label={t("common.tooltips.help", "Help")}
-              className="cursor-pointer w-9 h-9 rounded-button flex items-center justify-center transition-all duration-normal hover:bg-muted group"
+              className="cursor-pointer w-7 h-7 rounded-button flex items-center justify-center transition-all duration-normal hover:bg-muted group"
             >
-              <HelpCircle className="w-5 h-5 text-muted-foreground group-hover:text-foreground" />
+              <HelpCircle className="w-4 h-4 text-muted-foreground group-hover:text-foreground" />
             </button>
           </DropdownMenuTrigger>
         </TooltipTrigger>

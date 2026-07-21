@@ -43,7 +43,7 @@ export const AppLayoutTopbar: React.FC<AppLayoutTopbarProps> = ({
             <img
               src="/images/logo/Logo_Storcito_Web_Imagotipo_Oscuro-1024x230.png"
               alt="Wildfire Risk Assessment"
-              className="h-8 w-auto object-contain dark:invert"
+              className="h-6 w-auto object-contain dark:invert"
             />
           </a>
           <h1 className="text-sm font-semibold text-foreground hidden sm:block">
@@ -79,10 +79,10 @@ export const AppLayoutTopbar: React.FC<AppLayoutTopbarProps> = ({
                     <Button
                       variant="secondary"
                       onClick={navigationHandlers.login}
-                      className="relative cursor-pointer rounded-full size-9 flex items-center justify-center bg-foreground text-background hover:bg-foreground/90 border border-border shadow-md transition-all duration-200 hover:shadow-lg group"
+                      className="relative cursor-pointer rounded-full size-7 flex items-center justify-center bg-foreground text-background hover:bg-foreground/90 border border-border shadow-md transition-all duration-200 hover:shadow-lg group"
                     >
                       <svg
-                        className="w-4 h-4 text-background group-hover:scale-110 transition-transform"
+                        className="w-3.5 h-3.5 text-background group-hover:scale-110 transition-transform"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"

@@ -31,14 +31,14 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({
             data-tour={dataTour}
             disabled={disabled}
             className={cn(
-              "cursor-pointer w-9 h-9 rounded-button flex items-center justify-center transition-all duration-normal relative",
+              "cursor-pointer w-7 h-7 rounded-button flex items-center justify-center transition-all duration-normal relative",
               "hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed",
               className
             )}
           >
             <Icon
               className={cn(
-                "cursor-pointer w-5 h-5",
+                "cursor-pointer w-4 h-4",
                 isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
               )}
             />
