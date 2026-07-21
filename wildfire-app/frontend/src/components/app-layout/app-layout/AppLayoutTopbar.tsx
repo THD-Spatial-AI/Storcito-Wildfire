@@ -46,7 +46,7 @@ export const AppLayoutTopbar: React.FC<AppLayoutTopbarProps> = ({
               className="h-5 w-auto object-contain dark:invert"
             />
           </a>
-          <h1 className="text-sm font-semibold text-foreground hidden sm:block">
+          <h1 className="text-xs font-semibold text-foreground hidden sm:block">
             {t("common.appName", "Wildfire Risk Assessment")}
           </h1>
         </div>
