@@ -43,7 +43,7 @@ export const AppLayoutTopbar: React.FC<AppLayoutTopbarProps> = ({
             <img
               src="/images/logo/Logo_Storcito_Web_Imagotipo_Oscuro-1024x230.png"
               alt="Wildfire Risk Assessment"
-              className="h-6 w-auto object-contain dark:invert"
+              className="h-5 w-auto object-contain dark:invert"
             />
           </a>
           <h1 className="text-sm font-semibold text-foreground hidden sm:block">
