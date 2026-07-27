@@ -172,8 +172,7 @@ jobs:
           mkdir -p \
             "$DEPLOY_PATH_PROD/platform-core/geoserver" \
             "$DEPLOY_PATH_PROD/infrastructure/common" \
-            "$DEPLOY_PATH_PROD/infrastructure/platform" \
-            "$DEPLOY_PATH_PROD/wildfire-app/backend/storage/data"
+            "$DEPLOY_PATH_PROD/infrastructure/platform"
           cp -r infrastructure/common/. "$DEPLOY_PATH_PROD/infrastructure/common/"
           cp -r infrastructure/platform/. "$DEPLOY_PATH_PROD/infrastructure/platform/"
           cp platform-core/docker-compose.yml "$DEPLOY_PATH_PROD/platform-core/"
@@ -188,6 +187,8 @@ jobs:
           sed -i 's|^GEOSERVER_BASE_URL=.*|GEOSERVER_BASE_URL=http://geoserver:8080/geoserver|' "$GEO_ENV"
           chmod 600 "$GEO_ENV"
           docker network create spatialhub-net 2>/dev/null || true
+          docker volume create backend-storage-prod >/dev/null
+          docker run --rm -v backend-storage-prod:/storage alpine:3.20 mkdir -p /storage/data
           ( cd "$DEPLOY_PATH_PROD/platform-core/geoserver" && docker compose up -d --force-recreate geoserver )
           docker compose build --no-cache geoservice
           docker compose up -d --no-deps --force-recreate geoservice
@@ -311,6 +312,7 @@ jobs:
             fi
           done
           cd "$DEPLOY_PATH_PROD/wildfire-app"
+          docker volume create backend-storage-prod >/dev/null
           docker compose -f "$WILDFIRE_APP_DEPLOY_COMPOSE" up -d --force-recreate app-backend-prod nginx
           sleep 5
           docker compose -f "$WILDFIRE_APP_DEPLOY_COMPOSE" ps
