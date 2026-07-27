@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -57,9 +58,19 @@ import (
 const (
 	headerContentType = "Content-Type"
 	headerAccept      = "Accept"
+	healthCheckFlag   = "--health-check"
+	defaultAppPort    = "8000"
 )
 
 func main() {
+	if healthCheckRequested(os.Args) {
+		if err := checkServerHealth(os.Getenv("APP_PORT")); err != nil {
+			fmt.Fprintf(os.Stderr, "health check failed: %v\n", err)
+			os.Exit(1)
+		}
+		return
+	}
+
 	// Set GIN to release mode to disable debug messages
 	gin.SetMode(gin.ReleaseMode)
 
@@ -99,6 +110,28 @@ func main() {
 	defer outboxRelay.Stop()
 
 	runHTTPServer(serverAddr, r, log)
+}
+
+func healthCheckRequested(args []string) bool {
+	return len(args) > 1 && args[1] == healthCheckFlag
+}
+
+func checkServerHealth(port string) error {
+	if port == "" {
+		port = defaultAppPort
+	}
+
+	client := &http.Client{Timeout: 2 * time.Second}
+	resp, err := client.Get("http://127.0.0.1:" + port + "/api/health")
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("unexpected HTTP status %s", resp.Status)
+	}
+	return nil
 }
 
 // AppDependencies holds all infrastructure connections and their cleanup functions

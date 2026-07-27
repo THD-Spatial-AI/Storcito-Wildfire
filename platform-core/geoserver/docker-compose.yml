@@ -12,8 +12,11 @@ services:
     volumes:
       - geoserver-data:/opt/geoserver/data_dir
       - ./controlflow.properties:/opt/geoserver/data_dir/controlflow.properties:ro
-
-      - backend-storage-prod:/opt/geoserver/data_dir/data/results
+      - type: volume
+        source: backend-storage
+        target: /opt/geoserver/data_dir/data/results
+        volume:
+          subpath: data
     networks:
       - spatialhub-net
     healthcheck:
