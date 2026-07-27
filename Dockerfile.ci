@@ -97,13 +97,13 @@ COPY --from=gobuilder /app/migrations /app/migrations
 # Copy .env fallback (overridden at runtime by docker-compose env_file)
 COPY wildfire-app/backend/.env.example /app/.env
 
-# Create non-root user and set up storage
-RUN useradd -r -s /bin/false appuser && \
-    mkdir -p /app/storage/data && \
-    chmod +x /app/server /app/migrate /app/seed && \
-    chown -R appuser:appuser /app
+COPY wildfire-app/backend/entrypoint.sh /app/entrypoint.sh
 
-USER appuser
+# Create non-root user and set up storage
+RUN useradd -r -s /bin/sh appuser && \
+    mkdir -p /app/storage/data && \
+    chmod +x /app/server /app/migrate /app/seed /app/entrypoint.sh && \
+    chown -R appuser:appuser /app
 
 # Expose port
 EXPOSE 8000
@@ -115,5 +115,6 @@ ENV APP_HOST=0.0.0.0
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD ["/app/server", "--health-check"]
 
-# Run
-ENTRYPOINT ["/app/server"]
+# The entrypoint starts as root only long enough to fix bind-mount ownership,
+# then runs the server as appuser.
+ENTRYPOINT ["/app/entrypoint.sh"]
