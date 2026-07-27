@@ -47,7 +47,7 @@ jobs:
           echo '=== Runner OK ==='
 
   build:
-    if: ${{ github.event.inputs.step == 'build' || github.event.inputs.step == 'deploy-app' }}
+    if: ${{ github.event.inputs.step == 'build' }}
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
@@ -277,7 +277,6 @@ jobs:
 
   deploy-app:
     if: ${{ github.event.inputs.step == 'deploy-app' }}
-    needs: build
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
