@@ -1,0 +1,352 @@
+name: Production pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      step:
+        description: Which pipeline step to run
+        required: true
+        default: check-runner
+        type: choice
+        options:
+          - check-runner
+          - build
+          - infra-postgres-redis
+          - infra-keycloak
+          - infra-keycloak-init
+          - infra-geoserver
+          - platform-auth-webservice
+          - deploy-app
+          - migrate
+          - seed
+
+env:
+  SERVER_URL_PROD: https://wildfire.th-deg.de
+  DEPLOY_SUBDIR_PROD: deploy
+  WILDFIRE_APP_DEPLOY_COMPOSE: docker-compose.deploy.yml
+
+jobs:
+  check-runner:
+    if: ${{ github.event.inputs.step == 'check-runner' }}
+    runs-on: self-hosted
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check runner
+        run: |
+          echo '=== Checking runner ==='
+          echo "Runner name: ${RUNNER_NAME:-unknown}"
+          echo "Runner OS: ${RUNNER_OS} (${RUNNER_ARCH})"
+          echo "Branch: ${GITHUB_REF_NAME}"
+          echo "Commit: ${GITHUB_SHA::8}"
+          echo "Deploy path: $HOME/${DEPLOY_SUBDIR_PROD}"
+          docker --version
+          docker compose version
+          echo '=== Runner OK ==='
+
+  build:
+    if: ${{ github.event.inputs.step == 'build' }}
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build production image
+        run: |
+          echo '=== Building production Wildfire App image ==='
+          docker build --no-cache --provenance=false --sbom=false \
+            -t "wildfire-app:latest" -f Dockerfile.ci .
+          # Keep a single image: the previous wildfire-app:latest is now dangling.
+          docker image prune -f
+          echo '=== Build complete ==='
+
+  infra-postgres-redis:
+    if: ${{ github.event.inputs.step == 'infra-postgres-redis' }}
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Postgres and Redis
+        run: |
+          set -e
+          echo '=== [PROD] Setting up Postgres and Redis ==='
+          DEPLOY_PATH_PROD="$HOME/${DEPLOY_SUBDIR_PROD}"
+          mkdir -p \
+            "$DEPLOY_PATH_PROD/platform-core/auth-service" \
+            "$DEPLOY_PATH_PROD/platform-core/webservice" \
+            "$DEPLOY_PATH_PROD/platform-core/geoserver" \
+            "$DEPLOY_PATH_PROD/infrastructure/common" \
+            "$DEPLOY_PATH_PROD/infrastructure/platform" \
+            "$DEPLOY_PATH_PROD/wildfire-app/backend" \
+            "$DEPLOY_PATH_PROD/nginx"
+          cp -r infrastructure/common/. "$DEPLOY_PATH_PROD/infrastructure/common/"
+          cp -r infrastructure/platform/. "$DEPLOY_PATH_PROD/infrastructure/platform/"
+          cp platform-core/docker-compose.yml "$DEPLOY_PATH_PROD/platform-core/"
+          cp -r platform-core/auth-service/. "$DEPLOY_PATH_PROD/platform-core/auth-service/"
+          cp -r platform-core/webservice/. "$DEPLOY_PATH_PROD/platform-core/webservice/"
+          cp "$DEPLOY_PATH_PROD/platform-core/auth-service/.env.example" "$DEPLOY_PATH_PROD/platform-core/auth-service/.env" 2>/dev/null || true
+          cp "$DEPLOY_PATH_PROD/platform-core/webservice/.env.example" "$DEPLOY_PATH_PROD/platform-core/webservice/.env" 2>/dev/null || true
+          cp wildfire-app/backend/.env.example "$DEPLOY_PATH_PROD/wildfire-app/backend/.env.example"
+          [ -f "$DEPLOY_PATH_PROD/wildfire-app/backend/.env" ] || cp "$DEPLOY_PATH_PROD/wildfire-app/backend/.env.example" "$DEPLOY_PATH_PROD/wildfire-app/backend/.env"
+          cd "$DEPLOY_PATH_PROD/platform-core"
+          sed -i 's|../enerplanet/backend:/backend-config|../wildfire-app/backend:/backend-config|' docker-compose.yml
+          sed -i '/auth-service:/,/depends_on:/ s|KEYCLOAK_URL: .*|KEYCLOAK_URL: ${KEYCLOAK_ISSUER_URL:-'"${SERVER_URL_PROD}"'/keycloak}|' docker-compose.yml
+          sed -i '/webservice:/,/depends_on:/ s|KEYCLOAK_URL: .*|KEYCLOAK_URL: ${KEYCLOAK_ISSUER_URL:-'"${SERVER_URL_PROD}"'/keycloak}|' docker-compose.yml
+          AUTH_ENV="$DEPLOY_PATH_PROD/platform-core/auth-service/.env"
+          WEB_ENV="$DEPLOY_PATH_PROD/platform-core/webservice/.env"
+          sed -i 's|^APP_ENV=.*|APP_ENV=production|' "$AUTH_ENV"
+          sed -i 's|^COOKIE_DOMAIN=.*|COOKIE_DOMAIN=wildfire.th-deg.de|' "$AUTH_ENV"
+          sed -i "s|^FRONTEND_URL=.*|FRONTEND_URL=${SERVER_URL_PROD}|" "$AUTH_ENV"
+          sed -i "s|^WEB_URLS=.*|WEB_URLS=${SERVER_URL_PROD}|" "$AUTH_ENV"
+          sed -i "s|^KEYCLOAK_URL=.*|KEYCLOAK_URL=${SERVER_URL_PROD}/keycloak|" "$AUTH_ENV"
+          sed -i "s|^REDIRECT_URL=.*|REDIRECT_URL=${SERVER_URL_PROD}/api/callback-auth|" "$AUTH_ENV"
+          sed -i 's|^BACKEND_SERVICE_URL=.*|BACKEND_SERVICE_URL=http://app-backend-prod:8000|' "$AUTH_ENV"
+          sed -i 's|^DB_HOST=.*|DB_HOST=postgres|' "$AUTH_ENV"
+          sed -i 's|^DB_PORT=.*|DB_PORT=5432|' "$AUTH_ENV"
+          sed -i 's|^REDIS_HOST=.*|REDIS_HOST=redis|' "$AUTH_ENV"
+          sed -i 's|^REDIS_PORT=.*|REDIS_PORT=6379|' "$AUTH_ENV"
+          sed -i 's|^REDIS_PASSWORD=.*|REDIS_PASSWORD=|' "$AUTH_ENV"
+          sed -i 's|^APP_ENV=.*|APP_ENV=production|' "$WEB_ENV"
+          sed -i "s|^CALLBACK_URL=.*|CALLBACK_URL=${SERVER_URL_PROD}|" "$WEB_ENV"
+          sed -i 's|^DB_HOST=.*|DB_HOST=postgres|' "$WEB_ENV"
+          sed -i 's|^DB_PORT=.*|DB_PORT=5432|' "$WEB_ENV"
+          sed -i 's|^REDIS_HOST=.*|REDIS_HOST=redis|' "$WEB_ENV"
+          sed -i 's|^REDIS_PORT=.*|REDIS_PORT=6379|' "$WEB_ENV"
+          sed -i 's|^REDIS_PASSWORD=.*|REDIS_PASSWORD=|' "$WEB_ENV"
+          chmod 600 "$AUTH_ENV" "$WEB_ENV"
+          touch .env
+          sed -i '/^KEYCLOAK_ISSUER_URL=/d' .env
+          echo "KEYCLOAK_ISSUER_URL=${SERVER_URL_PROD}/keycloak" >> .env
+          grep -q '^KC_HOSTNAME=' .env && \
+            sed -i "s|^KC_HOSTNAME=.*|KC_HOSTNAME=${SERVER_URL_PROD}/keycloak|" .env || \
+            echo "KC_HOSTNAME=${SERVER_URL_PROD}/keycloak" >> .env
+          chmod 600 .env
+          docker network create spatialhub-net 2>/dev/null || true
+          docker compose up -d postgres redis
+          echo 'Waiting for Postgres to be ready...'
+          sleep 10
+          docker compose ps postgres redis
+          echo '=== [PROD] Postgres and Redis started ==='
+
+  infra-keycloak:
+    if: ${{ github.event.inputs.step == 'infra-keycloak' }}
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start Keycloak
+        run: |
+          set -e
+          echo '=== [PROD] Starting Keycloak ==='
+          DEPLOY_PATH_PROD="$HOME/${DEPLOY_SUBDIR_PROD}"
+          mkdir -p "$DEPLOY_PATH_PROD/platform-core/auth-service/keycloak"
+          cp platform-core/docker-compose.yml "$DEPLOY_PATH_PROD/platform-core/"
+          cp -r platform-core/auth-service/keycloak/. "$DEPLOY_PATH_PROD/platform-core/auth-service/keycloak/"
+          cd "$DEPLOY_PATH_PROD/platform-core"
+          sed -i 's|../enerplanet/backend:/backend-config|../wildfire-app/backend:/backend-config|' docker-compose.yml
+          touch .env
+          sed -i '/^KEYCLOAK_ISSUER_URL=/d' .env
+          echo "KEYCLOAK_ISSUER_URL=${SERVER_URL_PROD}/keycloak" >> .env
+          grep -q '^KC_HOSTNAME=' .env && \
+            sed -i "s|^KC_HOSTNAME=.*|KC_HOSTNAME=${SERVER_URL_PROD}/keycloak|" .env || \
+            echo "KC_HOSTNAME=${SERVER_URL_PROD}/keycloak" >> .env
+          chmod 600 .env
+          docker compose up -d --force-recreate keycloak
+          echo 'Waiting for Keycloak to be healthy...'
+          sleep 30
+          docker compose ps keycloak
+          echo '=== [PROD] Keycloak started ==='
+
+  infra-keycloak-init:
+    if: ${{ github.event.inputs.step == 'infra-keycloak-init' }}
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Keycloak init
+        run: |
+          set -e
+          echo '=== [PROD] Running Keycloak Init ==='
+          DEPLOY_PATH_PROD="$HOME/${DEPLOY_SUBDIR_PROD}"
+          cd "$DEPLOY_PATH_PROD/platform-core"
+          sed -i 's|../enerplanet/backend:/backend-config|../wildfire-app/backend:/backend-config|' docker-compose.yml
+          SERVER_URL="${SERVER_URL_PROD}" docker compose up keycloak-init
+          echo '=== Checking KEYCLOAK_CLIENT_SECRET ==='
+          grep KEYCLOAK_CLIENT_SECRET "$DEPLOY_PATH_PROD/wildfire-app/backend/.env" || echo 'Not found in wildfire-app'
+          grep KEYCLOAK_CLIENT_SECRET "$DEPLOY_PATH_PROD/platform-core/auth-service/.env" || echo 'Not found in auth-service'
+          grep KEYCLOAK_CLIENT_SECRET "$DEPLOY_PATH_PROD/platform-core/webservice/.env" || echo 'Not found in webservice'
+          echo '=== [PROD] Keycloak Init complete ==='
+
+  infra-geoserver:
+    if: ${{ github.event.inputs.step == 'infra-geoserver' }}
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy GeoServer + geoservice
+        run: |
+          set -e
+          echo '=== [PROD] Deploying GeoServer (kartoza) + geoservice ==='
+          DEPLOY_PATH_PROD="$HOME/${DEPLOY_SUBDIR_PROD}"
+          mkdir -p \
+            "$DEPLOY_PATH_PROD/platform-core/geoserver" \
+            "$DEPLOY_PATH_PROD/infrastructure/common" \
+            "$DEPLOY_PATH_PROD/infrastructure/platform" \
+            "$DEPLOY_PATH_PROD/wildfire-app/backend/storage/data"
+          cp -r infrastructure/common/. "$DEPLOY_PATH_PROD/infrastructure/common/"
+          cp -r infrastructure/platform/. "$DEPLOY_PATH_PROD/infrastructure/platform/"
+          cp platform-core/docker-compose.yml "$DEPLOY_PATH_PROD/platform-core/"
+          cp -r platform-core/geoserver/. "$DEPLOY_PATH_PROD/platform-core/geoserver/"
+          cd "$DEPLOY_PATH_PROD/platform-core"
+          sed -i 's|../enerplanet/backend:/backend-config|../wildfire-app/backend:/backend-config|' docker-compose.yml
+          [ -f geoserver/.env ] || cp geoserver/.env.example geoserver/.env
+          GEO_ENV="$DEPLOY_PATH_PROD/platform-core/geoserver/.env"
+          sed -i 's|^APP_ENV=.*|APP_ENV=production|' "$GEO_ENV"
+          sed -i 's|^DB_HOST=.*|DB_HOST=postgres|' "$GEO_ENV"
+          sed -i 's|^DB_PORT=.*|DB_PORT=5432|' "$GEO_ENV"
+          sed -i 's|^GEOSERVER_BASE_URL=.*|GEOSERVER_BASE_URL=http://geoserver:8080/geoserver|' "$GEO_ENV"
+          chmod 600 "$GEO_ENV"
+          docker network create spatialhub-net 2>/dev/null || true
+          ( cd "$DEPLOY_PATH_PROD/platform-core/geoserver" && docker compose up -d geoserver )
+          docker compose build --no-cache geoservice
+          docker compose up -d --no-deps --force-recreate geoservice
+          sleep 5
+          docker compose ps geoservice
+          docker image prune -f
+          echo '=== [PROD] GeoServer + geoservice started ==='
+
+  platform-auth-webservice:
+    if: ${{ github.event.inputs.step == 'platform-auth-webservice' }}
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start auth-service and webservice
+        run: |
+          set -e
+          echo '=== [PROD] Starting Auth Service and Webservice ==='
+          DEPLOY_PATH_PROD="$HOME/${DEPLOY_SUBDIR_PROD}"
+          mkdir -p \
+            "$DEPLOY_PATH_PROD/platform-core/auth-service" \
+            "$DEPLOY_PATH_PROD/platform-core/webservice" \
+            "$DEPLOY_PATH_PROD/infrastructure/common" \
+            "$DEPLOY_PATH_PROD/infrastructure/platform"
+          cp -r infrastructure/common/. "$DEPLOY_PATH_PROD/infrastructure/common/"
+          cp -r infrastructure/platform/. "$DEPLOY_PATH_PROD/infrastructure/platform/"
+          cp platform-core/docker-compose.yml "$DEPLOY_PATH_PROD/platform-core/"
+          cp -r platform-core/auth-service/. "$DEPLOY_PATH_PROD/platform-core/auth-service/"
+          cp -r platform-core/webservice/. "$DEPLOY_PATH_PROD/platform-core/webservice/"
+          [ -f "$DEPLOY_PATH_PROD/platform-core/auth-service/.env" ] || cp "$DEPLOY_PATH_PROD/platform-core/auth-service/.env.example" "$DEPLOY_PATH_PROD/platform-core/auth-service/.env"
+          [ -f "$DEPLOY_PATH_PROD/platform-core/webservice/.env" ] || cp "$DEPLOY_PATH_PROD/platform-core/webservice/.env.example" "$DEPLOY_PATH_PROD/platform-core/webservice/.env"
+          cd "$DEPLOY_PATH_PROD/platform-core"
+          sed -i 's|../enerplanet/backend:/backend-config|../wildfire-app/backend:/backend-config|' docker-compose.yml
+          sed -i '/auth-service:/,/depends_on:/ s|KEYCLOAK_URL: .*|KEYCLOAK_URL: ${KEYCLOAK_ISSUER_URL:-'"${SERVER_URL_PROD}"'/keycloak}|' docker-compose.yml
+          sed -i '/webservice:/,/depends_on:/ s|KEYCLOAK_URL: .*|KEYCLOAK_URL: ${KEYCLOAK_ISSUER_URL:-'"${SERVER_URL_PROD}"'/keycloak}|' docker-compose.yml
+          AUTH_ENV="$DEPLOY_PATH_PROD/platform-core/auth-service/.env"
+          WEB_ENV="$DEPLOY_PATH_PROD/platform-core/webservice/.env"
+          sed -i 's|^APP_ENV=.*|APP_ENV=production|' "$AUTH_ENV"
+          sed -i 's|^COOKIE_DOMAIN=.*|COOKIE_DOMAIN=wildfire.th-deg.de|' "$AUTH_ENV"
+          sed -i "s|^FRONTEND_URL=.*|FRONTEND_URL=${SERVER_URL_PROD}|" "$AUTH_ENV"
+          sed -i "s|^WEB_URLS=.*|WEB_URLS=${SERVER_URL_PROD}|" "$AUTH_ENV"
+          sed -i "s|^KEYCLOAK_URL=.*|KEYCLOAK_URL=${SERVER_URL_PROD}/keycloak|" "$AUTH_ENV"
+          sed -i "s|^REDIRECT_URL=.*|REDIRECT_URL=${SERVER_URL_PROD}/api/callback-auth|" "$AUTH_ENV"
+          sed -i 's|^BACKEND_SERVICE_URL=.*|BACKEND_SERVICE_URL=http://app-backend-prod:8000|' "$AUTH_ENV"
+          sed -i 's|^DB_HOST=.*|DB_HOST=postgres|' "$AUTH_ENV"
+          sed -i 's|^DB_PORT=.*|DB_PORT=5432|' "$AUTH_ENV"
+          sed -i 's|^REDIS_HOST=.*|REDIS_HOST=redis|' "$AUTH_ENV"
+          sed -i 's|^REDIS_PORT=.*|REDIS_PORT=6379|' "$AUTH_ENV"
+          sed -i 's|^REDIS_PASSWORD=.*|REDIS_PASSWORD=|' "$AUTH_ENV"
+          sed -i 's|^APP_ENV=.*|APP_ENV=production|' "$WEB_ENV"
+          sed -i "s|^CALLBACK_URL=.*|CALLBACK_URL=${SERVER_URL_PROD}|" "$WEB_ENV"
+          sed -i 's|^DB_HOST=.*|DB_HOST=postgres|' "$WEB_ENV"
+          sed -i 's|^DB_PORT=.*|DB_PORT=5432|' "$WEB_ENV"
+          sed -i 's|^REDIS_HOST=.*|REDIS_HOST=redis|' "$WEB_ENV"
+          sed -i 's|^REDIS_PORT=.*|REDIS_PORT=6379|' "$WEB_ENV"
+          sed -i 's|^REDIS_PASSWORD=.*|REDIS_PASSWORD=|' "$WEB_ENV"
+          chmod 600 "$AUTH_ENV" "$WEB_ENV"
+          touch .env
+          sed -i '/^KEYCLOAK_ISSUER_URL=/d' .env
+          echo "KEYCLOAK_ISSUER_URL=${SERVER_URL_PROD}/keycloak" >> .env
+          grep -q '^KC_HOSTNAME=' .env && \
+            sed -i "s|^KC_HOSTNAME=.*|KC_HOSTNAME=${SERVER_URL_PROD}/keycloak|" .env || \
+            echo "KC_HOSTNAME=${SERVER_URL_PROD}/keycloak" >> .env
+          sed -i '/^BACKEND_INTERNAL_URL=/d' .env
+          echo 'BACKEND_INTERNAL_URL=http://app-backend-prod:8000' >> .env
+          chmod 600 .env
+          docker compose build --no-cache auth-service webservice
+          docker compose up -d --no-deps --force-recreate auth-service webservice
+          sleep 5
+          docker compose ps auth-service webservice
+          docker image prune -f
+          echo '=== [PROD] Auth Service and Webservice started ==='
+
+  deploy-app:
+    if: ${{ github.event.inputs.step == 'deploy-app' }}
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy Wildfire App
+        run: |
+          set -e
+          echo '=== [PROD] Deploying Wildfire App ==='
+          DEPLOY_PATH_PROD="$HOME/${DEPLOY_SUBDIR_PROD}"
+          mkdir -p "$DEPLOY_PATH_PROD/wildfire-app/backend" "$DEPLOY_PATH_PROD/nginx/conf.d" "$DEPLOY_PATH_PROD/nginx/ssl" "$DEPLOY_PATH_PROD/nginx/certbot"
+          cp "wildfire-app/${WILDFIRE_APP_DEPLOY_COMPOSE}" "$DEPLOY_PATH_PROD/wildfire-app/"
+          cp nginx/nginx.conf "$DEPLOY_PATH_PROD/nginx/"
+          cp nginx/conf.d/wildfire.th-deg.de.conf "$DEPLOY_PATH_PROD/nginx/conf.d/"
+          cp wildfire-app/backend/.env.example "$DEPLOY_PATH_PROD/wildfire-app/backend/.env.example"
+          [ -f "$DEPLOY_PATH_PROD/wildfire-app/backend/.env.prod" ] || cp "$DEPLOY_PATH_PROD/wildfire-app/backend/.env.example" "$DEPLOY_PATH_PROD/wildfire-app/backend/.env.prod"
+          ENV_PROD="$DEPLOY_PATH_PROD/wildfire-app/backend/.env.prod"
+          sed -i 's|^APP_ENV=.*|APP_ENV=production|' "$ENV_PROD"
+          sed -i "s|^APP_URL=.*|APP_URL=${SERVER_URL_PROD}|" "$ENV_PROD"
+          sed -i "s|^REDIRECT_URL=.*|REDIRECT_URL=${SERVER_URL_PROD}/callback-auth|" "$ENV_PROD"
+          sed -i 's|^COOKIE_DOMAIN=.*|COOKIE_DOMAIN=wildfire.th-deg.de|' "$ENV_PROD"
+          if grep -q '^KEYCLOAK_CLIENT_SECRET=' "$DEPLOY_PATH_PROD/wildfire-app/backend/.env" 2>/dev/null; then
+            KC_SECRET=$(grep '^KEYCLOAK_CLIENT_SECRET=' "$DEPLOY_PATH_PROD/wildfire-app/backend/.env" | head -1)
+            sed -i '/^KEYCLOAK_CLIENT_SECRET=/d' "$ENV_PROD"
+            echo "$KC_SECRET" >> "$ENV_PROD"
+          else
+            echo 'WARNING: KEYCLOAK_CLIENT_SECRET not found in .env; run infra-keycloak-init first'
+          fi
+          sed -i 's|^GEOSERVER_SERVICE_URL=.*|GEOSERVER_SERVICE_URL=http://geoservice:8083|' "$ENV_PROD"
+          sed -i "s|^GEOSERVER_BASE_URL=.*|GEOSERVER_BASE_URL=${SERVER_URL_PROD}/geoserver|" "$ENV_PROD"
+          if grep -q '^GEOSERVER_PUBLIC_URL=' "$ENV_PROD"; then
+            sed -i "s|^GEOSERVER_PUBLIC_URL=.*|GEOSERVER_PUBLIC_URL=${SERVER_URL_PROD}|" "$ENV_PROD"
+          else
+            echo "GEOSERVER_PUBLIC_URL=${SERVER_URL_PROD}" >> "$ENV_PROD"
+          fi
+          docker network create spatialhub-net 2>/dev/null || true
+          for c in app-backend; do
+            if docker ps -a --format '{{.Names}}' | grep -qx "$c"; then
+              docker stop "$c" 2>/dev/null || true
+              docker rm "$c" 2>/dev/null || true
+            fi
+          done
+          cd "$DEPLOY_PATH_PROD/wildfire-app"
+          docker compose -f "$WILDFIRE_APP_DEPLOY_COMPOSE" up -d --force-recreate app-backend-prod nginx
+          sleep 5
+          docker compose -f "$WILDFIRE_APP_DEPLOY_COMPOSE" ps
+          # Drop the previous now-unused image so only the deployed one remains.
+          docker image prune -f
+          echo '=== [PROD] Wildfire App deployed ==='
+
+  migrate:
+    if: ${{ github.event.inputs.step == 'migrate' }}
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run migrations
+        run: |
+          set -e
+          echo '=== [PROD] Running Migrations ==='
+          DEPLOY_PATH_PROD="$HOME/${DEPLOY_SUBDIR_PROD}"
+          cd "$DEPLOY_PATH_PROD/wildfire-app"
+          docker compose -f "$WILDFIRE_APP_DEPLOY_COMPOSE" run --rm --entrypoint /app/migrate app-backend-prod
+          echo '=== [PROD] Migrations complete ==='
+
+  seed:
+    if: ${{ github.event.inputs.step == 'seed' }}
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run seed
+        run: |
+          set -e
+          echo '=== [PROD] Running Seed ==='
+          DEPLOY_PATH_PROD="$HOME/${DEPLOY_SUBDIR_PROD}"
+          cd "$DEPLOY_PATH_PROD/wildfire-app"
+          docker compose -f "$WILDFIRE_APP_DEPLOY_COMPOSE" run --rm -e SEED_KEYCLOAK_USER=false --entrypoint /app/seed app-backend-prod
+          echo '=== [PROD] Seed complete ==='
