@@ -37,7 +37,7 @@ services:
       WEBSERVICE_SERVICE_URL: http://webservice:8082
       RATE_LIMIT_PER_MIN: 1000
     volumes:
-      - ./backend/storage:/app/storage
+      - backend-storage-prod:/app/storage/data
     networks:
       - spatialhub-net
 
@@ -57,7 +57,10 @@ services:
 
 volumes:
   backend-storage-dev:
+  # External so this and the GeoServer compose share the SAME on-disk volume
+  # (docker-compose would otherwise project-prefix the name and create two).
   backend-storage-prod:
+    external: true
 
 networks:
   spatialhub-net:
