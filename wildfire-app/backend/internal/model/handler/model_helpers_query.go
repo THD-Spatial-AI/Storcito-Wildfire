@@ -63,23 +63,23 @@ func (h *ModelHandler) buildWorkspaceFilteredQuery(c *gin.Context, userCtx *http
 	isDefault := err == nil && defaultWs.ID == workspaceID
 
 	if isDefault {
-		// For the default workspace, also include directly shared models
-		// but only if the user doesn't have access to the model's original workspace
-		return h.store.DB().Where(
-			`workspace_id = ? OR (
-				id IN (SELECT model_id FROM model_shares WHERE user_id = ? OR LOWER(email) = LOWER(?))
-				AND workspace_id NOT IN (
-					SELECT id FROM workspaces WHERE user_id = ?
-					UNION
-					SELECT workspace_id FROM workspace_members WHERE user_id = ?
-				)
-			)`,
-			workspaceID, userCtx.UserID, userCtx.Email, userCtx.UserID, userCtx.UserID,
-		), true
+		return h.buildDefaultWorkspaceQuery(userCtx, workspaceID), true
 	}
-
-	// For non-default workspaces, only show models belonging to this workspace
 	return h.store.DB().Where("workspace_id = ?", workspaceID), true
+}
+
+func (h *ModelHandler) buildDefaultWorkspaceQuery(userCtx *httputil.UserContext, workspaceID uint) *gorm.DB {
+	return h.store.DB().Where(
+		`workspace_id = ? OR (
+			id IN (SELECT model_id FROM model_shares WHERE user_id = ? OR LOWER(email) = LOWER(?))
+			AND workspace_id NOT IN (
+				SELECT id FROM workspaces WHERE user_id = ?
+				UNION
+				SELECT workspace_id FROM workspace_members WHERE user_id = ?
+			)
+		)`,
+		workspaceID, userCtx.UserID, userCtx.Email, userCtx.UserID, userCtx.UserID,
+	)
 }
 
 func (h *ModelHandler) buildUserAccessQuery(c *gin.Context, userCtx *httputil.UserContext) *gorm.DB {
@@ -213,8 +213,11 @@ func (h *ModelHandler) buildQueryWithWorkspaceFilter(c *gin.Context, userCtx *ht
 			return nil, false
 		}
 
-		// Expert users can access any workspace - only show models from this workspace
 		if userCtx.AccessLevel == constants.AccessLevelExpert {
+			defaultWs, defaultErr := h.newModelService().GetDefaultWorkspace(userCtx.UserID)
+			if defaultErr == nil && defaultWs.ID == workspaceID {
+				return h.buildDefaultWorkspaceQuery(userCtx, workspaceID), true
+			}
 			return h.store.DB().Where("workspace_id = ?", workspaceID), true
 		}
 
