@@ -1,10 +1,12 @@
 name: Production pipeline
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       step:
-        description: Which pipeline step to run
+        description: Which job to run manually
         required: true
         default: check-runner
         type: choice
@@ -27,7 +29,7 @@ env:
 
 jobs:
   check-runner:
-    if: ${{ github.event.inputs.step == 'check-runner' }}
+    if: ${{ github.event_name == 'push' || github.event.inputs.step == 'check-runner' }}
     runs-on: self-hosted
     timeout-minutes: 5
     steps:
@@ -45,7 +47,7 @@ jobs:
           echo '=== Runner OK ==='
 
   build:
-    if: ${{ github.event.inputs.step == 'build' }}
+    if: ${{ github.event.inputs.step == 'build' || github.event.inputs.step == 'deploy-app' }}
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
@@ -275,6 +277,7 @@ jobs:
 
   deploy-app:
     if: ${{ github.event.inputs.step == 'deploy-app' }}
+    needs: build
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
