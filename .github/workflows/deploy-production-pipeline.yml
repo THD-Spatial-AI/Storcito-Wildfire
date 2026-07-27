@@ -188,7 +188,7 @@ jobs:
           sed -i 's|^GEOSERVER_BASE_URL=.*|GEOSERVER_BASE_URL=http://geoserver:8080/geoserver|' "$GEO_ENV"
           chmod 600 "$GEO_ENV"
           docker network create spatialhub-net 2>/dev/null || true
-          ( cd "$DEPLOY_PATH_PROD/platform-core/geoserver" && docker compose up -d geoserver )
+          ( cd "$DEPLOY_PATH_PROD/platform-core/geoserver" && docker compose up -d --force-recreate geoserver )
           docker compose build --no-cache geoservice
           docker compose up -d --no-deps --force-recreate geoservice
           sleep 5
