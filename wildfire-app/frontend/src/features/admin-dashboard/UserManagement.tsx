@@ -73,9 +73,6 @@ export const UserManagement = ({ onUsersMutated }: UserManagementProps) => {
 	const [formData, setFormData] = useState<UserFormData>({
 		name: "",
 		email: "",
-		organization: "",
-		position: "",
-		phone: "",
 		access_level: "very_low",
 		email_verified: false,
 		password: "",
@@ -129,9 +126,6 @@ export const UserManagement = ({ onUsersMutated }: UserManagementProps) => {
 				name: userData.name,
 				password: userData.password || undefined,
 				access_level: userData.access_level,
-				organization: userData.organization,
-				position: userData.position,
-				phone: userData.phone,
 			};
 
 			if ((isManager(user) || isExpert(user)) && selectedGroup) {
@@ -341,9 +335,6 @@ export const UserManagement = ({ onUsersMutated }: UserManagementProps) => {
 		setFormData({
 			name: user.name,
 			email: user.email,
-			organization: user.organization || "",
-			position: user.position || "",
-			phone: user.phone || "",
 			access_level: user.access_level,
 			email_verified: user.email_verified ?? false,
 			model_limit: user.model_limit,
@@ -587,9 +578,6 @@ export const UserManagement = ({ onUsersMutated }: UserManagementProps) => {
 		setFormData({
 			name: "",
 			email: "",
-			organization: "",
-			position: "",
-			phone: "",
 			access_level: "very_low",
 			email_verified: false,
 			password: "",

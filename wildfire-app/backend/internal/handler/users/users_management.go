@@ -91,14 +91,11 @@ func (h *Handler) markAPIAccess(users []services.UserDTO) {
 }
 
 type createUserRequest struct {
-	Email        string `json:"email" binding:"required,email"`
-	Name         string `json:"name" binding:"required"`
-	Password     string `json:"password"`
-	AccessLevel  string `json:"access_level"`
-	Organization string `json:"organization"`
-	Position     string `json:"position"`
-	Phone        string `json:"phone"`
-	GroupID      string `json:"group_id"`
+	Email       string `json:"email" binding:"required,email"`
+	Name        string `json:"name" binding:"required"`
+	Password    string `json:"password"`
+	AccessLevel string `json:"access_level"`
+	GroupID     string `json:"group_id"`
 }
 
 func (h *Handler) CreateUser(c *gin.Context) {
@@ -125,7 +122,7 @@ func (h *Handler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	createReq := usersstore.CreateUserRequest{Email: req.Email, Name: req.Name, Password: req.Password, AccessLevel: req.AccessLevel, Organization: req.Organization, Position: req.Position, Phone: req.Phone}
+	createReq := usersstore.CreateUserRequest{Email: req.Email, Name: req.Name, Password: req.Password, AccessLevel: req.AccessLevel}
 	userID, err := h.userStore.CreateUser(authToken, createReq)
 	if err != nil {
 		applogger.ForComponent("users").Errorf("create user failed email=%s err=%v", req.Email, err)
@@ -142,9 +139,6 @@ type updateUserRequest struct {
 	Email         *string `json:"email"`
 	Name          *string `json:"name"`
 	AccessLevel   *string `json:"access_level"`
-	Organization  *string `json:"organization"`
-	Position      *string `json:"position"`
-	Phone         *string `json:"phone"`
 	EmailVerified *bool   `json:"email_verified"`
 	Password      *string `json:"password"`
 	ModelLimit    *int    `json:"model_limit"`
@@ -190,7 +184,7 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 		}
 	}
 
-	updateReq := usersstore.UpdateUserRequest{Email: req.Email, Name: req.Name, AccessLevel: req.AccessLevel, Organization: req.Organization, Position: req.Position, Phone: req.Phone, EmailVerified: req.EmailVerified, ModelLimit: req.ModelLimit}
+	updateReq := usersstore.UpdateUserRequest{Email: req.Email, Name: req.Name, AccessLevel: req.AccessLevel, EmailVerified: req.EmailVerified, ModelLimit: req.ModelLimit}
 	if err := h.userStore.UpdateUser(authToken, id, updateReq); err != nil {
 		handleUpdateUserError(c, id, err)
 		return
@@ -310,9 +304,6 @@ func (h *Handler) GetUser(c *gin.Context) {
 		"email":          user.Email,
 		"email_verified": user.EmailVerified,
 		"enabled":        user.Enabled,
-		"organization":   services.GetAttributeValue(user.Attributes, "organization"),
-		"position":       services.GetAttributeValue(user.Attributes, "position"),
-		"phone":          services.GetAttributeValue(user.Attributes, "phone"),
 		"access_level":   h.userService.GetUserAccessLevel(authToken, id, user.Attributes),
 	}
 	if modelLimitStr := services.GetAttributeValue(user.Attributes, "model_limit"); modelLimitStr != "" {

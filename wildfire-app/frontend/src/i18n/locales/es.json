@@ -127,9 +127,6 @@
       "fields": {
         "fullName": "Nombre Completo",
         "email": "Dirección de Correo",
-        "organization": "Organización",
-        "position": "Cargo",
-        "phone": "Número de Teléfono",
         "accessLevel": "Nivel de Acceso",
         "emailVerified": "Correo Verificado",
         "password": "Contraseña",
@@ -139,8 +136,6 @@
       "placeholders": {
         "fullName": "Ingrese nombre completo",
         "email": "Ingrese dirección de correo",
-        "organization": "Ingrese nombre de la organización",
-        "position": "Ingrese cargo",
         "password": "Ingrese contraseña",
         "confirmPassword": "Confirmar contraseña",
         "modelLimit": "Dejar vacío para el valor predeterminado"
@@ -156,7 +151,6 @@
         "expert": "Experto (Acceso Completo)"
       },
       "validation": {
-        "phoneInvalid": "El número de teléfono solo puede contener dígitos, espacios, guiones, signos de más y paréntesis",
         "passwordLength": "La contraseña debe tener al menos 8 caracteres",
         "nameRequired": "El nombre es obligatorio",
         "emailRequired": "El correo es obligatorio",
@@ -374,13 +368,6 @@
       "specialChar": "Un carácter especial",
       "hasSpaces": "La contraseña contiene espacios al inicio o al final"
     },
-    "organizationDetails": "Detalles de Organización",
-    "organization": "Organización",
-    "enterOrganization": "Ingrese su organización",
-    "position": "Posición",
-    "enterPosition": "Ingrese su posición",
-    "phoneNumber": "Número de Teléfono",
-    "enterPhoneNumber": "Ingrese su número de teléfono",
     "accessLevel": "Nivel de Acceso",
     "veryLow": "Muy Bajo",
     "low": "Bajo",
@@ -402,6 +389,10 @@
     "creating": "Creando...",
     "agreeToTerms": "Al crear una cuenta, acepta nuestros Términos de Servicio",
     "signInHere": "Inicia sesión aquí",
+    "consentText": "Doy mi consentimiento para el tratamiento y almacenamiento de mis datos personales de acuerdo con la",
+    "declarationOfConsent": "Declaración de Consentimiento",
+    "privacyPolicy": "Política de Privacidad",
+    "and": "y",
     "sidePanel": {
       "badge": "Inteligencia sobre el riesgo de incendios",
       "title": "Proteja a las comunidades rurales antes de que se desaten las llamas",
@@ -597,10 +588,7 @@
     "userProfile": {
       "title": "Perfil de Usuario",
       "subtitle": "Información de tu cuenta",
-      "email": "Correo Electrónico",
-      "organization": "Organización",
-      "position": "Cargo",
-      "phone": "Teléfono"
+      "email": "Correo Electrónico"
     },
     "accessPermissions": {
       "title": "Acceso y Permisos",
@@ -667,12 +655,9 @@
     },
     "table": {
       "user": "Usuario",
-      "organization": "Organización",
-      "position": "Puesto",
       "accessLevel": "Nivel de acceso",
       "group": "Grupo",
       "emailVerified": "Correo verificado",
-      "phone": "Teléfono",
       "actions": "Acciones"
     },
     "emailStatus": {
@@ -807,7 +792,6 @@
     "loadingProfile": "Cargando tu perfil...",
     "defaultUser": "Usuario",
     "accessLevel": "Nivel de acceso",
-    "notSpecified": "No especificado",
     "personalInfo": "Información personal",
     "personalInfoDescription": "Actualiza los detalles de tu perfil a continuación",
     "readOnly": "solo lectura",
@@ -815,16 +799,10 @@
     "saveChanges": "Guardar cambios",
     "fields": {
       "fullName": "Nombre completo",
-      "email": "Correo electrónico",
-      "organization": "Organización",
-      "position": "Cargo",
-      "phone": "Teléfono"
+      "email": "Correo electrónico"
     },
     "placeholders": {
-      "fullName": "Introduce tu nombre completo",
-      "organization": "Tu empresa u organización",
-      "position": "Tu cargo",
-      "phone": "+34 600 000 000"
+      "fullName": "Introduce tu nombre completo"
     },
     "accessLevels": {
       "basic": "Básico",

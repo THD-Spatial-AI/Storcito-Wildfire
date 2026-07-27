@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { UniversalForm, type FormSection, type FormDataConvertible } from "@spatialhub/forms";
-import { User, Mail, Lock, Building2, Briefcase, Phone, UserPlus, ArrowRight } from "lucide-react";
+import { User, Mail, Lock, UserPlus, ArrowRight } from "lucide-react";
 import { useTranslation } from "@spatialhub/i18n";
 
 export interface RegisterFormProps {
@@ -96,36 +96,6 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 				},
 			],
 		},
-		{
-			title: t("auth.organizationDetails"),
-			columns: 2,
-			fields: [
-				{
-					key: "organization",
-					label: t("auth.organization"),
-					type: "text",
-					placeholder: t("auth.enterOrganization"),
-					required: false,
-					icon: Building2,
-				},
-				{
-					key: "position",
-					label: t("auth.position"),
-					type: "text",
-					placeholder: t("auth.enterPosition"),
-					required: false,
-					icon: Briefcase,
-				},
-				{
-					key: "phone",
-					label: t("auth.phoneNumber"),
-					type: "tel",
-					placeholder: t("auth.enterPhoneNumber"),
-					required: false,
-					icon: Phone,
-				},
-			],
-		},
 	];
 
 	const sections = formSections || defaultFormSections;
@@ -140,23 +110,30 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 		email: "",
 		password: "",
 		password_confirmation: "",
-		organization: "",
-		position: "",
-		phone: "",
 		access_level: "very_low",
 	});
 	const [errors, setErrors] = useState<Record<string, string>>({});
 	const [isLoading, setIsLoading] = useState(false);
+	const [consentChecked, setConsentChecked] = useState(false);
+	const consentError = Boolean(errors.consent);
 
 	const onSubmit = async () => {
 		setIsLoading(true);
 		setErrors({});
+		if (!consentChecked) {
+			setErrors((prev) => ({
+				...prev,
+				consent: "Required: You must consent to the processing and storage of your personal data.",
+			}));
+			setIsLoading(false);
+			return;
+		}
 		try {
 			const resp = await fetch(`${apiBaseUrl}/register`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				credentials: "include",
-				body: JSON.stringify(values),
+				body: JSON.stringify({ ...values, consented_at: new Date().toISOString().split("T")[0] }),
 			});
 			const data = await resp.json().catch(() => ({}));
 			if (!resp.ok) {
@@ -171,6 +148,52 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 	};
 
 	const isSplit = layout === "split";
+
+	const consentCheckbox = (
+		<div className="flex items-end gap-3 justify-between">
+			<label htmlFor="consent" className="text-sm text-gray-700 dark:text-gray-300 flex-1">
+				{t("auth.consentText")}{" "}
+				<a
+					href="/consent"
+					target="_blank"
+					rel="noopener noreferrer"
+					className="text-primary underline"
+				>
+					{t("auth.declarationOfConsent")}
+				</a>{" "}
+				{t("auth.and")}{" "}
+				<a
+					href="/privacy"
+					target="_blank"
+					rel="noopener noreferrer"
+					className="text-primary underline"
+				>
+					{t("auth.privacyPolicy")}
+				</a>
+				.
+				{errors.consent && (
+					<div id="consent-error" className="text-xs text-red-600 mt-1">
+						{errors.consent}
+					</div>
+				)}
+			</label>
+			<input
+				type="checkbox"
+				id="consent"
+				checked={consentChecked}
+				onChange={(e) => {
+					setConsentChecked(e.target.checked);
+					setErrors((prev) => {
+						const { consent, ...rest } = prev;
+						return rest;
+					});
+				}}
+				aria-invalid={consentError}
+				aria-describedby={consentError ? "consent-error" : undefined}
+				className={`mt-1 h-4 w-4 text-primary focus:ring-primary rounded transition-all flex-shrink-0 ${consentError ? "ring-2 ring-red-500 dark:ring-red-400" : ""}`}
+			/>
+		</div>
+	);
 
 	const card = (
 		<div className="w-full">
@@ -216,6 +239,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 						errors={errors}
 						variant="user"
 						maxWidth="2xl"
+						beforeSubmitContent={consentCheckbox}
 					/>
 				</div>
 

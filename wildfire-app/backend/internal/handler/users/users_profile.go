@@ -31,9 +31,6 @@ func (h *Handler) GetProfile(c *gin.Context) {
 		"id":           kcUser.ID,
 		"name":         services.DeriveUserName(kcUser.Attributes, kcUser.Username, kcUser.Email),
 		"email":        kcUser.Email,
-		"organization": services.GetAttributeValue(kcUser.Attributes, "organization"),
-		"position":     services.GetAttributeValue(kcUser.Attributes, "position"),
-		"phone":        services.GetAttributeValue(kcUser.Attributes, "phone"),
 		"access_level": h.userService.GetUserAccessLevel(authToken, userID, kcUser.Attributes),
 	}})
 }
@@ -45,10 +42,7 @@ func (h *Handler) UpdateProfile(c *gin.Context) {
 	}
 
 	var req struct {
-		Name         *string `json:"name"`
-		Organization *string `json:"organization"`
-		Position     *string `json:"position"`
-		Phone        *string `json:"phone"`
+		Name *string `json:"name"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		httputil.BadRequest(c, "Invalid request body")
@@ -66,15 +60,6 @@ func (h *Handler) UpdateProfile(c *gin.Context) {
 	if req.Name != nil {
 		attributes["fullName"] = []string{*req.Name}
 	}
-	if req.Organization != nil {
-		attributes["organization"] = []string{*req.Organization}
-	}
-	if req.Position != nil {
-		attributes["position"] = []string{*req.Position}
-	}
-	if req.Phone != nil {
-		attributes["phone"] = []string{*req.Phone}
-	}
 
 	if len(attributes) > 0 {
 		if err := h.userStore.UpdateUserAttributes(adminToken, userID, attributes); err != nil {
@@ -88,10 +73,7 @@ func (h *Handler) UpdateProfile(c *gin.Context) {
 		"success": true,
 		"message": "Profile updated successfully",
 		"data": gin.H{
-			"name":         req.Name,
-			"organization": req.Organization,
-			"position":     req.Position,
-			"phone":        req.Phone,
+			"name": req.Name,
 		},
 	})
 }

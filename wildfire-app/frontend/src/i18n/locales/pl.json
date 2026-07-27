@@ -214,13 +214,6 @@
       "specialChar": "Jeden znak specjalny",
       "hasSpaces": "Hasło zawiera spacje na początku lub na końcu"
     },
-    "organizationDetails": "Szczegóły Organizacji",
-    "organization": "Organizacja",
-    "enterOrganization": "Wprowadź swoją organizację",
-    "position": "Stanowisko",
-    "enterPosition": "Wprowadź swoje stanowisko",
-    "phoneNumber": "Numer Telefonu",
-    "enterPhoneNumber": "Wprowadź swój numer telefonu",
     "accessLevel": "Poziom Dostępu",
     "veryLow": "Bardzo Niski",
     "low": "Niski",
@@ -242,6 +235,10 @@
     "creating": "Tworzenie...",
     "agreeToTerms": "Tworząc konto, akceptujesz nasze Warunki korzystania z usługi",
     "signInHere": "Zaloguj się tutaj",
+    "consentText": "Wyrażam zgodę na przetwarzanie i przechowywanie moich danych osobowych zgodnie z",
+    "declarationOfConsent": "Deklaracją zgody",
+    "privacyPolicy": "Polityką prywatności",
+    "and": "oraz",
     "sidePanel": {
       "badge": "Analiza ryzyka pożarów",
       "title": "Chroń społeczności wiejskie, zanim pojawią się płomienie",
@@ -437,10 +434,7 @@
     "userProfile": {
       "title": "Profil Użytkownika",
       "subtitle": "Informacje o Twoim koncie",
-      "email": "E-mail",
-      "organization": "Organizacja",
-      "position": "Stanowisko",
-      "phone": "Telefon"
+      "email": "E-mail"
     },
     "accessPermissions": {
       "title": "Dostęp i Uprawnienia",
@@ -507,12 +501,9 @@
     },
     "table": {
       "user": "Użytkownik",
-      "organization": "Organizacja",
-      "position": "Stanowisko",
       "accessLevel": "Poziom dostępu",
       "group": "Grupa",
       "emailVerified": "E-mail zweryfikowany",
-      "phone": "Telefon",
       "actions": "Akcje"
     },
     "emailStatus": {
@@ -647,7 +638,6 @@
     "loadingProfile": "Ładowanie profilu...",
     "defaultUser": "Użytkownik",
     "accessLevel": "Poziom dostępu",
-    "notSpecified": "Nie określono",
     "personalInfo": "Informacje osobiste",
     "personalInfoDescription": "Zaktualizuj szczegóły swojego profilu poniżej",
     "readOnly": "tylko do odczytu",
@@ -655,16 +645,10 @@
     "saveChanges": "Zapisz zmiany",
     "fields": {
       "fullName": "Imię i nazwisko",
-      "email": "Adres e-mail",
-      "organization": "Organizacja",
-      "position": "Stanowisko",
-      "phone": "Telefon"
+      "email": "Adres e-mail"
     },
     "placeholders": {
-      "fullName": "Wprowadź swoje imię i nazwisko",
-      "organization": "Twoja firma lub organizacja",
-      "position": "Twoje stanowisko",
-      "phone": "+48 123 456 789"
+      "fullName": "Wprowadź swoje imię i nazwisko"
     },
     "accessLevels": {
       "basic": "Podstawowy",
@@ -1352,9 +1336,6 @@
       "fields": {
         "fullName": "Pełne Imię i Nazwisko",
         "email": "Adres Email",
-        "organization": "Organizacja",
-        "position": "Stanowisko",
-        "phone": "Numer Telefonu",
         "accessLevel": "Poziom Dostępu",
         "emailVerified": "Email Zweryfikowany",
         "password": "Hasło",
@@ -1364,8 +1345,6 @@
       "placeholders": {
         "fullName": "Wprowadź pełne imię i nazwisko",
         "email": "Wprowadź adres email",
-        "organization": "Wprowadź nazwę organizacji",
-        "position": "Wprowadź stanowisko",
         "password": "Wprowadź hasło",
         "confirmPassword": "Potwierdź hasło",
         "modelLimit": "Pozostaw puste dla wartości domyślnej"
@@ -1381,7 +1360,6 @@
         "expert": "Ekspert (Pełny Dostęp)"
       },
       "validation": {
-        "phoneInvalid": "Numer telefonu może zawierać tylko cyfry, spacje, myślniki, znaki plus i nawiasy",
         "passwordLength": "Hasło musi mieć co najmniej 8 znaków",
         "nameRequired": "Imię jest wymagane",
         "emailRequired": "Email jest wymagany",

@@ -143,7 +143,7 @@ const baseLayers: BaseLayerInfo[] = [
 		name: "MapLibre Dark",
 		description: "Dark vector basemap",
 		source: new XYZ({ url: '' }), // Vector source loaded via MapLibre GL
-		accessLevel: "very_low",
+		accessLevel: "intermediate",
 	},
 ];
 

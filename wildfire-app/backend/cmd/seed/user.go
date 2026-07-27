@@ -14,9 +14,6 @@ func seedUser(ctx context.Context, kc *keycloak.Client) {
 	email := seedEnv("SEED_ADMIN_EMAIL", "admin@storcito.de")
 	password := seedEnv("SEED_ADMIN_PASSWORD", "12345678")
 	fullName := seedEnv("SEED_ADMIN_FULL_NAME", "Admin")
-	organization := seedEnv("SEED_ADMIN_ORGANIZATION", "THD")
-	position := seedEnv("SEED_ADMIN_POSITION", "Dev")
-	phone := seedEnv("SEED_ADMIN_PHONE", "0176111111111")
 
 	if password == "12345678" {
 		log.Println("WARNING: using default seed admin password; change it immediately after first login")
@@ -52,9 +49,6 @@ func seedUser(ctx context.Context, kc *keycloak.Client) {
 		"attributes": map[string]any{
 			"access_level": []string{"expert"},
 			"fullName":     []string{fullName},
-			"organization": []string{organization},
-			"position":     []string{position},
-			"phone":        []string{phone},
 		},
 	}
 

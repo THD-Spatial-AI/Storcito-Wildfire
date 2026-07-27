@@ -6,9 +6,6 @@ export interface User {
 	email: string;
 	email_verified?: boolean;
 	enabled?: boolean;
-	organization?: string;
-	position?: string;
-	phone?: string;
 	access_level: "very_low" | "intermediate" | "manager" | "expert";
 	group_id?: string;
 	model_limit?: number;
@@ -20,9 +17,6 @@ export interface User {
 export interface UserFormData {
 	name: string;
 	email: string;
-	organization: string;
-	position: string;
-	phone: string;
 	access_level: "very_low" | "intermediate" | "manager" | "expert";
 	email_verified?: boolean;
 	password?: string;
@@ -49,8 +43,5 @@ export type CreateUserPayload = {
 	name: string;
 	password?: string;
 	access_level: User["access_level"];
-	organization: string;
-	position: string;
-	phone: string;
 	group_id?: Group["id"];
 };

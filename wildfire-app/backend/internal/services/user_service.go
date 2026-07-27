@@ -53,9 +53,6 @@ type UserDTO struct {
 	Email         string `json:"email"`
 	EmailVerified bool   `json:"email_verified"`
 	Enabled       bool   `json:"enabled"`
-	Organization  string `json:"organization,omitempty"`
-	Position      string `json:"position,omitempty"`
-	Phone         string `json:"phone,omitempty"`
 	AccessLevel   string `json:"access_level"`
 	GroupID       string `json:"group_id,omitempty"`
 	ModelLimit    *int   `json:"model_limit,omitempty"`
@@ -177,9 +174,6 @@ func (s *userService) convertToUserDTOs(ctx context.Context, authToken string, k
 			Email:         u.Email,
 			EmailVerified: u.EmailVerified,
 			Enabled:       u.Enabled,
-			Organization:  GetAttributeValue(u.Attributes, "organization"),
-			Position:      GetAttributeValue(u.Attributes, "position"),
-			Phone:         GetAttributeValue(u.Attributes, "phone"),
 			AccessLevel:   accessLevel,
 			GroupID:       groupID,
 			CreatedAt:     u.CreatedTimestamp,

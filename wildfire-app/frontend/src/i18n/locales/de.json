@@ -127,9 +127,6 @@
       "fields": {
         "fullName": "Vollständiger Name",
         "email": "E-Mail-Adresse",
-        "organization": "Organisation",
-        "position": "Position",
-        "phone": "Telefonnummer",
         "accessLevel": "Zugriffsebene",
         "emailVerified": "E-Mail verifiziert",
         "password": "Passwort",
@@ -139,8 +136,6 @@
       "placeholders": {
         "fullName": "Vollständigen Namen eingeben",
         "email": "E-Mail-Adresse eingeben",
-        "organization": "Organisationsnamen eingeben",
-        "position": "Position eingeben",
         "password": "Passwort eingeben",
         "confirmPassword": "Passwort bestätigen",
         "modelLimit": "Leer lassen für Standard"
@@ -156,7 +151,6 @@
         "expert": "Experte (Vollzugriff)"
       },
       "validation": {
-        "phoneInvalid": "Telefonnummer darf nur Ziffern, Leerzeichen, Bindestriche, Pluszeichen und Klammern enthalten",
         "passwordLength": "Passwort muss mindestens 8 Zeichen lang sein",
         "nameRequired": "Name ist erforderlich",
         "emailRequired": "E-Mail ist erforderlich",
@@ -374,13 +368,6 @@
       "specialChar": "Ein Sonderzeichen",
       "hasSpaces": "Passwort enthält Leerzeichen am Anfang oder Ende"
     },
-    "organizationDetails": "Organisationsdetails",
-    "organization": "Organisation",
-    "enterOrganization": "Geben Sie Ihre Organisation ein",
-    "position": "Position",
-    "enterPosition": "Geben Sie Ihre Position ein",
-    "phoneNumber": "Telefonnummer",
-    "enterPhoneNumber": "Geben Sie Ihre Telefonnummer ein",
     "accessLevel": "Zugangsstufe",
     "veryLow": "Sehr niedrig",
     "low": "Niedrig",
@@ -402,6 +389,10 @@
     "creating": "Wird erstellt...",
     "agreeToTerms": "Mit der Erstellung eines Kontos stimmen Sie unseren Nutzungsbedingungen zu",
     "signInHere": "Hier anmelden",
+    "consentText": "Ich willige in die Verarbeitung und Speicherung meiner personenbezogenen Daten gemäß der",
+    "declarationOfConsent": "Einwilligungserklärung",
+    "privacyPolicy": "Datenschutzrichtlinie",
+    "and": "und",
     "sidePanel": {
       "badge": "Waldbrandrisiko-Intelligenz",
       "title": "Schützen Sie ländliche Gemeinden, bevor die Flammen entstehen",
@@ -602,10 +593,7 @@
     "userProfile": {
       "title": "Benutzerprofil",
       "subtitle": "Ihre Kontoinformationen",
-      "email": "E-Mail",
-      "organization": "Organisation",
-      "position": "Position",
-      "phone": "Telefon"
+      "email": "E-Mail"
     },
     "accessPermissions": {
       "title": "Zugriff & Berechtigungen",
@@ -667,12 +655,9 @@
     },
     "table": {
       "user": "Benutzer",
-      "organization": "Organisation",
-      "position": "Position",
       "accessLevel": "Zugriffsebene",
       "group": "Gruppe",
       "emailVerified": "E-Mail verifiziert",
-      "phone": "Telefon",
       "actions": "Aktionen"
     },
     "emailStatus": {
@@ -807,7 +792,6 @@
     "loadingProfile": "Profil wird geladen...",
     "defaultUser": "Benutzer",
     "accessLevel": "Zugriffsebene",
-    "notSpecified": "Nicht angegeben",
     "personalInfo": "Persönliche Informationen",
     "personalInfoDescription": "Aktualisieren Sie Ihre Profildaten unten",
     "readOnly": "schreibgeschützt",
@@ -815,16 +799,10 @@
     "saveChanges": "Änderungen speichern",
     "fields": {
       "fullName": "Vollständiger Name",
-      "email": "E-Mail-Adresse",
-      "organization": "Organisation",
-      "position": "Position",
-      "phone": "Telefonnummer"
+      "email": "E-Mail-Adresse"
     },
     "placeholders": {
-      "fullName": "Geben Sie Ihren vollständigen Namen ein",
-      "organization": "Ihr Unternehmen oder Ihre Organisation",
-      "position": "Ihre Berufsbezeichnung",
-      "phone": "+49 (0) 123 456789"
+      "fullName": "Geben Sie Ihren vollständigen Namen ein"
     },
     "accessLevels": {
       "basic": "Basis",

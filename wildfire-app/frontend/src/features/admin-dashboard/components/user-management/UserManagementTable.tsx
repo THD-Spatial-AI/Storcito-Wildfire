@@ -1,9 +1,8 @@
-import { Briefcase, Building, Check, CheckCircle, Copy, Edit, KeyRound, Mail, Phone, Shield, Trash2, UserCheck, UserCog, Users, UserX, XCircle } from "lucide-react";
+import { Check, CheckCircle, Copy, Edit, KeyRound, Mail, Shield, Trash2, UserCheck, UserCog, Users, UserX, XCircle } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@spatialhub/ui";
 import Pagination from "@/components/ui/Pagination";
 import ModelActionGroup from "@/components/shared/ModelActionGroup";
 import StatusBadge from "@/components/ui/StatusBadge";
-import { TableIconCell } from "@/components/table/TableIconCell";
 import type { Group } from "@/components/workspace";
 import { getGroupDisplayName, getGroupFullDisplayName } from "@/components/workspace";
 import { getAccessLevelColor, getAccessLevelIconColor, getAccessLevelName, isExpertOrManager, isManager } from "@/features/admin-dashboard/utils/accessLevelUtils";
@@ -88,12 +87,9 @@ export function UserManagementTable({
 									</th>
 								)}
 								<th className="px-3 py-2 text-left text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("userManagement.table.user")}</th>
-								<th className="px-3 py-2 text-left text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("userManagement.table.organization")}</th>
-								<th className="px-3 py-2 text-left text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("userManagement.table.position")}</th>
 								<th className="px-3 py-2 text-left text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("userManagement.table.accessLevel")}</th>
 								<th className="px-3 py-2 text-left text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("userManagement.table.group")}</th>
 								<th className="px-3 py-2 text-left text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("userManagement.table.emailVerified")}</th>
-								<th className="px-3 py-2 text-left text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("userManagement.table.phone")}</th>
 								<th className="px-3 py-2 text-right text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("userManagement.table.actions")}</th>
 							</tr>
 						</thead>
@@ -182,18 +178,6 @@ export function UserManagementTable({
 											</div>
 										</td>
 										<td className="px-3 py-2">
-											<TableIconCell
-												icon={<Building className="w-3 h-3 text-muted-foreground" />}
-												text={tableUser.organization}
-											/>
-										</td>
-										<td className="px-3 py-2">
-											<TableIconCell
-												icon={<Briefcase className="w-3 h-3 text-muted-foreground" />}
-												text={tableUser.position}
-											/>
-										</td>
-										<td className="px-3 py-2">
 											<StatusBadge
 												icon={getAccessLevelIcon(tableUser.access_level)}
 												text={getAccessLevelName(tableUser.access_level)}
@@ -225,12 +209,6 @@ export function UserManagementTable({
 												text={tableUser.email_verified ? t("userManagement.emailStatus.verified") : t("userManagement.emailStatus.unverified")}
 												variant={tableUser.email_verified ? "success" : "default"}
 												size="small"
-											/>
-										</td>
-										<td className="px-3 py-2">
-											<TableIconCell
-												icon={<Phone className="w-3 h-3 text-muted-foreground" />}
-												text={tableUser.phone}
 											/>
 										</td>
 										<td className="px-3 py-2 text-right">
@@ -282,6 +260,7 @@ export function UserManagementTable({
 												]}
 												layout="horizontal"
 												size="small"
+												className="justify-end"
 											/>
 										</td>
 									</tr>

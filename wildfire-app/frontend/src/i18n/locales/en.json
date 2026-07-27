@@ -127,9 +127,6 @@
       "fields": {
         "fullName": "Full Name",
         "email": "Email Address",
-        "organization": "Organization",
-        "position": "Position",
-        "phone": "Phone Number",
         "accessLevel": "Access Level",
         "emailVerified": "Email Verified",
         "password": "Password",
@@ -139,8 +136,6 @@
       "placeholders": {
         "fullName": "Enter full name",
         "email": "Enter email address",
-        "organization": "Enter organization name",
-        "position": "Enter job position",
         "password": "Enter password",
         "confirmPassword": "Confirm password",
         "modelLimit": "Leave empty for default"
@@ -156,7 +151,6 @@
         "expert": "Expert (Full Access)"
       },
       "validation": {
-        "phoneInvalid": "Phone number can only contain digits, spaces, dashes, plus signs, and parentheses",
         "passwordLength": "Password must be at least 8 characters long",
         "nameRequired": "Name is required",
         "emailRequired": "Email is required",
@@ -374,13 +368,6 @@
       "specialChar": "One special character",
       "hasSpaces": "Password contains leading or trailing spaces"
     },
-    "organizationDetails": "Organization Details",
-    "organization": "Organization",
-    "enterOrganization": "Enter your organization",
-    "position": "Position",
-    "enterPosition": "Enter your position",
-    "phoneNumber": "Phone Number",
-    "enterPhoneNumber": "Enter your phone number",
     "accessLevel": "Access Level",
     "veryLow": "Very Low",
     "low": "Low",
@@ -402,6 +389,10 @@
     "creating": "Creating...",
     "agreeToTerms": "By creating an account, you agree to our Terms of Service",
     "signInHere": "Sign in here",
+    "consentText": "I consent to the processing and storage of my personal data in accordance with the",
+    "declarationOfConsent": "Declaration of Consent",
+    "privacyPolicy": "Privacy Policy",
+    "and": "and",
     "sidePanel": {
       "badge": "Wildfire risk intelligence",
       "title": "Protect rural communities before the flames ignite",
@@ -602,10 +593,7 @@
     "userProfile": {
       "title": "User Profile",
       "subtitle": "Your account information",
-      "email": "Email",
-      "organization": "Organization",
-      "position": "Position",
-      "phone": "Phone"
+      "email": "Email"
     },
     "accessPermissions": {
       "title": "Access & Permissions",
@@ -667,12 +655,9 @@
     },
     "table": {
       "user": "User",
-      "organization": "Organization",
-      "position": "Position",
       "accessLevel": "Access Level",
       "group": "Group",
       "emailVerified": "Email Verified",
-      "phone": "Phone",
       "actions": "Actions"
     },
     "emailStatus": {
@@ -807,7 +792,6 @@
     "loadingProfile": "Loading your profile...",
     "defaultUser": "User",
     "accessLevel": "Access Level",
-    "notSpecified": "Not specified",
     "personalInfo": "Personal Information",
     "personalInfoDescription": "Update your profile details below",
     "readOnly": "read-only",
@@ -815,16 +799,10 @@
     "saveChanges": "Save Changes",
     "fields": {
       "fullName": "Full Name",
-      "email": "Email Address",
-      "organization": "Organization",
-      "position": "Position",
-      "phone": "Phone Number"
+      "email": "Email Address"
     },
     "placeholders": {
-      "fullName": "Enter your full name",
-      "organization": "Your company or organization",
-      "position": "Your job title",
-      "phone": "+1 (555) 000-0000"
+      "fullName": "Enter your full name"
     },
     "accessLevels": {
       "basic": "Basic",

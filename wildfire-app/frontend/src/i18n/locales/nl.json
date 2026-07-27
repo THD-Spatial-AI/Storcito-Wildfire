@@ -214,13 +214,6 @@
       "specialChar": "Eén speciaal teken",
       "hasSpaces": "Wachtwoord bevat spaties aan het begin of einde"
     },
-    "organizationDetails": "Organisatiegegevens",
-    "organization": "Organisatie",
-    "enterOrganization": "Voer uw organisatie in",
-    "position": "Functie",
-    "enterPosition": "Voer uw functie in",
-    "phoneNumber": "Telefoonnummer",
-    "enterPhoneNumber": "Voer uw telefoonnummer in",
     "accessLevel": "Toegangsniveau",
     "veryLow": "Zeer Laag",
     "low": "Laag",
@@ -242,6 +235,10 @@
     "creating": "Aanmaken...",
     "agreeToTerms": "Door een account aan te maken, gaat u akkoord met onze Servicevoorwaarden",
     "signInHere": "Hier inloggen",
+    "consentText": "Ik geef toestemming voor de verwerking en opslag van mijn persoonsgegevens in overeenstemming met de",
+    "declarationOfConsent": "Toestemmingsverklaring",
+    "privacyPolicy": "Privacybeleid",
+    "and": "en",
     "sidePanel": {
       "badge": "Inzicht in bosbrandrisico",
       "title": "Bescherm plattelandsgemeenschappen voordat de vlammen ontstaan",
@@ -437,10 +434,7 @@
     "userProfile": {
       "title": "Gebruikersprofiel",
       "subtitle": "Uw accountinformatie",
-      "email": "E-mail",
-      "organization": "Organisatie",
-      "position": "Functie",
-      "phone": "Telefoon"
+      "email": "E-mail"
     },
     "accessPermissions": {
       "title": "Toegang & Machtigingen",
@@ -507,12 +501,9 @@
     },
     "table": {
       "user": "Gebruiker",
-      "organization": "Organisatie",
-      "position": "Functie",
       "accessLevel": "Toegangsniveau",
       "group": "Groep",
       "emailVerified": "E-mail geverifieerd",
-      "phone": "Telefoon",
       "actions": "Acties"
     },
     "emailStatus": {
@@ -647,7 +638,6 @@
     "loadingProfile": "Uw profiel laden...",
     "defaultUser": "Gebruiker",
     "accessLevel": "Toegangsniveau",
-    "notSpecified": "Niet gespecificeerd",
     "personalInfo": "Persoonlijke informatie",
     "personalInfoDescription": "Werk uw profielgegevens hieronder bij",
     "readOnly": "alleen-lezen",
@@ -655,16 +645,10 @@
     "saveChanges": "Wijzigingen opslaan",
     "fields": {
       "fullName": "Volledige naam",
-      "email": "E-mailadres",
-      "organization": "Organisatie",
-      "position": "Functie",
-      "phone": "Telefoonnummer"
+      "email": "E-mailadres"
     },
     "placeholders": {
-      "fullName": "Voer uw volledige naam in",
-      "organization": "Uw bedrijf of organisatie",
-      "position": "Uw functietitel",
-      "phone": "+31 6 12345678"
+      "fullName": "Voer uw volledige naam in"
     },
     "accessLevels": {
       "basic": "Basis",
@@ -1352,9 +1336,6 @@
       "fields": {
         "fullName": "Volledige Naam",
         "email": "E-mailadres",
-        "organization": "Organisatie",
-        "position": "Functie",
-        "phone": "Telefoonnummer",
         "accessLevel": "Toegangsniveau",
         "emailVerified": "E-mail Geverifieerd",
         "password": "Wachtwoord",
@@ -1364,8 +1345,6 @@
       "placeholders": {
         "fullName": "Voer volledige naam in",
         "email": "Voer e-mailadres in",
-        "organization": "Voer organisatienaam in",
-        "position": "Voer functie in",
         "password": "Voer wachtwoord in",
         "confirmPassword": "Bevestig wachtwoord",
         "modelLimit": "Laat leeg voor standaardwaarde"
@@ -1381,7 +1360,6 @@
         "expert": "Expert (Volledige Toegang)"
       },
       "validation": {
-        "phoneInvalid": "Telefoonnummer mag alleen cijfers, spaties, streepjes, plustekens en haakjes bevatten",
         "passwordLength": "Wachtwoord moet minimaal 8 tekens lang zijn",
         "nameRequired": "Naam is verplicht",
         "emailRequired": "E-mail is verplicht",

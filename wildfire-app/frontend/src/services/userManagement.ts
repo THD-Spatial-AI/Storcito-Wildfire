@@ -8,9 +8,6 @@ export interface AdminUser {
 	email: string;
 	email_verified?: boolean;
 	enabled?: boolean;
-	organization?: string;
-	position?: string;
-	phone?: string;
 	access_level: UserAccessLevel;
 	group_id?: string;
 	model_limit?: number;
@@ -30,18 +27,12 @@ export interface CreateAdminUserPayload {
 	name: string;
 	password?: string;
 	access_level: UserAccessLevel;
-	organization: string;
-	position: string;
-	phone: string;
 	group_id?: string;
 }
 
 export interface UpdateAdminUserPayload {
 	name?: string;
 	email?: string;
-	organization?: string;
-	position?: string;
-	phone?: string;
 	access_level?: UserAccessLevel;
 	email_verified?: boolean;
 	password?: string;

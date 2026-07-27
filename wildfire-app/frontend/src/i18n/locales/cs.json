@@ -214,13 +214,6 @@
       "specialChar": "Jeden speciální znak",
       "hasSpaces": "Heslo obsahuje mezery na začátku nebo na konci"
     },
-    "organizationDetails": "Údaje o Organizaci",
-    "organization": "Organizace",
-    "enterOrganization": "Zadejte svou organizaci",
-    "position": "Pozice",
-    "enterPosition": "Zadejte svou pozici",
-    "phoneNumber": "Telefonní Číslo",
-    "enterPhoneNumber": "Zadejte své telefonní číslo",
     "accessLevel": "Úroveň Přístupu",
     "veryLow": "Velmi Nízká",
     "low": "Nízká",
@@ -242,6 +235,10 @@
     "creating": "Vytváření...",
     "agreeToTerms": "Vytvořením účtu souhlasíte s našimi Podmínkami služby",
     "signInHere": "Přihlaste se zde",
+    "consentText": "Souhlasím se zpracováním a uchováváním mých osobních údajů v souladu s",
+    "declarationOfConsent": "Prohlášením o souhlasu",
+    "privacyPolicy": "Zásadami ochrany osobních údajů",
+    "and": "a",
     "sidePanel": {
       "badge": "Analýza rizika požárů",
       "title": "Chraňte venkovské komunity dříve, než vzplanou plameny",
@@ -437,10 +434,7 @@
     "userProfile": {
       "title": "Uživatelský Profil",
       "subtitle": "Informace o vašem účtu",
-      "email": "E-mail",
-      "organization": "Organizace",
-      "position": "Pozice",
-      "phone": "Telefon"
+      "email": "E-mail"
     },
     "accessPermissions": {
       "title": "Přístup a Oprávnění",
@@ -507,12 +501,9 @@
     },
     "table": {
       "user": "Uživatel",
-      "organization": "Organizace",
-      "position": "Pozice",
       "accessLevel": "Úroveň přístupu",
       "group": "Skupina",
       "emailVerified": "E-mail ověřen",
-      "phone": "Telefon",
       "actions": "Akce"
     },
     "emailStatus": {
@@ -647,7 +638,6 @@
     "loadingProfile": "Načítání vašeho profilu...",
     "defaultUser": "Uživatel",
     "accessLevel": "Úroveň přístupu",
-    "notSpecified": "Nespecifikováno",
     "personalInfo": "Osobní informace",
     "personalInfoDescription": "Aktualizujte své profilové údaje níže",
     "readOnly": "pouze pro čtení",
@@ -655,16 +645,10 @@
     "saveChanges": "Uložit změny",
     "fields": {
       "fullName": "Celé jméno",
-      "email": "E-mailová adresa",
-      "organization": "Organizace",
-      "position": "Pozice",
-      "phone": "Telefon"
+      "email": "E-mailová adresa"
     },
     "placeholders": {
-      "fullName": "Zadejte své celé jméno",
-      "organization": "Vaše společnost nebo organizace",
-      "position": "Vaše pracovní pozice",
-      "phone": "+420 123 456 789"
+      "fullName": "Zadejte své celé jméno"
     },
     "accessLevels": {
       "basic": "Základní",
@@ -1352,9 +1336,6 @@
       "fields": {
         "fullName": "Celé Jméno",
         "email": "E-mailová Adresa",
-        "organization": "Organizace",
-        "position": "Pozice",
-        "phone": "Telefonní Číslo",
         "accessLevel": "Úroveň Přístupu",
         "emailVerified": "E-mail Ověřen",
         "password": "Heslo",
@@ -1364,8 +1345,6 @@
       "placeholders": {
         "fullName": "Zadejte celé jméno",
         "email": "Zadejte e-mailovou adresu",
-        "organization": "Zadejte název organizace",
-        "position": "Zadejte pracovní pozici",
         "password": "Zadejte heslo",
         "confirmPassword": "Potvrďte heslo",
         "modelLimit": "Ponechte prázdné pro výchozí hodnotu"
@@ -1381,7 +1360,6 @@
         "expert": "Expert (Plný Přístup)"
       },
       "validation": {
-        "phoneInvalid": "Telefonní číslo může obsahovat pouze číslice, mezery, pomlčky, znaménka plus a závorky",
         "passwordLength": "Heslo musí mít alespoň 8 znaků",
         "nameRequired": "Jméno je povinné",
         "emailRequired": "E-mail je povinný",
