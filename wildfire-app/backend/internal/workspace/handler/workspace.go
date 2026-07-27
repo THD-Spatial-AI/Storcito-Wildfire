@@ -1,13 +1,16 @@
 package workspace
 
 import (
-	"platform.local/common/pkg/httputil"
-	"platform.local/common/pkg/models"
-	authplatform "platform.local/platform/auth"
+	"strings"
+
 	"spatialhub_backend/internal/api/contracts"
 	"spatialhub_backend/internal/cache"
 	"spatialhub_backend/internal/services"
 	workspaceservice "spatialhub_backend/internal/workspace/service"
+
+	"platform.local/common/pkg/httputil"
+	"platform.local/common/pkg/models"
+	authplatform "platform.local/platform/auth"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -271,7 +274,8 @@ func (h *WorkspaceHandler) RemoveMember(c *gin.Context) {
 		return
 	}
 
-	if member.UserID == workspace.UserID {
+	if member.UserID == workspace.UserID ||
+		(workspace.UserEmail != "" && strings.EqualFold(member.Email, workspace.UserEmail)) {
 		httputil.BadRequest(c, "Cannot remove workspace owner")
 		return
 	}

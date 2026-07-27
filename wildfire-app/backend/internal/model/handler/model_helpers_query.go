@@ -172,7 +172,7 @@ func (h *ModelHandler) postProcessModelWorkspacesBatch(ctx context.Context, user
 	}
 
 	// 2. Get all shared model IDs in batch
-	sharedModelIDs := h.store.PluckSharedModelIDsByUser(userCtx.UserID)
+	sharedModelIDs := h.store.PluckSharedModelIDsByUser(userCtx.UserID, userCtx.Email)
 
 	for _, modelID := range sharedModelIDs {
 		modelIDsToCheck[modelID] = true
@@ -463,13 +463,13 @@ func (h *ModelHandler) applyPrivacyFilters(userCtx httputil.UserContext, modelsL
 	}
 	return modelsList
 }
-func (h *ModelHandler) handleSharedModelWorkspace(userID string, model *models.Model) {
+func (h *ModelHandler) handleSharedModelWorkspace(userID, email string, model *models.Model) {
 	if model.UserID == userID || model.WorkspaceID == nil {
 		return
 	}
 
 	modelSvc := h.newModelService()
-	if h.store.CountModelSharesByModelAndUser(model.ID, userID) > 0 && !modelSvc.UserHasWorkspaceAccess(userID, *model.WorkspaceID) {
+	if h.store.CountModelSharesByModelAndUserOrEmail(model.ID, userID, email) > 0 && !modelSvc.UserHasWorkspaceAccess(userID, *model.WorkspaceID) {
 		if defaultWorkspace, err := modelSvc.GetDefaultWorkspace(userID); err == nil {
 			model.WorkspaceID = &defaultWorkspace.ID
 			model.Workspace = defaultWorkspace

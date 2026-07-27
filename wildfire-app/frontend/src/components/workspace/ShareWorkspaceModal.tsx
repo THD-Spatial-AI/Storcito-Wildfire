@@ -244,7 +244,11 @@ export const ShareWorkspaceModal: React.FC<ShareWorkspaceModalProps> = ({
                           <p className="text-sm font-medium text-foreground">{member.email}</p>
                         </div>
                       </div>
-                      {member.user_id !== workspace.user_id && (
+                      {!(
+                        member.user_id === workspace.user_id ||
+                        (!!workspace.user_email &&
+                          member.email?.toLowerCase() === workspace.user_email.toLowerCase())
+                      ) && (
                         <button
                           onClick={() => handleRemoveMember(member.id)}
                           className="p-2 text-muted-foreground hover:text-destructive transition-colors"

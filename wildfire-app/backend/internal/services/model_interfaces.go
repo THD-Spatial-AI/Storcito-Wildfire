@@ -38,7 +38,7 @@ type ModelStore interface {
 	FindModelShareByModelAndEmail(modelID uint, email string) (*commonModels.ModelShare, error)
 	CountModelSharesByModelAndUser(modelID uint, userID string) int64
 	CountModelSharesByModelAndUserOrEmail(modelID uint, userID, email string) int64
-	PluckSharedModelIDsByUser(userID string) []uint
+	PluckSharedModelIDsByUser(userID, email string) []uint
 	IsWorkspaceSharedWithUser(workspaceID uint, email string) bool
 	IsWorkspaceSharedWithUserGroups(workspaceID uint, groupIDs []string) bool
 

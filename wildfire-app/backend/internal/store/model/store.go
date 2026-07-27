@@ -264,13 +264,15 @@ func (s *Store) CountModelSharesByModelAndUserOrEmail(modelID uint, userID, emai
 	q.Count(&count)
 	return count
 }
-
-// PluckSharedModelIDsByUser returns model IDs shared with the given user.
-func (s *Store) PluckSharedModelIDsByUser(userID string) []uint {
+func (s *Store) PluckSharedModelIDsByUser(userID, email string) []uint {
 	var ids []uint
-	s.db.Model(&commonModels.ModelShare{}).
-		Where("user_id = ?", userID).
-		Pluck("model_id", &ids)
+	q := s.db.Model(&commonModels.ModelShare{}).Where("model_id > 0")
+	if email != "" {
+		q = q.Where("user_id = ? OR LOWER(email) = LOWER(?)", userID, email)
+	} else {
+		q = q.Where("user_id = ?", userID)
+	}
+	q.Pluck("model_id", &ids)
 	return ids
 }
 

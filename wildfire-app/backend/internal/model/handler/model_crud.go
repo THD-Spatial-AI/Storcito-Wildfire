@@ -99,7 +99,7 @@ func (h *ModelHandler) GetModel(c *gin.Context) {
 		return
 	}
 
-	h.handleSharedModelWorkspace(userCtx.UserID, &model)
+	h.handleSharedModelWorkspace(userCtx.UserID, userCtx.Email, &model)
 	h.filterModelShares(&model, userCtx.UserID, userCtx.Email)
 	h.filterWorkspaceData(&model, userCtx.UserID, userCtx.Email)
 	h.populateChildModelIDsForModel(&model)
