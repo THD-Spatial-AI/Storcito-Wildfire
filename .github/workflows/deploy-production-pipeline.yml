@@ -12,7 +12,6 @@ on:
         type: choice
         options:
           - check-runner
-          - build
           - infra-postgres-redis
           - infra-keycloak
           - infra-keycloak-init
@@ -45,20 +44,6 @@ jobs:
           docker --version
           docker compose version
           echo '=== Runner OK ==='
-
-  build:
-    if: ${{ github.event.inputs.step == 'build' }}
-    runs-on: self-hosted
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build production image
-        run: |
-          echo '=== Building production Wildfire App image ==='
-          docker build --no-cache --provenance=false --sbom=false \
-            -t "wildfire-app:latest" -f Dockerfile.ci .
-          # Keep a single image: the previous wildfire-app:latest is now dangling.
-          docker image prune -f
-          echo '=== Build complete ==='
 
   infra-postgres-redis:
     if: ${{ github.event.inputs.step == 'infra-postgres-redis' }}
@@ -280,6 +265,14 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
+      - name: Build production image
+        run: |
+          set -e
+          echo '=== [PROD] Building Wildfire App image ==='
+          docker build --no-cache --provenance=false --sbom=false \
+            -t "wildfire-app:latest" -f Dockerfile.ci .
+          docker image prune -f
+          echo '=== [PROD] Build complete ==='
       - name: Deploy Wildfire App
         run: |
           set -e
