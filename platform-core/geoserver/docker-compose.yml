@@ -13,7 +13,7 @@ services:
       - geoserver-data:/opt/geoserver/data_dir
       - ./controlflow.properties:/opt/geoserver/data_dir/controlflow.properties:ro
       - type: volume
-        source: backend-storage
+        source: backend-storage-prod
         target: /opt/geoserver/data_dir/data/results
         volume:
           subpath: data
