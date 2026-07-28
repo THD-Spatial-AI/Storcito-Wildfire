@@ -12,34 +12,31 @@ import (
 	gormlogger "gorm.io/gorm/logger"
 )
 
-// Store encapsulates all database operations for the model domain.
+// Store handles model DB operations.
 type Store struct {
 	db *gorm.DB
 }
 
-// NewStore creates a new model Store.
+// NewStore creates a model Store.
 func NewStore(db *gorm.DB) *Store {
 	return &Store{db: db}
 }
 
-// DB exposes the underlying *gorm.DB for complex query building
-// that hasn't been abstracted into dedicated store methods yet.
+// DB returns the underlying DB instance.
 func (s *Store) DB() *gorm.DB {
 	return s.db
 }
 
-// ---------------------------------------------------------------------------
 // Basic CRUD
-// ---------------------------------------------------------------------------
 
-// FindByID finds a model by its ID.
+// FindByID gets model by ID.
 func (s *Store) FindByID(id string) (*commonModels.Model, error) {
 	var model commonModels.Model
 	err := s.db.Where("id = ?", id).First(&model).Error
 	return &model, err
 }
 
-// FindByIDPreloaded finds a model by ID with Workspace.Members and Workspace.Groups preloaded.
+// FindByIDPreloaded gets model with workspace preloaded.
 func (s *Store) FindByIDPreloaded(id string) (*commonModels.Model, error) {
 	var model commonModels.Model
 	err := s.db.
@@ -50,24 +47,22 @@ func (s *Store) FindByIDPreloaded(id string) (*commonModels.Model, error) {
 	return &model, err
 }
 
-// Create creates a model from a field map (avoids inserting removed columns).
+// Create inserts a model map.
 func (s *Store) Create(modelMap map[string]interface{}) error {
 	return s.db.Model(&commonModels.Model{}).Create(&modelMap).Error
 }
 
-// Update applies a map of updates to the given model.
+// Update updates model fields.
 func (s *Store) Update(model *commonModels.Model, updates map[string]interface{}) error {
 	return s.db.Model(model).Updates(updates).Error
 }
 
-// PatchByID applies field updates to a model by id without changing status.
+// PatchByID updates model by ID.
 func (s *Store) PatchByID(modelID uint, updates map[string]interface{}) error {
 	return s.db.Model(&commonModels.Model{}).Where("id = ?", modelID).Updates(updates).Error
 }
 
-// FindActiveModels returns the lightweight projection of all in-flight models
-// (queued or running). It selects only the columns the webservice's instance
-// reconciliation needs, so model state never leaves the backend as a full row.
+// FindActiveModels gets in-flight models.
 func (s *Store) FindActiveModels() ([]commonModels.Model, error) {
 	var models []commonModels.Model
 	err := s.db.
@@ -77,12 +72,7 @@ func (s *Store) FindActiveModels() ([]commonModels.Model, error) {
 	return models, err
 }
 
-// TransitionStatus atomically moves a model to `to`, but only if its current
-// status is one of `from` (when `from` is empty, no status guard is applied).
-// `extra` carries additional column updates (e.g. webservice_id, timestamps).
-// It returns true when a row was actually transitioned, allowing callers to
-// detect a lost race (e.g. the model was already claimed) without a separate
-// read. The backend is the single writer of Model.status.
+// TransitionStatus updates model status atomically.
 func (s *Store) TransitionStatus(modelID uint, from []string, to string, extra map[string]interface{}) (bool, error) {
 	updates := map[string]interface{}{
 		"status":     to,
@@ -102,10 +92,7 @@ func (s *Store) TransitionStatus(modelID uint, from []string, to string, extra m
 	return res.RowsAffected > 0, nil
 }
 
-// TransitionStatusTx is TransitionStatus that also writes a domain event to the
-// outbox in the SAME transaction, so the event is persisted iff the status
-// change commits (transactional outbox). The event is written only when the
-// transition actually moves a row.
+// TransitionStatusTx updates status and enqueues outbox event.
 func (s *Store) TransitionStatusTx(modelID uint, from []string, to string, extra map[string]interface{}, ev *events.OutboxEvent) (bool, error) {
 	var moved bool
 	err := s.db.Transaction(func(tx *gorm.DB) error {
@@ -133,23 +120,21 @@ func (s *Store) TransitionStatusTx(modelID uint, from []string, to string, extra
 	return moved, err
 }
 
-// HardDelete permanently removes a model (unscoped).
+// HardDelete permanently deletes a model.
 func (s *Store) HardDelete(model *commonModels.Model) error {
 	return s.db.Unscoped().Delete(model).Error
 }
 
-// UpdateParentModelID sets parent_model_id = NULL for every child of modelID.
+// UpdateParentModelID clears parent ID for child models.
 func (s *Store) UpdateParentModelID(modelID uint) error {
 	return s.db.Model(&commonModels.Model{}).
 		Where("parent_model_id = ?", modelID).
 		Update("parent_model_id", nil).Error
 }
 
-// ---------------------------------------------------------------------------
 // Queries
-// ---------------------------------------------------------------------------
 
-// CountByUserID returns the number of non-deleted models owned by userID.
+// CountByUserID counts user models.
 func (s *Store) CountByUserID(userID string) (int64, error) {
 	var count int64
 	err := s.db.Model(&commonModels.Model{}).
@@ -158,7 +143,7 @@ func (s *Store) CountByUserID(userID string) (int64, error) {
 	return count, err
 }
 
-// CountByUserIDAndStatus returns the count of models with the given status.
+// CountByUserIDAndStatus counts user models with status.
 func (s *Store) CountByUserIDAndStatus(userID, status string) (int64, error) {
 	var count int64
 	err := s.db.Model(&commonModels.Model{}).
@@ -167,7 +152,7 @@ func (s *Store) CountByUserIDAndStatus(userID, status string) (int64, error) {
 	return count, err
 }
 
-// CountByUserIDGrouped returns counts per status in a single query.
+// CountByUserIDGrouped counts user models by status.
 func (s *Store) CountByUserIDGrouped(userID string) (total int64, byStatus map[string]int64, err error) {
 	byStatus = make(map[string]int64)
 	type statusCount struct {
@@ -190,18 +175,16 @@ func (s *Store) CountByUserIDGrouped(userID string) (total int64, byStatus map[s
 	return total, byStatus, nil
 }
 
-// FindByIDs returns models matching the supplied IDs.
+// FindByIDs gets models by IDs.
 func (s *Store) FindByIDs(ids []uint) ([]commonModels.Model, error) {
 	var models []commonModels.Model
 	err := s.db.Where("id IN ?", ids).Find(&models).Error
 	return models, err
 }
 
-// ---------------------------------------------------------------------------
 // Workspace access
-// ---------------------------------------------------------------------------
 
-// IsDefaultWorkspace checks whether workspaceID is the user's default workspace.
+// IsDefaultWorkspace checks if default workspace.
 func (s *Store) IsDefaultWorkspace(userID string, workspaceID uint) (bool, error) {
 	var workspace commonModels.Workspace
 	err := s.db.Session(&gorm.Session{Logger: s.db.Logger.LogMode(gormlogger.Silent)}).
@@ -216,7 +199,7 @@ func (s *Store) IsDefaultWorkspace(userID string, workspaceID uint) (bool, error
 	return false, err
 }
 
-// GetDefaultWorkspace returns the user's default workspace.
+// GetDefaultWorkspace gets user default workspace.
 func (s *Store) GetDefaultWorkspace(userID string) (*commonModels.Workspace, error) {
 	var workspace commonModels.Workspace
 	err := s.db.Where("user_id = ? AND is_default = ?", userID, true).First(&workspace).Error
@@ -226,24 +209,29 @@ func (s *Store) GetDefaultWorkspace(userID string) (*commonModels.Workspace, err
 	return &workspace, nil
 }
 
-// ---------------------------------------------------------------------------
 // Model sharing
-// ---------------------------------------------------------------------------
 
-// CreateModelShare persists a new ModelShare record.
+// CreateModelShare creates model share.
 func (s *Store) CreateModelShare(share *commonModels.ModelShare) error {
 	return s.db.Create(share).Error
 }
 
-// FindModelShareByModelAndEmail looks up an existing share.
+// DeleteModelShare removes model share.
+func (s *Store) DeleteModelShare(modelID, shareID uint) (bool, error) {
+	result := s.db.
+		Where("id = ? AND model_id = ?", shareID, modelID).
+		Delete(&commonModels.ModelShare{})
+	return result.RowsAffected > 0, result.Error
+}
+
+// FindModelShareByModelAndEmail gets share by model and email.
 func (s *Store) FindModelShareByModelAndEmail(modelID uint, email string) (*commonModels.ModelShare, error) {
 	var share commonModels.ModelShare
 	err := s.db.Where("model_id = ? AND email = ?", modelID, email).First(&share).Error
 	return &share, err
 }
 
-// CountModelSharesByModelAndUser returns how many shares exist for a model+user pair.
-// Checks both user_id and email to handle cases where user_id hasn't been backfilled yet.
+// CountModelSharesByModelAndUser counts model shares for user.
 func (s *Store) CountModelSharesByModelAndUser(modelID uint, userID string) int64 {
 	var count int64
 	s.db.Model(&commonModels.ModelShare{}).
@@ -252,7 +240,7 @@ func (s *Store) CountModelSharesByModelAndUser(modelID uint, userID string) int6
 	return count
 }
 
-// CountModelSharesByModelAndUserOrEmail checks shares by user_id or email
+// CountModelSharesByModelAndUserOrEmail counts model shares by user or email.
 func (s *Store) CountModelSharesByModelAndUserOrEmail(modelID uint, userID, email string) int64 {
 	var count int64
 	q := s.db.Model(&commonModels.ModelShare{}).Where("model_id = ?", modelID)
@@ -264,6 +252,8 @@ func (s *Store) CountModelSharesByModelAndUserOrEmail(modelID uint, userID, emai
 	q.Count(&count)
 	return count
 }
+
+// PluckSharedModelIDsByUser gets shared model IDs for user.
 func (s *Store) PluckSharedModelIDsByUser(userID, email string) []uint {
 	var ids []uint
 	q := s.db.Model(&commonModels.ModelShare{}).Where("model_id > 0")
@@ -276,7 +266,7 @@ func (s *Store) PluckSharedModelIDsByUser(userID, email string) []uint {
 	return ids
 }
 
-// IsWorkspaceSharedWithUser checks direct workspace membership by email.
+// IsWorkspaceSharedWithUser checks workspace sharing by email.
 func (s *Store) IsWorkspaceSharedWithUser(workspaceID uint, email string) bool {
 	var count int64
 	s.db.Model(&commonModels.WorkspaceMember{}).
@@ -285,7 +275,7 @@ func (s *Store) IsWorkspaceSharedWithUser(workspaceID uint, email string) bool {
 	return count > 0
 }
 
-// IsWorkspaceSharedWithUserGroups checks if the workspace is shared via any of the supplied groups.
+// IsWorkspaceSharedWithUserGroups checks workspace sharing by groups.
 func (s *Store) IsWorkspaceSharedWithUserGroups(workspaceID uint, groupIDs []string) bool {
 	var count int64
 	s.db.Model(&commonModels.WorkspaceGroup{}).
@@ -294,11 +284,9 @@ func (s *Store) IsWorkspaceSharedWithUserGroups(workspaceID uint, groupIDs []str
 	return count > 0
 }
 
-// ---------------------------------------------------------------------------
-// Workspace helpers (used by service)
-// ---------------------------------------------------------------------------
+// Workspace helpers
 
-// CountWorkspaceOwner checks if userID owns the workspace.
+// CountWorkspaceOwner checks workspace ownership.
 func (s *Store) CountWorkspaceOwner(workspaceID uint, userID string) int64 {
 	var count int64
 	s.db.Model(&commonModels.Workspace{}).
@@ -307,7 +295,7 @@ func (s *Store) CountWorkspaceOwner(workspaceID uint, userID string) int64 {
 	return count
 }
 
-// CountWorkspaceMember checks if userID is a member of the workspace.
+// CountWorkspaceMember checks workspace membership.
 func (s *Store) CountWorkspaceMember(workspaceID uint, userID string) int64 {
 	var count int64
 	s.db.Model(&commonModels.WorkspaceMember{}).
@@ -316,7 +304,7 @@ func (s *Store) CountWorkspaceMember(workspaceID uint, userID string) int64 {
 	return count
 }
 
-// CountWorkspaceGroupAccess checks if any of groupIDs grant access to the workspace.
+// CountWorkspaceGroupAccess checks workspace group access.
 func (s *Store) CountWorkspaceGroupAccess(workspaceID uint, groupIDs []string) int64 {
 	var count int64
 	s.db.Model(&commonModels.WorkspaceGroup{}).
@@ -325,7 +313,7 @@ func (s *Store) CountWorkspaceGroupAccess(workspaceID uint, groupIDs []string) i
 	return count
 }
 
-// FindWorkspaceByIDSelect fetches a workspace with only the selected columns.
+// FindWorkspaceByIDSelect gets workspace selecting columns.
 func (s *Store) FindWorkspaceByIDSelect(workspaceID uint) (*commonModels.Workspace, error) {
 	var ws commonModels.Workspace
 	err := s.db.Select("id, user_id, user_email, is_default").
@@ -333,12 +321,12 @@ func (s *Store) FindWorkspaceByIDSelect(workspaceID uint) (*commonModels.Workspa
 	return &ws, err
 }
 
-// UpdateWorkspaceUserID updates the user_id on the workspace.
+// UpdateWorkspaceUserID updates workspace user ID.
 func (s *Store) UpdateWorkspaceUserID(ws *commonModels.Workspace, userID string) error {
 	return s.db.Model(ws).Update("user_id", userID).Error
 }
 
-// PluckOwnedWorkspaceIDs returns workspace IDs owned by the user from the given set.
+// PluckOwnedWorkspaceIDs gets owned workspace IDs.
 func (s *Store) PluckOwnedWorkspaceIDs(workspaceIDs []uint, userID string) []uint {
 	var ids []uint
 	s.db.Model(&commonModels.Workspace{}).
@@ -347,7 +335,7 @@ func (s *Store) PluckOwnedWorkspaceIDs(workspaceIDs []uint, userID string) []uin
 	return ids
 }
 
-// PluckMemberWorkspaceIDs returns workspace IDs where the user is a member.
+// PluckMemberWorkspaceIDs gets member workspace IDs.
 func (s *Store) PluckMemberWorkspaceIDs(workspaceIDs []uint, userID string) []uint {
 	var ids []uint
 	s.db.Model(&commonModels.WorkspaceMember{}).
@@ -356,7 +344,7 @@ func (s *Store) PluckMemberWorkspaceIDs(workspaceIDs []uint, userID string) []ui
 	return ids
 }
 
-// PluckGroupWorkspaceIDs returns workspace IDs accessible via group membership.
+// PluckGroupWorkspaceIDs gets group workspace IDs.
 func (s *Store) PluckGroupWorkspaceIDs(workspaceIDs []uint, groupIDs []string) []uint {
 	var ids []uint
 	s.db.Model(&commonModels.WorkspaceGroup{}).
@@ -365,11 +353,9 @@ func (s *Store) PluckGroupWorkspaceIDs(workspaceIDs []uint, groupIDs []string) [
 	return ids
 }
 
-// ---------------------------------------------------------------------------
-// Sync helpers (used by service)
-// ---------------------------------------------------------------------------
+// Sync helpers
 
-// SyncWorkspaceMemberUserID backfills user_id on workspace_members and model_shares by email.
+// SyncWorkspaceMemberUserID syncs user ID by email.
 func (s *Store) SyncWorkspaceMemberUserID(userID, email string) {
 	s.db.Model(&commonModels.WorkspaceMember{}).
 		Where("email = ? AND (user_id = ? OR user_id IS NULL)", email, "").
@@ -380,7 +366,7 @@ func (s *Store) SyncWorkspaceMemberUserID(userID, email string) {
 		Update("user_id", userID)
 }
 
-// FindUserIDByEmail looks up a user_id by email across workspace_members and model_shares.
+// FindUserIDByEmail finds user ID by email.
 func (s *Store) FindUserIDByEmail(email string) string {
 	var userID string
 	s.db.Model(&commonModels.WorkspaceMember{}).
@@ -398,11 +384,9 @@ func (s *Store) FindUserIDByEmail(email string) string {
 	return userID
 }
 
-// ---------------------------------------------------------------------------
 // Model limits
-// ---------------------------------------------------------------------------
 
-// GetModelLimit fetches the ModelLimit record for the given access level.
+// GetModelLimit gets model limit by access level.
 func (s *Store) GetModelLimit(accessLevel string) (*backendModels.ModelLimit, error) {
 	var limit backendModels.ModelLimit
 	err := s.db.Where("access_level = ?", accessLevel).First(&limit).Error
@@ -412,11 +396,9 @@ func (s *Store) GetModelLimit(accessLevel string) (*backendModels.ModelLimit, er
 	return &limit, nil
 }
 
-// ---------------------------------------------------------------------------
-// Calculation helpers (used by service)
-// ---------------------------------------------------------------------------
+// Calculation helpers
 
-// FindModelWithWorkspace loads a model by ID param with Workspace preloaded.
+// FindModelWithWorkspace gets model with workspace preloaded.
 func (s *Store) FindModelWithWorkspace(modelIDParam string) (*commonModels.Model, error) {
 	var model commonModels.Model
 	err := s.db.Preload("Workspace").First(&model, modelIDParam).Error

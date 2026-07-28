@@ -48,6 +48,23 @@ func TestFindByID_NotFound(t *testing.T) {
 	assert.Error(t, err)
 }
 
+func TestDeleteModelShareScopesDeleteToModel(t *testing.T) {
+	db, mock := testutil.NewMockDB(t)
+	store := NewStore(db)
+
+	mock.ExpectBegin()
+	mock.ExpectExec(`DELETE FROM "model_shares" WHERE id = \$1 AND model_id = \$2`).
+		WithArgs(9, 128).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectCommit()
+
+	revoked, err := store.DeleteModelShare(128, 9)
+
+	require.NoError(t, err)
+	assert.True(t, revoked)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestCountByUserID(t *testing.T) {
 	db, mock := testutil.NewMockDB(t)
 	store := NewStore(db)

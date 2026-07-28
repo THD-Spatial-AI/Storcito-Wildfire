@@ -35,6 +35,7 @@ type ModelStore interface {
 
 	// Sharing
 	CreateModelShare(share *commonModels.ModelShare) error
+	DeleteModelShare(modelID, shareID uint) (bool, error)
 	FindModelShareByModelAndEmail(modelID uint, email string) (*commonModels.ModelShare, error)
 	CountModelSharesByModelAndUser(modelID uint, userID string) int64
 	CountModelSharesByModelAndUserOrEmail(modelID uint, userID, email string) int64

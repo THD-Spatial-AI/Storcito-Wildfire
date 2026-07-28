@@ -18,6 +18,7 @@ func registerModelRoutes(api *gin.RouterGroup, modelHandler *modelhandler.ModelH
 	api.PUT(routeModelByID+"/activation", modelHandler.UpdateModelActivation)
 	api.PATCH(routeModelByID+"/move", modelHandler.MoveModel)
 	api.POST(routeModelByID+"/share", modelHandler.ShareModel)
+	api.DELETE(routeModelByID+"/shares/:shareId", modelHandler.RevokeModelShare)
 	api.POST(routeModelByID+"/inputs", modelHandler.UploadModelInputs)
 	api.GET(routeModelByID+"/results", resultHandler.GetModelResults)
 	api.GET(routeModelByID+"/fire-weather", resultHandler.GetModelFireWeather)

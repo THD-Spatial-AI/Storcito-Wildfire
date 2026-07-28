@@ -106,6 +106,57 @@ func TestShareModel_NoUserContext(t *testing.T) {
 	assert.NotEqual(t, http.StatusOK, w.Code)
 }
 
+func TestRevokeModelShare_OwnerCanRevoke(t *testing.T) {
+	db, mock := testutil.NewMockDB(t)
+	handler := NewModelHandlerWithCache(db, nil, nil, "http://kc", "realm", nil, nil, nil, nil)
+
+	mock.ExpectQuery(`SELECT \* FROM "models" WHERE id = \$1`).
+		WithArgs("128", 1).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id", "user_email"}).
+			AddRow(128, "owner-id", "owner@example.com"))
+	mock.ExpectBegin()
+	mock.ExpectExec(`DELETE FROM "model_shares" WHERE id = \$1 AND model_id = \$2`).
+		WithArgs(9, 128).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectCommit()
+
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = httptest.NewRequest(http.MethodDelete, "/models/128/shares/9", nil)
+	c.Params = gin.Params{{Key: "id", Value: "128"}, {Key: "shareId", Value: "9"}}
+	c.Set("user_id", "owner-id")
+	c.Set("user_email", "owner@example.com")
+	c.Set("access_level", "intermediate")
+
+	handler.RevokeModelShare(c)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestRevokeModelShare_RecipientCannotRevoke(t *testing.T) {
+	db, mock := testutil.NewMockDB(t)
+	handler := NewModelHandlerWithCache(db, nil, nil, "http://kc", "realm", nil, nil, nil, nil)
+
+	mock.ExpectQuery(`SELECT \* FROM "models" WHERE id = \$1`).
+		WithArgs("128", 1).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id", "user_email"}).
+			AddRow(128, "owner-id", "owner@example.com"))
+
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = httptest.NewRequest(http.MethodDelete, "/models/128/shares/9", nil)
+	c.Params = gin.Params{{Key: "id", Value: "128"}, {Key: "shareId", Value: "9"}}
+	c.Set("user_id", "recipient-id")
+	c.Set("user_email", "recipient@example.com")
+	c.Set("access_level", "intermediate")
+
+	handler.RevokeModelShare(c)
+
+	assert.Equal(t, http.StatusForbidden, w.Code)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestGetModelStats_NoUserContext(t *testing.T) {
 	db, _ := testutil.NewMockDB(t)
 	handler := NewModelHandlerWithCache(db, nil, nil, "http://kc", "realm", nil, nil, nil, nil)

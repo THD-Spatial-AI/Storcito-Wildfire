@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	modelservice "spatialhub_backend/internal/model/service"
 
@@ -433,7 +434,8 @@ func (h *ModelHandler) populateChildModelIDsForModel(model *models.Model) {
 }
 
 func (h *ModelHandler) filterModelShares(model *models.Model, userID, email string) {
-	if model.UserID == userID {
+	if model.UserID == userID ||
+		(email != "" && model.UserEmail != "" && strings.EqualFold(model.UserEmail, email)) {
 		return
 	}
 	filteredShares := []models.ModelShare{}

@@ -338,7 +338,14 @@ const modelSnapshotEqual = (prev: Model & { level: number }, next: Model & { lev
 	prev.is_copy === next.is_copy &&
 	prev.parent_model_id === next.parent_model_id &&
 	prev.level === next.level &&
+	modelSharesSnapshot(prev) === modelSharesSnapshot(next) &&
 	getErrorMessage(prev.results?.error) === getErrorMessage(next.results?.error);
+
+const modelSharesSnapshot = (model: Model): string =>
+	(model.shares ?? [])
+		.map((share) => `${share.id}:${share.email}:${share.permission}`)
+		.sort()
+		.join("|");
 
 const areRowPropsEqual = (prev: ModelTableRowProps, next: ModelTableRowProps): boolean => {
 	if (!modelSnapshotEqual(prev.model, next.model)) return false;
