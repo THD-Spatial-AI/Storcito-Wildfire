@@ -25,12 +25,8 @@ var ErrForbidden = errors.New("access: forbidden")
 type ModelAccessStore interface {
 	GetModelByIDWithWorkspace(id uint) (*commonModels.Model, error)
 	GetUserGroupIDs(userID string) ([]string, error)
+	HasModelShare(modelID uint, userID, email string) (bool, error)
 }
-
-// EnsureModelAccess loads the model and validates that the user
-// identified by userCtx has access. Expert users and owners always
-// pass; otherwise workspace membership or group membership is
-// consulted.
 func EnsureModelAccess(store ModelAccessStore, userCtx *httputil.UserContext, modelID uint) (*commonModels.Model, error) {
 	if userCtx == nil {
 		return nil, ErrForbidden
@@ -43,7 +39,17 @@ func EnsureModelAccess(store ModelAccessStore, userCtx *httputil.UserContext, mo
 		return nil, err
 	}
 
-	if userCtx.AccessLevel == constants.AccessLevelExpert || model.UserID == userCtx.UserID {
+	if userCtx.AccessLevel == constants.AccessLevelExpert ||
+		isModelOwner(model, userCtx.UserID, userCtx.Email) ||
+		isWorkspaceOwner(model, userCtx.UserID, userCtx.Email) {
+		return model, nil
+	}
+
+	hasShare, err := store.HasModelShare(model.ID, userCtx.UserID, userCtx.Email)
+	if err != nil {
+		return nil, err
+	}
+	if hasShare {
 		return model, nil
 	}
 
@@ -51,6 +57,28 @@ func EnsureModelAccess(store ModelAccessStore, userCtx *httputil.UserContext, mo
 		return model, nil
 	}
 	return nil, ErrForbidden
+}
+
+func isModelOwner(model *commonModels.Model, userID, email string) bool {
+	if model == nil {
+		return false
+	}
+	if model.UserID == userID {
+		return true
+	}
+	return email != "" && model.UserEmail != "" && strings.EqualFold(model.UserEmail, email)
+}
+
+func isWorkspaceOwner(model *commonModels.Model, userID, email string) bool {
+	if model == nil || model.Workspace == nil {
+		return false
+	}
+	if model.Workspace.UserID == userID {
+		return true
+	}
+	return email != "" &&
+		model.Workspace.UserEmail != "" &&
+		strings.EqualFold(model.Workspace.UserEmail, email)
 }
 
 func isWorkspaceMember(model *commonModels.Model, userID, email string) bool {

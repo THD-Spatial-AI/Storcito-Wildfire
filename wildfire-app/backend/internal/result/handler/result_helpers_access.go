@@ -1,15 +1,16 @@
 package result
 
 import (
+	"errors"
 	"fmt"
-	"strings"
 
-	"platform.local/common/pkg/constants"
 	"platform.local/common/pkg/httputil"
 	commonModels "platform.local/common/pkg/models"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+
+	"spatialhub_backend/internal/access"
 )
 
 // getResultFromRequest fetches the result for the :id param with access validation for current user
@@ -19,7 +20,7 @@ func (h *ResultHandler) getResultFromRequest(c *gin.Context) (*commonModels.Mode
 		return nil, false
 	}
 	resultID := c.Param("id")
-	result, ok := h.fetchResultWithAccess(c, userCtx.UserID, userCtx.Email, parseUint(resultID))
+	result, ok := h.fetchResultWithAccess(c, userCtx, parseUint(resultID))
 	if !ok {
 		return nil, false
 	}
@@ -27,10 +28,10 @@ func (h *ResultHandler) getResultFromRequest(c *gin.Context) (*commonModels.Mode
 }
 
 // fetchResultWithAccess fetches a result by ID and validates user access
-func (h *ResultHandler) fetchResultWithAccess(c *gin.Context, userID string, userEmail string, resultID uint) (*commonModels.ModelResult, bool) {
+func (h *ResultHandler) fetchResultWithAccess(c *gin.Context, userCtx *httputil.UserContext, resultID uint) (*commonModels.ModelResult, bool) {
 	result, err := h.store.GetResultByID(resultID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			httputil.NotFound(c, "Result not found")
 		} else {
 			httputil.InternalError(c, "Failed to fetch result")
@@ -38,66 +39,34 @@ func (h *ResultHandler) fetchResultWithAccess(c *gin.Context, userID string, use
 		return nil, false
 	}
 
-	if result.UserID != userID {
-		hasAccess := h.hasWorkspaceAccess(userID, userEmail, result.ModelID)
-		if !hasAccess {
-			httputil.Forbidden(c, errAccessDenied)
-			return nil, false
-		}
+	if !h.ensureModelAccess(c, userCtx, result.ModelID) {
+		return nil, false
 	}
 
 	return result, true
 }
 
-// hasWorkspaceAccess checks if a user has access to a model through workspace sharing
-func (h *ResultHandler) hasWorkspaceAccess(userID string, userEmail string, modelID uint) bool {
-	model, err := h.store.GetModelByIDWithWorkspace(modelID)
-	if err != nil {
-		return false
-	}
-
-	if model.WorkspaceID == nil {
-		return false
-	}
-
-	if h.isWorkspaceMember(model, userID, userEmail) {
+func (h *ResultHandler) ensureModelAccess(c *gin.Context, userCtx *httputil.UserContext, modelID uint) bool {
+	_, err := access.EnsureModelAccess(h.store, userCtx, modelID)
+	if err == nil {
 		return true
 	}
 
-	return h.isInWorkspaceGroup(model, userID)
-}
-
-func (h *ResultHandler) isWorkspaceMember(model *commonModels.Model, userID, userEmail string) bool {
-	for _, member := range model.Workspace.Members {
-		if member.UserID == userID {
-			return true
-		}
-		if userEmail != "" && member.Email != "" && strings.EqualFold(member.Email, userEmail) {
-			return true
-		}
+	switch {
+	case errors.Is(err, access.ErrModelNotFound):
+		httputil.NotFound(c, errModelNotFound)
+	case errors.Is(err, access.ErrForbidden):
+		httputil.Forbidden(c, errAccessDenied)
+	default:
+		httputil.InternalError(c, "Failed to verify model access")
 	}
 	return false
 }
 
-func (h *ResultHandler) isInWorkspaceGroup(model *commonModels.Model, userID string) bool {
-	userGroupIDs, err := h.store.GetUserGroupIDs(userID)
-	if err != nil || len(userGroupIDs) == 0 {
-		return false
-	}
-
-	for _, wsGroup := range model.Workspace.Groups {
-		for _, userGroupID := range userGroupIDs {
-			if wsGroup.GroupID == userGroupID {
-				return true
-			}
-		}
-	}
-	return false
-}
 func (h *ResultHandler) fetchModelByID(c *gin.Context, modelID string) (*commonModels.Model, bool) {
 	model, err := h.store.GetModelByIDStr(modelID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			httputil.NotFound(c, errModelNotFound)
 		} else {
 			httputil.InternalError(c, errFailedToFetchModel)
@@ -108,19 +77,7 @@ func (h *ResultHandler) fetchModelByID(c *gin.Context, modelID string) (*commonM
 }
 
 func (h *ResultHandler) userHasModelAccess(c *gin.Context, model *commonModels.Model, userCtx *httputil.UserContext) bool {
-	// Expert users can access all models
-	if userCtx.AccessLevel == constants.AccessLevelExpert {
-		return true
-	}
-
-	isOwner := model.UserID == userCtx.UserID
-	hasWorkspaceAccess := h.hasWorkspaceAccess(userCtx.UserID, userCtx.Email, model.ID)
-
-	if !isOwner && !hasWorkspaceAccess {
-		httputil.Forbidden(c, errAccessDenied)
-		return false
-	}
-	return true
+	return h.ensureModelAccess(c, userCtx, model.ID)
 }
 
 func (h *ResultHandler) fetchResults(c *gin.Context, modelID string) ([]commonModels.ModelResult, error) {

@@ -1,10 +1,11 @@
 import * as React from "react";
 import { useAuthStore } from "@/store/auth-store";
-import { createContext, useContext, ReactNode, useState, useEffect, useMemo, useCallback } from "react";
+import { createContext, useContext, ReactNode, useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useAppStore } from "@/store/app-store";
 import { useWeatherLocationStore } from "@/features/weather/store/weather-location";
 import { useMapLocationStore } from "@/features/interactive-map/store/map-location";
 import { updateMapToSavedLocation } from "@/features/interactive-map/store/map-store";
+import { useWorkspaceStore } from "@/components/workspace";
 import { User } from "@/types/user";
 
 // Define the shape of the context
@@ -36,6 +37,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const [isAuthenticated, setIsAuthenticated] = useState(!!storeUser);
 	const [user, setUser] = useState<User | null>(storeUser);
 	const [isLoading, setIsLoading] = useState(!!storeUser);
+	const previousUserIDRef = useRef(storeUser?.id == null ? null : String(storeUser.id));
 
 	const refreshUser = useCallback(async () => {
 		if (storeUser) {
@@ -60,6 +62,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	}, []);
 
 	useEffect(() => {
+		const nextUserID = storeUser?.id == null ? null : String(storeUser.id);
+		if (previousUserIDRef.current !== nextUserID) {
+			useWorkspaceStore.getState().resetWorkspace();
+			previousUserIDRef.current = nextUserID;
+		}
+
 		if (storeUser) {
 			setIsAuthenticated(true);
 			setUser(storeUser);

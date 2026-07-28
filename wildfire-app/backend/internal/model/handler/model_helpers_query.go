@@ -100,7 +100,7 @@ func (h *ModelHandler) buildUserAccessQuery(c *gin.Context, userCtx *httputil.Us
 func (h *ModelHandler) buildBaseAccessConditions(userCtx *httputil.UserContext) []interface{} {
 	db := h.store.DB()
 	conditions := []interface{}{
-		db.Where("user_id = ?", userCtx.UserID),
+		db.Where("user_id = ? OR LOWER(user_email) = LOWER(?)", userCtx.UserID, userCtx.Email),
 	}
 
 	conditions = append(conditions, db.Where(

@@ -53,6 +53,7 @@ var allowedCrossDomain = map[string]map[string]string{
 	// Result store joins to the parent model and checks group membership.
 	"result": {
 		"Model":       "join result → owning model",
+		"ModelShare":  "access checks: direct model sharing",
 		"GroupMember": "access checks: group membership",
 	},
 	// Settings store reads Model for usage limits.

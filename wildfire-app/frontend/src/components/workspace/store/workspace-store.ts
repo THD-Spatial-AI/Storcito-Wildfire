@@ -12,6 +12,7 @@ type WorkspaceState = {
   loadPreferredWorkspace: () => Promise<void>;
   savePreferredWorkspace: (workspaceId: number | null) => Promise<void>;
   initializeWorkspace: () => Promise<void>;
+  resetWorkspace: () => void;
 };
 
 export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
@@ -28,6 +29,15 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
 
   setPreferredWorkspaceId: (id) => {
     set({ preferredWorkspaceId: id });
+  },
+
+  resetWorkspace: () => {
+    set({
+      currentWorkspace: null,
+      preferredWorkspaceId: null,
+      isLoading: false,
+      isInitialized: false,
+    });
   },
 
   loadPreferredWorkspace: async () => {
