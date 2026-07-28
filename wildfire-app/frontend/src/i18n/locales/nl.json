@@ -867,7 +867,7 @@
   },
   "mapLayers": {
     "title": "Kaartlagen",
-    "description": "Configureer kaartweergave en datalagen",
+    "description": "Kies de achtergrondkaartstijl",
     "baseLayers": {
       "title": "Basislagen",
       "description": "Kies de achtergrondkaartstijl",
@@ -878,10 +878,6 @@
       "openTopoMap": "Topografische stijlkaart",
       "maplibreDark": "Donkere vector-basiskaart",
       "maplibreVoyager": "Gedetailleerde vector-basiskaart (Voyager)"
-    },
-    "dataLayers": {
-      "title": "Datalagen",
-      "energySimulation": "Eindlaag energiesimulatie"
     },
     "tooltip": "Basiskaarten"
   },
@@ -928,7 +924,7 @@
       },
       "layers": {
         "title": "Kaartlagen",
-        "description": "Beheer kaartlagen en overlays. Kies basiskaarten, schakel gegevenslagen in/uit en pas uw kaartweergave aan."
+        "description": "Kies een basiskaart en pas uw kaartweergave aan."
       },
       "documentation": {
         "title": "Documentatie",

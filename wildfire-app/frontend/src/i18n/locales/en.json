@@ -1021,7 +1021,7 @@
   },
   "mapLayers": {
     "title": "Map Layers",
-    "description": "Configure map appearance and data layers",
+    "description": "Choose the background map style",
     "baseLayers": {
       "title": "Base Layers",
       "description": "Choose the background map style",
@@ -1032,10 +1032,6 @@
       "openTopoMap": "Topographic style map",
       "maplibreDark": "Dark vector basemap",
       "maplibreVoyager": "Detailed vector basemap"
-    },
-    "dataLayers": {
-      "title": "Data Layers",
-      "energySimulation": "Final Energy Simulation layer"
     },
     "tooltip": "Base Maps"
   },
@@ -1082,7 +1078,7 @@
       },
       "layers": {
         "title": "Map Layers",
-        "description": "Control map layers and overlays. Choose base maps, toggle data layers, and customize your map view."
+        "description": "Choose a base map and customize your map view."
       },
       "documentation": {
         "title": "Documentation",

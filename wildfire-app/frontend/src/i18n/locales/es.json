@@ -1021,7 +1021,7 @@
   },
   "mapLayers": {
     "title": "Capas del mapa",
-    "description": "Configurar apariencia del mapa y capas de datos",
+    "description": "Elegir el estilo del mapa de fondo",
     "baseLayers": {
       "title": "Capas base",
       "description": "Elegir el estilo del mapa de fondo",
@@ -1032,10 +1032,6 @@
       "openTopoMap": "Mapa de estilo topográfico",
       "maplibreDark": "Mapa base vectorial oscuro",
       "maplibreVoyager": "Mapa base vectorial detallado (Voyager)"
-    },
-    "dataLayers": {
-      "title": "Capas de datos",
-      "energySimulation": "Capa de simulación energética final"
     },
     "tooltip": "Mapas Base"
   },
@@ -1082,7 +1078,7 @@
       },
       "layers": {
         "title": "Capas del Mapa",
-        "description": "Controla capas del mapa y superposiciones. Elige mapas base, activa/desactiva capas de datos y personaliza tu vista del mapa."
+        "description": "Elige un mapa base y personaliza tu vista del mapa."
       },
       "documentation": {
         "title": "Documentación",

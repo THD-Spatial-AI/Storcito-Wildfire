@@ -47,12 +47,12 @@ export const useAppLayoutState = () => {
   );
 
   const changeBaseLayer = useCallback(
-    (index: number) => {
-      const layer = baseLayers.at(index);
-      if (!layer) return;
+    (layerId: string) => {
+      const layer = baseLayers.find((candidate) => candidate.id === layerId);
+      if (!layer || !hasAccessToLayer(layer)) return;
       setSelectedBaseLayerId(layer.id);
     },
-    [baseLayers, setSelectedBaseLayerId]
+    [baseLayers, hasAccessToLayer, setSelectedBaseLayerId]
   );
 
   const accessibleBaseLayers = useMemo(
@@ -162,7 +162,6 @@ export const useAppLayoutState = () => {
     cssVariables,
     getUserInitial,
     handleSmartRestartTour,
-    hasAccessToLayer,
     isActive,
     navigationHandlers,
     selectedBaseLayerId,

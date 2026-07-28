@@ -867,7 +867,7 @@
   },
   "mapLayers": {
     "title": "Mapové vrstvy",
-    "description": "Nakonfigurovat vzhled mapy a datové vrstvy",
+    "description": "Vyberte styl podkladové mapy",
     "baseLayers": {
       "title": "Základní vrstvy",
       "description": "Vyberte styl podkladové mapy",
@@ -878,10 +878,6 @@
       "openTopoMap": "Topografická stylová mapa",
       "maplibreDark": "Tmavá vektorová podkladová mapa",
       "maplibreVoyager": "Podrobná vektorová podkladová mapa (Voyager)"
-    },
-    "dataLayers": {
-      "title": "Datové vrstvy",
-      "energySimulation": "Konečná vrstva energetické simulace"
     },
     "tooltip": "Základní Mapy"
   },
@@ -928,7 +924,7 @@
       },
       "layers": {
         "title": "Vrstvy Mapy",
-        "description": "Ovládejte vrstvy mapy a překryvy. Vybírejte základní mapy, přepínejte datové vrstvy a přizpůsobujte zobrazení mapy."
+        "description": "Vyberte základní mapu a přizpůsobte zobrazení mapy."
       },
       "documentation": {
         "title": "Dokumentace",

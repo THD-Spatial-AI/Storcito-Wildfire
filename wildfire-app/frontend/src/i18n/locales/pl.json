@@ -867,7 +867,7 @@
   },
   "mapLayers": {
     "title": "Warstwy mapy",
-    "description": "Skonfiguruj wygląd mapy i warstwy danych",
+    "description": "Wybierz styl mapy tła",
     "baseLayers": {
       "title": "Warstwy bazowe",
       "description": "Wybierz styl mapy tła",
@@ -878,10 +878,6 @@
       "openTopoMap": "Mapa stylu topograficznego",
       "maplibreDark": "Ciemna wektorowa mapa bazowa",
       "maplibreVoyager": "Szczegółowa wektorowa mapa bazowa (Voyager)"
-    },
-    "dataLayers": {
-      "title": "Warstwy danych",
-      "energySimulation": "Końcowa warstwa symulacji energetycznej"
     },
     "tooltip": "Mapy Bazowe"
   },
@@ -928,7 +924,7 @@
       },
       "layers": {
         "title": "Warstwy Mapy",
-        "description": "Kontroluj warstwy mapy i nakładki. Wybieraj mapy bazowe, włączaj/wyłączaj warstwy danych i dostosowuj widok mapy."
+        "description": "Wybierz mapę bazową i dostosuj widok mapy."
       },
       "documentation": {
         "title": "Dokumentacja",

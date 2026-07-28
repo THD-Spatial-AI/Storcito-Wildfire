@@ -21,7 +21,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     cssVariables,
     getUserInitial,
     handleSmartRestartTour,
-    hasAccessToLayer,
     isActive,
     navigationHandlers,
     selectedBaseLayerId,
@@ -50,7 +49,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           accessibleBaseLayers={accessibleBaseLayers}
           selectedBaseLayerId={selectedBaseLayerId}
           changeBaseLayer={changeBaseLayer}
-          hasAccessToLayer={hasAccessToLayer}
           sidebarItems={sidebarItems}
           isActive={isActive}
           navigationHandlers={navigationHandlers}

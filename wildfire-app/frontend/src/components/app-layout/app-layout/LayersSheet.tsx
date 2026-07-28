@@ -9,18 +9,15 @@ import {
   Label,
   RadioGroup,
   RadioGroupItem,
-  Separator,
   Sheet,
   SheetContent,
   SheetTitle,
   SheetTrigger,
-  Switch,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@spatialhub/ui";
 
-import { LayerInfo, layers } from "@/features/interactive-map/store/map-store";
 import { cn } from "@/lib/utils";
 import { SIDEBAR_WIDTH, TOPBAR_HEIGHT } from "./constants";
 
@@ -33,15 +30,13 @@ type BaseLayerInfo = {
 interface LayersSheetProps {
   baseLayers: BaseLayerInfo[];
   selectedBaseLayerId: string;
-  changeBaseLayer: (index: number) => void;
-  hasAccessToLayer: (layer: LayerInfo) => boolean;
+  changeBaseLayer: (layerId: string) => void;
 }
 
 export const LayersSheet: React.FC<LayersSheetProps> = ({
   baseLayers,
   selectedBaseLayerId,
   changeBaseLayer,
-  hasAccessToLayer,
 }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [open, setOpen] = useState(false);
@@ -130,10 +125,7 @@ export const LayersSheet: React.FC<LayersSheetProps> = ({
                   <RadioGroup
                     className="gap-2"
                     value={selectedBaseLayerId}
-                    onValueChange={(val) => {
-                      const idx = baseLayers.findIndex((layer) => layer.id === val);
-                      if (idx >= 0) changeBaseLayer(idx);
-                    }}
+                    onValueChange={changeBaseLayer}
                   >
                     {baseLayers.map((layer) => (
                       <BaseLayerOption key={layer.id} layer={layer} />
@@ -142,22 +134,6 @@ export const LayersSheet: React.FC<LayersSheetProps> = ({
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-          </div>
-
-          <Separator className="my-4 bg-border" />
-
-          <div className="relative">
-            <div className="flex items-center gap-2 mb-3 px-1">
-              <div className="p-1 rounded bg-muted">
-                <Layers className="size-3.5 text-muted-foreground" />
-              </div>
-              <span className="text-sm font-medium text-foreground">{t("mapLayers.dataLayers.title")}</span>
-            </div>
-            <div className="space-y-2">
-              {layers.map((layer) => (
-                <LayerOption key={layer.id} layer={layer} hasAccess={hasAccessToLayer(layer)} />
-              ))}
-            </div>
           </div>
         </div>
       </SheetContent>
@@ -206,66 +182,5 @@ const BaseLayerOption: React.FC<BaseLayerOptionProps> = ({ layer }) => {
         </p>
       </div>
     </label>
-  );
-};
-
-interface LayerOptionProps {
-  layer: LayerInfo;
-  hasAccess: boolean;
-}
-
-const LayerOption: React.FC<LayerOptionProps> = ({ layer, hasAccess }) => {
-  const { id, name, color, enabled, icon: LayerIcon } = layer;
-
-  const getLayerDescription = (layerId: string) => {
-    const descriptionMap: Record<string, string> = {};
-    return descriptionMap[layerId] || layer.description;
-  };
-
-  return (
-    <div className="relative">
-      <div
-        style={{ "--layer-color": color } as React.CSSProperties}
-        className={cn(
-          "group border border-border cursor-pointer relative flex w-full items-center gap-3 rounded-xl p-3 shadow-sm hover:shadow-md transition-all duration-200",
-          "hover:border-muted-foreground",
-          "has-data-[state=checked]:border-foreground has-data-[state=checked]:bg-muted",
-          !hasAccess && "opacity-50 pointer-events-none"
-        )}
-      >
-        <div className="p-2 rounded-lg bg-muted group-hover:bg-accent transition-colors">
-          <LayerIcon className="size-4 text-foreground" />
-        </div>
-
-        <div className="flex-1 min-w-0">
-          <Label htmlFor={id} className="text-sm font-medium text-foreground cursor-pointer block">
-            {name}
-          </Label>
-          <p id={`${id}-description`} className="text-muted-foreground text-xs mt-0.5 leading-relaxed truncate">
-            {getLayerDescription(id)}
-          </p>
-          {!hasAccess && (
-            <span className="text-amber-600 dark:text-amber-400 text-xs mt-1 flex items-center gap-1">
-              <svg className="size-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                />
-              </svg>
-              Requires {layer.accessLevel.replace("_", " ")} access
-            </span>
-          )}
-        </div>
-
-        <Switch
-          id={id}
-          className={cn("h-5 w-9 shrink-0", "data-[state=checked]:bg-foreground cursor-pointer")}
-          aria-describedby={`${id}-description`}
-          {...(enabled && { checked: enabled })}
-        />
-      </div>
-    </div>
   );
 };

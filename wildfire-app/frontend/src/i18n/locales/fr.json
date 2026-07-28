@@ -1021,7 +1021,7 @@
   },
   "mapLayers": {
     "title": "Couches de carte",
-    "description": "Configurer l'apparence de la carte et les couches de données",
+    "description": "Choisir le style de carte d'arrière-plan",
     "baseLayers": {
       "title": "Couches de base",
       "description": "Choisir le style de carte d'arrière-plan",
@@ -1032,10 +1032,6 @@
       "openTopoMap": "Carte de style topographique",
       "maplibreDark": "Fond de carte vectoriel sombre",
       "maplibreVoyager": "Fond de carte vectoriel détaillé (Voyager)"
-    },
-    "dataLayers": {
-      "title": "Couches de données",
-      "energySimulation": "Couche de simulation énergétique finale"
     },
     "tooltip": "Cartes de Base"
   },
@@ -1082,7 +1078,7 @@
       },
       "layers": {
         "title": "Couches de Carte",
-        "description": "Contrôlez les couches de carte et les superpositions. Choisissez les cartes de base, activez/désactivez les couches de données et personnalisez votre vue de carte."
+        "description": "Choisissez une carte de base et personnalisez votre vue de carte."
       },
       "documentation": {
         "title": "Documentation",

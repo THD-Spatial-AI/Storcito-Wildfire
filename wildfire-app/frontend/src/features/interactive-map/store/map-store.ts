@@ -5,13 +5,9 @@ import OSM from "ol/source/OSM";
 import XYZ from "ol/source/XYZ";
 import TileWMS from "ol/source/TileWMS";
 import { fromLonLat } from "ol/proj";
-import { AlertTriangle } from "lucide-react";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { MAP_ZOOM } from '@/features/interactive-map/utils/mapUtils';
 import { useMapLocationStore } from './map-location';
-
-// Type definitions
-type LucideIconType = typeof AlertTriangle;
 
 // Base layer metadata interface
 interface BaseLayerInfo {
@@ -19,16 +15,6 @@ interface BaseLayerInfo {
 	name: string;
 	description: string;
 	source: OSM | XYZ | TileWMS;
-	accessLevel: "very_low" | "intermediate" | "manager" | "expert";
-}
-
-export interface LayerInfo {
-	id: string;
-	name: string;
-	description: string;
-	icon: LucideIconType;
-	color: string;
-	enabled: boolean;
 	accessLevel: "very_low" | "intermediate" | "manager" | "expert";
 }
 
@@ -146,8 +132,6 @@ const baseLayers: BaseLayerInfo[] = [
 		accessLevel: "intermediate",
 	},
 ];
-
-export const layers: LayerInfo[] = [];
 
 export const useMapStore = create<MapStore>()(
 	persist(

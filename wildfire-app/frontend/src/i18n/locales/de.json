@@ -1021,7 +1021,7 @@
   },
   "mapLayers": {
     "title": "Kartenebenen",
-    "description": "Kartenansicht und Datenebenen konfigurieren",
+    "description": "Wählen Sie den Kartenhintergrund",
     "baseLayers": {
       "title": "Basisebenen",
       "description": "Wählen Sie den Kartenhintergrund",
@@ -1032,10 +1032,6 @@
       "openTopoMap": "Topografische Stilkarte",
       "maplibreDark": "Dunkle Vektor-Basiskarte",
       "maplibreVoyager": "Detaillierte Vektor-Basiskarte (Voyager)"
-    },
-    "dataLayers": {
-      "title": "Datenebenen",
-      "energySimulation": "Energiesimulations-Endebene"
     },
     "tooltip": "Basiskarten"
   },
@@ -1082,7 +1078,7 @@
       },
       "layers": {
         "title": "Kartenebenen",
-        "description": "Steuern Sie Kartenebenen und Overlays. Wählen Sie Basiskarten, schalten Sie Datenebenen um und passen Sie Ihre Kartenansicht an."
+        "description": "Wählen Sie eine Basiskarte und passen Sie Ihre Kartenansicht an."
       },
       "documentation": {
         "title": "Dokumentation",

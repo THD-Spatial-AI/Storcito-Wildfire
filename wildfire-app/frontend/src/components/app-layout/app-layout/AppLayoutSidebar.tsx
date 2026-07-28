@@ -1,6 +1,5 @@
 import SidebarButton from "@/components/ui/SidebarButton";
 import { Authorized } from "@/middleware/authorized";
-import { LayerInfo } from "@/features/interactive-map/store/map-store";
 import { LayoutGrid, type LucideIcon } from "lucide-react";
 import { ADMIN_PATH } from "./constants";
 import { LayersSheet } from "./LayersSheet";
@@ -17,8 +16,7 @@ type BaseLayerInfo = {
 
 interface AppLayoutSidebarProps {
   accessibleBaseLayers: BaseLayerInfo[];
-  changeBaseLayer: (index: number) => void;
-  hasAccessToLayer: (layer: LayerInfo) => boolean;
+  changeBaseLayer: (layerId: string) => void;
   isActive: (path: string) => boolean;
   navigationHandlers: NavigationHandlers;
   onRestartTour: () => void;
@@ -37,7 +35,6 @@ interface AppLayoutSidebarProps {
 export const AppLayoutSidebar: React.FC<AppLayoutSidebarProps> = ({
   accessibleBaseLayers,
   changeBaseLayer,
-  hasAccessToLayer,
   isActive,
   navigationHandlers,
   onRestartTour,
@@ -73,7 +70,6 @@ export const AppLayoutSidebar: React.FC<AppLayoutSidebarProps> = ({
           baseLayers={accessibleBaseLayers}
           selectedBaseLayerId={selectedBaseLayerId}
           changeBaseLayer={changeBaseLayer}
-          hasAccessToLayer={hasAccessToLayer}
         />
       </div>
 

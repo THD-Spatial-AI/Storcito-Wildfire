@@ -867,7 +867,7 @@
   },
   "mapLayers": {
     "title": "Livelli mappa",
-    "description": "Configura aspetto mappa e livelli dati",
+    "description": "Scegli lo stile della mappa di sfondo",
     "baseLayers": {
       "title": "Livelli base",
       "description": "Scegli lo stile della mappa di sfondo",
@@ -878,10 +878,6 @@
       "openTopoMap": "Mappa di stile topografico",
       "maplibreDark": "Mappa base vettoriale scura",
       "maplibreVoyager": "Mappa base vettoriale dettagliata (Voyager)"
-    },
-    "dataLayers": {
-      "title": "Livelli dati",
-      "energySimulation": "Livello simulazione energetica finale"
     },
     "tooltip": "Mappe di Base"
   },
@@ -928,7 +924,7 @@
       },
       "layers": {
         "title": "Livelli Mappa",
-        "description": "Controlla livelli mappa e sovrapposizioni. Scegli mappe base, attiva/disattiva livelli dati e personalizza la tua vista mappa."
+        "description": "Scegli una mappa base e personalizza la vista della mappa."
       },
       "documentation": {
         "title": "Documentazione",
