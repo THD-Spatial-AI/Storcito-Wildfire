@@ -20,3 +20,9 @@ services:
   webservice:
     environment:
       KEYCLOAK_URL: http://keycloak:8080/keycloak
+
+  # Not published in the base compose; loopback-only here so host-run backends
+  # and make migrate/seed can reach it. Still password-protected.
+  redis:
+    ports:
+      - "127.0.0.1:6379:6379"

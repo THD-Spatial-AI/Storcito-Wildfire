@@ -6,10 +6,15 @@ YELLOW := \033[1;33m
 CYAN := \033[0;36m
 NC := \033[0m
 
-# Compose files: dev overrides fix Keycloak issuer for localhost
-PLATFORM_COMPOSE := -f platform-core/docker-compose.yml -f platform-core/docker-compose.dev.yml
-WILDFIRE_APP_COMPOSE := -f wildfire-app/docker-compose.yml -f wildfire-app/docker-compose.dev.yml
-GEOSERVER_COMPOSE := -f platform-core/geoserver/docker-compose.yml
+# Compose files: dev overrides fix Keycloak issuer for localhost.
+ENV_FILE := --env-file .env
+PLATFORM_COMPOSE := $(ENV_FILE) -f platform-core/docker-compose.yml -f platform-core/docker-compose.dev.yml
+WILDFIRE_APP_COMPOSE := $(ENV_FILE) -f wildfire-app/docker-compose.yml -f wildfire-app/docker-compose.dev.yml
+GEOSERVER_COMPOSE := $(ENV_FILE) -f platform-core/geoserver/docker-compose.yml
+
+.env:
+	@cp .env.example .env
+	@echo "$(GREEN)Created .env from .env.example$(NC)"
 
 .PHONY: help
 help:
@@ -37,7 +42,7 @@ help:
 	@echo "  make remove-postgres    Remove PostgreSQL container"
 
 .PHONY: up-db
-up-db:
+up-db: .env
 	@echo "$(CYAN)Starting database services...$(NC)"
 	@docker network create spatialhub-net 2>/dev/null || true
 	@docker compose $(PLATFORM_COMPOSE) up -d postgres redis
@@ -47,7 +52,7 @@ up-db:
 	@echo ""
 
 .PHONY: start-postgres
-start-postgres:
+start-postgres: .env
 	@echo "$(CYAN)Starting PostgreSQL with pgRouting...$(NC)"
 	@docker network create spatialhub-net 2>/dev/null || true
 	@docker compose $(PLATFORM_COMPOSE) up -d postgres
@@ -57,13 +62,13 @@ start-postgres:
 	@echo ""
 
 .PHONY: stop-postgres
-stop-postgres:
+stop-postgres: .env
 	@echo "$(CYAN)Stopping PostgreSQL...$(NC)"
 	@docker compose $(PLATFORM_COMPOSE) stop postgres
 	@echo "$(GREEN)PostgreSQL stopped.$(NC)"
 
 .PHONY: remove-postgres
-remove-postgres:
+remove-postgres: .env
 	@echo "$(CYAN)Removing PostgreSQL container...$(NC)"
 	@docker compose $(PLATFORM_COMPOSE) rm -f postgres
 	@echo "$(GREEN)PostgreSQL container removed.$(NC)"
@@ -77,7 +82,7 @@ db-create:
 	@echo ""
 
 .PHONY: up-keycloak
-up-keycloak:
+up-keycloak: .env
 	@echo "$(CYAN)Starting Keycloak...$(NC)"
 	@docker compose $(PLATFORM_COMPOSE) up -d keycloak
 	@echo "Waiting for Keycloak to be healthy..."
@@ -86,21 +91,21 @@ up-keycloak:
 	@echo ""
 
 .PHONY: init-keycloak
-init-keycloak:
+init-keycloak: .env
 	@echo "$(CYAN)Running Keycloak init (configuring realm and updating .env files)...$(NC)"
 	@docker compose $(PLATFORM_COMPOSE) up keycloak-init
 	@echo "$(GREEN)Keycloak configured and client secrets updated in .env files.$(NC)"
 	@echo ""
 
 .PHONY: up-services
-up-services:
+up-services: .env
 	@echo "$(CYAN)Building and starting platform services...$(NC)"
 	@docker compose $(PLATFORM_COMPOSE) up -d --build auth-service webservice geoservice
 	@echo "$(GREEN)Platform services started.$(NC)"
 	@echo ""
 
 .PHONY: up
-up:
+up: .env
 	@echo "$(CYAN)Starting Platform Core...$(NC)"
 	@docker network create spatialhub-net 2>/dev/null || true
 	@docker compose $(PLATFORM_COMPOSE) up -d postgres redis keycloak auth-service webservice geoservice
@@ -113,16 +118,16 @@ up:
 	@echo "  Redis: localhost:6379"
 
 .PHONY: down
-down:
+down: .env
 	@echo "Stopping Platform Core..."
 	@docker compose $(PLATFORM_COMPOSE) down
 
 .PHONY: logs
-logs:
+logs: .env
 	@docker compose $(PLATFORM_COMPOSE) logs -f
 
 .PHONY: up-wildfire-app
-up-wildfire-app:
+up-wildfire-app: .env
 	@echo "$(CYAN)Starting Wildfire App...$(NC)"
 	@docker network create spatialhub-net 2>/dev/null || true
 	@docker compose $(WILDFIRE_APP_COMPOSE) up -d --build
@@ -133,12 +138,12 @@ up-wildfire-app:
 	@echo "  Pylovo: http://localhost:8086"
 
 .PHONY: down-wildfire-app
-down-wildfire-app:
+down-wildfire-app: .env
 	@echo "Stopping Wildfire App..."
 	@docker compose $(WILDFIRE_APP_COMPOSE) down
 
 .PHONY: logs-wildfire-app
-logs-wildfire-app:
+logs-wildfire-app: .env
 	@docker compose $(WILDFIRE_APP_COMPOSE) logs -f
 
 # -----------------------------------------------------------------------------
@@ -149,7 +154,7 @@ logs-wildfire-app:
 # -----------------------------------------------------------------------------
 
 .PHONY: up-geoserver
-up-geoserver:
+up-geoserver: .env
 	@echo "$(CYAN)Starting GeoServer stack...$(NC)"
 	@docker network create spatialhub-net 2>/dev/null || true
 	@docker compose $(GEOSERVER_COMPOSE) up -d
@@ -160,14 +165,14 @@ up-geoserver:
 	@echo ""
 
 .PHONY: down-geoserver
-down-geoserver:
+down-geoserver: .env
 	@echo "$(CYAN)Stopping GeoServer stack...$(NC)"
 	@docker compose $(PLATFORM_COMPOSE) stop geoservice
 	@docker compose $(GEOSERVER_COMPOSE) down
 	@echo "$(GREEN)GeoServer stack stopped.$(NC)"
 
 .PHONY: logs-geoserver
-logs-geoserver:
+logs-geoserver: .env
 	@docker compose $(GEOSERVER_COMPOSE) logs -f
 
 .PHONY: restart-geoserver
@@ -181,9 +186,15 @@ setup: env-setup install pull-images up-db db-create up-keycloak init-keycloak u
 .PHONY: env-setup
 env-setup:
 	@echo "$(CYAN)Creating .env files from .env.example...$(NC)"
+	@# Root .env: supplies REDIS_PASSWORD and the other variables the compose
+	@# files interpolate. Must exist before any docker compose target runs.
+	@[ -f .env ] || (cp .env.example .env && echo "  Created: .env")
 	@# Platform Core services
 	@[ -f platform-core/auth-service/.env ] || (cp platform-core/auth-service/.env.example platform-core/auth-service/.env && echo "  Created: platform-core/auth-service/.env")
 	@[ -f platform-core/webservice/.env ] || (cp platform-core/webservice/.env.example platform-core/webservice/.env && echo "  Created: platform-core/webservice/.env")
+	@# geoservice declares env_file: ./geoserver/.env — compose refuses to load
+	@# any target in this stack while that file is missing.
+	@[ -f platform-core/geoserver/.env ] || (cp platform-core/geoserver/.env.example platform-core/geoserver/.env && echo "  Created: platform-core/geoserver/.env")
 	@# Energy App
 	@[ -f wildfire-app/backend/.env ] || (cp wildfire-app/backend/.env.example wildfire-app/backend/.env && echo "  Created: wildfire-app/backend/.env")
 	@[ -f wildfire-app/frontend/.env ] || (cp wildfire-app/frontend/.env.example wildfire-app/frontend/.env && echo "  Created: wildfire-app/frontend/.env")
@@ -234,7 +245,7 @@ install-go:
 	@echo "$(GREEN)Go modules tidied.$(NC)"
 
 .PHONY: pull-images
-pull-images:
+pull-images: .env
 	@echo "$(CYAN)Pulling Docker images...$(NC)"
 	@echo "Pulling PostgreSQL..."
 	@docker pull postgres:15-alpine
