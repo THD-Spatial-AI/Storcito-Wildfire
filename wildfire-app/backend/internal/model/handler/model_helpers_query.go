@@ -58,29 +58,26 @@ func (h *ModelHandler) buildWorkspaceFilteredQuery(c *gin.Context, userCtx *http
 		return nil, false
 	}
 
-	// Check if this is the user's default workspace
-	modelSvc := h.newModelService()
-	defaultWs, err := modelSvc.GetDefaultWorkspace(userCtx.UserID)
-	isDefault := err == nil && defaultWs.ID == workspaceID
-
-	if isDefault {
-		return h.buildDefaultWorkspaceQuery(userCtx, workspaceID), true
-	}
-	return h.store.DB().Where("workspace_id = ?", workspaceID), true
+	return h.buildWorkspaceQuery(userCtx, workspaceID), true
 }
 
-func (h *ModelHandler) buildDefaultWorkspaceQuery(userCtx *httputil.UserContext, workspaceID uint) *gorm.DB {
-	return h.store.DB().Where(
-		`workspace_id = ? OR (
-			id IN (SELECT model_id FROM model_shares WHERE user_id = ? OR LOWER(email) = LOWER(?))
-			AND workspace_id NOT IN (
-				SELECT id FROM workspaces WHERE user_id = ?
-				UNION
-				SELECT workspace_id FROM workspace_members WHERE user_id = ?
-			)
-		)`,
-		workspaceID, userCtx.UserID, userCtx.Email, userCtx.UserID, userCtx.UserID,
-	)
+func (h *ModelHandler) buildWorkspaceQuery(userCtx *httputil.UserContext, workspaceID uint) *gorm.DB {
+	defaultWs, err := h.newModelService().GetDefaultWorkspace(userCtx.UserID)
+	if err == nil && defaultWs.ID == workspaceID {
+		return h.store.DB().Where(
+			`workspace_id = ? OR (
+				id IN (SELECT model_id FROM model_shares WHERE user_id = ? OR LOWER(email) = LOWER(?))
+				AND workspace_id NOT IN (
+					SELECT id FROM workspaces WHERE user_id = ?
+					UNION
+					SELECT workspace_id FROM workspace_members WHERE user_id = ?
+				)
+			)`,
+			workspaceID, userCtx.UserID, userCtx.Email, userCtx.UserID, userCtx.UserID,
+		)
+	}
+
+	return h.store.DB().Where("workspace_id = ?", workspaceID)
 }
 
 func (h *ModelHandler) buildUserAccessQuery(c *gin.Context, userCtx *httputil.UserContext) *gorm.DB {
@@ -215,11 +212,7 @@ func (h *ModelHandler) buildQueryWithWorkspaceFilter(c *gin.Context, userCtx *ht
 		}
 
 		if userCtx.AccessLevel == constants.AccessLevelExpert {
-			defaultWs, defaultErr := h.newModelService().GetDefaultWorkspace(userCtx.UserID)
-			if defaultErr == nil && defaultWs.ID == workspaceID {
-				return h.buildDefaultWorkspaceQuery(userCtx, workspaceID), true
-			}
-			return h.store.DB().Where("workspace_id = ?", workspaceID), true
+			return h.buildWorkspaceQuery(userCtx, workspaceID), true
 		}
 
 		query, ok := h.buildWorkspaceFilteredQuery(c, userCtx, workspaceID)
