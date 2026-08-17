@@ -660,8 +660,8 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 
 return (
 		<Fragment>
-			<div className="relative p-4 w-full space-y-4 bg-background overflow-x-hidden overflow-y-scroll">
-				<div className="w-full space-y-4">
+			<div className="md-scope relative p-4 sm:p-6 w-full bg-background overflow-x-hidden overflow-y-scroll">
+				<div className="w-full space-y-5">
 					<ModelDashboardFilters
 						groups={groups}
 						selectedGroup={selectedGroup}

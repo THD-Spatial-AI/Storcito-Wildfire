@@ -16,23 +16,31 @@ export function ModelStatsSummary({ stats, className = "" }: ModelStatsSummaryPr
 	const limitText = isUnlimited ? t("dashboard.stats.unlimited") : `${stats.total}/${stats.model_limit}`;
 
 	const items = [
-		{ label: t("dashboard.stats.totalModels"), value: stats.total },
-		{ label: t("dashboard.stats.inProgress"), value: inProgress },
-		{ label: t("dashboard.stats.completed"), value: stats.completed },
+		{ label: t("dashboard.stats.totalModels"), value: stats.total, highlight: false },
+		{ label: t("dashboard.stats.inProgress"), value: inProgress, highlight: false },
+		{ label: t("dashboard.stats.completed"), value: stats.completed, highlight: false },
+		{ label: t("dashboard.stats.modelLimit"), value: limitText, highlight: isAtLimit },
 	];
 
 	return (
-		<div className={`flex flex-wrap items-center gap-1.5 ${className}`}>
+		<div className={`flex flex-wrap items-center gap-2 ${className}`}>
 			{items.map((s) => (
-				<div key={s.label} className="flex flex-col items-center justify-center bg-card border border-border rounded px-2 py-1 shadow-sm">
-					<span className="text-[8px] font-semibold uppercase tracking-wider text-muted-foreground">{s.label}</span>
-					<span className="text-sm font-bold tabular-nums text-foreground leading-none mt-0.5">{s.value}</span>
+				<div
+					key={s.label}
+					className="flex h-9 items-center gap-2 rounded-lg border border-border bg-muted/30 px-3"
+				>
+					<span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+						{s.label}
+					</span>
+					<span
+						className={`text-sm font-semibold tabular-nums leading-none ${
+							s.highlight ? "text-destructive" : "text-foreground"
+						}`}
+					>
+						{s.value}
+					</span>
 				</div>
 			))}
-			<div className="flex flex-col items-center justify-center bg-card border border-border rounded px-2 py-1 shadow-sm">
-				<span className="text-[8px] font-semibold uppercase tracking-wider text-muted-foreground">{t("dashboard.stats.modelLimit")}</span>
-				<span className={`text-sm font-bold tabular-nums leading-none mt-0.5 ${isAtLimit ? "text-destructive" : "text-foreground"}`}>{limitText}</span>
-			</div>
 		</div>
 	);
 }

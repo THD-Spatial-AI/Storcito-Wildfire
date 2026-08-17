@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { AlertCircle, BarChart3, Copy, Edit, Filter, GitCompareArrows, Plus, RefreshCw, Settings, Share2, Trash2 } from "lucide-react";
+import { AlertCircle, BarChart3, Copy, Edit, GitCompareArrows, Plus, RefreshCw, Search, Settings, Share2, Trash2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@spatialhub/ui";
 import Chip from "@/components/ui/Chip";
 import { WorkspaceSelector } from "@/components/workspace";
@@ -40,6 +40,11 @@ interface ModelDashboardFiltersProps {
 	table: ReactNode;
 }
 
+const TOOLBAR_BUTTON_CLASS =
+	"inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-card px-3 text-sm font-medium text-foreground shadow-sm transition-colors duration-150 hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50";
+const TOOLBAR_ICON_BUTTON_CLASS =
+	"inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground shadow-sm transition-colors duration-150 hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50";
+
 export function ModelDashboardFilters({
 	groups, selectedGroup, setSelectedGroup, filterText, setFilterText, isLoadingWorkspace, handleWorkspaceChange, setIsCreateWsOpen, wsReloadKey, normalizedWorkspaceId, preferredWorkspaceId, currentWorkspace, handleRefresh, isRefreshing, isLoading, handleCompareSelected, canCompareSelected, canManageWorkspace, setIsShareWsOpen, setIsCopyWsOpen, setIsRenameWsOpen, handleDeleteWorkspace, bulkActions, stats, statsLoaded = false, handleNewModel, isModelLimitReached, table,
 }: ModelDashboardFiltersProps) {
@@ -47,236 +52,238 @@ export function ModelDashboardFilters({
 
 	return (
 		<>
-					{/* Groups Section */}
-					{groups.length > 0 && (
-						<div className="bg-card rounded-lg px-4 py-3 shadow-sm border border-border">
-							<div className="flex items-center gap-2 mb-3">
-								<Settings className="w-4 h-4 text-muted-foreground" />
-								<h3 className="text-sm font-medium text-foreground">{t('model.modelGroups')}</h3>
-							</div>
-							<div className="flex gap-2 flex-wrap">
-								<Chip
-									label={t('model.allModels')}
-									color={selectedGroup ? "default" : "primary"}
-									variant={selectedGroup ? "outlined" : "filled"}
-									onClick={() => setSelectedGroup(null)}
-									size="small"
-								/>
-								{groups.map((group) => (
-									<Chip
-										key={group.id}
-										label={`${group.name} (${group.ids.length})`}
-										color={selectedGroup?.id === group.id ? "primary" : "default"}
-										variant={selectedGroup?.id === group.id ? "filled" : "outlined"}
-										onClick={() => setSelectedGroup(group)}
-										size="small"
-									/>
-								))}
-							</div>
-						</div>
-					)}
+			{/* Groups Section */}
+			{groups.length > 0 && (
+				<div className="md-rise rounded-xl border border-border bg-card px-4 py-3.5 shadow-sm">
+					<div className="mb-3 flex items-center gap-2">
+						<Settings className="h-4 w-4 text-muted-foreground" />
+						<h3 className="text-sm font-medium text-foreground">{t('model.modelGroups')}</h3>
+					</div>
+					<div className="flex flex-wrap gap-2">
+						<Chip
+							label={t('model.allModels')}
+							color={selectedGroup ? "default" : "primary"}
+							variant={selectedGroup ? "outlined" : "filled"}
+							onClick={() => setSelectedGroup(null)}
+							size="small"
+						/>
+						{groups.map((group) => (
+							<Chip
+								key={group.id}
+								label={`${group.name} (${group.ids.length})`}
+								color={selectedGroup?.id === group.id ? "primary" : "default"}
+								variant={selectedGroup?.id === group.id ? "filled" : "outlined"}
+								onClick={() => setSelectedGroup(group)}
+								size="small"
+							/>
+						))}
+					</div>
+				</div>
+			)}
 
-					{/* Main Content Card */}
-					<div className="bg-card rounded-lg shadow-sm border border-border">
-						<div className="p-4">
-							{/* Title + primary action, above the search */}
-							<div className="flex items-center justify-between gap-3 mb-4">
-								<div className="flex items-center gap-3">
-									<div className="p-2 bg-muted rounded-lg">
-										<BarChart3 className="w-5 h-5 text-muted-foreground" />
-									</div>
-									<div>
-										<h1 className="text-lg font-semibold text-foreground">{t('model.dashboard')}</h1>
-										<p className="text-xs text-muted-foreground">{t('model.manageConfigurations')}</p>
-									</div>
-								</div>
+			{/* Page header */}
+			<div className="md-rise flex flex-wrap items-center justify-between gap-3">
+				<div className="flex items-center gap-3.5">
+					<div className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-card shadow-sm">
+						<BarChart3 className="h-5 w-5 text-muted-foreground" />
+					</div>
+					<div>
+						<h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+							{t('model.dashboard')}
+						</h1>
+						<p className="mt-0.5 text-sm text-muted-foreground">{t('model.manageConfigurations')}</p>
+					</div>
+				</div>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<span>
+							<button
+								onClick={handleNewModel}
+								disabled={isModelLimitReached}
+								data-tour="new-assessment"
+								className={`inline-flex h-9 items-center gap-2 rounded-lg px-4 text-sm font-medium shadow-sm transition-all duration-200 ${
+									isModelLimitReached
+										? 'cursor-not-allowed bg-muted text-muted-foreground'
+										: 'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md active:scale-[0.98]'
+								}`}
+							>
+								{isModelLimitReached ? <AlertCircle className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+								{t('model.newModel')}
+							</button>
+						</span>
+					</TooltipTrigger>
+					{isModelLimitReached && (
+						<TooltipContent>
+							{t('model.limitReached', { current: stats.total, limit: stats.model_limit })}
+						</TooltipContent>
+					)}
+				</Tooltip>
+			</div>
+
+			{/* Main Content Card */}
+			<div className="md-rise rounded-xl border border-border bg-card shadow-sm" style={{ animationDelay: "60ms" }}>
+				{/* Filter toolbar */}
+				<div className="flex flex-wrap items-center gap-2 p-4 sm:px-5">
+					{/* Search field */}
+					<div className="relative w-full sm:w-auto sm:min-w-[220px] sm:flex-1 sm:max-w-xs">
+						<Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+						<input
+							type="text"
+							placeholder={t('model.searchModels')}
+							value={filterText}
+							onChange={(e) => setFilterText(e.target.value)}
+							className="h-9 w-full rounded-lg border border-input bg-background pl-9 pr-3 text-sm text-foreground shadow-sm transition-colors duration-150 placeholder:text-muted-foreground hover:border-muted-foreground/40"
+						/>
+					</div>
+
+					{/* Workspace Controls */}
+					<div className="flex flex-wrap items-center gap-2">
+						{isLoadingWorkspace ? (
+							<div className="inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-card px-3 text-sm shadow-sm">
+								<RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />
+								<span className="font-medium text-muted-foreground">{t('model.loadingWorkspace')}</span>
+							</div>
+						) : (
+							<>
 								<Tooltip>
 									<TooltipTrigger asChild>
-										<span>
-											<button
-												onClick={handleNewModel}
-												disabled={isModelLimitReached}
-												data-tour="new-assessment"
-												className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all shadow-sm ${
-													isModelLimitReached
-														? 'bg-muted text-muted-foreground cursor-not-allowed'
-														: 'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md'
-												}`}
-											>
-												{isModelLimitReached ? <AlertCircle className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-												{t('model.newModel')}
-											</button>
-										</span>
-									</TooltipTrigger>
-									{isModelLimitReached && (
-										<TooltipContent>
-											{t('model.limitReached', { current: stats.total, limit: stats.model_limit })}
-										</TooltipContent>
-									)}
-								</Tooltip>
-							</div>
-
-							{/* Toolbar */}
-							<div className="flex flex-wrap items-center gap-2 mb-4">
-								{/* Search */}
-								<div className="flex-1 min-w-[200px] max-w-md">
-									<div className="relative">
-										<Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-										<input
-											type="text"
-											placeholder={t('model.searchModels')}
-											value={filterText}
-											onChange={(e) => setFilterText(e.target.value)}
-											className="w-full pl-9 pr-3 py-1.5 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background hover:bg-accent focus:bg-background transition-colors text-sm text-foreground placeholder-muted-foreground"
-										/>
-									</div>
-								</div>
-
-								{/* Workspace Controls */}
-								<div className="flex items-center gap-2">
-									{isLoadingWorkspace ? (
-										<div className="flex items-center gap-2 px-4 py-1.5 border border-border rounded-xl bg-card text-sm">
-											<RefreshCw className="w-4 h-4 animate-spin text-muted-foreground" />
-											<span className="font-medium text-muted-foreground">{t('model.loadingWorkspace')}</span>
+										<div>
+											<WorkspaceSelector
+												onWorkspaceChange={handleWorkspaceChange}
+												onCreateWorkspace={() => setIsCreateWsOpen(true)}
+												reloadKey={wsReloadKey}
+												initialWorkspaceId={normalizedWorkspaceId ?? preferredWorkspaceId ?? undefined}
+												activeWorkspace={currentWorkspace}
+											/>
 										</div>
-									) : (
-										<>
-											<Tooltip>
-												<TooltipTrigger asChild>
-													<div>
-														<WorkspaceSelector
-															onWorkspaceChange={handleWorkspaceChange}
-															onCreateWorkspace={() => setIsCreateWsOpen(true)}
-															reloadKey={wsReloadKey}
-															initialWorkspaceId={normalizedWorkspaceId ?? preferredWorkspaceId ?? undefined}
-															activeWorkspace={currentWorkspace}
-														/>
-													</div>
-												</TooltipTrigger>
-												<TooltipContent>
-													{t('model.selectWorkspace')}
-												</TooltipContent>
-											</Tooltip>
+									</TooltipTrigger>
+									<TooltipContent>
+										{t('model.selectWorkspace')}
+									</TooltipContent>
+								</Tooltip>
 
-											<Tooltip>
-												<TooltipTrigger asChild>
-													<button
-														onClick={handleRefresh}
-														disabled={isRefreshing || isLoading}
-														className="p-2 border border-border rounded-xl hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-card"
-														aria-label={t('model.refreshModels')}
-													>
-														<RefreshCw className={`w-4 h-4 text-muted-foreground ${isRefreshing || isLoading ? 'animate-spin' : ''}`} />
-													</button>
-												</TooltipTrigger>
-												<TooltipContent>
-													{t('model.refreshModels')}
-												</TooltipContent>
-											</Tooltip>
-										</>
-									)}
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<button
+											onClick={handleRefresh}
+											disabled={isRefreshing || isLoading}
+											className={TOOLBAR_ICON_BUTTON_CLASS}
+											aria-label={t('model.refreshModels')}
+										>
+											<RefreshCw className={`h-4 w-4 ${isRefreshing || isLoading ? 'animate-spin' : ''}`} />
+										</button>
+									</TooltipTrigger>
+									<TooltipContent>
+										{t('model.refreshModels')}
+									</TooltipContent>
+								</Tooltip>
+							</>
+						)}
 
-									{/* Compare button - always visible */}
+						{/* Compare button - always visible */}
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<span>
+									<button
+										onClick={handleCompareSelected}
+										disabled={!canCompareSelected}
+										className={TOOLBAR_BUTTON_CLASS}
+									>
+										<GitCompareArrows className="h-4 w-4 text-muted-foreground" />
+										<span className="hidden sm:inline">{t('model.compare')}</span>
+									</button>
+								</span>
+							</TooltipTrigger>
+							<TooltipContent>
+								<p>{canCompareSelected ? t('model.compare') : t('model.compareRequires2Completed')}</p>
+							</TooltipContent>
+						</Tooltip>
+
+						{currentWorkspace && (
+							<>
+								{canManageWorkspace && (
 									<Tooltip>
 										<TooltipTrigger asChild>
-											<span>
-												<button
-													onClick={handleCompareSelected}
-													disabled={!canCompareSelected}
-													className="flex items-center gap-1.5 px-3 py-1.5 border border-border rounded-xl hover:bg-accent text-sm transition-colors bg-card disabled:opacity-50 disabled:cursor-not-allowed"
-												>
-													<GitCompareArrows className="w-4 h-4 text-muted-foreground" />
-													<span className="text-foreground">{t('model.compare')}</span>
-												</button>
-											</span>
+											<button
+												onClick={() => setIsShareWsOpen(true)}
+												className={TOOLBAR_BUTTON_CLASS}
+											>
+												<Share2 className="h-4 w-4 text-muted-foreground" />
+												<span className="hidden sm:inline">{t('model.share')}</span>
+											</button>
 										</TooltipTrigger>
 										<TooltipContent>
-											<p>{canCompareSelected ? t('model.compare') : t('model.compareRequires2Completed')}</p>
+											{t('model.shareWorkspace')}
 										</TooltipContent>
 									</Tooltip>
-
-									{currentWorkspace && (
-										<>
-											{canManageWorkspace && (
-												<Tooltip>
-													<TooltipTrigger asChild>
-														<button
-															onClick={() => setIsShareWsOpen(true)}
-															className="flex items-center gap-1.5 px-3 py-1.5 border border-border rounded-xl hover:bg-accent text-sm transition-colors bg-card"
-														>
-															<Share2 className="w-4 h-4 text-muted-foreground" />
-															<span className="text-foreground">{t('model.share')}</span>
-														</button>
-													</TooltipTrigger>
-													<TooltipContent>
-														{t('model.shareWorkspace')}
-													</TooltipContent>
-												</Tooltip>
-											)}
-
-											<Tooltip>
-												<TooltipTrigger asChild>
-													<button
-														onClick={() => setIsCopyWsOpen(true)}
-														className="flex items-center gap-1.5 px-3 py-1.5 border border-border rounded-xl hover:bg-accent text-sm transition-colors bg-card"
-													>
-														<Copy className="w-4 h-4 text-muted-foreground" />
-														<span className="text-foreground">{t('model.copy')}</span>
-													</button>
-												</TooltipTrigger>
-												<TooltipContent>
-													{t('model.copyWorkspace')}
-												</TooltipContent>
-											</Tooltip>
-
-											{!currentWorkspace.is_default && canManageWorkspace && (
-												<>
-													<Tooltip>
-														<TooltipTrigger asChild>
-															<button
-																onClick={() => setIsRenameWsOpen(true)}
-																className="flex items-center gap-1.5 px-3 py-1.5 border border-border rounded-xl hover:bg-accent text-sm transition-colors bg-card"
-															>
-																<Edit className="w-4 h-4 text-muted-foreground" />
-																<span className="text-foreground">{t('model.rename')}</span>
-															</button>
-														</TooltipTrigger>
-														<TooltipContent>
-															{t('model.renameWorkspace')}
-														</TooltipContent>
-													</Tooltip>
-
-													<Tooltip>
-														<TooltipTrigger asChild>
-															<button
-																onClick={handleDeleteWorkspace}
-																className="flex items-center gap-1.5 px-3 py-1.5 border border-destructive/50 rounded-xl hover:bg-destructive/10 text-sm transition-colors bg-card text-destructive"
-															>
-																<Trash2 className="w-4 h-4" />
-																<span>{t('model.delete')}</span>
-															</button>
-														</TooltipTrigger>
-														<TooltipContent>
-															{t('model.deleteWorkspace')}
-														</TooltipContent>
-													</Tooltip>
-												</>
-											)}
-										</>
-									)}
-
-									{/* Bulk Actions - placed after workspace delete button */}
-									{bulkActions}
-								</div>
-
-								{/* Compact stats summary, just above the table */}
-								{statsLoaded && (
-									<ModelStatsSummary stats={stats} className="ml-auto" />
 								)}
-							</div>
-							{table}
-						</div>
+
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<button
+											onClick={() => setIsCopyWsOpen(true)}
+											className={TOOLBAR_BUTTON_CLASS}
+										>
+											<Copy className="h-4 w-4 text-muted-foreground" />
+											<span className="hidden sm:inline">{t('model.copy')}</span>
+										</button>
+									</TooltipTrigger>
+									<TooltipContent>
+										{t('model.copyWorkspace')}
+									</TooltipContent>
+								</Tooltip>
+
+								{!currentWorkspace.is_default && canManageWorkspace && (
+									<>
+										<Tooltip>
+											<TooltipTrigger asChild>
+												<button
+													onClick={() => setIsRenameWsOpen(true)}
+													className={TOOLBAR_BUTTON_CLASS}
+												>
+													<Edit className="h-4 w-4 text-muted-foreground" />
+													<span className="hidden sm:inline">{t('model.rename')}</span>
+												</button>
+											</TooltipTrigger>
+											<TooltipContent>
+												{t('model.renameWorkspace')}
+											</TooltipContent>
+										</Tooltip>
+
+										<Tooltip>
+											<TooltipTrigger asChild>
+												<button
+													onClick={handleDeleteWorkspace}
+													className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-destructive/40 bg-card px-3 text-sm font-medium text-destructive shadow-sm transition-colors duration-150 hover:bg-destructive/10"
+												>
+													<Trash2 className="h-4 w-4" />
+													<span className="hidden sm:inline">{t('model.delete')}</span>
+												</button>
+											</TooltipTrigger>
+											<TooltipContent>
+												{t('model.deleteWorkspace')}
+											</TooltipContent>
+										</Tooltip>
+									</>
+								)}
+							</>
+						)}
+
+						{/* Bulk Actions - placed after workspace delete button */}
+						{bulkActions}
 					</div>
+
+					{/* Compact stats summary, just above the table */}
+					{statsLoaded && (
+						<ModelStatsSummary stats={stats} className="max-sm:w-full sm:ml-auto" />
+					)}
+				</div>
+
+				{/* Table */}
+				<div className="border-t border-border p-4 sm:px-5 sm:pb-5">
+					{table}
+				</div>
+			</div>
 		</>
 	);
 }

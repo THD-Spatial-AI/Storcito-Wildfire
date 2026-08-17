@@ -12,16 +12,19 @@ export function ModelDashboardBulkActions({ selectedCount, actions }: ModelDashb
 	if (selectedCount === 0) return null;
 
 	return (
-		<div className="flex items-center gap-2 ml-2 pl-2 border-l-2 border-foreground/30">
-			<span className="text-xs font-medium text-muted-foreground">{t('model.actions')}:</span>
-			
-			<div className="px-2 py-1 border border-border rounded-md bg-muted/50">
-				<ModelActionGroup
-					actions={actions}
-					layout="horizontal"
-					size="small"
-				/>
-			</div>
+		<div className="md-fade-in flex h-9 items-center gap-2 rounded-full border border-border bg-muted/40 pl-1.5 pr-1.5 shadow-sm">
+			<span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-semibold tabular-nums text-primary-foreground">
+				{selectedCount}
+			</span>
+			<span className="hidden text-xs font-medium text-muted-foreground lg:inline">
+				{t('model.selected')}
+			</span>
+			<span className="h-4 w-px bg-border" aria-hidden="true" />
+			<ModelActionGroup
+				actions={actions}
+				layout="horizontal"
+				size="small"
+			/>
 		</div>
 	);
 }
