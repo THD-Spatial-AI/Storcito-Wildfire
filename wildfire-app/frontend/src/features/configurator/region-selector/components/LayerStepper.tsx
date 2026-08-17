@@ -231,6 +231,15 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                 return missing.length ? `Please add ${missing.join(" and ")} to continue.` : null;
             }
             case 2:
+                if (state.areaInputMode === "region" && state.isResolvingRegion) {
+                    return t("configurator.layer2.regionResolving", "Finding administrative boundary…");
+                }
+                if (state.areaInputMode === "region" && (!state.selectedRegionName || allPolygonsCount === 0)) {
+                    return state.regionSelectionError ?? t(
+                        "configurator.layer2.blockingSelectRegion",
+                        "Click inside an administrative region on the map to continue.",
+                    );
+                }
                 if (allPolygonsCount === 0) {
                     return state.areaInputMode === "upload"
                         ? t("configurator.layer2.blockingUploadGeoJson", "Upload a GeoJSON boundary file or switch back to draw.")
@@ -266,7 +275,13 @@ export const LayerStepper: FC<LayerStepperProps> = ({
         state.dynamicDatesError,
         state.areaInputMode,
         state.uploadedGeoJsonName,
+        state.selectedRegionName,
+        state.isResolvingRegion,
+        state.regionSelectionError,
+        state.dtmFootprint,
         allPolygonsCount,
+        polygonCoordinates,
+        t,
     ]);
 
     const canAdvance = blockingReason === null;
@@ -286,7 +301,8 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                 !dateRangeHasOnlyAvailableDates(state.fromDate, state.toDate, state.availableDynamicDates))) ||
         state.isSaving ||
         allPolygonsCount === 0 ||
-        (state.areaInputMode === "upload" && !state.uploadedGeoJsonName);
+        (state.areaInputMode === "upload" && !state.uploadedGeoJsonName) ||
+        (state.areaInputMode === "region" && (state.isResolvingRegion || !state.selectedRegionName));
 
     const goNext = () => {
         if (!canAdvance) return;

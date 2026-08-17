@@ -1,7 +1,8 @@
-export type AreaInputMode = 'draw' | 'upload';
-export type CalculationMode = 'static' | 'dynamic';
-
+import type { AdministrativeRegionResult } from '@/features/interactive-map/services/geocoding';
 import type { OptionalLayerKey } from '@/features/configurator/region-selector/components/layers/types';
+
+export type AreaInputMode = 'draw' | 'upload' | 'region';
+export type CalculationMode = 'static' | 'dynamic';
 
 interface DateParts {
 	year: number;
@@ -55,6 +56,10 @@ export interface AreaSelectState {
 	areaInputMode: AreaInputMode;
 	uploadedGeoJsonName?: string;
 	geoJsonUploadError?: string;
+	selectedRegionName?: string;
+	selectedRegionCountry?: string;
+	isResolvingRegion: boolean;
+	regionSelectionError?: string;
 	isDrawing: boolean;
 	clearTrigger: number;
 	cursorPos: { x: number; y: number } | null;
@@ -84,6 +89,10 @@ export interface AreaSelectActions {
 	setAllPolygons: (polygons: [number, number][][]) => void;
 	setAreaInputMode: (mode: AreaInputMode) => void;
 	handleGeoJsonUpload: (file: File) => Promise<void>;
+	beginRegionSelection: () => void;
+	handleRegionSelected: (region: AdministrativeRegionResult) => void;
+	handleRegionSelectionError: (message: string) => void;
+	cancelRegionSelection: () => void;
 	handlePolygonDrawn: (coordinates: [number, number][], allPolygons: [number, number][][]) => Promise<void>;
 	handlePolygonModified: (allPolygons: [number, number][][]) => Promise<void>;
 	handleClearAllPolygons: () => void;

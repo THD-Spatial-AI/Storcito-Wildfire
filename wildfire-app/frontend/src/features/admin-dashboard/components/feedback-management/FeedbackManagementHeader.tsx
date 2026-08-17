@@ -19,9 +19,9 @@ export function FeedbackManagementHeader({
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="md-rise flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div className="flex items-center gap-3">
-        <div className="p-2 bg-muted rounded-lg">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card shadow-sm">
           <MessageSquare className="w-5 h-5 text-muted-foreground" />
         </div>
         <div>
@@ -35,7 +35,7 @@ export function FeedbackManagementHeader({
             <button
               onClick={onRefresh}
               disabled={loading}
-              className="p-2.5 bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors duration-200 disabled:opacity-50"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground shadow-sm transition-colors duration-150 hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
             >
               <RefreshCw
                 className={`w-4 h-4 transition-transform duration-500 ${loading || isRefreshing ? "animate-spin" : ""}`}

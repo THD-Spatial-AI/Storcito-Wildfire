@@ -60,12 +60,24 @@ export const asRecord = (value: unknown): Record<string, unknown> | undefined =>
 
 export const getAreaInputModeFromConfig = (config: Record<string, unknown>): AreaInputMode | undefined => {
     const areaInput = asRecord(config.area_input);
-    return areaInput?.method === 'upload' ? 'upload' : undefined;
+    if (areaInput?.method === 'upload') return 'upload';
+    if (areaInput?.method === 'region') return 'region';
+    return undefined;
 };
 
 export const getUploadedGeoJsonNameFromConfig = (config: Record<string, unknown>): string | undefined => {
     const areaInput = asRecord(config.area_input);
     return typeof areaInput?.uploaded_geojson_name === 'string' ? areaInput.uploaded_geojson_name : undefined;
+};
+
+export const getSelectedRegionNameFromConfig = (config: Record<string, unknown>): string | undefined => {
+    const areaInput = asRecord(config.area_input);
+    return typeof areaInput?.selected_region_name === 'string' ? areaInput.selected_region_name : undefined;
+};
+
+export const getSelectedRegionCountryFromConfig = (config: Record<string, unknown>): string | undefined => {
+    const areaInput = asRecord(config.area_input);
+    return typeof areaInput?.selected_region_country === 'string' ? areaInput.selected_region_country : undefined;
 };
 
 export const getCalculationModeFromConfig = (config: Record<string, unknown>): CalculationMode | undefined => {

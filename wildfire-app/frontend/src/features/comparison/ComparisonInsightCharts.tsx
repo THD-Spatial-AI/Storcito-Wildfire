@@ -429,7 +429,7 @@ export const ComparisonInsightCharts: FC<ComparisonInsightChartsProps> = ({
   const coverage = totalCells > 0 ? (validCells / totalCells) * 100 : null;
 
   return (
-    <section className="bg-card border border-border rounded-xl p-5 shadow-sm">
+    <section className="md-rise bg-card border border-border rounded-xl p-5 shadow-sm" style={{ animationDelay: "180ms" }}>
       <header className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <h3 className="text-sm font-semibold text-foreground tracking-tight">

@@ -20,15 +20,15 @@ export function WebservicesFilters({ readOnly, loading, isRefreshing, filters, s
 const { t } = useTranslation();
 
 return (
-<div className="space-y-4">
+<div className="md-rise space-y-4" style={{ animationDelay: "60ms" }}>
 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-<div className="flex items-center gap-3">
-<div className="p-2 bg-muted rounded-lg">
+<div className="flex items-center gap-3.5">
+<div className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-card shadow-sm">
 <Cloud className="w-5 h-5 text-muted-foreground" />
 </div>
 <div>
-<h2 className="text-lg font-semibold text-foreground">{t("webservicesManagement.title")}</h2>
-<p className="text-xs text-muted-foreground">{t("webservicesManagement.subtitle")}</p>
+<h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">{t("webservicesManagement.title")}</h2>
+<p className="mt-0.5 text-sm text-muted-foreground">{t("webservicesManagement.subtitle")}</p>
 </div>
 </div>
 <div className="flex items-center gap-2">
@@ -37,7 +37,7 @@ return (
 <button
 onClick={onRefresh}
 disabled={loading}
-className="p-2.5 bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors duration-200 disabled:opacity-50"
+className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground shadow-sm transition-colors duration-150 hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50"
 >
 <RefreshCw className={`w-4 h-4 transition-transform duration-500 ${loading || isRefreshing ? "animate-spin" : ""}`} />
 </button>
@@ -47,7 +47,7 @@ className="p-2.5 bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 tra
 {!readOnly && (
 <button
 onClick={onAdd}
-className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 transition-all shadow-sm hover:shadow-md"
+className="inline-flex h-9 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-all duration-200 hover:bg-primary/90 hover:shadow-md active:scale-[0.98]"
 >
 <Plus className="w-4 h-4" />
 <span className="hidden sm:inline">{t("webservicesManagement.registerNew")}</span>
@@ -59,13 +59,13 @@ className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground 
 
 <div className="flex flex-col sm:flex-row gap-3">
 <div className="relative flex-1">
-<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+<Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 <input
 type="text"
 placeholder={t("webservicesManagement.searchPlaceholder")}
 value={searchInput}
 onChange={(e) => setSearchInput(e.target.value)}
-className="w-full pl-10 pr-4 py-2.5 border border-input rounded-xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-sm text-foreground"
+className="h-9 w-full rounded-lg border border-input bg-background pl-9 pr-3 text-sm text-foreground shadow-sm transition-colors duration-150 placeholder:text-muted-foreground hover:border-muted-foreground/40"
 />
 </div>
 <div className="flex gap-2">

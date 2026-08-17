@@ -29,7 +29,6 @@ const getErrorMessage = (error: unknown): string => {
 
 interface ModelTableRowProps {
 	model: Model & { level: number };
-	index: number;
 	modelTitle: string;
 	parentModelTitle?: string;
 	hasChildren: boolean;
@@ -144,7 +143,6 @@ const ModelNameCell: React.FC<ModelNameCellProps> = ({
 
 const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
 	model,
-	index,
 	modelTitle,
 	parentModelTitle,
 	hasChildren,
@@ -181,12 +179,12 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
 	const isNotModelOwner = currentUserId && model.user_id &&
 		String(model.user_id) !== String(currentUserId);
 
-	const rowClassName = `md-row-in group transition-colors duration-150 hover:bg-muted/40 ${
+	const rowClassName = `group transition-colors duration-150 hover:bg-muted/40 ${
 		level > 0 ? "border-l-2 border-border bg-muted/20" : ""
 	} ${isSelected ? "bg-muted/60 shadow-[inset_2px_0_0_0_var(--primary)]" : ""}`;
 
 	return (
-		<tr className={rowClassName} style={{ animationDelay: `${Math.min(index * 30, 240)}ms` }}>
+		<tr className={rowClassName}>
 			<td className={`pl-4 pr-2 py-2.5 ${indentClass}`}>
 				<div className="flex items-center justify-center gap-1.5">
 					<input

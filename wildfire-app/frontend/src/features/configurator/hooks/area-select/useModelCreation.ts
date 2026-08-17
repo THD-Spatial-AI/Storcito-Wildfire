@@ -15,6 +15,8 @@ import {
     getAreaInputModeFromConfig,
     getCalculationModeFromConfig,
     getDateInputValue,
+    getSelectedRegionCountryFromConfig,
+    getSelectedRegionNameFromConfig,
     getUploadedGeoJsonNameFromConfig,
     lookupRegionForPolygons,
 } from './utils';
@@ -57,7 +59,17 @@ export const useModelCreation = ({
         setStoredStationDataName, setStoredDtmName,
     } = state;
 
-    const { allPolygons, loadedCoordinates, setAllPolygons, setLoadedCoordinates } = drawing;
+    const {
+        allPolygons,
+        loadedCoordinates,
+        setAllPolygons,
+        setLoadedCoordinates,
+        selectedRegionName,
+        setSelectedRegionName,
+        selectedRegionCountry,
+        setSelectedRegionCountry,
+        isResolvingRegion,
+    } = drawing;
 
     // ── Edit-mode load ────────────────────────────────────────────────
     useEffect(() => {
@@ -82,6 +94,10 @@ export const useModelCreation = ({
                 if (loadedAreaMode) setAreaInputModeRaw(loadedAreaMode);
                 const loadedGeoJsonName = cfg ? getUploadedGeoJsonNameFromConfig(cfg) : undefined;
                 if (loadedGeoJsonName) setUploadedGeoJsonName(loadedGeoJsonName);
+                const loadedRegionName = cfg ? getSelectedRegionNameFromConfig(cfg) : undefined;
+                setSelectedRegionName(loadedRegionName);
+                const loadedRegionCountry = cfg ? getSelectedRegionCountryFromConfig(cfg) : undefined;
+                setSelectedRegionCountry(loadedRegionCountry);
                 const loadedCalculationMode = cfg ? getCalculationModeFromConfig(cfg) : undefined;
                 if (loadedCalculationMode) setCalculationMode(loadedCalculationMode);
                 const loadedParameters = cfg ? asRecord(cfg.parameters) : undefined;
@@ -136,6 +152,7 @@ export const useModelCreation = ({
         if (calculationMode === 'static' && !availableStaticDates.includes(fromDate)) return;
         if (calculationMode === 'dynamic' && fromDate > toDate) return;
         if (calculationMode === 'dynamic' && !dateRangeHasOnlyAvailableDates(fromDate, toDate, availableDynamicDates)) return;
+        if (areaInputMode === 'region' && (!selectedRegionName || isResolvingRegion)) return;
         setIsSaving(true);
         try {
             await new Promise((resolve) => setTimeout(resolve, SAVE_DELAY_MS));
@@ -158,7 +175,13 @@ export const useModelCreation = ({
                 coordinates: allPolygons.map((polygon) => [polygon]),
             };
 
-            const { region, country } = await lookupRegionForPolygons(allPolygons);
+            let region = areaInputMode === 'region' ? selectedRegionName ?? '' : '';
+            let country = areaInputMode === 'region' ? selectedRegionCountry ?? '' : '';
+            if (!region || !country) {
+                const resolvedLocation = await lookupRegionForPolygons(allPolygons);
+                region ||= resolvedLocation.region;
+                country ||= resolvedLocation.country;
+            }
             const originalParameters = asRecord(originalConfig?.parameters);
 
             const modelData = {
@@ -166,6 +189,8 @@ export const useModelCreation = ({
                 from_date: areaData.fromDate,
                 to_date: areaData.toDate,
                 workspace_id: currentWorkspace?.id,
+                region,
+                country,
                 coordinates: coordinatesGeoJSON,
                 config: {
                     ...(originalConfig ?? {}),
@@ -185,6 +210,8 @@ export const useModelCreation = ({
                     area_input: {
                         method: areaInputMode,
                         uploaded_geojson_name: uploadedGeoJsonName ?? null,
+                        selected_region_name: areaInputMode === 'region' ? selectedRegionName ?? null : null,
+                        selected_region_country: areaInputMode === 'region' ? selectedRegionCountry ?? null : null,
                     },
                 } as Record<string, unknown>,
             };
@@ -194,7 +221,7 @@ export const useModelCreation = ({
                 await updateModelMutation.mutateAsync({ id: modelId, data: modelData });
                 savedModelId = modelId;
             } else {
-                const created = await createModelMutation.mutateAsync({ ...modelData, region, country });
+                const created = await createModelMutation.mutateAsync(modelData);
                 savedModelId = created?.data?.id;
             }
 
@@ -220,8 +247,10 @@ export const useModelCreation = ({
         } finally {
             setIsSaving(false);
         }
-    }, [fromDate, toDate, modelName, bufferDistance, calculationMode, availableStaticDates, availableDynamicDates, editMode, modelId, onAreaSelected,
-        allPolygons, areaInputMode, uploadedGeoJsonName, currentWorkspace?.id, originalConfig, optionalLayers,
+    }, [fromDate, toDate, modelName, bufferDistance, calculationMode, usePrecomputed, availablePrecomputedDates,
+        availableStaticDates, availableDynamicDates, editMode, modelId, onAreaSelected,
+        allPolygons, areaInputMode, uploadedGeoJsonName, selectedRegionName, selectedRegionCountry, isResolvingRegion,
+        currentWorkspace?.id, originalConfig, optionalLayers,
         stationDataFile, dtmFile, updateModelMutation, createModelMutation, navigate]);
 
     return {

@@ -1,5 +1,5 @@
 import type { ChangeEvent, FC } from "react";
-import { AlertCircle, Download, MapPin, MapPinned, Mountain, Pencil, Ruler, UploadCloud } from "lucide-react";
+import { AlertCircle, Download, Loader2, MapPin, MapPinned, Mountain, Pencil, Ruler, UploadCloud } from "lucide-react";
 import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 
@@ -22,8 +22,25 @@ const getStatusMessage = (
     isUploadMode: boolean,
     drawn: boolean,
     fileName: string | undefined,
+    isRegionMode: boolean,
+    isResolvingRegion: boolean,
+    regionSelectionError: string | undefined,
+    selectedRegionName: string | undefined,
     t: (key: string, data?: any) => string
 ) => {
+    if (isRegionMode && isResolvingRegion) {
+        return t("configurator.layer2.regionResolving", "Finding administrative boundary…");
+    }
+    if (isRegionMode && regionSelectionError) return regionSelectionError;
+    if (isRegionMode && selectedRegionName) {
+        return t("configurator.layer2.statusRegionSelected", {
+            name: selectedRegionName,
+            defaultValue: `${selectedRegionName} selected. Click another region to replace it.`,
+        });
+    }
+    if (isRegionMode) {
+        return t("configurator.layer2.statusRegionPrompt", "Click inside an administrative region on the map to select its complete boundary.");
+    }
     if (hasError) return error;
     if (isUploadMode && drawn) {
         return fileName 
@@ -41,14 +58,27 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
     const drawn = allPolygonsCount > 0;
     const isUploadMode = state.areaInputMode === "upload";
     const isDrawMode = state.areaInputMode === "draw";
-    const hasUploadError = Boolean(state.geoJsonUploadError);
-    const StatusIcon = hasUploadError ? AlertCircle : isUploadMode ? UploadCloud : Pencil;
+    const isRegionMode = state.areaInputMode === "region";
+    const hasAreaError = Boolean(state.geoJsonUploadError || (isRegionMode && state.regionSelectionError));
+    const StatusIcon = state.isResolvingRegion
+        ? Loader2
+        : hasAreaError
+          ? AlertCircle
+          : isRegionMode
+            ? MapPinned
+            : isUploadMode
+              ? UploadCloud
+              : Pencil;
     const statusMessage = getStatusMessage(
-        hasUploadError,
+        Boolean(state.geoJsonUploadError),
         state.geoJsonUploadError,
         isUploadMode,
         drawn,
         state.uploadedGeoJsonName,
+        isRegionMode,
+        state.isResolvingRegion,
+        state.regionSelectionError,
+        state.selectedRegionName,
         t
     );
 
@@ -104,7 +134,7 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
 
     return (
         <LayerShell
-            purpose={t("configurator.layer2.purpose", "Optionally upload a DTM to see its coverage, then draw inside it — or just draw on the bundled data.")}
+            purpose={t("configurator.layer2.purpose", "Select a complete administrative region, draw an area, or upload a GeoJSON boundary.")}
             nextStepHint={t("configurator.layer2.nextStepHint", "Next we'll validate the selected area and model inputs.")}
         >
             <div className="mb-3 rounded-lg border border-border bg-muted/30 p-2.5">
@@ -150,37 +180,59 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                         onChange={handleUploadChange}
                     />
                 </label>
-            </div>
 
-            <div className="flex items-center justify-between gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-3 py-2 text-xs">
-                <div className="min-w-0">
-                    <p className="font-semibold text-foreground">{t("configurator.layer2.notSureFormat", "Not sure about the format?")}</p>
-                    <p className="text-muted-foreground leading-snug">
-                        {t("configurator.layer2.formatDesc", "Polygon or MultiPolygon, WGS84 (EPSG:4326), [lon, lat] order.")}
-                    </p>
-                </div>
                 <button
                     type="button"
-                    onClick={handleDownloadSample}
-                    className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-foreground bg-foreground px-2.5 py-1.5 text-[11px] font-semibold text-background transition-colors hover:bg-foreground/90"
+                    onClick={() => actions.setAreaInputMode("region")}
+                    className={cn(modeButtonClass(isRegionMode), "col-span-2 justify-center")}
                 >
-                    <Download className="h-3 w-3" />
-                    {t("configurator.layer2.sample", "Sample")}
+                    <MapPinned className="h-3 w-3 shrink-0" />
+                    <span className="text-[11px] font-semibold leading-tight whitespace-nowrap">
+                        {t("configurator.layer2.selectRegion", "Select complete region")}
+                    </span>
                 </button>
             </div>
+
+            {!isRegionMode && (
+                <div className="flex items-center justify-between gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-3 py-2 text-xs">
+                    <div className="min-w-0">
+                        <p className="font-semibold text-foreground">{t("configurator.layer2.notSureFormat", "Not sure about the format?")}</p>
+                        <p className="text-muted-foreground leading-snug">
+                            {t("configurator.layer2.formatDesc", "Polygon or MultiPolygon, WGS84 (EPSG:4326), [lon, lat] order.")}
+                        </p>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={handleDownloadSample}
+                        className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-foreground bg-foreground px-2.5 py-1.5 text-[11px] font-semibold text-background transition-colors hover:bg-foreground/90"
+                    >
+                        <Download className="h-3 w-3" />
+                        {t("configurator.layer2.sample", "Sample")}
+                    </button>
+                </div>
+            )}
 
             <div
                 className={cn(
                     "flex items-start gap-2 rounded-lg border px-3 py-2.5 text-xs",
-                    drawn && !hasUploadError
+                    drawn && !hasAreaError && !state.isResolvingRegion
                         ? "border-emerald-500/40 bg-emerald-500/5 text-emerald-700 dark:text-emerald-300"
                         : "border-amber-500/40 bg-amber-500/5 text-amber-700 dark:text-amber-300",
                 )}
                 data-tour="area-status"
             >
-                <StatusIcon className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                <StatusIcon className={cn("w-3.5 h-3.5 mt-0.5 shrink-0", state.isResolvingRegion && "animate-spin")} />
                 <span className="min-w-0 break-words leading-snug">{statusMessage}</span>
             </div>
+
+            {isRegionMode && (
+                <div className="flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-[11px] leading-snug text-amber-700 dark:text-amber-300">
+                    <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                    <span>
+                        {t("configurator.layer2.regionCoverageWarning", "The complete administrative boundary is used. Any pixels outside the shaded wildfire-data footprint may not be calculable.")}
+                    </span>
+                </div>
+            )}
 
             <BufferDistanceField value={state.bufferDistance} onChange={actions.setBufferDistance} />
 
@@ -188,11 +240,15 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                 <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-muted/30">
                     <MapPin className="w-3.5 h-3.5 text-foreground" />
                     <span className="text-xs font-semibold text-foreground">{t("configurator.layer2.areaSummary", "Area summary")}</span>
-                    {areaStats && areaStats.regions > 1 && (
+                    {isRegionMode && state.selectedRegionName ? (
+                        <span className="ml-auto max-w-[150px] truncate rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium" title={state.selectedRegionName}>
+                            {state.selectedRegionName}
+                        </span>
+                    ) : areaStats && areaStats.regions > 1 ? (
                         <span className="text-[10px] font-medium px-1.5 py-0.5 bg-muted rounded ml-auto">
                             {t("configurator.layer2.regions", `${areaStats.regions} regions`, { count: areaStats.regions })}
                         </span>
-                    )}
+                    ) : null}
                 </div>
                 <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 px-3 py-2.5 text-xs">
                     <SummaryRow label={t("configurator.layer2.status", "Status")}>
@@ -202,7 +258,13 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                                 drawn ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground",
                             )}
                         >
-                            {drawn ? (isUploadMode ? t("configurator.layer2.statusUploadedLabel", "Uploaded") : t("configurator.layer2.statusDrawnLabel", "Drawn")) : t("configurator.layer2.statusNotSet", "Not set")}
+                            {drawn
+                                ? isRegionMode
+                                    ? t("configurator.layer2.statusRegionLabel", "Region selected")
+                                    : isUploadMode
+                                      ? t("configurator.layer2.statusUploadedLabel", "Uploaded")
+                                      : t("configurator.layer2.statusDrawnLabel", "Drawn")
+                                : t("configurator.layer2.statusNotSet", "Not set")}
                         </span>
                     </SummaryRow>
                     <SummaryRow label={t("configurator.layer2.area", "Area")}>{areaStats?.area ?? "—"}</SummaryRow>

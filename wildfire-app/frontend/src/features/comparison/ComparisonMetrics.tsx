@@ -232,7 +232,7 @@ export const ComparisonMetrics: FC<ComparisonMetricsProps> = ({ model1, model2 }
       )}
 
       {bothReady && deltas && (
-        <section className="bg-card border border-border rounded-xl p-5 shadow-sm">
+        <section className="md-rise bg-card border border-border rounded-xl p-5 shadow-sm" style={{ animationDelay: "120ms" }}>
           <header className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between mb-4">
             <div className="flex items-start gap-3 min-w-0">
               <span
@@ -391,7 +391,7 @@ export const ComparisonMetrics: FC<ComparisonMetricsProps> = ({ model1, model2 }
       )}
 
       {bothReady && a.metrics.riskDistribution && b.metrics.riskDistribution && (
-        <section className="bg-card border border-border rounded-xl p-5 shadow-sm">
+        <section className="md-rise bg-card border border-border rounded-xl p-5 shadow-sm" style={{ animationDelay: "240ms" }}>
           <header className="flex items-center gap-2 mb-4">
             <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300">
               <BarChart3 className="w-4 h-4" />

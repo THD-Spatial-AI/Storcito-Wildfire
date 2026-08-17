@@ -37,7 +37,12 @@ export const Layer6SaveCalculate: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) =
                     <Row label={t("configurator.layer5.labels.mode", "Mode")} value={state.calculationMode} />
                     <Row label={t("configurator.layer5.labels.dailyRun", "Daily run")} value="16:00-17:00" />
                     <Row label={t("configurator.layer5.labels.buffer", "Buffer")} value={`${state.bufferDistance} m`} />
-                    <Row label={t("configurator.layer5.labels.area", "Area")} value={areaStats?.area ?? (allPolygonsCount > 0 ? t("configurator.layer5.drawn", "drawn") : t("configurator.layer5.notDrawn", "not drawn"))} />
+                    <Row
+                        label={t("configurator.layer5.labels.area", "Area")}
+                        value={state.areaInputMode === "region" && state.selectedRegionName
+                            ? `${state.selectedRegionName} · ${areaStats?.area ?? "—"}`
+                            : areaStats?.area ?? (allPolygonsCount > 0 ? t("configurator.layer5.drawn", "drawn") : t("configurator.layer5.notDrawn", "not drawn"))}
+                    />
                     <Row label={t("configurator.layer5.labels.riskComponents", "Risk components")} value={activeMods.length ? activeMods.join(", ") : t("configurator.layer5.coreOnly", "core only (veg + infra)")} />
                 </div>
             </div>

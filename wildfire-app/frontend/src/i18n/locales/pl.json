@@ -1856,7 +1856,7 @@
       "hottest": "Najgorętszy"
     },
     "layer2": {
-      "purpose": "Opcjonalnie prześlij DTM, aby zobaczyć jego zasięg, a następnie rysuj w jego obrębie — lub po prostu rysuj na danych w pakiecie.",
+      "purpose": "Wybierz cały region administracyjny, narysuj obszar lub prześlij granicę GeoJSON.",
       "nextStepHint": "Następnie zweryfikujemy wybrany obszar i dane wejściowe modelu.",
       "terrainModel": "Terrain model (DTM)",
       "dtmHint": "Opcjonalny GeoTIFF (.tif) — zasięg jest pokazany na mapie",

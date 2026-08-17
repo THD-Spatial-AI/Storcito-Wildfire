@@ -166,7 +166,7 @@ export const ComparisonPage: FC<ComparisonPageProps> = ({ modelId: propModelId }
 
   return (
     <div className="h-full bg-background flex flex-col overflow-hidden">
-      <header className="bg-card border-b border-border flex-shrink-0">
+      <header className="md-rise bg-card border-b border-border flex-shrink-0">
         <div className="h-[3px] bg-muted" />
 
         <div className="px-6 py-4">
@@ -174,13 +174,13 @@ export const ComparisonPage: FC<ComparisonPageProps> = ({ modelId: propModelId }
             <div className="flex items-center gap-4">
               <button
                 onClick={() => navigate('/app/model-dashboard')}
-                className="p-2 hover:bg-muted rounded-lg transition-colors"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-sm font-medium text-foreground shadow-sm transition-colors duration-150 hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <ArrowLeft className="w-5 h-5 text-muted-foreground" />
               </button>
 
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-muted rounded-lg">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-background shadow-sm">
                   <GitCompare className="w-5 h-5 text-foreground" />
                 </div>
                 <div>
@@ -313,35 +313,30 @@ export const ComparisonPage: FC<ComparisonPageProps> = ({ modelId: propModelId }
 
           if (!hasComparison) {
             return (
-              <div className="bg-card rounded-xl border border-border border-dashed">
-                <div className="flex flex-col items-center justify-center text-center py-16">
-                  <div className="relative mb-6">
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 via-indigo-500/15 to-violet-500/20 blur-sm scale-110" />
-                    <div className="relative p-5 bg-muted rounded-full">
-                      <BarChart3 className="w-12 h-12 text-muted-foreground/60" />
-                    </div>
-                  </div>
-                  <h2 className="text-lg font-bold text-foreground mb-2">
-                    {t('simulationComparison.selectModels')}
-                  </h2>
-                  <p className="text-muted-foreground max-w-md">
-                    {t('simulationComparison.selectModelsDescription')}
-                  </p>
-                  {!selectedModelId1 && (
-                    <div className="mt-5 px-4 py-2 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
-                      <p className="text-sm text-blue-700 dark:text-blue-300">
-                        {t('simulationComparison.startBySelectingBaseline')}
-                      </p>
-                    </div>
-                  )}
-                  {selectedModelId1 && !selectedModelId2 && (
-                    <div className="mt-5 px-4 py-2 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg">
-                      <p className="text-sm text-amber-700 dark:text-amber-300">
-                        {t('simulationComparison.nowSelectComparison')}
-                      </p>
-                    </div>
-                  )}
+              <div className="md-fade-in flex flex-col items-center rounded-xl border border-dashed border-border bg-muted/30 px-6 py-14 text-center">
+                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-border bg-card shadow-sm">
+                  <BarChart3 className="w-7 h-7 text-muted-foreground" />
                 </div>
+                <h2 className="text-lg font-bold text-foreground mb-2">
+                  {t('simulationComparison.selectModels')}
+                </h2>
+                <p className="text-muted-foreground max-w-md">
+                  {t('simulationComparison.selectModelsDescription')}
+                </p>
+                {!selectedModelId1 && (
+                  <div className="mt-5 px-4 py-2 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                      {t('simulationComparison.startBySelectingBaseline')}
+                    </p>
+                  </div>
+                )}
+                {selectedModelId1 && !selectedModelId2 && (
+                  <div className="mt-5 px-4 py-2 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg">
+                    <p className="text-sm text-amber-700 dark:text-amber-300">
+                      {t('simulationComparison.nowSelectComparison')}
+                    </p>
+                  </div>
+                )}
               </div>
             );
           }
@@ -350,7 +345,7 @@ export const ComparisonPage: FC<ComparisonPageProps> = ({ modelId: propModelId }
             <div className="space-y-6">
               {model1 && model2 && (
                 <>
-                  <div className="h-[560px]">
+                  <div className="md-rise h-[560px]" style={{ animationDelay: "60ms" }}>
                     <ComparisonMapView model1={model1} model2={model2} />
                   </div>
                   <ComparisonMetrics model1={model1} model2={model2} />

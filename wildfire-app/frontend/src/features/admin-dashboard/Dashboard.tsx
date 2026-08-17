@@ -114,7 +114,7 @@ export const Dashboard: React.FC = () => {
 		<div className="min-h-screen bg-background">
 			<div className="p-3 md:p-4 lg:p-5 max-w-[1600px] mx-auto space-y-4">
 				{/* Main header section with welcome message and user info */}
-				<div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-800 via-gray-900 to-black p-4 md:p-5 text-white shadow-xl">
+				<div className="md-rise relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-800 via-gray-900 to-black p-4 md:p-5 text-white shadow-xl">
 					{/* Decorative elements */}
 					<div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-white/10 to-transparent rounded-full -translate-y-1/2 translate-x-1/2"></div>
 					<div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-white/5 to-transparent rounded-full translate-y-1/2 -translate-x-1/2"></div>
@@ -179,7 +179,7 @@ export const Dashboard: React.FC = () => {
 				</div>
 
 					{/* User statistics cards section */}
-				<div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+				<div className="md-rise grid grid-cols-2 md:grid-cols-4 gap-3" style={{ animationDelay: "60ms" }}>
 					{statsCards.map((stat) => (
 						<div
 							key={stat.title}
@@ -205,7 +205,7 @@ export const Dashboard: React.FC = () => {
 				</div>
 
 				{/* Main content area with tabbed interface */}
-				<div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
+				<div className="md-rise bg-card rounded-2xl shadow-sm border border-border overflow-hidden" style={{ animationDelay: "120ms" }}>
 					{/* Tab navigation */}
 					<div className="border-b border-border bg-muted/50">
 						<nav className="flex overflow-x-auto scrollbar-hide px-2 md:px-4 py-2 gap-1">

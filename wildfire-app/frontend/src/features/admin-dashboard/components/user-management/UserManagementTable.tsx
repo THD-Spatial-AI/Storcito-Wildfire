@@ -31,6 +31,30 @@ function getUserGroupTooltip(tableUser: User, groups: Group[], t: (key: string) 
 	return group ? getGroupFullDisplayName(group) : t("userManagement.groups.unknownGroup");
 }
 
+function TableSkeleton({ rows = 6 }: { rows?: number }) {
+	return (
+		<div className="overflow-hidden rounded-xl border border-border">
+			<div className="border-b border-border bg-muted/40 px-4 py-3">
+				<div className="md-skeleton h-3 w-36 rounded-md bg-muted" />
+			</div>
+			<div className="divide-y divide-border">
+				{Array.from({ length: rows }, (_, i) => (
+					<div key={i} className="flex items-center gap-4 px-4 py-3.5">
+						<div className="md-skeleton h-4 w-4 shrink-0 rounded bg-muted" />
+						<div
+							className="md-skeleton h-3.5 w-full max-w-[220px] rounded-md bg-muted"
+							style={{ animationDelay: `${i * 90}ms` }}
+						/>
+						<div className="md-skeleton hidden h-5 w-20 shrink-0 rounded-full bg-muted sm:block" />
+						<div className="md-skeleton hidden h-3.5 w-24 shrink-0 rounded-md bg-muted md:block" />
+						<div className="md-skeleton ml-auto h-6 w-24 shrink-0 rounded-md bg-muted" />
+					</div>
+				))}
+			</div>
+		</div>
+	);
+}
+
 interface UserManagementTableProps {
 	user: User | null | undefined;
 	users: User[];
@@ -64,11 +88,31 @@ export function UserManagementTable({
 	const getAccessLevelIcon = (level: string) => <Shield className={`w-3 h-3 ${getAccessLevelIconColor(level)}`} />;
 
 	return (
-		<div className="bg-card rounded-xl border border-border overflow-visible shadow-sm">
-			<div className="overflow-x-auto overflow-y-visible">
-				<table className="min-w-full divide-y divide-border">
-						<thead className="bg-muted/50">
-							<tr>
+		<div className="md-rise bg-card rounded-xl border border-border overflow-visible shadow-sm" style={{ animationDelay: "60ms" }}>
+			{loading ? (
+				<div className="space-y-3 p-4 sm:p-5">
+					<div className="flex items-center gap-2 text-sm text-muted-foreground">
+						<span>{t("userManagement.loadingUsers")}</span>
+					</div>
+					<TableSkeleton />
+				</div>
+			) : users.length === 0 ? (
+				<div className="p-4 sm:p-5">
+					<div className="md-fade-in flex flex-col items-center rounded-xl border border-dashed border-border bg-muted/30 px-6 py-14 text-center">
+						<div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-border bg-card shadow-sm">
+							<Users className="h-7 w-7 text-muted-foreground" />
+						</div>
+						<h3 className="text-base font-semibold tracking-tight text-foreground">{t("userManagement.noUsersFound")}</h3>
+						<p className="mt-1.5 max-w-sm text-sm text-muted-foreground">
+							{getUsersEmptyMessage(t, user, noResults, debouncedSearch)}
+						</p>
+					</div>
+				</div>
+			) : (
+				<div className="md-fade-in overflow-x-auto overflow-y-visible">
+					<table className="min-w-full divide-y divide-border">
+						<thead>
+							<tr className="border-b border-border bg-muted/40">
 								{canManageUsers && (
 									<th className="px-3 py-2 w-10">
 										<Tooltip>
@@ -86,203 +130,169 @@ export function UserManagementTable({
 										</Tooltip>
 									</th>
 								)}
-								<th className="px-3 py-2 text-left text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("userManagement.table.user")}</th>
-								<th className="px-3 py-2 text-left text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("userManagement.table.accessLevel")}</th>
-								<th className="px-3 py-2 text-left text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("userManagement.table.group")}</th>
-								<th className="px-3 py-2 text-left text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("userManagement.table.emailVerified")}</th>
-								<th className="px-3 py-2 text-right text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{t("userManagement.table.actions")}</th>
+								<th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("userManagement.table.user")}</th>
+								<th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("userManagement.table.accessLevel")}</th>
+								<th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("userManagement.table.group")}</th>
+								<th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("userManagement.table.emailVerified")}</th>
+								<th className="px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("userManagement.table.actions")}</th>
 							</tr>
 						</thead>
 						<tbody className="divide-y divide-border">
-							{loading ? (
-								<tr>
-									<td colSpan={canManageUsers ? 9 : 8} className="px-6 py-16 text-center">
-										<div className="flex flex-col items-center justify-center gap-3">
-											<div className="relative">
-												<div className="w-10 h-10 rounded-full border-4 border-muted"></div>
-												<div className="absolute top-0 left-0 w-10 h-10 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin"></div>
-											</div>
-											<span className="text-sm text-muted-foreground">{t("userManagement.loadingUsers")}</span>
-										</div>
-									</td>
-								</tr>
-							) : (
-								<>
-									{users.length === 0 ? (
-										<tr>
-											<td colSpan={canManageUsers ? 9 : 8} className="px-6 py-16 text-center">
-												<div className="flex flex-col items-center justify-center gap-3">
-													<div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center">
-														<Users className="w-8 h-8 text-muted-foreground" />
-													</div>
-													<div>
-														<p className="text-lg font-medium text-foreground mb-1">{t("userManagement.noUsersFound")}</p>
-														<p className="text-sm text-muted-foreground">
-															{getUsersEmptyMessage(t, user, noResults, debouncedSearch)}
-														</p>
-													</div>
-												</div>
-											</td>
-										</tr>
-									) : (
-										users.map((tableUser) => (
-									<tr key={tableUser.id} className={`hover:bg-muted/50 transition-colors duration-150 ${canManageUsers && isSelected(tableUser) ? "bg-muted" : ""}`}>
-										{canManageUsers && (
-											<td className="px-3 py-2 w-10">
-												<input
-													type="checkbox"
-													checked={isSelected(tableUser)}
-													onChange={() => handleSelectUser(tableUser)}
-													className="w-4 h-4 text-foreground rounded border-input focus:ring-ring focus:ring-offset-0 cursor-pointer"
-												/>
-											</td>
-										)}
-										<td className="px-3 py-2">
-											<div className="flex items-center gap-2.5">
-												<Tooltip>
-													<TooltipTrigger asChild>
-														<div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center text-foreground text-xs font-medium cursor-default">
-															{tableUser.name.charAt(0).toUpperCase()}
-														</div>
-													</TooltipTrigger>
-													<TooltipContent side="top">
-														{tableUser.created_at
-															? `Created: ${new Date(tableUser.created_at).toLocaleString()}`
-															: "Creation date unknown"}
-													</TooltipContent>
-												</Tooltip>
-												<div className="min-w-0">
-													<div className="text-sm font-medium text-foreground">{tableUser.name}</div>
-													<div className="text-[10px] text-muted-foreground flex items-center gap-1.5">
-														<Mail className="w-2.5 h-2.5" />
-														<span className="truncate">{tableUser.email}</span>
-														<Tooltip>
-															<TooltipTrigger asChild>
-																<button
-																	onClick={() => handleCopyEmail(tableUser.email)}
-																	className="inline-flex items-center justify-center p-0.5 rounded hover:bg-muted transition-colors duration-150 cursor-pointer"
-																>
-																	{copiedEmail === tableUser.email ? (
-																		<Check className="w-2.5 h-2.5 text-green-600" />
-																	) : (
-																		<Copy className="w-2.5 h-2.5 text-muted-foreground hover:text-foreground dark:text-white" />
-																	)}
-																</button>
-															</TooltipTrigger>
-															<TooltipContent side="top">
-																{copiedEmail === tableUser.email ? t("userManagement.actions.copied") : t("userManagement.actions.copyEmail")}
-															</TooltipContent>
-														</Tooltip>
-													</div>
-												</div>
-											</div>
-										</td>
-										<td className="px-3 py-2">
-											<StatusBadge
-												icon={getAccessLevelIcon(tableUser.access_level)}
-												text={getAccessLevelName(tableUser.access_level)}
-												variant="default"
-												size="small"
-												className={getAccessLevelColor(tableUser.access_level)}
+							{users.map((tableUser) => (
+								<tr key={tableUser.id} className={`transition-colors duration-150 hover:bg-muted/40 ${canManageUsers && isSelected(tableUser) ? "bg-muted" : ""}`}>
+									{canManageUsers && (
+										<td className="px-3 py-2 w-10">
+											<input
+												type="checkbox"
+												checked={isSelected(tableUser)}
+												onChange={() => handleSelectUser(tableUser)}
+												className="w-4 h-4 text-foreground rounded border-input focus:ring-ring focus:ring-offset-0 cursor-pointer"
 											/>
 										</td>
-										<td className="px-3 py-2">
+									)}
+									<td className="px-3 py-2">
+										<div className="flex items-center gap-2.5">
 											<Tooltip>
 												<TooltipTrigger asChild>
-													<div className="inline-block">
-														<StatusBadge
-															icon={<Users className="w-3 h-3" />}
-															text={getUserGroupDisplay(tableUser, groups, t)}
-															variant="info"
-															size="small"
-														/>
+													<div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center text-foreground text-xs font-medium cursor-default">
+														{tableUser.name.charAt(0).toUpperCase()}
 													</div>
 												</TooltipTrigger>
-												<TooltipContent>
-													{getUserGroupTooltip(tableUser, groups, t)}
+												<TooltipContent side="top">
+													{tableUser.created_at
+														? `Created: ${new Date(tableUser.created_at).toLocaleString()}`
+														: "Creation date unknown"}
 												</TooltipContent>
 											</Tooltip>
-										</td>
-										<td className="px-3 py-2">
-											<StatusBadge
-												icon={tableUser.email_verified ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-												text={tableUser.email_verified ? t("userManagement.emailStatus.verified") : t("userManagement.emailStatus.unverified")}
-												variant={tableUser.email_verified ? "success" : "default"}
-												size="small"
-											/>
-										</td>
-										<td className="px-3 py-2 text-right">
-											<ModelActionGroup
-												actions={[
-													// Experts and managers can change user groups
-													...(canManageUsers ? [{
-														key: "group",
-														icon: UserCog,
-														tooltip: t("userManagement.actions.changeGroup"),
-														variant: "default" as const,
-														onClick: () => handleChangeGroup(tableUser),
-													}] : []),
-													// Single toggle enable/disable icon
-													...(canManageUsers ? [{
-														key: "toggle-enabled",
-														icon: (tableUser.enabled === false) ? UserX : UserCheck,
-														tooltip: (tableUser.enabled === false) ? t("userManagement.actions.enableUser") : t("userManagement.actions.disableUser"),
-														variant: "default" as const,
-														onClick: () => handleToggleUser(tableUser),
-													}] : []),
-													// Experts and managers (for their group users); the key turns green when the user has an active token.
-													...(canManageUsers ? [{
-														key: "api-tokens",
-														icon: KeyRound,
-														tooltip: tableUser.has_api_access
-															? t("userManagement.actions.apiTokensActive", "API access enabled — manage tokens")
-															: t("userManagement.actions.apiTokens", "API tokens"),
-														variant: "default" as const,
-														className: tableUser.has_api_access
-															? "!text-emerald-800 dark:!text-emerald-300 bg-emerald-600/20 hover:bg-emerald-600/30"
-															: undefined,
-														onClick: () => handleApiTokens(tableUser),
-													}] : []),
-													{
-														key: "edit",
-														icon: Edit,
-														tooltip: t("userManagement.actions.editUser"),
-														variant: "default" as const,
-														onClick: () => handleEditUser(tableUser),
-													},
-													{
-														key: "delete",
-														icon: Trash2,
-														tooltip: t("userManagement.actions.deleteUser"),
-														variant: "danger" as const,
-														onClick: () => { void handleDeleteUser(tableUser); },
-													},
-												]}
-												layout="horizontal"
-												size="small"
-												className="justify-end"
-											/>
-										</td>
-									</tr>
-								))
-								)}
-								</>
-							)}
+											<div className="min-w-0">
+												<div className="text-sm font-medium text-foreground">{tableUser.name}</div>
+												<div className="text-[10px] text-muted-foreground flex items-center gap-1.5">
+													<Mail className="w-2.5 h-2.5" />
+													<span className="truncate">{tableUser.email}</span>
+													<Tooltip>
+														<TooltipTrigger asChild>
+															<button
+																onClick={() => handleCopyEmail(tableUser.email)}
+																className="inline-flex items-center justify-center p-0.5 rounded hover:bg-muted transition-colors duration-150 cursor-pointer"
+															>
+																{copiedEmail === tableUser.email ? (
+																	<Check className="w-2.5 h-2.5 text-green-600" />
+																) : (
+																	<Copy className="w-2.5 h-2.5 text-muted-foreground hover:text-foreground dark:text-white" />
+																)}
+															</button>
+														</TooltipTrigger>
+														<TooltipContent side="top">
+															{copiedEmail === tableUser.email ? t("userManagement.actions.copied") : t("userManagement.actions.copyEmail")}
+														</TooltipContent>
+													</Tooltip>
+												</div>
+											</div>
+										</div>
+									</td>
+									<td className="px-3 py-2">
+										<StatusBadge
+											icon={getAccessLevelIcon(tableUser.access_level)}
+											text={getAccessLevelName(tableUser.access_level)}
+											variant="default"
+											size="small"
+											className={getAccessLevelColor(tableUser.access_level)}
+										/>
+									</td>
+									<td className="px-3 py-2">
+										<Tooltip>
+											<TooltipTrigger asChild>
+												<div className="inline-block">
+													<StatusBadge
+														icon={<Users className="w-3 h-3" />}
+														text={getUserGroupDisplay(tableUser, groups, t)}
+														variant="info"
+														size="small"
+													/>
+												</div>
+											</TooltipTrigger>
+											<TooltipContent>
+												{getUserGroupTooltip(tableUser, groups, t)}
+											</TooltipContent>
+										</Tooltip>
+									</td>
+									<td className="px-3 py-2">
+										<StatusBadge
+											icon={tableUser.email_verified ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+											text={tableUser.email_verified ? t("userManagement.emailStatus.verified") : t("userManagement.emailStatus.unverified")}
+											variant={tableUser.email_verified ? "success" : "default"}
+											size="small"
+										/>
+									</td>
+									<td className="px-3 py-2 text-right">
+										<ModelActionGroup
+											actions={[
+												// Experts and managers can change user groups
+												...(canManageUsers ? [{
+													key: "group",
+													icon: UserCog,
+													tooltip: t("userManagement.actions.changeGroup"),
+													variant: "default" as const,
+													onClick: () => handleChangeGroup(tableUser),
+												}] : []),
+												// Single toggle enable/disable icon
+												...(canManageUsers ? [{
+													key: "toggle-enabled",
+													icon: (tableUser.enabled === false) ? UserX : UserCheck,
+													tooltip: (tableUser.enabled === false) ? t("userManagement.actions.enableUser") : t("userManagement.actions.disableUser"),
+													variant: "default" as const,
+													onClick: () => handleToggleUser(tableUser),
+												}] : []),
+												// Experts and managers (for their group users); the key turns green when the user has an active token.
+												...(canManageUsers ? [{
+													key: "api-tokens",
+													icon: KeyRound,
+													tooltip: tableUser.has_api_access
+														? t("userManagement.actions.apiTokensActive", "API access enabled — manage tokens")
+														: t("userManagement.actions.apiTokens", "API tokens"),
+													variant: "default" as const,
+													className: tableUser.has_api_access
+														? "!text-emerald-800 dark:!text-emerald-300 bg-emerald-600/20 hover:bg-emerald-600/30"
+														: undefined,
+													onClick: () => handleApiTokens(tableUser),
+												}] : []),
+												{
+													key: "edit",
+													icon: Edit,
+													tooltip: t("userManagement.actions.editUser"),
+													variant: "default" as const,
+													onClick: () => handleEditUser(tableUser),
+												},
+												{
+													key: "delete",
+													icon: Trash2,
+													tooltip: t("userManagement.actions.deleteUser"),
+													variant: "danger" as const,
+													onClick: () => { void handleDeleteUser(tableUser); },
+												},
+											]}
+											layout="horizontal"
+											size="small"
+											className="justify-end"
+										/>
+									</td>
+								</tr>
+							))}
 						</tbody>
 					</table>
 				</div>
+			)}
 
-
-				<Pagination
-					currentPage={page}
-					totalItems={totalCount}
-					itemsPerPage={rowsPerPage}
-					onPageChange={setPage}
-					onItemsPerPageChange={(newItemsPerPage: number) => {
-						setRowsPerPage(newItemsPerPage);
-						setPage(0);
-					}}
-					isLoading={loading}
+			<Pagination
+				currentPage={page}
+				totalItems={totalCount}
+				itemsPerPage={rowsPerPage}
+				onPageChange={setPage}
+				onItemsPerPageChange={(newItemsPerPage: number) => {
+					setRowsPerPage(newItemsPerPage);
+					setPage(0);
+				}}
+				isLoading={loading}
 			/>
 		</div>
 	);

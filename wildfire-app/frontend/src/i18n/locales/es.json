@@ -1856,7 +1856,7 @@
       "hottest": "Más caluroso"
     },
     "layer2": {
-      "purpose": "Opcionalmente suba un DTM para ver su cobertura, luego dibuje dentro de ella — o simplemente dibuje sobre los datos incluidos.",
+      "purpose": "Selecciona una región administrativa completa, dibuja un área o sube un límite GeoJSON.",
       "nextStepHint": "A continuación validaremos el área seleccionada y las entradas del modelo.",
       "terrainModel": "Terrain model (DTM)",
       "dtmHint": "GeoTIFF opcional (.tif) — su cobertura se muestra en el mapa",

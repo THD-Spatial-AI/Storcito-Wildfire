@@ -1856,7 +1856,7 @@
       "hottest": "Heißeste"
     },
     "layer2": {
-      "purpose": "Optional können Sie ein DTM hochladen, um dessen Abdeckung zu sehen, und dann darin zeichnen – oder zeichnen Sie einfach auf den gebündelten Daten.",
+      "purpose": "Wählen Sie eine vollständige Verwaltungsregion aus, zeichnen Sie ein Gebiet oder laden Sie eine GeoJSON-Grenze hoch.",
       "nextStepHint": "Als nächstes überprüfen wir das ausgewählte Gebiet und die Modelleingaben.",
       "terrainModel": "Terrain model (DTM)",
       "dtmHint": "Optionales GeoTIFF (.tif) — die Abdeckung wird auf der Karte angezeigt",

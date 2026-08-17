@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	feedback "spatialhub_backend/internal/handler/feedback"
+	geocodinghandler "spatialhub_backend/internal/handler/geocoding"
 	grouphandler "spatialhub_backend/internal/handler/group"
 	notificationshandler "spatialhub_backend/internal/handler/notifications"
 	settingshandler "spatialhub_backend/internal/handler/settings"
@@ -63,6 +64,7 @@ type Deps struct {
 	ModelHandler          *modelhandler.ModelHandler
 	RiskHandler           *riskmetricshandler.Handler
 	WeatherHandler        *weather.WeatherHandler
+	GeocodingHandler      *geocodinghandler.Handler
 	WebserviceClient      *webservice.Client
 }
 
@@ -136,6 +138,7 @@ func RegisterProtected(r *gin.Engine, deps Deps) {
 	registerGroupRoutes(protectedAPI, deps.GroupHandler)
 	registerModelRoutes(protectedAPI, deps.ModelHandler, deps.ResultHandler, deps.RiskHandler)
 	registerWeatherRoutes(protectedAPI, deps.WeatherHandler)
+	registerGeocodingRoutes(protectedAPI, deps.GeocodingHandler)
 }
 
 func registerFrontend(r *gin.Engine) {

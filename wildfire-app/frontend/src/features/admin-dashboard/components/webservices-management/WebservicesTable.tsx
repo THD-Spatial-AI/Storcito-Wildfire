@@ -79,7 +79,7 @@ return (
 };
 
 return (
-<div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
+<div className="md-rise overflow-hidden rounded-xl border border-border bg-card shadow-sm" style={{ animationDelay: "120ms" }}>
 {loading && (
 <div className="h-1 bg-muted overflow-hidden">
 <div className="h-full w-1/3 bg-gradient-to-r from-blue-400 to-blue-600 animate-[shimmer_1.5s_infinite]"></div>
@@ -87,25 +87,25 @@ return (
 )}
 <div className="overflow-x-auto">
 <table className="min-w-full divide-y divide-border">
-<thead className="bg-muted/50">
-<tr>
-<th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("webservicesManagement.table.service")}</th>
-{!readOnly && <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("webservicesManagement.table.endpoint")}</th>}
-<th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("webservicesManagement.table.status")}</th>
-<th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("webservicesManagement.table.availability")}</th>
-<th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("webservicesManagement.table.jobs")}</th>
-<th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("webservicesManagement.table.performance")}</th>
-<th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("webservicesManagement.table.user")}</th>
-<th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("webservicesManagement.table.lastCheck")}</th>
-<th className="px-6 py-4 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("webservicesManagement.table.actions")}</th>
+<thead>
+<tr className="border-b border-border bg-muted/40">
+<th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("webservicesManagement.table.service")}</th>
+{!readOnly && <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("webservicesManagement.table.endpoint")}</th>}
+<th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("webservicesManagement.table.status")}</th>
+<th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("webservicesManagement.table.availability")}</th>
+<th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("webservicesManagement.table.jobs")}</th>
+<th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("webservicesManagement.table.performance")}</th>
+<th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("webservicesManagement.table.user")}</th>
+<th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("webservicesManagement.table.lastCheck")}</th>
+<th className="px-6 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("webservicesManagement.table.actions")}</th>
 </tr>
 </thead>
 <tbody className="divide-y divide-border">
 {webservices.length === 0 && !loading ? (
 <tr>
 <td colSpan={readOnly ? 8 : 9} className="px-6 py-16 text-center">
-<div className="flex flex-col items-center justify-center gap-3">
-<div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-2xl flex items-center justify-center">
+<div className="md-fade-in flex flex-col items-center justify-center gap-3">
+<div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-2xl flex items-center justify-center border border-border shadow-sm">
 <Cloud className="w-8 h-8 text-gray-400 dark:text-gray-300" />
 </div>
 <div>
@@ -115,7 +115,7 @@ return (
 </p>
 </div>
 {!readOnly && (
-<button onClick={onAdd} className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 transition-all shadow-sm hover:shadow-md">
+<button onClick={onAdd} className="inline-flex h-9 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-all duration-200 hover:bg-primary/90 hover:shadow-md active:scale-[0.98]">
 <Plus className="w-4 h-4" />
 {t("webservicesManagement.registerNew")}
 </button>
@@ -125,7 +125,7 @@ return (
 </tr>
 ) : (
 webservices.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage).map((service) => (
-<tr key={service.id} className="hover:bg-muted/50 transition-colors duration-150">
+<tr key={service.id} className="transition-colors duration-150 hover:bg-muted/40">
 <td className="px-6 py-4">
 <div className="flex items-center gap-3">
 <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-muted"><Server className="w-5 h-5 text-muted-foreground" /></div>

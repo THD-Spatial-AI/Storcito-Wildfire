@@ -1856,7 +1856,7 @@
       "hottest": "Heetste"
     },
     "layer2": {
-      "purpose": "Upload optioneel een DTM om de dekking ervan te zien en teken erin — of teken gewoon op de meegeleverde data.",
+      "purpose": "Selecteer een volledige administratieve regio, teken een gebied of upload een GeoJSON-grens.",
       "nextStepHint": "Hierna valideren we het geselecteerde gebied en de model-inputs.",
       "terrainModel": "Terrain model (DTM)",
       "dtmHint": "Optionele GeoTIFF (.tif) — dekking wordt weergegeven op de kaart",

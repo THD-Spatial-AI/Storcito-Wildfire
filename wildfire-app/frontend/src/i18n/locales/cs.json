@@ -1856,7 +1856,7 @@
       "hottest": "Nejteplejší"
     },
     "layer2": {
-      "purpose": "Volitelně nahrajte DTM, abyste viděli jeho pokrytí, a poté kreslete do něj — nebo prostě kreslete na přibalená data.",
+      "purpose": "Vyberte celý správní region, nakreslete oblast nebo nahrajte hranici GeoJSON.",
       "nextStepHint": "Dále ověříme vybranou oblast a vstupy modelu.",
       "terrainModel": "Terrain model (DTM)",
       "dtmHint": "Volitelný GeoTIFF (.tif) — jeho pokrytí je zobrazeno na mapě",

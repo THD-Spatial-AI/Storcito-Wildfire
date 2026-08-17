@@ -16,12 +16,12 @@ export function UserManagementBulkActions({ selectedCount, handleBulkMoveToGroup
 			<span className="text-xs font-medium text-muted-foreground">
 				{t("userManagement.actions.selected", { count: selectedCount })}
 			</span>
-			<div className="flex items-center gap-1 px-2 py-1 border border-border rounded-md bg-muted/50">
+			<div className="flex items-center gap-1.5">
 				<Tooltip>
 					<TooltipTrigger asChild>
 						<button
 							onClick={handleBulkMoveToGroup}
-							className="inline-flex items-center justify-center h-7 w-7 rounded hover:bg-muted transition-colors cursor-pointer"
+							className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground shadow-sm transition-colors duration-150 hover:bg-accent hover:text-foreground cursor-pointer"
 						>
 							<FolderInput className="w-4 h-4" />
 						</button>
@@ -32,7 +32,7 @@ export function UserManagementBulkActions({ selectedCount, handleBulkMoveToGroup
 					<TooltipTrigger asChild>
 						<button
 							onClick={() => { void handleBulkDelete(); }}
-							className="inline-flex items-center justify-center h-7 w-7 rounded text-destructive hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+							className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-destructive shadow-sm transition-colors duration-150 hover:bg-destructive/10 cursor-pointer"
 						>
 							<Trash2 className="w-4 h-4" />
 						</button>

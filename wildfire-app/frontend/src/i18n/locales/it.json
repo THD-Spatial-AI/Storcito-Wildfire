@@ -1856,7 +1856,7 @@
       "hottest": "Più caldo"
     },
     "layer2": {
-      "purpose": "Opzionalmente carica un DTM per vederne la copertura, poi disegnaci dentro — o disegna semplicemente sui dati inclusi.",
+      "purpose": "Seleziona un'intera regione amministrativa, disegna un'area o carica un confine GeoJSON.",
       "nextStepHint": "Successivamente convalideremo l'area selezionata e gli input del modello.",
       "terrainModel": "Terrain model (DTM)",
       "dtmHint": "GeoTIFF opzionale (.tif) — la copertura è mostrata sulla mappa",

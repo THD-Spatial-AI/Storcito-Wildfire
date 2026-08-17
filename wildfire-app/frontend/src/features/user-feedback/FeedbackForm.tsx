@@ -25,7 +25,7 @@ export const FeedbackComponent: React.FC = () => {
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-background text-foreground">
-      <div className="bg-gradient-to-r from-gray-800 to-gray-900 dark:from-gray-900 dark:to-black rounded-xl p-6 mb-6 text-white shadow-lg">
+      <div className="md-rise bg-gradient-to-r from-gray-800 to-gray-900 dark:from-gray-900 dark:to-black rounded-xl p-6 mb-6 text-white shadow-lg">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center">
             <MessageSquare className="w-6 h-6" />
@@ -39,7 +39,7 @@ export const FeedbackComponent: React.FC = () => {
 
       {form.user?.id && <MyFeedbackHistory userId={String(form.user.id)} refreshTrigger={form.historyRefresh} />}
 
-      <form onSubmit={form.handleSubmit} className="space-y-4">
+      <form onSubmit={form.handleSubmit} className="md-rise space-y-4" style={{ animationDelay: "120ms" }}>
         <CategorySection
           value={form.feedbackData.category}
           onChange={(value) => form.updateField("category", value)}

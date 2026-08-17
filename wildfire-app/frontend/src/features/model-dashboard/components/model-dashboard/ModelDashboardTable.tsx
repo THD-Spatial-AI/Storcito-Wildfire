@@ -176,11 +176,10 @@ export function ModelDashboardTable({
 										</tr>
 									</thead>
 									<tbody className="divide-y divide-border bg-card">
-										{paginatedModels.map((model, index) => (
+										{paginatedModels.map((model) => (
 											<ModelTableRow
 												key={model.id}
 												model={model}
-												index={index}
 												modelTitle={modelTitlesByID.get(model.id) ?? model.title.trim()}
 												parentModelTitle={model.parent_model_id ? (modelTitlesByID.get(model.parent_model_id) ?? model.parent_model_title) : undefined}
 												hasChildren={(childCountByParentID.get(model.id) ?? 0) > 0}

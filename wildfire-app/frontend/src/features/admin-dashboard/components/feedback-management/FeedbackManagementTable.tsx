@@ -158,33 +158,33 @@ export function FeedbackManagementTable({
     t(`feedbackManagement.statuses.${status === "in_progress" ? "inProgress" : status}`);
 
   return (
-    <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
-      <div className="overflow-x-auto">
+    <div className="md-rise bg-card rounded-xl border border-border overflow-hidden shadow-sm" style={{ animationDelay: "120ms" }}>
+      <div className="md-fade-in overflow-x-auto">
         <table className="min-w-full divide-y divide-border">
-          <thead className="bg-muted/50">
-            <tr>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          <thead>
+            <tr className="border-b border-border bg-muted/40">
+              <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 {t("feedbackManagement.table.subject")}
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 {t("feedbackManagement.table.category")}
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 {t("feedbackManagement.table.priority")}
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 {t("feedbackManagement.table.status")}
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 {t("feedbackManagement.table.rating")}
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 {t("feedbackManagement.table.user")}
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 {t("feedbackManagement.table.created")}
               </th>
-              <th className="px-6 py-4 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              <th className="px-6 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 {t("feedbackManagement.table.actions")}
               </th>
             </tr>
@@ -193,7 +193,7 @@ export function FeedbackManagementTable({
             {feedbacks.length === 0 ? (
               <tr>
                 <td colSpan={8} className="px-6 py-16 text-center">
-                  <div className="flex flex-col items-center justify-center gap-3">
+                  <div className="md-fade-in flex flex-col items-center justify-center gap-3">
                     <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-2xl flex items-center justify-center">
                       <MessageCircle className="w-8 h-8 text-gray-400 dark:text-gray-300" />
                     </div>
@@ -218,7 +218,7 @@ export function FeedbackManagementTable({
                 return (
                   <tr
                     key={feedback.id}
-                    className="hover:bg-muted/50 transition-colors duration-150"
+                    className="transition-colors duration-150 hover:bg-muted/40"
                   >
                     <td className="px-6 py-4 max-w-[200px]">
                       <div className="min-w-0">

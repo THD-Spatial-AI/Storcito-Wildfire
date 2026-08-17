@@ -90,7 +90,7 @@ export const MyFeedbackHistory: React.FC<{ userId: string; refreshTrigger: numbe
   if (items.length === 0) return null;
 
   return (
-    <div className="mb-6">
+    <div className="md-rise mb-6" style={{ animationDelay: "60ms" }}>
       <button
         type="button"
         onClick={() => setExpanded(!expanded)}
@@ -101,7 +101,7 @@ export const MyFeedbackHistory: React.FC<{ userId: string; refreshTrigger: numbe
       </button>
 
       {expanded && (
-        <div className="space-y-2">
+        <div className="md-fade-in space-y-2">
           {items.map((item) => <FeedbackHistoryItem key={item.id} item={item} />)}
         </div>
       )}

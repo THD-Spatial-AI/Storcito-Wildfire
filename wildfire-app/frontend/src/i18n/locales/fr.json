@@ -1856,7 +1856,7 @@
       "hottest": "Le plus chaud"
     },
     "layer2": {
-      "purpose": "Vous pouvez optionnellement télécharger un DTM pour voir sa couverture, puis dessiner à l'intérieur — ou simplement dessiner sur les données groupées.",
+      "purpose": "Sélectionnez une région administrative complète, dessinez une zone ou importez une limite GeoJSON.",
       "nextStepHint": "Ensuite, nous validerons la zone sélectionnée et les entrées du modèle.",
       "terrainModel": "Terrain model (DTM)",
       "dtmHint": "GeoTIFF optionnel (.tif) — sa couverture est affichée sur la carte",

@@ -7,6 +7,7 @@ import { useTranslation } from "@/i18n";
 import { AreaSelectTour } from "@/features/guided-tour/AreaSelectTour";
 import { MapContainer } from "@/components/shared/MapContainer";
 import { useAreaSelect, type AreaData } from "@/features/configurator/hooks/useAreaSelect";
+import { useAdministrativeRegionSelection } from "@/features/configurator/hooks/area-select/useAdministrativeRegionSelection";
 import { PolygonDrawer } from "@/features/polygon-drawer";
 import { PolygonDrawingGuide } from "@/components/map-controls/PolygonDrawingGuide";
 import { CreateWorkspaceModal } from "@/components/workspace";
@@ -89,6 +90,16 @@ export const AreaSelect: FC<AreaSelectProps> = ({
         onCancel,
         editMode,
         existingModelId,
+    });
+
+    const regionSelectionEnabled = activeConfiguratorStep === 2 && state.areaInputMode === "region";
+    useAdministrativeRegionSelection({
+        map,
+        enabled: regionSelectionEnabled,
+        onStart: actions.beginRegionSelection,
+        onSelected: actions.handleRegionSelected,
+        onError: actions.handleRegionSelectionError,
+        onCancel: actions.cancelRegionSelection,
     });
 
     // Fly to default region when map is ready
@@ -186,6 +197,9 @@ export const AreaSelect: FC<AreaSelectProps> = ({
                         <MapOverlays
                             showDrawHint={Boolean(showDrawHint)}
                             cursorPos={state.cursorPos}
+                            regionSelectionActive={regionSelectionEnabled}
+                            regionSelectionLoading={state.isResolvingRegion}
+                            selectedRegionName={state.selectedRegionName}
                         />
                         {!editMode && activeConfiguratorStep === 2 && state.areaInputMode === "draw" && (
                             <PolygonDrawingGuide

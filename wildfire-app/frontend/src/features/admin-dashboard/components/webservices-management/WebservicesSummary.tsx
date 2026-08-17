@@ -18,7 +18,7 @@ const { t } = useTranslation();
 
 return (
 <>
-<div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+<div className="md-rise grid grid-cols-2 md:grid-cols-5 gap-3">
 {[
 { icon: Server, label: t("webservicesManagement.summary.total"), value: summary?.total || 0 },
 { icon: Wifi, label: t("webservicesManagement.summary.online"), value: summary?.online || 0 },
@@ -26,7 +26,7 @@ return (
 { icon: RotateCw, label: t("webservicesManagement.summary.busy"), value: summary?.busy || 0 },
 { icon: WifiOff, label: t("webservicesManagement.summary.offline"), value: summary?.offline || 0 },
 ].map((stat) => (
-<div key={stat.label} className="bg-card rounded-lg p-3 border border-border shadow-sm hover:shadow-md transition-all duration-200">
+<div key={stat.label} className="bg-card rounded-xl p-3 border border-border shadow-sm hover:shadow-md transition-all duration-200">
 <div className="flex items-center gap-3">
 <div className="p-2 rounded-lg bg-muted flex-shrink-0">
 <stat.icon className="w-4 h-4 text-muted-foreground" />
@@ -41,7 +41,7 @@ return (
 </div>
 
 {(userQueueCount > 0 || userRunningCount > 0) && (
-<div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg p-4 border border-primary/20">
+<div className="md-rise bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl p-4 border border-primary/20" style={{ animationDelay: "60ms" }}>
 <div className="flex items-center gap-4">
 <div className="p-3 rounded-full bg-primary/10">
 <Activity className="w-5 h-5 text-primary" />

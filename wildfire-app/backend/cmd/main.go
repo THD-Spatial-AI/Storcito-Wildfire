@@ -17,6 +17,7 @@ import (
 	"spatialhub_backend/internal/events"
 	geoserverclient "spatialhub_backend/internal/geoserver"
 	feedback "spatialhub_backend/internal/handler/feedback"
+	geocodinghandler "spatialhub_backend/internal/handler/geocoding"
 	grouphandler "spatialhub_backend/internal/handler/group"
 	notificationshandler "spatialhub_backend/internal/handler/notifications"
 	settingshandler "spatialhub_backend/internal/handler/settings"
@@ -326,6 +327,7 @@ func buildRouteDeps(cfg *config.Config, deps *AppDependencies) routes.Deps {
 		WithCache(riskmetricsservice.NewRedisCache(deps.RedisClient, 0))
 	riskHandler := riskmetricshandler.NewHandler(riskService, resultStore.NewStore(deps.DB))
 	weatherHandler := weather.NewWeatherHandler()
+	geocodingHandler := geocodinghandler.NewHandler()
 
 	return routes.Deps{
 		AuthServiceURL:             cfg.AuthServiceURL,
@@ -344,6 +346,7 @@ func buildRouteDeps(cfg *config.Config, deps *AppDependencies) routes.Deps {
 		ModelHandler:               modelHandler,
 		RiskHandler:                riskHandler,
 		WeatherHandler:             weatherHandler,
+		GeocodingHandler:           geocodingHandler,
 		WebserviceClient:           deps.WebserviceClient,
 	}
 }

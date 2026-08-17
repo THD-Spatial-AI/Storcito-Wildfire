@@ -35,7 +35,7 @@ export function FeedbackManagementFilters({
   const { t } = useTranslation();
 
   return (
-    <div className="bg-card rounded-xl border border-border p-4">
+    <div className="md-rise bg-card rounded-xl border border-border p-4 shadow-sm" style={{ animationDelay: "60ms" }}>
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <div className="flex items-center gap-2">
           <Filter className="w-4 h-4 text-muted-foreground" />

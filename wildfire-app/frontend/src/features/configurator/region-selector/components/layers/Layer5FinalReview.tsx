@@ -76,22 +76,40 @@ const buildChecks = (ctx: ConfiguratorContext, t: (key: string, data?: any) => s
         }
     }
 
-    if (allPolygonsCount === 0) {
+    if (state.areaInputMode === "region" && state.isResolvingRegion) {
+        checks.push({
+            label: t("configurator.layer4.labels.areaOfInterest", "Area of interest"),
+            status: "warn",
+            detail: t("configurator.layer2.regionResolving", "Finding administrative boundary…"),
+        });
+    } else if (allPolygonsCount === 0) {
         checks.push({
             label: t("configurator.layer4.labels.areaOfInterest", "Area of interest"),
             status: "fail",
             detail:
                 state.areaInputMode === "upload"
                     ? t("configurator.layer4.noGeoJson", "No GeoJSON uploaded.")
-                    : t("configurator.layer4.noPolygon", "No polygon drawn on the map."),
+                    : state.areaInputMode === "region"
+                      ? state.regionSelectionError ?? t("configurator.layer4.noRegionSelected", "No administrative region selected.")
+                      : t("configurator.layer4.noPolygon", "No polygon drawn on the map."),
         });
     } else if (state.areaInputMode === "upload" && !state.uploadedGeoJsonName) {
         checks.push({ label: t("configurator.layer4.labels.areaOfInterest", "Area of interest"), status: "fail", detail: t("configurator.layer4.uploadIncomplete", "GeoJSON upload incomplete.") });
+    } else if (state.areaInputMode === "region" && !state.selectedRegionName) {
+        checks.push({ label: t("configurator.layer4.labels.areaOfInterest", "Area of interest"), status: "fail", detail: t("configurator.layer4.noRegionSelected", "No administrative region selected.") });
     } else {
         checks.push({
             label: t("configurator.layer4.labels.areaOfInterest", "Area of interest"),
             status: "pass",
-            detail: allPolygonsCount === 1 ? t("configurator.layer4.areaDetailsSingle", { area: areaStats?.area ?? "—", defaultValue: `1 region · ${areaStats?.area ?? "—"}` }) : t("configurator.layer4.areaDetails", { count: allPolygonsCount, area: areaStats?.area ?? "—", defaultValue: `${allPolygonsCount} regions · ${areaStats?.area ?? "—"}` }),
+            detail: state.areaInputMode === "region"
+                ? t("configurator.layer4.selectedRegionDetails", {
+                    name: state.selectedRegionName,
+                    area: areaStats?.area ?? "—",
+                    defaultValue: `${state.selectedRegionName} · ${areaStats?.area ?? "—"}`,
+                })
+                : allPolygonsCount === 1
+                  ? t("configurator.layer4.areaDetailsSingle", { area: areaStats?.area ?? "—", defaultValue: `1 region · ${areaStats?.area ?? "—"}` })
+                  : t("configurator.layer4.areaDetails", { count: allPolygonsCount, area: areaStats?.area ?? "—", defaultValue: `${allPolygonsCount} regions · ${areaStats?.area ?? "—"}` }),
         });
     }
 
