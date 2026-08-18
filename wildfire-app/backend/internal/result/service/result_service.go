@@ -45,11 +45,17 @@ func NewResultService(db *gorm.DB, opts ...Option) *ResultService {
 
 func (s *ResultService) ProcessModelResult(_ context.Context, modelID uint, userID, zipPath string) (result *commonModels.ModelResult, retErr error) {
 	log := logger.ForComponent("result")
+	extractDir := ""
 
 	defer func() {
 		if r := recover(); r != nil {
 			log.Errorf("PANIC in ProcessModelResult model_id=%d: %v", modelID, r)
 			retErr = fmt.Errorf("panic in ProcessModelResult: %v", r)
+		}
+		if retErr != nil && extractDir != "" {
+			if err := cleanupFailedExtraction(extractDir, zipPath); err != nil {
+				log.Warnf("failed to clean partial extraction model_id=%d path=%s err=%v", modelID, extractDir, err)
+			}
 		}
 	}()
 
@@ -59,7 +65,7 @@ func (s *ResultService) ProcessModelResult(_ context.Context, modelID uint, user
 		return nil, fmt.Errorf("zip file not found: %w", err)
 	}
 
-	extractDir := filepath.Dir(zipPath)
+	extractDir = filepath.Dir(zipPath)
 
 	if err := s.extractZip(zipPath, extractDir); err != nil {
 		log.Errorf("Failed to extract zip model_id=%d err=%v", modelID, err)
@@ -117,4 +123,22 @@ func (s *ResultService) ProcessModelResult(_ context.Context, modelID uint, user
 	}
 
 	return result, nil
+}
+
+func cleanupFailedExtraction(extractDir, zipPath string) error {
+	entries, err := os.ReadDir(extractDir)
+	if err != nil {
+		return err
+	}
+	archivePath := filepath.Clean(zipPath)
+	for _, entry := range entries {
+		path := filepath.Join(extractDir, entry.Name())
+		if filepath.Clean(path) == archivePath {
+			continue
+		}
+		if err := os.RemoveAll(path); err != nil {
+			return err
+		}
+	}
+	return nil
 }
