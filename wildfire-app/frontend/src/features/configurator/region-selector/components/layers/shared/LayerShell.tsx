@@ -15,13 +15,13 @@ interface LayerShellProps {
 export const LayerShell: FC<LayerShellProps> = ({ purpose, nextStepHint, children }) => (
     <div className="space-y-3">
         {purpose && (
-            <p className="rounded-md border border-border bg-muted/30 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+            <p className="md-row-in rounded-md border border-border bg-muted/30 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
                 {purpose}
             </p>
         )}
         {children}
         {nextStepHint && (
-            <div className="flex items-start gap-1.5 border-t border-border/60 pt-3 text-[11px] text-muted-foreground">
+            <div className="md-fade-in flex items-start gap-1.5 border-t border-border/60 pt-3 text-[11px] text-muted-foreground" style={{ animationDelay: "120ms" }}>
                 <ArrowRight className="w-3 h-3 mt-0.5 shrink-0" />
                 <span>{nextStepHint}</span>
             </div>

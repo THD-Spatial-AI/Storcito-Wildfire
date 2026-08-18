@@ -168,19 +168,20 @@ export const Layer5FinalReview: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => 
             <div data-tour="final-review">
                 <div
                     className={cn(
-                        "mb-3 rounded-lg border px-3 py-2 text-[11px] font-medium leading-snug",
+                        "md-fade-in mb-3 rounded-lg border px-3 py-2 text-[11px] font-medium leading-snug transition-colors duration-300",
                         TONES[summaryTone],
                     )}
                 >
                     {summary}
                 </div>
                 <ul className="space-y-1.5">
-                    {checks.map((c) => {
+                    {checks.map((c, index) => {
                         const Icon = ICONS[c.status];
                         return (
                             <li
                                 key={c.label}
-                                className="flex items-start gap-2.5 rounded-md border border-border bg-background px-2.5 py-2"
+                                style={{ animationDelay: `${Math.min(index * 30, 240)}ms` }}
+                                className="md-row-in flex items-start gap-2.5 rounded-md border border-border bg-background px-2.5 py-2 transition-colors duration-150 hover:bg-muted/40"
                             >
                                 <Icon
                                     className={cn(

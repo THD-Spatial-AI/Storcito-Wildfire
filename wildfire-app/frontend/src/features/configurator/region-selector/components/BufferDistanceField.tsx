@@ -33,12 +33,12 @@ export const BufferDistanceField: FC<BufferDistanceFieldProps> = ({ value, onCha
                     onClick={decrement}
                     aria-label={t("simulation.bufferDistance.decrease")}
                     disabled={atMin}
-                    className="inline-flex items-center justify-center w-7 h-7 rounded-md border border-border bg-background dark:bg-gray-700 text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center justify-center w-7 h-7 rounded-md border border-border bg-background dark:bg-gray-700 text-foreground transition-all duration-150 hover:bg-muted active:scale-90 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
                 >
                     <Minus className="w-3.5 h-3.5" />
                 </button>
                 <div
-                    className="flex-1 min-w-[5rem] select-none text-center px-3 py-1 rounded-md border border-border bg-background dark:bg-gray-700 text-xs font-semibold text-foreground"
+                    className="flex-1 min-w-[5rem] select-none text-center px-3 py-1 rounded-md border border-border bg-background dark:bg-gray-700 text-xs font-semibold tabular-nums text-foreground transition-colors duration-150"
                     aria-live="polite"
                 >
                     {value} m
@@ -48,7 +48,7 @@ export const BufferDistanceField: FC<BufferDistanceFieldProps> = ({ value, onCha
                     onClick={increment}
                     aria-label={t("simulation.bufferDistance.increase")}
                     disabled={atMax}
-                    className="inline-flex items-center justify-center w-7 h-7 rounded-md border border-border bg-background dark:bg-gray-700 text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center justify-center w-7 h-7 rounded-md border border-border bg-background dark:bg-gray-700 text-foreground transition-all duration-150 hover:bg-muted active:scale-90 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
                 >
                     <Plus className="w-3.5 h-3.5" />
                 </button>

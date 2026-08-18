@@ -119,7 +119,7 @@ const StaticDateDropdown: FC<StaticDateDropdownProps> = ({
             </button>
 
             {isOpen && (
-                <div className="absolute left-0 top-full z-50 mt-1.5 w-full overflow-hidden rounded-lg border border-border bg-card shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="md-fade-in absolute left-0 top-full z-50 mt-1.5 w-full overflow-hidden rounded-lg border border-border bg-card shadow-lg">
                     <div className="max-h-56 overflow-y-auto p-1.5">
                         {orderedDates.length === 0 ? (
                             <div className="px-3 py-4 text-center text-sm text-muted-foreground">
@@ -127,15 +127,16 @@ const StaticDateDropdown: FC<StaticDateDropdownProps> = ({
                             </div>
                         ) : (
                             <div className="space-y-0.5">
-                                {orderedDates.map((day) => {
+                                {orderedDates.map((day, index) => {
                                     const isSelected = selectedDate === day;
                                     return (
                                         <button
                                             key={day}
                                             type="button"
                                             onClick={() => handleSelect(day)}
+                                            style={{ animationDelay: `${Math.min(index * 30, 240)}ms` }}
                                             className={cn(
-                                                "group flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-sm text-foreground transition-all duration-150 hover:bg-muted",
+                                                "md-row-in group flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-sm text-foreground transition-all duration-150 hover:bg-muted active:scale-[0.98]",
                                                 isSelected && "bg-muted",
                                             )}
                                         >
@@ -249,7 +250,7 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                         value={state.modelName}
                         onChange={handleModelNameChange}
                         placeholder={t("configurator.layer1.modelNamePlaceholder", "e.g. Galicia Summer 2026 Wildfire Risk")}
-                        className="w-full px-2.5 py-1.5 border border-border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-background dark:bg-gray-700 text-foreground text-sm transition-colors"
+                        className="w-full px-2.5 py-1.5 border border-border rounded-md hover:border-muted-foreground/40 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-background dark:bg-gray-700 text-foreground text-sm transition-colors duration-150"
                     />
                     <p className="text-[11px] text-muted-foreground mt-1">{t("configurator.layer1.modelNameHint", "A descriptive name so you can find this model later.")}</p>
                 </div>
@@ -267,7 +268,7 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                                     type="button"
                                     onClick={() => actions.setCalculationMode(mode)}
                                     className={cn(
-                                        "px-2.5 py-1.5 text-xs capitalize transition-colors",
+                                        "px-2.5 py-1.5 text-xs capitalize transition-all duration-200 active:scale-[0.98]",
                                         selected
                                             ? "bg-foreground text-background"
                                             : "bg-background text-foreground hover:bg-muted",
@@ -296,7 +297,7 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                                         <button
                                             type="button"
                                             aria-label="How the static date is selected"
-                                            className="text-muted-foreground transition-colors hover:text-foreground focus:outline-none"
+                                            className="text-muted-foreground transition-all duration-150 hover:text-foreground hover:scale-110 active:scale-95 focus:outline-none"
                                         >
                                             <Info className="h-3.5 w-3.5" />
                                         </button>
@@ -319,7 +320,7 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                                 }}
                                 t={t}
                             />
-                            <p className="mt-1 text-[11px] text-muted-foreground" data-tour="calculation-status">
+                            <p className="md-fade-in mt-1 text-[11px] text-muted-foreground" data-tour="calculation-status">
                                 {staticDateStatus}
                             </p>
                         </>
@@ -365,7 +366,7 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                                     </Dialog>
                                 </Popover>
                             </DateRangePicker>
-                            <p className="mt-1 text-[11px] text-muted-foreground" data-tour="calculation-status">
+                            <p className="md-fade-in mt-1 text-[11px] text-muted-foreground" data-tour="calculation-status">
                                 {dynamicDateStatus}
                             </p>
                         </>

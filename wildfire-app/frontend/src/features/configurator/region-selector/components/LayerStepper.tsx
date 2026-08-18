@@ -363,7 +363,7 @@ export const LayerStepper: FC<LayerStepperProps> = ({
         <div
             data-tour="configurator-panel"
             className={cn(
-                "pointer-events-auto absolute z-30 flex flex-col overflow-hidden border border-border bg-background/98 shadow-xl backdrop-blur dark:bg-gray-900/98",
+                "md-scope md-rise pointer-events-auto absolute z-30 flex flex-col overflow-hidden border border-border bg-background/98 shadow-xl backdrop-blur dark:bg-gray-900/98",
                 layout.panel,
             )}
         >
@@ -372,7 +372,7 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                 <button
                     type="button"
                     onClick={restartModelTour}
-                    className="absolute right-10 top-3 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    className="absolute right-10 top-3 rounded-md p-1.5 text-muted-foreground transition-all duration-150 hover:bg-muted hover:text-foreground hover:scale-110 active:scale-95"
                     aria-label="Restart guided tour"
                     title="Restart guided tour"
                     data-tour="restart-model-tour"
@@ -382,7 +382,7 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                 <button
                     type="button"
                     onClick={actions.handleCancel}
-                    className="absolute right-3 top-3 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    className="absolute right-3 top-3 rounded-md p-1.5 text-muted-foreground transition-all duration-150 hover:bg-muted hover:text-foreground hover:scale-110 active:scale-95"
                     aria-label="Cancel"
                 >
                     <X className="w-4 h-4" />
@@ -408,7 +408,7 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                 </div>
                 <div className="h-1.5 overflow-hidden rounded-full bg-muted">
                     <div
-                        className="h-full rounded-full bg-foreground transition-all"
+                        className="h-full rounded-full bg-foreground transition-[width] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
                         style={{ width: `${progressPercent}%` }}
                     />
                 </div>
@@ -433,7 +433,8 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                                     disabled={!reachable}
                                     title={`${l.id}. ${l.title}`}
                                     className={cn(
-                                        "relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-all",
+                                        "relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-all duration-200",
+                                        reachable && "hover:scale-105 active:scale-95",
                                         isCurrent && "bg-foreground text-background ring-4 ring-foreground/15",
                                         done && "bg-foreground text-background hover:bg-foreground/90",
                                         !isCurrent && !done && reachable && "border-2 border-border bg-background text-muted-foreground hover:border-foreground/40 hover:text-foreground",
@@ -447,7 +448,7 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                                 {idx < LAYERS.length - 1 && (
                                     <span
                                         className={cn(
-                                            "mx-1.5 h-0.5 flex-1 rounded-full transition-colors",
+                                            "mx-1.5 h-0.5 flex-1 rounded-full transition-colors duration-300",
                                             connectorActive ? "bg-foreground" : "bg-border",
                                         )}
                                     />
@@ -458,8 +459,8 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                 </ol>
             </nav>
 
-            {/* Body (scrollable) */}
-            <section className={cn("overflow-y-auto", layout.body)}>
+            {/* Body (scrollable) — keyed on step so each layer replays the entrance motion */}
+            <section key={step} className={cn("md-rise overflow-y-auto", layout.body)}>
                 {step === 1 && <Layer1ModelInit ctx={ctx} />}
                 {step === 2 && <Layer2AreaSelect ctx={ctx} />}
                 {step === 3 && <Layer4OptionalLayers ctx={ctx} />}
@@ -471,7 +472,7 @@ export const LayerStepper: FC<LayerStepperProps> = ({
             <div className="border-t border-border bg-background px-4 py-3 dark:bg-gray-900">
                 {blockingReason && (
                     <p
-                        className="mb-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-2.5 py-2 text-[11px] leading-snug text-amber-700 dark:text-amber-300"
+                        className="md-fade-in mb-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-2.5 py-2 text-[11px] leading-snug text-amber-700 dark:text-amber-300"
                         data-tour="blocking-status"
                     >
                         {blockingReason}
@@ -483,13 +484,13 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                         size="sm"
                         onClick={goBack}
                         disabled={step === 1}
-                        className="h-9 cursor-pointer text-xs"
+                        className="h-9 cursor-pointer text-xs transition-all duration-200 hover:shadow-md active:scale-[0.98] disabled:hover:shadow-none disabled:active:scale-100"
                     >
                         <ChevronLeft className="w-3.5 h-3.5" /> {t("configurator.stepper.back", "Back")}
                     </Button>
 
                     {step < LAYER_COUNT ? (
-                        <Button size="sm" onClick={goNext} disabled={!canAdvance} className="h-9 cursor-pointer text-xs">
+                        <Button size="sm" onClick={goNext} disabled={!canAdvance} className="h-9 cursor-pointer text-xs transition-all duration-200 hover:shadow-md active:scale-[0.98] disabled:hover:shadow-none disabled:active:scale-100">
                             {t("configurator.stepper.continue", "Continue")} <ChevronRight className="w-3.5 h-3.5" />
                         </Button>
                     ) : (
@@ -499,7 +500,7 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                                 size="sm"
                                 onClick={() => actions.handleSave({ runAfterSave: false })}
                                 disabled={finalDisabled}
-                                className="h-9 cursor-pointer text-xs"
+                                className="h-9 cursor-pointer text-xs transition-all duration-200 hover:shadow-md active:scale-[0.98] disabled:hover:shadow-none disabled:active:scale-100"
                             >
                                 {state.isSaving ? (
                                     <>
@@ -517,7 +518,7 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                                 size="sm"
                                 onClick={() => actions.handleSave({ runAfterSave: true })}
                                 disabled={finalDisabled}
-                                className="h-9 cursor-pointer border-0 bg-foreground text-xs text-background hover:bg-foreground/90"
+                                className="h-9 cursor-pointer border-0 bg-foreground text-xs text-background transition-all duration-200 hover:bg-foreground/90 hover:shadow-md active:scale-[0.98] disabled:hover:shadow-none disabled:active:scale-100"
                                 data-tour="save-button"
                             >
                                 {state.isSaving ? (
@@ -554,9 +555,9 @@ const IntroCard: FC<{
 }> = ({ onStart, onCancel, dismissIntroCard, isSavingPreference, onDismissIntroPreferenceChange }) => {
     const { t } = useTranslation();
     return (
-    <div className="pointer-events-auto absolute inset-0 z-30 flex items-center justify-center px-4">
-        <div className="absolute inset-0 bg-foreground/20 backdrop-blur-sm" onClick={onCancel} />
-        <div className="relative w-[min(760px,100%)] overflow-hidden rounded-2xl border border-border bg-background shadow-2xl dark:bg-gray-900">
+    <div className="md-scope pointer-events-auto absolute inset-0 z-30 flex items-center justify-center px-4">
+        <div className="md-fade-in absolute inset-0 bg-foreground/20 backdrop-blur-sm" onClick={onCancel} />
+        <div className="md-rise relative w-[min(760px,100%)] overflow-hidden rounded-2xl border border-border bg-background shadow-2xl dark:bg-gray-900">
 
             {/* Header */}
             <div className="relative px-7 pt-7 pb-5">
@@ -579,7 +580,7 @@ const IntroCard: FC<{
                         type="button"
                         onClick={onCancel}
                         aria-label="Close"
-                        className="rounded-md p-1.5 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                        className="rounded-md p-1.5 text-muted-foreground transition-all duration-150 hover:bg-muted hover:text-foreground hover:scale-110 active:scale-95"
                     >
                         <X className="h-4 w-4" />
                     </button>
@@ -589,12 +590,13 @@ const IntroCard: FC<{
             {/* Steps grid */}
             <div className="relative border-t border-border/60 bg-muted/30 px-7 py-5 dark:bg-gray-800/30">
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    {LAYERS.map((l) => (
+                    {LAYERS.map((l, idx) => (
                         <div
                             key={l.id}
-                            className="group relative flex items-start gap-3 rounded-lg border border-border/70 bg-background px-3 py-2.5 transition hover:border-foreground/40 hover:shadow-sm dark:bg-gray-900"
+                            style={{ animationDelay: `${Math.min(idx * 30, 240)}ms` }}
+                            className="md-row-in group relative flex items-start gap-3 rounded-lg border border-border/70 bg-background px-3 py-2.5 transition-all duration-200 hover:border-foreground/40 hover:shadow-sm dark:bg-gray-900"
                         >
-                            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-foreground transition group-hover:bg-foreground group-hover:text-background">
+                            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-foreground transition-colors duration-200 group-hover:bg-foreground group-hover:text-background">
                                 {l.icon}
                             </span>
                             <div className="min-w-0 flex-1">
@@ -634,13 +636,13 @@ const IntroCard: FC<{
                     </label>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="sm" onClick={onCancel} className="cursor-pointer text-xs">
+                    <Button variant="ghost" size="sm" onClick={onCancel} className="cursor-pointer text-xs transition-all duration-200 active:scale-[0.98]">
                         {t("configurator.stepper.introCancel", "Cancel")}
                     </Button>
                     <Button
                         size="sm"
                         onClick={onStart}
-                        className="cursor-pointer border-0 bg-foreground text-background hover:bg-foreground/90"
+                        className="cursor-pointer border-0 bg-foreground text-background transition-all duration-200 hover:bg-foreground/90 hover:shadow-md active:scale-[0.98]"
                     >
                         {t("configurator.stepper.introStart", "Get started")} <ChevronRight className="ml-0.5 h-4 w-4" />
                     </Button>

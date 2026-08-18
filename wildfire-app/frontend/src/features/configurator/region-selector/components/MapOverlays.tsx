@@ -26,7 +26,7 @@ export const MapOverlays: FC<MapOverlaysProps> = ({
 
             {regionSelectionActive && (
                 <div className="pointer-events-none absolute left-1/2 top-4 z-30 -translate-x-1/2">
-                    <div className="flex items-center gap-2 rounded-full border border-border bg-background/95 px-3 py-2 text-xs font-medium text-foreground shadow-lg backdrop-blur-sm">
+                    <div className="md-rise flex items-center gap-2 rounded-full border border-border bg-background/95 px-3 py-2 text-xs font-medium text-foreground shadow-lg backdrop-blur-sm">
                         {regionSelectionLoading ? (
                             <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" />
                         ) : (
@@ -51,7 +51,7 @@ export const MapOverlays: FC<MapOverlaysProps> = ({
                     className="absolute pointer-events-none z-20"
                     style={{ left: cursorPos.x, top: cursorPos.y }}
                 >
-                    <div className="bg-background/90 dark:bg-gray-800/90 backdrop-blur-sm border border-border rounded px-2 py-1 shadow-sm text-xs text-foreground opacity-90">
+                    <div className="md-fade-in bg-background/90 dark:bg-gray-800/90 backdrop-blur-sm border border-border rounded px-2 py-1 shadow-sm text-xs text-foreground opacity-90">
                         {t("drawing.clickToDraw")}
                     </div>
                 </div>

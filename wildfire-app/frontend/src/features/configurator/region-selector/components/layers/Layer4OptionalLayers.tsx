@@ -113,8 +113,8 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
             disabled={!precomputedAvailable}
             onClick={() => ctx.actions.setUsePrecomputed(!usePrecomputed)}
             className={cn(
-              "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors",
-              !precomputedAvailable && "cursor-not-allowed opacity-40",
+              "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200",
+              precomputedAvailable ? "active:scale-95" : "cursor-not-allowed opacity-40",
               precomputedOn
                 ? "bg-violet-500"
                 : "bg-muted-foreground/30 hover:bg-muted-foreground/40"
@@ -122,7 +122,7 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
           >
             <span
               className={cn(
-                "inline-block h-4 w-4 transform rounded-full bg-white shadow-md ring-1 ring-black/5 transition-transform",
+                "inline-block h-4 w-4 transform rounded-full bg-white shadow-md ring-1 ring-black/5 transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
                 precomputedOn ? "translate-x-[18px]" : "translate-x-0.5"
               )}
             />
@@ -157,14 +157,15 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
       </div>
 
       <div className="space-y-2.5" data-tour="optional-layers">
-        {ITEMS.map((it) => {
+        {ITEMS.map((it, index) => {
           const enabled = ctx.optionalLayers[it.id];
           const Icon = it.icon;
           return (
             <div
               key={it.id}
+              style={{ animationDelay: `${Math.min(index * 30, 240)}ms` }}
               className={cn(
-                "group relative flex items-start gap-2.5 rounded-xl border bg-gradient-to-br p-3 transition-all",
+                "md-row-in group relative flex items-start gap-2.5 rounded-xl border bg-gradient-to-br p-3 transition-all duration-200",
                 enabled
                   ? cn("border-foreground/15 shadow-sm", it.accent)
                   : "border-border bg-muted/30 from-transparent to-transparent"
@@ -172,7 +173,7 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
             >
               <span
                 className={cn(
-                  "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border transition-colors",
+                  "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border transition-colors duration-200",
                   enabled
                     ? "border-current bg-background/60"
                     : "border-border bg-background/40 text-muted-foreground"
@@ -199,8 +200,8 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
                     aria-checked={enabled}
                     aria-label={`Toggle ${it.label}`}
                     className={cn(
-                      "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                      precomputedOn && "cursor-not-allowed opacity-50",
+                      "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                      precomputedOn ? "cursor-not-allowed opacity-50" : "active:scale-95",
                       enabled
                         ? "bg-emerald-500"
                         : "bg-muted-foreground/30 hover:bg-muted-foreground/40"
@@ -208,7 +209,7 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
                   >
                     <span
                       className={cn(
-                        "inline-block h-4 w-4 transform rounded-full bg-white shadow-md ring-1 ring-black/5 transition-transform",
+                        "inline-block h-4 w-4 transform rounded-full bg-white shadow-md ring-1 ring-black/5 transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
                         enabled ? "translate-x-[18px]" : "translate-x-0.5"
                       )}
                     />
@@ -226,7 +227,7 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
         })}
       </div>
       {weatherDisabled && (
-        <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2.5 text-[11px] leading-snug text-amber-700 dark:text-amber-300">
+        <div className="md-fade-in mt-3 flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2.5 text-[11px] leading-snug text-amber-700 dark:text-amber-300">
           <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           <span>
             {t(

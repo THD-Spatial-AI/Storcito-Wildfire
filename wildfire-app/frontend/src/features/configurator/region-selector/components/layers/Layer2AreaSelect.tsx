@@ -10,10 +10,10 @@ import type { ConfiguratorContext } from "./types";
 
 const modeButtonClass = (active: boolean) =>
     cn(
-        "flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-left transition-colors",
+        "flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-left transition-all duration-200 active:scale-[0.98]",
         active
             ? "border-foreground bg-foreground text-background shadow-sm"
-            : "border-border bg-card text-foreground hover:bg-muted/60",
+            : "border-border bg-card text-foreground hover:bg-muted/60 hover:shadow-sm",
     );
 
 const getStatusMessage = (
@@ -151,7 +151,7 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                     onSelect={(f) => ctx.actions.setDtmFile(f)}
                 />
                 {ctx.state.dtmFootprint && !ctx.state.dtmProcessing && (
-                    <p className="mt-1.5 flex items-center gap-1 text-[11px] leading-snug text-emerald-600 dark:text-emerald-400">
+                    <p className="md-fade-in mt-1.5 flex items-center gap-1 text-[11px] leading-snug text-emerald-600 dark:text-emerald-400">
                         <MapPinned className="h-3 w-3 shrink-0" /> {t("configurator.layer2.coverageShown", "Coverage shown on the map — draw your area inside the outline.")}
                     </p>
                 )}
@@ -194,7 +194,7 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
             </div>
 
             {!isRegionMode && (
-                <div className="flex items-center justify-between gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-3 py-2 text-xs">
+                <div className="md-fade-in flex items-center justify-between gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-3 py-2 text-xs">
                     <div className="min-w-0">
                         <p className="font-semibold text-foreground">{t("configurator.layer2.notSureFormat", "Not sure about the format?")}</p>
                         <p className="text-muted-foreground leading-snug">
@@ -204,7 +204,7 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                     <button
                         type="button"
                         onClick={handleDownloadSample}
-                        className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-foreground bg-foreground px-2.5 py-1.5 text-[11px] font-semibold text-background transition-colors hover:bg-foreground/90"
+                        className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-foreground bg-foreground px-2.5 py-1.5 text-[11px] font-semibold text-background transition-all duration-200 hover:bg-foreground/90 hover:shadow-md active:scale-[0.98]"
                     >
                         <Download className="h-3 w-3" />
                         {t("configurator.layer2.sample", "Sample")}
@@ -214,7 +214,7 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
 
             <div
                 className={cn(
-                    "flex items-start gap-2 rounded-lg border px-3 py-2.5 text-xs",
+                    "flex items-start gap-2 rounded-lg border px-3 py-2.5 text-xs transition-colors duration-300",
                     drawn && !hasAreaError && !state.isResolvingRegion
                         ? "border-emerald-500/40 bg-emerald-500/5 text-emerald-700 dark:text-emerald-300"
                         : "border-amber-500/40 bg-amber-500/5 text-amber-700 dark:text-amber-300",
@@ -226,7 +226,7 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
             </div>
 
             {isRegionMode && (
-                <div className="flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-[11px] leading-snug text-amber-700 dark:text-amber-300">
+                <div className="md-fade-in flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-[11px] leading-snug text-amber-700 dark:text-amber-300">
                     <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                     <span>
                         {t("configurator.layer2.regionCoverageWarning", "The complete administrative boundary is used. Any pixels outside the shaded wildfire-data footprint may not be calculable.")}
@@ -236,7 +236,7 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
 
             <BufferDistanceField value={state.bufferDistance} onChange={actions.setBufferDistance} />
 
-            <div className="rounded-lg border border-border bg-card overflow-hidden" data-tour="area-summary">
+            <div className="md-row-in rounded-lg border border-border bg-card overflow-hidden transition-shadow duration-200 hover:shadow-sm" data-tour="area-summary" style={{ animationDelay: "60ms" }}>
                 <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-muted/30">
                     <MapPin className="w-3.5 h-3.5 text-foreground" />
                     <span className="text-xs font-semibold text-foreground">{t("configurator.layer2.areaSummary", "Area summary")}</span>
