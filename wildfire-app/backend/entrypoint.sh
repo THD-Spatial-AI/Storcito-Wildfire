@@ -3,6 +3,8 @@ set -e
 
 echo "Starting backend container..."
 
+mkdir -p /app/storage/tmp
+
 # Fix storage permissions (volume mounts or docker cp may set root ownership)
 chown -R appuser:appuser /app/storage 2>/dev/null || true
 

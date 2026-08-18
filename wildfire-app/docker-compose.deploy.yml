@@ -16,6 +16,7 @@ services:
       AUTH_SERVICE_URL: http://auth-service:8001
       WEBSERVICE_SERVICE_URL: http://webservice:8082
       RATE_LIMIT_PER_MIN: 1000
+      TMPDIR: /app/storage/tmp
     volumes:
       - backend-storage-dev:/app/storage
     networks:
@@ -38,6 +39,7 @@ services:
       AUTH_SERVICE_URL: http://auth-service:8001
       WEBSERVICE_SERVICE_URL: http://webservice:8082
       RATE_LIMIT_PER_MIN: 1000
+      TMPDIR: /app/storage/tmp
     volumes:
       - backend-storage-prod:/app/storage
     networks:
