@@ -17,7 +17,7 @@ const (
 	errAccessDenied         = "Access denied"
 	errModelNotFound        = "Model not found"
 	errFailedToFetchModel   = "Failed to fetch model"
-	maxCallbackZipSizeBytes = int64(500 * 1024 * 1024) // 500 MB
+	maxCallbackZipSizeBytes = int64(2 * 1024 * 1024 * 1024)
 )
 
 type ResultHandler struct {

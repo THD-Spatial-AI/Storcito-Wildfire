@@ -304,8 +304,8 @@ func runHTTPServer(addr string, engine *gin.Engine, log *logrus.Logger) {
 	srv := platformserver.NewHTTPServer(platformserver.HTTPServerConfig{
 		Addr:         addr,
 		Handler:      engine,
-		ReadTimeout:  300 * time.Second,
-		WriteTimeout: 60 * time.Second,
+		ReadTimeout:  24 * time.Hour,
+		WriteTimeout: 24 * time.Hour,
 	})
 
 	platformserver.RunWithGracefulShutdown(srv, log, 10*time.Second)
