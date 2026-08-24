@@ -69,6 +69,11 @@ RUN sed -i 's|../../libs/|../libs/|g' vite.config.ts
 # Fix Tailwind @source paths in global.css (../../../../libs/ -> ../../../libs/)
 RUN sed -i 's|../../../../libs/|../../../libs/|g' src/styles/global.css
 
+ARG VITE_WORKSHOP_MODE=false
+ARG VITE_FEEDBACK_API_URL=/feedback-api
+ARG VITE_WORKSHOP_TOKEN=
+ARG VITE_WORKSHOP_TAG=
+
 RUN npm run build
 
 # Runtime image

@@ -9,7 +9,6 @@ export default defineConfig({
 		dedupe: ["react", "react-dom", "react-router-dom"],
 		alias: {
 			"@": node_path.resolve(__dirname, "src"),
-			"@spatialhub/feedback": node_path.resolve(__dirname, "../../../feedback_pipeline/frontend_overlay/src"),
 			"@spatialhub/forms": node_path.resolve(__dirname, "../../libs/forms/src"),
 			"@spatialhub/auth": node_path.resolve(__dirname, "../../libs/auth/src"),
 			"@spatialhub/ui": node_path.resolve(__dirname, "../../libs/ui/src"),

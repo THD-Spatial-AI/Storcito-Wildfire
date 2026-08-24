@@ -271,6 +271,10 @@ jobs:
           set -e
           echo '=== [PROD] Building Wildfire App image ==='
           docker build --no-cache --provenance=false --sbom=false \
+            --build-arg VITE_WORKSHOP_MODE="${{ vars.VITE_WORKSHOP_MODE || 'false' }}" \
+            --build-arg VITE_FEEDBACK_API_URL="${{ vars.VITE_FEEDBACK_API_URL || '/feedback-api' }}" \
+            --build-arg VITE_WORKSHOP_TOKEN="${{ secrets.WORKSHOP_TOKEN }}" \
+            --build-arg VITE_WORKSHOP_TAG="${{ vars.VITE_WORKSHOP_TAG || 'workshop-2026-uvigo' }}" \
             -t "wildfire-app:latest" -f Dockerfile.ci .
           docker image prune -f
           echo '=== [PROD] Build complete ==='

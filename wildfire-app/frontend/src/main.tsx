@@ -5,7 +5,7 @@ import "@/styles/global.css";
 import "@/index.css";
 
 import { initI18n } from "@/i18n";
-import { FeedbackOverlay } from "@spatialhub/feedback";
+import { FeedbackOverlay } from "@/feedback";
 
 initI18n({ storageKey: "wildfire-app_language" });
 
