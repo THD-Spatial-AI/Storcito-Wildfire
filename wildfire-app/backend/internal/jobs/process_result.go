@@ -3,6 +3,7 @@ package jobs
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
@@ -10,17 +11,19 @@ import (
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 
-	commonModels "platform.local/common/pkg/models"
-	"platform.local/platform/logger"
 	"spatialhub_backend/internal/events"
 	"spatialhub_backend/internal/geoserver"
 	resultservice "spatialhub_backend/internal/result/service"
 	"spatialhub_backend/internal/services"
 	"spatialhub_backend/internal/webservice"
+
+	commonModels "platform.local/common/pkg/models"
+	"platform.local/platform/logger"
 )
 
 const (
-	TypeProcessResult = "process_result"
+	TypeProcessResult          = "process_result"
+	rasterOverviewBatchTimeout = 10 * time.Minute
 )
 
 type ProcessResultPayload struct {
@@ -64,8 +67,35 @@ func HandleProcessResult(
 		return fmt.Errorf("failed to fetch model %d: %w", payload.ModelID, err)
 	}
 
+	var svcOpts []resultservice.Option
+	if geoClient != nil {
+		svcOpts = append(svcOpts, resultservice.WithGeoServerClient(geoClient))
+	}
+	resultSvc := resultservice.NewResultService(db, svcOpts...)
+
 	if model.Status == commonModels.ModelStatusCompleted {
-		log.Debugf("Model %d already completed, skipping", payload.ModelID)
+		log.Debugf("Model %d already completed", payload.ModelID)
+
+		var existingResult commonModels.ModelResult
+		if resultErr := db.Where("model_id = ?", payload.ModelID).
+			Order("created_at DESC").First(&existingResult).Error; resultErr != nil {
+			if !errors.Is(resultErr, gorm.ErrRecordNotFound) {
+				log.Warnf("failed to load result for completed model model_id=%d err=%v", payload.ModelID, resultErr)
+			}
+			return nil
+		}
+
+		// The completion path already released the webservice and cleared the
+		// id on the model. Releasing the payload id again would decrement a
+		// concurrency slot that another model has since taken.
+		if model.WebserviceID != nil {
+			releaseWebservice(ctx, wsClient, model.WebserviceID, payload.ModelID, log)
+		}
+
+		// Resume whatever the first pass left unfinished. An overview batch
+		// that ran out of time still leaves the layer configured, so the
+		// GeoServer status alone cannot tell us this result is done.
+		prepareAndConfigureResult(ctx, resultSvc, geoClient, &existingResult, payload.ModelID, log)
 		return nil
 	}
 
@@ -75,11 +105,6 @@ func HandleProcessResult(
 		return fmt.Errorf("failed to lock model %d for processing: %w", payload.ModelID, err)
 	}
 
-	var svcOpts []resultservice.Option
-	if geoClient != nil {
-		svcOpts = append(svcOpts, resultservice.WithGeoServerClient(geoClient))
-	}
-	resultSvc := resultservice.NewResultService(db, svcOpts...)
 	res, err := resultSvc.ProcessModelResult(ctx, payload.ModelID, payload.UserID, payload.ZipPath)
 
 	if err != nil {
@@ -129,12 +154,7 @@ func HandleProcessResult(
 
 	releaseWebservice(ctx, wsClient, payload.WebserviceID, payload.ModelID, log)
 
-	// Publish the layer to the geoservice; a failure here does not fail the model.
-	if geoClient != nil {
-		if geoErr := resultSvc.ConfigureGeoServer(ctx, res.ID); geoErr != nil {
-			log.Warnf("geoserver configuration failed model_id=%d result_id=%d err=%v", payload.ModelID, res.ID, geoErr)
-		}
-	}
+	prepareAndConfigureResult(ctx, resultSvc, geoClient, res, payload.ModelID, log)
 
 	// Send completion notification
 	if notificationService != nil {
@@ -152,6 +172,31 @@ func HandleProcessResult(
 
 	log.Debugf("Successfully processed result for model_id=%d result_id=%d", payload.ModelID, res.ID)
 	return nil
+}
+
+func prepareAndConfigureResult(
+	ctx context.Context,
+	resultSvc *resultservice.ResultService,
+	geoClient geoserver.Client,
+	result *commonModels.ModelResult,
+	modelID uint,
+	log *logrus.Entry,
+) {
+	if resultSvc.NeedsRasterOverviews(result) {
+		overviewCtx, cancelOverviews := context.WithTimeout(ctx, rasterOverviewBatchTimeout)
+		err := resultSvc.PrepareRasterOverviews(overviewCtx, result)
+		cancelOverviews()
+		if err != nil {
+			log.Warnf("failed to prepare one or more raster overviews model_id=%d result_id=%d err=%v", modelID, result.ID, err)
+		}
+	}
+
+	if geoClient == nil || result.GeoserverStatus == commonModels.ResultGeoserverConfigured {
+		return
+	}
+	if geoErr := resultSvc.ConfigureGeoServer(ctx, result.ID); geoErr != nil {
+		log.Warnf("geoserver configuration failed model_id=%d result_id=%d err=%v", modelID, result.ID, geoErr)
+	}
 }
 
 func releaseWebservice(ctx context.Context, wsClient *webservice.Client, webserviceID *uint, modelID uint, log *logrus.Entry) {

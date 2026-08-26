@@ -43,7 +43,7 @@ export const EPSG_32629 = "EPSG:32629";
 export const POLL_INTERVAL_MS = 10_000;
 // Raster transparency is applied only here; users adjust it with the opacity slider.
 export const FIRE_RISK_DEFAULT_OPACITY = 0.7;
-export const FIRE_RISK_STYLE_VERSION = "risk-style-storcito-v7";
+export const FIRE_RISK_STYLE_VERSION = "risk-style-storcito-v8";
 export const MAP_REFERENCE_DARK_OPACITY = 0.95;
 export const MAP_REFERENCE_LIGHT_ROADS_OPACITY = 0.82;
 export const MAP_REFERENCE_LIGHT_LABELS_OPACITY = 0.62;
@@ -103,7 +103,10 @@ export type RiskLevelValue = (typeof RISK_LEVELS)[number]["value"];
 export type VisibleRiskLevels = Record<RiskLevelValue, boolean>;
 
 export interface RiskLayerEntry {
-  value: RiskLevelValue;
+  id: string;
+  style: string;
+  sourceKey: string;
+  values: readonly RiskLevelValue[];
   layer: TileLayer<TileWMS>;
 }
 

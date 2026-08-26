@@ -27,6 +27,7 @@ import (
 
 const (
 	riskStyleClassified   = "fire_risk_classified"
+	riskStyleLowPlus      = "fire_risk_low_plus"
 	riskStyleModeratePlus = "fire_risk_moderate_plus"
 	riskStyleHighPlus     = "fire_risk_high_plus"
 	riskStyleVeryLow      = "fire_risk_level_1"
@@ -44,6 +45,7 @@ type riskStyleDefinition struct {
 
 var riskStyleDefinitions = []riskStyleDefinition{
 	{name: riskStyleClassified, title: "Fire Risk - contextual classified overlay", visibleValues: []int{1, 2, 3, 4, 5}},
+	{name: riskStyleLowPlus, title: "Fire Risk - low and above", visibleValues: []int{2, 3, 4, 5}},
 	{name: riskStyleModeratePlus, title: "Fire Risk - moderate and above", visibleValues: []int{3, 4, 5}},
 	{name: riskStyleHighPlus, title: "Fire Risk - high and above", visibleValues: []int{4, 5}},
 	{name: riskStyleVeryLow, title: "Fire Risk - very low", visibleValues: []int{1}},

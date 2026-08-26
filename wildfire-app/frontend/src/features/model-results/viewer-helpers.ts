@@ -14,7 +14,16 @@ import {
   type LayerInfo,
 } from "./viewer-config";
 
-export function buildWMSLayer(info: LayerInfo, styleName: string, zIndex: number): TileLayer<TileWMS> {
+// The request URL for a given tile must be identical for every viewer, so
+// nothing per-session or per-attach belongs in these params. STYLE_VERSION only
+// busts the browser cache: GeoWebCache ignores parameters it does not know, so
+// bumping it does NOT drop cached tiles drawn with an older SLD. Changing a
+// style requires a GWC truncate on the server side as well.
+export function buildWMSLayer(
+  info: LayerInfo,
+  styleName: string,
+  zIndex: number
+): TileLayer<TileWMS> {
   const source = new TileWMS({
     url: info.wms_url,
     params: {
@@ -41,16 +50,17 @@ export function fitMapToBounds(map: Map, bounds: LayerBounds) {
   const { minx, miny, maxx, maxy, crs } = bounds;
   const sourceCrs = crs || "EPSG:4326";
 
-  if (sourceCrs === EPSG_32629) {
+  if (sourceCrs === EPSG_32629 && !getProj(EPSG_32629)) {
+    proj4.defs(EPSG_32629, "+proj=utm +zone=29 +datum=WGS84 +units=m +no_defs +type=crs");
     registerProj4(proj4);
-    if (!getProj(EPSG_32629)) {
-      proj4.defs(EPSG_32629, "+proj=utm +zone=29 +datum=WGS84 +units=m +no_defs +type=crs");
-    }
   }
 
   try {
     const extent = transformExtent([minx, miny, maxx, maxy], sourceCrs, "EPSG:3857");
-    map.getView().fit(extent, { padding: [50, 50, 50, 50], duration: 250, maxZoom: 14 });
+    // Fit synchronously before WMS layers are attached. Animating a large AOI
+    // through several zoom levels makes OpenLayers request every intermediate
+    // tile grid and can overwhelm GeoServer before the final view is reached.
+    map.getView().fit(extent, { padding: [50, 50, 50, 50], maxZoom: 14 });
   } catch (err) {
     if (import.meta.env.DEV) console.warn("[ModelResultsViewer] bounds fit failed", err);
   }

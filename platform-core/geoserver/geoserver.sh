@@ -24,26 +24,26 @@ success() { echo "[OK] $1"; }
 # Start GeoServer container
 start_container() {
     log "Starting GeoServer container..."
-    
+
     # Resolve absolute path for backend storage (ensure it exists)
     SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     BACKEND_STORAGE_ABS="$(cd "$SCRIPT_DIR/../backend/storage/data" 2>/dev/null && pwd)"
-    
+
     # Create storage directory if it doesn't exist
     if [ -z "$BACKEND_STORAGE_ABS" ]; then
         # Fallback if directory doesn't exist yet
         mkdir -p "$SCRIPT_DIR/../backend/storage/data"
         BACKEND_STORAGE_ABS="$(cd "$SCRIPT_DIR/../backend/storage/data" && pwd)"
     fi
-    
+
     # Fix permissions (ignore errors if not owner)
     chmod 777 "$BACKEND_STORAGE_ABS" 2>/dev/null || true
-    
+
     log "Ensuring data directory exists and is writable: $BACKEND_STORAGE_ABS"
 
     # Run using docker compose
     docker compose up -d
-    
+
     if [ $? -eq 0 ]; then
         success "GeoServer container started"
         return 0
@@ -57,7 +57,7 @@ start_container() {
 wait_for_geoserver() {
     log "Waiting 30 seconds for GeoServer to initialize..."
     sleep 30
-    
+
     log "Checking GeoServer availability..."
     # Loop for up to 60 more seconds
     for i in {1..12}; do
@@ -68,7 +68,7 @@ wait_for_geoserver() {
         log "Waiting for GeoServer... ($((i*5))s)"
         sleep 5
     done
-    
+
     log "GeoServer might still be starting, but proceeding with configuration attempts..."
     return 0
 }
@@ -76,20 +76,20 @@ wait_for_geoserver() {
 # Create workspace
 create_workspace() {
     log "Creating workspace: $WORKSPACE"
-    
+
     # Check if workspace exists
     if curl -sf "$GEOSERVER_URL/rest/workspaces/$WORKSPACE" -u "$USERNAME:$PASSWORD" > /dev/null 2>&1; then
         log "Workspace '$WORKSPACE' already exists"
         return 0
     fi
-    
+
     # Create workspace
     curl -X POST "$GEOSERVER_URL/rest/workspaces" \
         -u "$USERNAME:$PASSWORD" \
         -H "Content-Type: application/json" \
         -d "{\"workspace\":{\"name\":\"$WORKSPACE\"}}" \
         -s > /dev/null
-    
+
     if [ $? -eq 0 ]; then
         success "Workspace '$WORKSPACE' created"
     fi
@@ -98,14 +98,14 @@ create_workspace() {
 # Create fire risk style
 create_style() {
     log "Creating fire risk classification style..."
-    
+
     # Check if style exists and delete it to update
     if curl -sf "$GEOSERVER_URL/rest/styles/$STYLE_NAME" -u "$USERNAME:$PASSWORD" > /dev/null 2>&1; then
         log "Style '$STYLE_NAME' already exists - updating"
         curl -X DELETE "$GEOSERVER_URL/rest/styles/$STYLE_NAME?purge=true" \
             -u "$USERNAME:$PASSWORD" -s > /dev/null 2>&1
     fi
-    
+
     # Create SLD file
     SLD_CONTENT='<?xml version="1.0" encoding="UTF-8"?>
 <sld:StyledLayerDescriptor xmlns:sld="http://www.opengis.net/sld"
@@ -134,33 +134,71 @@ create_style() {
     </sld:UserStyle>
   </sld:NamedLayer>
 </sld:StyledLayerDescriptor>'
-    
+
     # Create style
     curl -X POST "$GEOSERVER_URL/rest/styles" \
         -u "$USERNAME:$PASSWORD" \
         -H "Content-Type: application/json" \
         -d "{\"style\":{\"name\":\"$STYLE_NAME\",\"filename\":\"$STYLE_NAME.sld\"}}" \
         -s > /dev/null
-    
+
     # Upload SLD content
     echo "$SLD_CONTENT" | curl -X PUT "$GEOSERVER_URL/rest/styles/$STYLE_NAME" \
         -u "$USERNAME:$PASSWORD" \
         -H "Content-Type: application/vnd.ogc.sld+xml" \
         -d @- \
         -s > /dev/null
-    
+
     success "Style '$STYLE_NAME' created"
+}
+
+configure_tile_caching() {
+    log "Verifying GeoWebCache settings..."
+
+    GWC_CONFIG="/opt/geoserver/data_dir/gwc-gs.xml"
+    GWC_CHANGED=0
+
+    if ! docker exec "$CONTAINER_NAME" test -f "$GWC_CONFIG" 2>/dev/null; then
+        error "gwc-gs.xml not found in container '$CONTAINER_NAME' - skipping tile cache check"
+        return 0
+    fi
+
+    for setting in directWMSIntegrationEnabled requireTiledParameter cacheLayersByDefault; do
+        current=$(docker exec "$CONTAINER_NAME" \
+            sed -n "s|.*<${setting}>\(.*\)</${setting}>.*|\1|p" "$GWC_CONFIG" 2>/dev/null || true)
+
+        if [ "$current" = "true" ]; then
+            log "  $setting = true"
+        elif [ "$current" = "false" ]; then
+            log "  $setting = false -> patching to true"
+            docker exec "$CONTAINER_NAME" \
+                sed -i "s|<${setting}>false</${setting}>|<${setting}>true</${setting}>|" "$GWC_CONFIG"
+            GWC_CHANGED=1
+        else
+            error "  $setting missing from gwc-gs.xml - set it in the GeoServer UI under Tile Caching > Caching Defaults"
+        fi
+    done
+
+    if [ "$GWC_CHANGED" -eq 1 ]; then
+        log "Restarting GeoServer so the patched settings load..."
+        docker restart "$CONTAINER_NAME" > /dev/null
+        wait_for_geoserver
+        success "GeoWebCache settings applied"
+    else
+        success "GeoWebCache settings already correct"
+    fi
 }
 
 # Main
 main() {
     log "Starting GeoServer setup..."
-    
+
     start_container
     wait_for_geoserver
+    configure_tile_caching
     create_workspace
     create_style
-    
+
     success "GeoServer setup completed"
 }
 

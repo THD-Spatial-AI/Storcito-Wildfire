@@ -89,6 +89,7 @@ func (s *ResultService) ProcessModelResult(_ context.Context, modelID uint, user
 	}
 
 	tifPath, tifName := findTifFile(extractDir)
+	resultLayers := findResultLayers(extractDir)
 
 	result = &commonModels.ModelResult{
 		ModelID:          modelID,
@@ -101,8 +102,8 @@ func (s *ResultService) ProcessModelResult(_ context.Context, modelID uint, user
 		ExtractionStatus: commonModels.ResultExtractionCompleted,
 	}
 
-	if layers := findResultLayers(extractDir); len(layers) > 0 {
-		if encoded, err := json.Marshal(layers); err != nil {
+	if len(resultLayers) > 0 {
+		if encoded, err := json.Marshal(resultLayers); err != nil {
 			log.Warnf("failed to encode result layers model_id=%d err=%v", modelID, err)
 		} else {
 			result.Layers = datatypes.JSON(encoded)

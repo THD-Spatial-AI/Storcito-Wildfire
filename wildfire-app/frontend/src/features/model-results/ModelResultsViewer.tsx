@@ -105,13 +105,12 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   const pollTimerRef = useRef<number | null>(null);
 
   const {
-    riskLayerEntries,
-    riskLayerEntriesRef,
     availableLayers,
     selectedLayerKey,
     selectedLayerKeyRef,
     tileErrors,
     wms3D,
+    layerAttached,
     attachLayer,
     selectLayer,
     applyDailyFrame,
@@ -166,10 +165,10 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
   // Attach the layer once both the map is ready and the result is configured.
   useEffect(() => {
-    if (!map || !activeResult || riskLayerEntriesRef.current.length > 0) return;
+    if (!map || !activeResult || layerAttached) return;
     if (activeResult.geoserver_status !== "configured") return;
     attachLayer(activeResult);
-  }, [map, activeResult, attachLayer, riskLayerEntriesRef]);
+  }, [map, activeResult, attachLayer, layerAttached]);
 
   // Poll for readiness while the layer is still being processed server-side.
   useEffect(() => {
@@ -274,28 +273,22 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     };
   }, [riskDistribution]);
 
-  useEffect(() => {
-    if (!riskDistribution) return;
-    setVisibleRiskLevels((current) => {
-      let changed = false;
-      const next = { ...current };
-      RISK_LEVELS.forEach((level) => {
-        if (!riskLevelAvailability[level.value] && next[level.value]) {
-          next[level.value] = false;
-          changed = true;
-        }
-      });
-      return changed ? next : current;
-    });
-  }, [riskDistribution, riskLevelAvailability]);
-
-  const hasRiskLayers = riskLayerEntries.length > 0;
+  const hasRiskLayers = layerAttached;
   const allRiskLevelsVisible = RISK_LEVELS.every(
     (level) => !riskLevelAvailability[level.value] || visibleRiskLevels[level.value]
   );
-  const toggleRiskLevel = useCallback((value: RiskLevelValue, checked: boolean) => {
-    setVisibleRiskLevels((current) => ({ ...current, [value]: checked }));
-  }, []);
+  const toggleRiskLevel = useCallback(
+    (value: RiskLevelValue, checked: boolean) => {
+      setVisibleRiskLevels((current) => ({
+        1: riskLevelAvailability[1] && (value === 1 ? checked : current[1]),
+        2: riskLevelAvailability[2] && (value === 2 ? checked : current[2]),
+        3: riskLevelAvailability[3] && (value === 3 ? checked : current[3]),
+        4: riskLevelAvailability[4] && (value === 4 ? checked : current[4]),
+        5: riskLevelAvailability[5] && (value === 5 ? checked : current[5]),
+      }));
+    },
+    [riskLevelAvailability]
+  );
   const setAllRiskLevelsVisible = useCallback(
     (checked: boolean) => {
       setVisibleRiskLevels({

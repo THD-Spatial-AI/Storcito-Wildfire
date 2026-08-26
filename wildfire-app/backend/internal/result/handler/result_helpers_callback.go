@@ -231,7 +231,13 @@ func (h *ResultHandler) processResultUpload(c *gin.Context, model *commonModels.
 		return
 	}
 
-	task := asynq.NewTask(jobs.TypeProcessResult, payloadBytes, asynq.Queue("results"), asynq.MaxRetry(1))
+	task := asynq.NewTask(
+		jobs.TypeProcessResult,
+		payloadBytes,
+		asynq.Queue("results"),
+		asynq.MaxRetry(1),
+		asynq.Timeout(2*time.Hour),
+	)
 	if _, err := h.asynqClient.Enqueue(task); err != nil {
 		log.Errorf("Failed to enqueue process_result task model_id=%d err=%v", model.ID, err)
 		h.handleResultProcessingError(c, model, err, log)
