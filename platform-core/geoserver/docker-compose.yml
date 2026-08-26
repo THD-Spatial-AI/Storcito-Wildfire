@@ -7,6 +7,7 @@ services:
     environment:
       GEOSERVER_ADMIN_USER: ${GEOSERVER_USERNAME:-admin}
       GEOSERVER_ADMIN_PASSWORD: ${GEOSERVER_PASSWORD:-geoserver}
+      GEOSERVER_CSRF_WHITELIST: ${GEOSERVER_CSRF_WHITELIST:-localhost}
       STABLE_EXTENSIONS: wps,csw
       COMMUNITY_EXTENSIONS: ogcapi-features,ogcapi-maps,ogcapi-tiles
     volumes:
