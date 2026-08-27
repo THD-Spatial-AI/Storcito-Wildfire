@@ -129,6 +129,19 @@ export function FeedbackOverlay({
     return () => { cancelAnimationFrame(r1); cancelAnimationFrame(r2); };
   }, [mode]);
 
+  // Escape (or Space while selecting) exits the feedback flow.
+  useEffect(() => {
+    if (mode !== "selecting" && mode !== "dialog") return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape" || (mode === "selecting" && e.key === " ")) {
+        e.preventDefault();
+        handleClose();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mode]);
+
   if (!workshopMode) return <>{children}</>;
 
   const t = translations[language];
@@ -266,12 +279,26 @@ export function FeedbackOverlay({
 
       {mode === "selecting" && (
         <div
-          className={`fixed inset-0 z-40 select-none ${overlayReady ? "cursor-crosshair" : "cursor-wait"}`}
+          className={`fixed inset-0 z-[9999] select-none ${overlayReady ? "cursor-crosshair" : "cursor-wait"}`}
           style={{ background: "rgba(0,0,0,0.28)" }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
         >
+          {/* Cancel button — also exits via Escape/Space */}
+          <button
+            type="button"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={handleClose}
+            aria-label="Cancel"
+            className="absolute right-6 top-6 flex size-9 items-center justify-center rounded-full text-zinc-200 shadow-lg ring-1 ring-white/10 transition-colors hover:text-white pointer-events-auto"
+            style={{ backgroundColor: "oklch(0.15 0 0)" }}
+          >
+            <svg className="size-5" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+            </svg>
+          </button>
+
           {!isDragging && (
             <div
               className="absolute left-1/2 top-6 -translate-x-1/2 rounded-full px-5 py-2 text-sm font-medium text-zinc-200 shadow-lg ring-1 ring-white/10 pointer-events-none"
@@ -302,7 +329,7 @@ export function FeedbackOverlay({
       {mode === "dialog" && selectedRect && (
         <>
           <div
-            className="fixed z-40 pointer-events-none"
+            className="fixed z-[9998] pointer-events-none"
             style={{
               left: `${selectedRect.x1 * 100}%`,
               top: `${selectedRect.y1 * 100}%`,
@@ -328,7 +355,7 @@ export function FeedbackOverlay({
       )}
 
       {mode === "idle" && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2">
+        <div className="fixed bottom-6 right-6 z-[9999] flex max-w-[calc(100vw-3rem)] flex-wrap items-center justify-end gap-2">
           {/* Language pill switcher */}
           <div
             className="flex items-center gap-0.5 rounded-full p-1 shadow-lg ring-1 ring-white/10"

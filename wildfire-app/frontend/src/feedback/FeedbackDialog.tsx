@@ -230,7 +230,7 @@ export function FeedbackDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-50">
+    <div className="fixed inset-0 z-[9999]">
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
       <div
         className="absolute w-80 rounded-2xl px-5 pb-6 pt-5 ring-1 ring-white/10 overflow-y-auto"
