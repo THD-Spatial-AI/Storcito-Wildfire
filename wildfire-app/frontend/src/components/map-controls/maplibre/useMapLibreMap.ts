@@ -59,7 +59,7 @@ export function useMapLibreMap(olMap: OlMap, visible: boolean, isDrawing: boolea
         // Required so html2canvas / toDataURL can read the WebGL base map — without it the
         // feedback screenshot captures a blank map. ponytail: costs a little GPU memory; the
         // only alternative (compositing map canvases by hand) is far more code.
-        preserveDrawingBuffer: true,
+        canvasContextAttributes: { preserveDrawingBuffer: true },
         attributionControl: false,
         dragPan: true,
         dragRotate: false,
