@@ -1,4 +1,4 @@
-export type FeedbackType = "bug" | "feature" | "question";
+export type FeedbackType = "bug" | "feature" | "question" | "praise";
 
 export interface PersonaData {
   name: string;

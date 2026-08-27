@@ -12,7 +12,7 @@ export interface Translations {
 
   // Step 2
   q2: string;
-  typeLabels: { bug: string; feature: string; question: string };
+  typeLabels: { bug: string; feature: string; question: string; praise: string };
   submitWithoutInfo: string;
 
   // Step 3
@@ -27,6 +27,8 @@ export interface Translations {
     wrong: string;
     confused: string;
     access: string;
+    dislike: string;
+    looks: string;
     other: string;
   };
   commentLabel: string;
@@ -34,11 +36,11 @@ export interface Translations {
   writeOwn: string;
   writeOwnPlaceholder: string;
 
-  // Step 3 — expected / desired chips
+  // Step 3 — expected / desired chips (length must match EXPECTED_EMOJIS / DESIRED_EMOJIS)
   qExpected: string;
-  expectedChipLabels: [string, string, string, string, string, string];
+  expectedChipLabels: string[];
   qDesired: string;
-  desiredChipLabels: [string, string, string, string, string, string];
+  desiredChipLabels: string[];
 
   // User story preview
   storyTitle: string;
@@ -82,7 +84,7 @@ const en: Translations = {
   emojiLabels: ["Very unhappy", "Unhappy", "Neutral", "Happy", "Very happy"],
 
   q2: "What kind of feedback is this?",
-  typeLabels: { bug: "Bug", feature: "Idea", question: "Question" },
+  typeLabels: { bug: "Bug", feature: "Idea", question: "Question", praise: "I like it" },
   submitWithoutInfo: "Submit without more info",
 
   q3: "What were you trying to do?",
@@ -96,6 +98,8 @@ const en: Translations = {
     wrong:    "Wrong result",
     confused: "Got confused",
     access:   "Couldn't access",
+    dislike:  "I just didn't like it",
+    looks:    "Looks off / bad design",
     other:    "Something else",
   },
   commentLabel: "Any details to add?",
@@ -104,9 +108,9 @@ const en: Translations = {
   writeOwnPlaceholder: "Describe what you were doing...",
 
   qExpected: "What did you expect?",
-  expectedChipLabels: ["It should have worked", "Data to be saved", "Screen to update", "A confirmation", "A clear error", "No change needed"],
+  expectedChipLabels: ["It should have worked", "Data to be saved", "Screen to update", "A confirmation", "A clear error", "No change needed", "Just sharing an opinion", "Wanted it to look nicer"],
   qDesired: "What would you like?",
-  desiredChipLabels: ["Fix the issue", "Better messages", "Faster response", "Easier navigation", "New feature", "Better guidance"],
+  desiredChipLabels: ["Fix the issue", "Better messages", "Faster response", "Easier navigation", "New feature", "Better guidance", "Just venting — no action", "Nicer design"],
 
   storyTitle: "Your story",
   storyTrying: "I was trying to",
@@ -147,7 +151,7 @@ const es: Translations = {
   emojiLabels: ["Muy insatisfecho", "Insatisfecho", "Neutral", "Satisfecho", "Muy satisfecho"],
 
   q2: "¿Qué tipo de comentario es este?",
-  typeLabels: { bug: "Error", feature: "Idea", question: "Pregunta" },
+  typeLabels: { bug: "Error", feature: "Idea", question: "Pregunta", praise: "Me gusta" },
   submitWithoutInfo: "Enviar sin más información",
 
   q3: "¿Qué estabas intentando hacer?",
@@ -161,6 +165,8 @@ const es: Translations = {
     wrong:    "Resultado incorrecto",
     confused: "Me confundí",
     access:   "No pude acceder",
+    dislike:  "Simplemente no me gustó",
+    looks:    "Se ve mal / mal diseño",
     other:    "Otra cosa",
   },
   commentLabel: "¿Algún detalle que añadir?",
@@ -169,9 +175,9 @@ const es: Translations = {
   writeOwnPlaceholder: "Describe qué estabas haciendo...",
 
   qExpected: "¿Qué esperabas?",
-  expectedChipLabels: ["Que funcionara", "Que se guardara", "Que se actualizara", "Una confirmación", "Un error claro", "Sin cambios"],
+  expectedChipLabels: ["Que funcionara", "Que se guardara", "Que se actualizara", "Una confirmación", "Un error claro", "Sin cambios", "Solo doy mi opinión", "Que se viera mejor"],
   qDesired: "¿Qué te gustaría?",
-  desiredChipLabels: ["Corregir el error", "Mejores mensajes", "Más rapidez", "Navegación más fácil", "Nueva función", "Mejor orientación"],
+  desiredChipLabels: ["Corregir el error", "Mejores mensajes", "Más rapidez", "Navegación más fácil", "Nueva función", "Mejor orientación", "Solo desahogarme — sin acción", "Mejor diseño"],
 
   storyTitle: "Tu historia",
   storyTrying: "Estaba intentando",
@@ -212,7 +218,7 @@ const gl: Translations = {
   emojiLabels: ["Moi insatisfeito", "Insatisfeito", "Neutral", "Satisfeito", "Moi satisfeito"],
 
   q2: "Que tipo de comentario é este?",
-  typeLabels: { bug: "Erro", feature: "Idea", question: "Pregunta" },
+  typeLabels: { bug: "Erro", feature: "Idea", question: "Pregunta", praise: "Gústame" },
   submitWithoutInfo: "Enviar sen máis información",
 
   q3: "Que estabas a tentar facer?",
@@ -226,6 +232,8 @@ const gl: Translations = {
     wrong:    "Resultado incorrecto",
     confused: "Desorienteime",
     access:   "Non puiden acceder",
+    dislike:  "Simplemente non me gustou",
+    looks:    "Vese mal / mal deseño",
     other:    "Outra cousa",
   },
   commentLabel: "Algún detalle que engadir?",
@@ -234,9 +242,9 @@ const gl: Translations = {
   writeOwnPlaceholder: "Describe o que estabas a facer...",
 
   qExpected: "Que esperabas?",
-  expectedChipLabels: ["Que funcionara", "Que se gardara", "Que se actualizara", "Unha confirmación", "Un erro claro", "Sen cambios"],
+  expectedChipLabels: ["Que funcionara", "Que se gardara", "Que se actualizara", "Unha confirmación", "Un erro claro", "Sen cambios", "Só dou a miña opinión", "Que se vira mellor"],
   qDesired: "Que che gustaría?",
-  desiredChipLabels: ["Corrixir o erro", "Mellores mensaxes", "Máis rapidez", "Navegación máis fácil", "Nova función", "Mellor orientación"],
+  desiredChipLabels: ["Corrixir o erro", "Mellores mensaxes", "Máis rapidez", "Navegación máis fácil", "Nova función", "Mellor orientación", "Só desafogarme — sen acción", "Mellor deseño"],
 
   storyTitle: "A túa historia",
   storyTrying: "Estaba a tentar",
@@ -277,7 +285,7 @@ const de: Translations = {
   emojiLabels: ["Sehr unzufrieden", "Unzufrieden", "Neutral", "Zufrieden", "Sehr zufrieden"],
 
   q2: "Was für Feedback ist das?",
-  typeLabels: { bug: "Fehler", feature: "Idee", question: "Frage" },
+  typeLabels: { bug: "Fehler", feature: "Idee", question: "Frage", praise: "Gefällt mir" },
   submitWithoutInfo: "Ohne weitere Infos senden",
 
   q3: "Was hast du versucht zu tun?",
@@ -291,6 +299,8 @@ const de: Translations = {
     wrong:    "Falsches Ergebnis",
     confused: "Verwirrt",
     access:   "Kein Zugriff",
+    dislike:  "Hat mir einfach nicht gefallen",
+    looks:    "Sieht schlecht aus / Design",
     other:    "Etwas anderes",
   },
   commentLabel: "Möchtest du noch etwas ergänzen?",
@@ -299,9 +309,9 @@ const de: Translations = {
   writeOwnPlaceholder: "Beschreibe, was du gemacht hast...",
 
   qExpected: "Was hast du erwartet?",
-  expectedChipLabels: ["Dass es funktioniert", "Daten gespeichert", "Bildschirm aktualisiert", "Eine Bestätigung", "Klare Fehlermeldung", "Keine Änderung"],
+  expectedChipLabels: ["Dass es funktioniert", "Daten gespeichert", "Bildschirm aktualisiert", "Eine Bestätigung", "Klare Fehlermeldung", "Keine Änderung", "Nur meine Meinung", "Sollte schöner aussehen"],
   qDesired: "Was wünschst du dir?",
-  desiredChipLabels: ["Fehler beheben", "Bessere Meldungen", "Schnellere Reaktion", "Einfachere Navigation", "Neue Funktion", "Bessere Anleitung"],
+  desiredChipLabels: ["Fehler beheben", "Bessere Meldungen", "Schnellere Reaktion", "Einfachere Navigation", "Neue Funktion", "Bessere Anleitung", "Nur Luft machen — keine Aktion", "Schöneres Design"],
 
   storyTitle: "Deine Story",
   storyTrying: "Ich wollte",

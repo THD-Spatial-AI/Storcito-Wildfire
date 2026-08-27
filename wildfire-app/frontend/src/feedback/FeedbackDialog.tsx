@@ -17,9 +17,10 @@ const TYPE_BASE: { value: FeedbackType; emoji: string }[] = [
   { value: "bug",      emoji: "🐛" },
   { value: "feature",  emoji: "💡" },
   { value: "question", emoji: "❓" },
+  { value: "praise",   emoji: "❤️" },
 ];
 
-type WhatHappenedKey = "error" | "nothing" | "slow" | "wrong" | "confused" | "access" | "other";
+type WhatHappenedKey = "error" | "nothing" | "slow" | "wrong" | "confused" | "access" | "dislike" | "looks" | "other";
 const WHAT_HAPPENED_BASE: { value: WhatHappenedKey; emoji: string }[] = [
   { value: "error",    emoji: "⚠️" },
   { value: "nothing",  emoji: "🚫" },
@@ -27,11 +28,13 @@ const WHAT_HAPPENED_BASE: { value: WhatHappenedKey; emoji: string }[] = [
   { value: "wrong",    emoji: "🤷" },
   { value: "confused", emoji: "😵" },
   { value: "access",   emoji: "🔒" },
+  { value: "dislike",  emoji: "👎" },
+  { value: "looks",    emoji: "🎨" },
   { value: "other",    emoji: "❓" },
 ];
 
-const EXPECTED_EMOJIS = ["✅", "💾", "🔄", "📩", "⚠️", "➡️"];
-const DESIRED_EMOJIS  = ["🔧", "💬", "⚡", "🗺️", "✨", "📖"];
+const EXPECTED_EMOJIS = ["✅", "💾", "🔄", "📩", "⚠️", "➡️", "💬", "🎨"];
+const DESIRED_EMOJIS  = ["🔧", "💬", "⚡", "🗺️", "✨", "📖", "🤷", "🎨"];
 
 // ─── Language toggle ──────────────────────────────────────────────────────────
 
@@ -113,10 +116,24 @@ function getDialogStyle(rect: Rect): React.CSSProperties {
     hStyle = { right: MARGIN };
   }
 
-  const top = Math.max(MARGIN, Math.min(Math.round(rect.y1 * H), H - 200));
-  const maxHeight = H - top - MARGIN;
+  // Vertical: anchor to whichever side of the selection has more room, so a selection near the
+  // bottom grows UPWARD with a large max-height instead of being squeezed into a tiny box at the edge.
+  const CAP = H - 2 * MARGIN;
+  const selTop = Math.round(rect.y1 * H);
+  const selBottom = Math.round(rect.y2 * H);
+  const roomBelow = H - selTop - MARGIN;
+  const roomAbove = selBottom - MARGIN;
 
-  return { ...hStyle, top, maxHeight };
+  let vStyle: React.CSSProperties;
+  if (roomBelow >= roomAbove) {
+    const top = Math.max(MARGIN, selTop);
+    vStyle = { top, maxHeight: Math.min(CAP, H - top - MARGIN) };
+  } else {
+    const bottom = Math.max(MARGIN, H - selBottom);
+    vStyle = { bottom, maxHeight: Math.min(CAP, H - bottom - MARGIN) };
+  }
+
+  return { ...hStyle, ...vStyle };
 }
 
 // ─── Main dialog ──────────────────────────────────────────────────────────────
@@ -325,7 +342,7 @@ export function FeedbackDialog({
               {t.back}
             </button>
             <p className="mb-5 text-center text-base font-medium text-zinc-200">{t.q2}</p>
-            <div className="flex justify-center gap-3">
+            <div className="flex flex-wrap justify-center gap-2.5">
               {types.map(({ value, emoji, label }) => {
                 const isActive = feedbackType === value;
                 return (
@@ -333,7 +350,7 @@ export function FeedbackDialog({
                     key={value}
                     type="button"
                     onClick={() => { setFeedbackType(value); setScreen(3); }}
-                    className={`flex flex-col items-center gap-1.5 rounded-xl border-2 px-5 py-3 text-sm font-medium transition-all duration-150 active:scale-[0.97] focus:outline-none ${
+                    className={`flex flex-1 min-w-[7rem] flex-col items-center gap-1.5 rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all duration-150 active:scale-[0.97] focus:outline-none ${
                       isActive
                         ? ""
                         : "border-zinc-800 bg-zinc-900 text-zinc-400 hover:border-zinc-700 hover:bg-zinc-800 hover:text-zinc-200"

@@ -28,12 +28,15 @@ const VALID_LANGS: Language[] = ["de", "en", "es", "gl"];
 
 async function captureScreen(): Promise<HTMLCanvasElement | null> {
   try {
-    const { default: html2canvas } = await import("html2canvas");
+    // html2canvas-pro (fork) supports Tailwind v4 oklch()/lab() colors — the original html2canvas
+    // throws on them, which silently killed the whole capture and left the screenshot null.
+    const { default: html2canvas } = await import("html2canvas-pro");
     return await html2canvas(document.body, {
       useCORS: true,
       allowTaint: false,
       logging: false,
-      scale: 0.5,
+      // Native pixel density (capped at 2×) — scale 0.5 was halving resolution, hence the blur.
+      scale: Math.min(window.devicePixelRatio || 1, 2),
     });
   } catch {
     return null;
@@ -50,15 +53,22 @@ function canvasToBase64(canvas: HTMLCanvasElement): string | null {
 
 function cropRectToBase64(canvas: HTMLCanvasElement, rect: Rect): string | null {
   try {
-    const x1 = rect.x1 * canvas.width;
-    const y1 = rect.y1 * canvas.height;
-    const w = Math.max((rect.x2 - rect.x1) * canvas.width, 80);
-    const h = Math.max((rect.y2 - rect.y1) * canvas.height, 80);
+    // html2canvas renders the whole page from the top-left at a uniform scale. The rect is normalised
+    // to the VIEWPORT, so derive the scale from width (no horizontal scroll) and use it for BOTH axes
+    // over page pixels — this keeps the crop's aspect ratio identical to what the user drew, even when
+    // document.body is taller than the viewport (canvas.height would otherwise distort the Y mapping).
+    const scale = canvas.width / window.innerWidth;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const sx = (rect.x1 * vw + window.scrollX) * scale;
+    const sy = (rect.y1 * vh + window.scrollY) * scale;
+    const w = Math.max((rect.x2 - rect.x1) * vw * scale, 40);
+    const h = Math.max((rect.y2 - rect.y1) * vh * scale, 40);
     const out = document.createElement("canvas");
-    out.width = w;
-    out.height = h;
-    out.getContext("2d")!.drawImage(canvas, x1, y1, w, h, 0, 0, w, h);
-    return out.toDataURL("image/jpeg", 0.65).split(",")[1];
+    out.width = Math.round(w);
+    out.height = Math.round(h);
+    out.getContext("2d")!.drawImage(canvas, sx, sy, w, h, 0, 0, out.width, out.height);
+    return out.toDataURL("image/jpeg", 0.9).split(",")[1];
   } catch {
     return null;
   }
