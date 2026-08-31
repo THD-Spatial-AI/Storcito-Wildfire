@@ -48,6 +48,16 @@ export const AppLayoutSidebar: React.FC<AppLayoutSidebarProps> = ({
   return (
     <aside className="fixed left-0 bottom-0 bg-card border-r border-border shadow-lg z-[51] w-[var(--sidebar-width)] top-[var(--topbar-height)]">
       <div className="flex flex-col items-center gap-3 py-4">
+        <LayersSheet
+          baseLayers={accessibleBaseLayers}
+          selectedBaseLayerId={selectedBaseLayerId}
+          changeBaseLayer={changeBaseLayer}
+        />
+
+        <Authorized>
+          <div className="w-6 h-px bg-border" />
+        </Authorized>
+
         <Authorized>
           {sidebarItems.map((item) => (
             <SidebarButton
@@ -60,17 +70,6 @@ export const AppLayoutSidebar: React.FC<AppLayoutSidebarProps> = ({
             />
           ))}
         </Authorized>
-
-        {/* Separate primary navigation (above) from the Layers map tool (below) */}
-        <Authorized>
-          <div className="w-6 h-px bg-border" />
-        </Authorized>
-
-        <LayersSheet
-          baseLayers={accessibleBaseLayers}
-          selectedBaseLayerId={selectedBaseLayerId}
-          changeBaseLayer={changeBaseLayer}
-        />
       </div>
 
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-3 text-center">
@@ -95,7 +94,10 @@ export const AppLayoutSidebar: React.FC<AppLayoutSidebarProps> = ({
 
         <ProfileMenu userMenuItems={userMenuItems} getUserInitial={getUserInitial} />
 
-        <span className="text-[9px] font-medium tabular-nums text-muted-foreground/60" title={`App version ${APP_VERSION}`}>
+        <span
+          className="text-[9px] font-medium tabular-nums text-muted-foreground/60"
+          title={`App version ${APP_VERSION}`}
+        >
           v{APP_VERSION}
         </span>
       </div>

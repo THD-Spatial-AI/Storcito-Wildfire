@@ -27,6 +27,7 @@ interface ModelDashboardFiltersProps {
 	isLoading: boolean;
 	handleCompareSelected: () => void;
 	canCompareSelected: boolean;
+	canUseComparison: boolean;
 	canManageWorkspace: boolean;
 	setIsShareWsOpen: (open: boolean) => void;
 	setIsCopyWsOpen: (open: boolean) => void;
@@ -46,7 +47,7 @@ const TOOLBAR_ICON_BUTTON_CLASS =
 	"inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground shadow-sm transition-colors duration-150 hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50";
 
 export function ModelDashboardFilters({
-	groups, selectedGroup, setSelectedGroup, filterText, setFilterText, isLoadingWorkspace, handleWorkspaceChange, setIsCreateWsOpen, wsReloadKey, normalizedWorkspaceId, preferredWorkspaceId, currentWorkspace, handleRefresh, isRefreshing, isLoading, handleCompareSelected, canCompareSelected, canManageWorkspace, setIsShareWsOpen, setIsCopyWsOpen, setIsRenameWsOpen, handleDeleteWorkspace, bulkActions, stats, statsLoaded = false, handleNewModel, isModelLimitReached, table,
+	groups, selectedGroup, setSelectedGroup, filterText, setFilterText, isLoadingWorkspace, handleWorkspaceChange, setIsCreateWsOpen, wsReloadKey, normalizedWorkspaceId, preferredWorkspaceId, currentWorkspace, handleRefresh, isRefreshing, isLoading, handleCompareSelected, canCompareSelected, canUseComparison, canManageWorkspace, setIsShareWsOpen, setIsCopyWsOpen, setIsRenameWsOpen, handleDeleteWorkspace, bulkActions, stats, statsLoaded = false, handleNewModel, isModelLimitReached, table,
 }: ModelDashboardFiltersProps) {
 	const { t } = useTranslation();
 
@@ -180,24 +181,25 @@ export function ModelDashboardFilters({
 							</>
 						)}
 
-						{/* Compare button - always visible */}
-						<Tooltip>
-							<TooltipTrigger asChild>
-								<span>
-									<button
-										onClick={handleCompareSelected}
-										disabled={!canCompareSelected}
-										className={TOOLBAR_BUTTON_CLASS}
-									>
-										<GitCompareArrows className="h-4 w-4 text-muted-foreground" />
-										<span className="hidden sm:inline">{t('model.compare')}</span>
-									</button>
-								</span>
-							</TooltipTrigger>
-							<TooltipContent>
-								<p>{canCompareSelected ? t('model.compare') : t('model.compareRequires2Completed')}</p>
-							</TooltipContent>
-						</Tooltip>
+						{canUseComparison && (
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<span>
+										<button
+											onClick={handleCompareSelected}
+											disabled={!canCompareSelected}
+											className={TOOLBAR_BUTTON_CLASS}
+										>
+											<GitCompareArrows className="h-4 w-4 text-muted-foreground" />
+											<span className="hidden sm:inline">{t('model.compare')}</span>
+										</button>
+									</span>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>{canCompareSelected ? t('model.compare') : t('model.compareRequires2Completed')}</p>
+								</TooltipContent>
+							</Tooltip>
+						)}
 
 						{currentWorkspace && (
 							<>

@@ -21,6 +21,7 @@ import { processModelTimingUpdates, type TimingUpdate } from "@/features/model-d
 import { organizeModelsHierarchically } from "@/features/model-dashboard/utils/dashboardHelpers";
 import { useTranslation } from "@/i18n";
 import { useNotification } from "@/features/notifications/hooks/useNotification";
+import { hasMinimumAccessLevel } from "@/utils/access-level";
 import { ModelDashboardFilters } from "./model-dashboard/ModelDashboardFilters";
 import { ModelDashboardBulkActions } from "./model-dashboard/ModelDashboardBulkActions";
 import { ModelDashboardTable } from "./model-dashboard/ModelDashboardTable";
@@ -572,6 +573,7 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 			return isModelCompleted(fresh ? fresh.status : sel.status);
 		});
 	}, [selectedModels, modelsResponse]);
+	const canUseComparison = hasMinimumAccessLevel(user?.access_level, "manager");
 
 	const handleCompareSelected = useCallback(() => {
 		if (selectedModels.length !== 2) return;
@@ -678,8 +680,9 @@ return (
 						handleRefresh={handleRefresh}
 						isRefreshing={isRefreshing}
 						isLoading={isLoading}
-						handleCompareSelected={handleCompareSelected}
-						canCompareSelected={canCompareSelected}
+							handleCompareSelected={handleCompareSelected}
+							canCompareSelected={canCompareSelected}
+							canUseComparison={canUseComparison}
 						canManageWorkspace={canManageWorkspace}
 						setIsShareWsOpen={setIsShareWsOpen}
 						setIsCopyWsOpen={setIsCopyWsOpen}

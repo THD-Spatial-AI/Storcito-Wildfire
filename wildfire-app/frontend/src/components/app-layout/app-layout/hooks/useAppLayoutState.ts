@@ -8,10 +8,9 @@ import { useLogout } from "@/hooks/useLogout";
 import { useProductTour } from "@/features/guided-tour/hooks/useProductTour";
 import { useOnboarding } from "@/features/onboarding/hooks/useOnboarding";
 import { useMapStore } from "@/features/interactive-map/store/map-store";
+import { hasMinimumAccessLevel } from "@/utils/access-level";
 import { ADMIN_PATH, DOCUMENTATION_URL, SIDEBAR_WIDTH, TOPBAR_HEIGHT } from "../constants";
 import type { AccessLevel, NavigationHandlers, SidebarItem, UserMenuItem } from "../types";
-
-const accessLevels: AccessLevel[] = ["very_low", "intermediate", "manager", "expert"];
 
 export const useAppLayoutState = () => {
   const { user } = useAuth();
@@ -30,18 +29,18 @@ export const useAppLayoutState = () => {
     [location.pathname]
   );
 
+  const hasAccessLevel = useCallback(
+    (required: AccessLevel): boolean => {
+      return hasMinimumAccessLevel(user?.access_level, required);
+    },
+    [user]
+  );
+
   const hasAccessToLayer = useCallback(
     (layer: { accessLevel: AccessLevel }): boolean => {
       if (!user) return false;
 
-      const userLevel = accessLevels.indexOf(user.access_level);
-      const requiredLevel = accessLevels.indexOf(layer.accessLevel);
-
-      return (
-        userLevel >= requiredLevel ||
-        user.access_level === "expert" ||
-        user.access_level === "manager"
-      );
+      return hasMinimumAccessLevel(user.access_level, layer.accessLevel);
     },
     [user]
   );
@@ -98,7 +97,7 @@ export const useAppLayoutState = () => {
   }, [location.pathname, restartAreaSelectTour, startTour]);
 
   const sidebarItems: SidebarItem[] = useMemo(
-    () => [
+    () => ([
       {
         path: "/app/model-dashboard",
         icon: Flame,
@@ -116,15 +115,17 @@ export const useAppLayoutState = () => {
         dataTour: "map",
       },
       {
+        // Comparing two runs is an analyst task — standard users found it confusing.
         path: "/app/comparison",
         icon: GitCompareArrows,
         title: t("common.sidebar.simulationReports"),
         color: "#10b981",
         bgColor: "#d1fae5",
         dataTour: "reports",
+        minAccessLevel: "manager",
       },
-    ],
-    [t]
+    ] as SidebarItem[]).filter((item) => !item.minAccessLevel || hasAccessLevel(item.minAccessLevel)),
+    [hasAccessLevel, t]
   );
 
   const userMenuItems: UserMenuItem[] = useMemo(

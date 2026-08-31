@@ -79,13 +79,24 @@ const App: React.FC<AppProps> = () => {
                   <Route path="/app/model-dashboard/new-model" element={<AreaSelect />} />
                   <Route path="/app/model-dashboard/edit/:id" element={<AreaSelect editMode={true} />} />
                   <Route path="/app/model-results/:id" element={<ModelResultsViewer />} />
-                  <Route path="/app/comparison" element={<ComparisonPage />} />
-                  <Route path="/app/comparison/:modelId" element={<ComparisonPage />} />
                   <Route path="/app/profile" element={<ProfilePage />} />
                   <Route path="/app/admin-dashboard" element={<Dashboard />} />
                   <Route path="/app/settings" element={<SettingsPage />} />
                   <Route path="/app/settings/weather" element={<WeatherSettings />} />
                   <Route path="/app/notifications" element={<NotificationsPage />} />
+                </Route>
+
+                <Route
+                  element={(
+                    <Middleware
+                      type="auth"
+                      minimumAccess="manager"
+                      accessDeniedTo="/app/model-dashboard"
+                    />
+                  )}
+                >
+                  <Route path="/app/comparison" element={<ComparisonPage />} />
+                  <Route path="/app/comparison/:modelId" element={<ComparisonPage />} />
                 </Route>
               </Routes>
             </Suspense>

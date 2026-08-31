@@ -7,6 +7,7 @@ export interface SidebarItem {
   color: string;
   bgColor: string;
   dataTour: string;
+  minAccessLevel?: AccessLevel;
 }
 
 export interface UserMenuItem {
