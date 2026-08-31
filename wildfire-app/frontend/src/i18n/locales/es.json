@@ -1008,7 +1008,7 @@
     },
     "bufferDistance": {
       "decrease": "Disminuir distancia de búfer",
-      "hint": "Rango de 0 a 2000 m en pasos de 100 m. Amplía el área considerada alrededor de su polígono.",
+      "hint": "Distancia fija que se añade por fuera de tu área, siguiendo su forma: de 0 a 2000 m en pasos de 100 m. Si redibujas el área, la distancia se mantiene.",
       "increase": "Aumentar distancia de búfer",
       "label": "Distancia de búfer (metros)"
     },
@@ -1284,7 +1284,29 @@
       "veryHigh": "Protección extra necesaria",
       "extreme": "Evitar exposición solar"
     },
-    "dataBy": "Datos meteorológicos de"
+    "dataBy": "Datos meteorológicos de",
+    "conditions": {
+      "clear": "Cielo despejado",
+      "mainlyClear": "Mayormente despejado",
+      "partlyCloudy": "Parcialmente nublado",
+      "overcast": "Cubierto",
+      "fog": "Niebla",
+      "rimeFog": "Niebla helada",
+      "drizzle": "Llovizna",
+      "freezingDrizzle": "Llovizna helada",
+      "rain": "Lluvia",
+      "heavyRain": "Lluvia fuerte",
+      "freezingRain": "Lluvia helada",
+      "snow": "Nieve",
+      "heavySnow": "Nieve intensa",
+      "snowGrains": "Cinarra",
+      "showers": "Chubascos",
+      "heavyShowers": "Chubascos fuertes",
+      "snowShowers": "Chubascos de nieve",
+      "thunderstorm": "Tormenta",
+      "thunderstormHail": "Tormenta con granizo"
+    },
+    "windSpeedTooltip": "Cambia la unidad en Configuración → Visualización de datos."
   },
   "settings": {
     "title": "Configuración",
@@ -1836,7 +1858,7 @@
       "nextStepHint": "A continuación, delinearás el área geográfica en el mapa.",
       "modelNameLabel": "Nombre del modelo",
       "modelNamePlaceholder": "ej. Galicia Verano 2026 Riesgo de Incendio",
-      "modelNameHint": "Un nombre descriptivo para que puedas encontrar este modelo más tarde.",
+      "modelNameHint": "Para poder encontrarlo después.",
       "calcModeLabel": "Modo de cálculo",
       "calcModeStatic": "estático",
       "calcModeDynamic": "dinámico",
@@ -1853,7 +1875,11 @@
       "dynamicSelectedOne": "Rango seleccionado: {{start}} a {{end}} (1 día).",
       "dynamicSelectInside": "Selecciona un rango dentro de las fechas disponibles: {{start}} a {{end}}",
       "dynamicAvailable": "Fechas dinámicas disponibles: {{start}} a {{end}}",
-      "hottest": "Más caluroso"
+      "hottest": "Más caluroso",
+      "calcModeInfoLabel": "Qué hace cada modo de cálculo",
+      "calcModeInfo": "Estático evalúa un solo día —una fecha meteorológica disponible— con el flujo de trabajo de riesgo AOI. Dinámico evalúa un rango de días y mantiene la secuencia meteorológica diaria. Ambos usan la ventana meteorológica de 16:00 a 17:00.",
+      "calcModeHintStatic": "Un solo día, elegido entre las fechas meteorológicas disponibles.",
+      "calcModeHintDynamic": "Un rango de días, evaluado día a día."
     },
     "layer2": {
       "purpose": "Selecciona una región administrativa completa, dibuja un área o sube un límite GeoJSON.",
@@ -1907,7 +1933,8 @@
       "customDataDesc": "Traiga sus propios datos meteorológicos para esta área. Si se deja en blanco, se utilizan los datos regionales incluidos.",
       "weatherStationData": "Datos de estación meteorológica",
       "weatherStationHint": "Exportación de estación en Excel o CSV (.xlsx / .csv)",
-      "weatherStationInfo": "Mediciones meteorológicas horarias de una estación local — temperatura, humedad, viento y precipitación. Se usa para calcular el FWI para esta área. Sube una exportación Excel o CSV; si se omite, se usan los datos meteorológicos regionales."
+      "weatherStationInfo": "Mediciones meteorológicas horarias de una estación local — temperatura, humedad, viento y precipitación. Se usa para calcular el FWI para esta área. Sube una exportación Excel o CSV; si se omite, se usan los datos meteorológicos regionales.",
+      "coreSignalsNote": "La vegetación (NDVI) y las infraestructuras forman parte del modelo siempre y no se pueden desactivar. Al desactivar una señal de arriba se elimina su contribución del cálculo de pesos; la ejecución continúa con las señales restantes."
     },
     "layer4": {
       "purpose": "Validación en tiempo real de la configuración. Los bloqueos deben resolverse en sus respectivos pasos antes de iniciar la ejecución.",

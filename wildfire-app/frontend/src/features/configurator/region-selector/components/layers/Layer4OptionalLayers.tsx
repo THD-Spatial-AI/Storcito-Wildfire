@@ -226,6 +226,13 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
           );
         })}
       </div>
+      <p className="mt-3 text-[11px] leading-snug text-muted-foreground">
+        {t(
+          "configurator.layer3.coreSignalsNote",
+          "Vegetation (NDVI) and infrastructure are always part of the model and cannot be switched off. Switching a signal above off removes its contribution from the weighting — the run continues with the remaining signals."
+        )}
+      </p>
+
       {weatherDisabled && (
         <div className="md-fade-in mt-3 flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2.5 text-[11px] leading-snug text-amber-700 dark:text-amber-300">
           <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />

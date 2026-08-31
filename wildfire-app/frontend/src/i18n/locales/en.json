@@ -1008,7 +1008,7 @@
     },
     "bufferDistance": {
       "label": "Buffer Distance (meters)",
-      "hint": "Range 0–2000 m in 100 m steps. Expands the area considered around your polygon.",
+      "hint": "A fixed distance added outside your area, following its shape — 0–2000 m in 100 m steps. Redrawing the area keeps the same distance.",
       "decrease": "Decrease buffer distance",
       "increase": "Increase buffer distance"
     },
@@ -1284,7 +1284,29 @@
       "veryHigh": "Extra protection needed",
       "extreme": "Avoid sun exposure"
     },
-    "dataBy": "Weather data by"
+    "dataBy": "Weather data by",
+    "conditions": {
+      "clear": "Clear sky",
+      "mainlyClear": "Mainly clear",
+      "partlyCloudy": "Partly cloudy",
+      "overcast": "Overcast",
+      "fog": "Fog",
+      "rimeFog": "Rime fog",
+      "drizzle": "Drizzle",
+      "freezingDrizzle": "Freezing drizzle",
+      "rain": "Rain",
+      "heavyRain": "Heavy rain",
+      "freezingRain": "Freezing rain",
+      "snow": "Snow",
+      "heavySnow": "Heavy snow",
+      "snowGrains": "Snow grains",
+      "showers": "Rain showers",
+      "heavyShowers": "Heavy rain showers",
+      "snowShowers": "Snow showers",
+      "thunderstorm": "Thunderstorm",
+      "thunderstormHail": "Thunderstorm with hail"
+    },
+    "windSpeedTooltip": "Change the unit in Settings → Data display."
   },
   "settings": {
     "title": "Settings",
@@ -1836,7 +1858,7 @@
       "nextStepHint": "Next you'll outline the geographic area on the map.",
       "modelNameLabel": "Model name",
       "modelNamePlaceholder": "e.g. Galicia Summer 2026 Wildfire Risk",
-      "modelNameHint": "A descriptive name so you can find this model later.",
+      "modelNameHint": "So you can find it later.",
       "calcModeLabel": "Calculation mode",
       "calcModeStatic": "static",
       "calcModeDynamic": "dynamic",
@@ -1853,7 +1875,11 @@
       "dynamicSelectedOne": "Selected range: {{start}} to {{end}} (1 day).",
       "dynamicSelectInside": "Select a range inside available dynamic dates: {{start}} to {{end}}",
       "dynamicAvailable": "Available dynamic dates: {{start}} to {{end}}",
-      "hottest": "Hottest"
+      "hottest": "Hottest",
+      "calcModeInfoLabel": "What the calculation modes do",
+      "calcModeInfo": "Static assesses a single day — one available weather date — using the AOI risk workflow. Dynamic assesses a range of days, keeping the daily weather sequence. Both use the 16:00–17:00 weather window.",
+      "calcModeHintStatic": "One day, chosen from the available weather dates.",
+      "calcModeHintDynamic": "A range of days, assessed day by day."
     },
     "layer2": {
       "purpose": "Select a complete administrative region, draw an area, or upload a GeoJSON boundary.",
@@ -1910,7 +1936,8 @@
       "customDataDesc": "Bring your own weather inputs for this area. If left empty, the bundled regional data is used.",
       "weatherStationData": "Weather station data",
       "weatherStationHint": "Excel or CSV station export (.xlsx / .csv)",
-      "weatherStationInfo": "Hourly weather measurements from a local station — temperature, humidity, wind and precipitation. Used to compute the Fire Weather Index for this area. Upload an Excel or CSV export; if omitted, the bundled regional weather data is used."
+      "weatherStationInfo": "Hourly weather measurements from a local station — temperature, humidity, wind and precipitation. Used to compute the Fire Weather Index for this area. Upload an Excel or CSV export; if omitted, the bundled regional weather data is used.",
+      "coreSignalsNote": "Vegetation (NDVI) and infrastructure are always part of the model and cannot be switched off. Switching a signal above off removes its contribution from the weighting — the run continues with the remaining signals."
     },
     "layer4": {
       "purpose": "Real-time validation of the model configuration. Blockers must be cleared in their respective steps before the run can start.",

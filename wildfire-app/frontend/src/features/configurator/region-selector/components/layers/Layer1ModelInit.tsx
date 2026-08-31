@@ -252,13 +252,29 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                         placeholder={t("configurator.layer1.modelNamePlaceholder", "e.g. Galicia Summer 2026 Wildfire Risk")}
                         className="w-full px-2.5 py-1.5 border border-border rounded-md hover:border-muted-foreground/40 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-background dark:bg-gray-700 text-foreground text-sm transition-colors duration-150"
                     />
-                    <p className="text-[11px] text-muted-foreground mt-1">{t("configurator.layer1.modelNameHint", "A descriptive name so you can find this model later.")}</p>
+                    <p className="text-[11px] text-muted-foreground mt-1">{t("configurator.layer1.modelNameHint", "So you can find it later.")}</p>
                 </div>
 
                 <div data-tour="calculation-mode">
-                    <label className="block text-xs font-medium text-foreground mb-1">
-                        {t("configurator.layer1.calcModeLabel", "Calculation mode")}
-                    </label>
+                    <div className="mb-1 flex items-center gap-1">
+                        <label className="block text-xs font-medium text-foreground">
+                            {t("configurator.layer1.calcModeLabel", "Calculation mode")}
+                        </label>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <button
+                                    type="button"
+                                    aria-label={t("configurator.layer1.calcModeInfoLabel", "What the calculation modes do")}
+                                    className="text-muted-foreground transition-all duration-150 hover:text-foreground hover:scale-110 active:scale-95 focus:outline-none"
+                                >
+                                    <Info className="h-3.5 w-3.5" />
+                                </button>
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-[260px] text-xs">
+                                {t("configurator.layer1.calcModeInfo", "Static assesses a single day — one available weather date — using the AOI risk workflow. Dynamic assesses a range of days, keeping the daily weather sequence. Both use the 16:00–17:00 weather window.")}
+                            </TooltipContent>
+                        </Tooltip>
+                    </div>
                     <div className="grid grid-cols-2 overflow-hidden rounded-md border border-border">
                         {(["static", "dynamic"] as const).map((mode) => {
                             const selected = state.calculationMode === mode;
@@ -280,7 +296,9 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                         })}
                     </div>
                     <p className="text-[11px] text-muted-foreground mt-1">
-                        {t("configurator.layer1.calcModeHint", "Static uses the AOI risk workflow for one date. Dynamic keeps the selected mode in the model payload for the dynamic workflow.")}
+                        {state.calculationMode === "static"
+                            ? t("configurator.layer1.calcModeHintStatic", "One day, chosen from the available weather dates.")
+                            : t("configurator.layer1.calcModeHintDynamic", "A range of days, assessed day by day.")}
                     </p>
                 </div>
 
@@ -307,9 +325,6 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                                     </TooltipContent>
                                 </Tooltip>
                             </div>
-                            <p className="mb-1 mt-0.5 text-[11px] leading-snug text-muted-foreground">
-                                {t("configurator.layer1.staticHint", "Static runs use one available weather date, from 16:00 to 17:00.")}
-                            </p>
                             <StaticDateDropdown
                                 availableStaticDates={state.availableStaticDates}
                                 isLoadingStaticDates={state.isLoadingStaticDates}
@@ -339,9 +354,6 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                                 <Label className="text-foreground text-xs font-medium">
                                     {t("simulation.simulationPeriod")} <span className="text-red-500">*</span>
                                 </Label>
-                                <p className="mb-1 mt-0.5 text-[11px] leading-snug text-muted-foreground">
-                                    {t("configurator.layer1.dynamicHint", "Dynamic runs keep the selected date range and use the 16:00 to 17:00 window.")}
-                                </p>
                                 <div className="flex">
                                     <Group className={cn(DATE_INPUT_STYLE, "xl:px-0 lg:px-2 relative dark:bg-gray-700 dark:border-gray-600")}>
                                         <DateInput slot="start" unstyled className="text-xs pl-2.5 pr-1 py-1.5 flex-1" />
