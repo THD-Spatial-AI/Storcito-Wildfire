@@ -130,6 +130,10 @@ export const MapProvider: React.FC<MapProviderProps> = ({ children }) => {
 			} else {
 				baseLayer.setVisible(true);
 				baseLayer.setSource(selected.source);
+				// Swapping in a source that previously failed keeps serving its
+				// error state until something asks for the tiles again — that is
+				// why switching layers sometimes needed a page reload.
+				selected.source.refresh();
 			}
 			if (map) {
 				requestAnimationFrame(() => {
