@@ -2,7 +2,10 @@
   "drawing": {
     "clickToDraw": "Click to draw",
     "clickToClose": "Click to close",
-    "start": "Start"
+    "start": "Start",
+    "edit": "Edit",
+    "moveMap": "Move map",
+    "resumeDrawing": "Resume drawing"
   },
   "common": {
     "save": "Save",
@@ -1366,7 +1369,19 @@
       "windSpeed": "Wind Speed",
       "knots": "knots",
       "dataRefresh": "Data Refresh",
-      "min": "min"
+      "min": "min",
+      "windUnits": {
+        "kmh": "km/h",
+        "mph": "mph",
+        "ms": "m/s",
+        "knots": "kn"
+      },
+      "textSize": "Text size",
+      "textSizes": {
+        "small": "Small",
+        "normal": "Normal",
+        "large": "Large"
+      }
     },
     "notifications": {
       "title": "Notifications",
@@ -1394,6 +1409,21 @@
       "sendNotification": "Send Notification",
       "sent": "Notification sent!",
       "failedToSend": "Failed to send"
+    },
+    "modelCreation": {
+      "title": "Model intro card",
+      "description": "Controls the setup card shown before the guided model creation steps.",
+      "checking": "Checking preference...",
+      "hidden": "Intro is hidden",
+      "enabled": "Intro is enabled",
+      "hiddenHint": "Enable it again when users need the setup summary before creating a model.",
+      "enabledHint": "The setup summary will appear before new model creation.",
+      "showAgain": "Show again",
+      "loadError": "Unable to load this preference.",
+      "enabledMessage": "The intro card will show the next time you create a new model.",
+      "updateError": "Could not update the intro card preference.",
+      "sectionTitle": "Model creation",
+      "guidancePreferences": "Guidance preferences"
     }
   },
   "simulationComparison": {
@@ -1470,7 +1500,17 @@
     "regions": "regions",
     "myModels": "my models",
     "grids": "grids",
-    "countries": "countries"
+    "countries": "countries",
+    "privacyRequired": "Please accept the Data & Privacy terms to view the map",
+    "modelsCapped": "Showing your {{shown}} most recent models of {{total}}.",
+    "legend": {
+      "title": "Map outlines",
+      "baseMap": "Gray lines: roads and administrative boundaries from the selected base map",
+      "availableRegions": "Dashed indigo: available administrative regions",
+      "yourModels": "Green areas: your saved models — select one to open it",
+      "zoomDetail": "The default view is Galicia; the base map reveals more detail as you zoom in."
+    },
+    "newModelShortcut": "Shortcut: N"
   },
   "privacy": {
     "dataAndPrivacy": "Data & Privacy",
@@ -1992,7 +2032,8 @@
         "buffer": "Buffer",
         "area": "Area",
         "riskComponents": "Risk components"
-      }
+      },
+      "dailyRunInfo": "Every simulated day is assessed with the weather from this window — the hottest, driest part of the afternoon."
     },
     "coverage": {
       "title": "Wildfire data coverage",

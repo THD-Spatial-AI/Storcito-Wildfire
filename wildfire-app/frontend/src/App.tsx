@@ -5,6 +5,7 @@ import { LayoutProvider } from "@/providers/layout-provider";
 import { AppLayout } from "@/components/app-layout/AppLayout";
 import { Middleware } from "@/middleware/middleware";
 import { ensureCSRFToken } from "@/utils/csrf";
+import { useDataDisplayStore, TEXT_SIZE_PX } from "@/features/settings/store/data-display";
 import { TooltipProvider } from "@spatialhub/ui";
 import { Loader2 } from 'lucide-react';
 
@@ -38,12 +39,19 @@ const PageLoader = () => (
 type AppProps = Record<string, never>;
 
 const App: React.FC<AppProps> = () => {
+  const textSize = useDataDisplayStore((s) => s.textSize);
+
   // Initialize CSRF token on app load
   useEffect(() => {
     ensureCSRFToken().catch((err) => {
       if (import.meta.env.DEV) console.error('Failed to initialize CSRF token:', err);
     });
   }, []);
+
+  // The whole UI is sized in rem, so the text-size preference is one line here.
+  useEffect(() => {
+    document.documentElement.style.fontSize = TEXT_SIZE_PX[textSize] ?? TEXT_SIZE_PX.normal;
+  }, [textSize]);
 
   return (
     <Router>

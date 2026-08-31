@@ -2,7 +2,10 @@
   "drawing": {
     "clickToDraw": "Clic para dibujar",
     "clickToClose": "Clic para cerrar",
-    "start": "Inicio"
+    "start": "Inicio",
+    "edit": "Editar",
+    "moveMap": "Mover el mapa",
+    "resumeDrawing": "Seguir dibujando"
   },
   "common": {
     "save": "Guardar",
@@ -111,7 +114,7 @@
       "previousPage": "Página anterior",
       "nextPage": "Página siguiente"
     },
-    "appName": "Evaluación del riesgo de incendios forestales",
+    "appName": "Evaluación del riesgo de incendio forestal",
     "saved": "Guardado"
   },
   "forms": {
@@ -298,7 +301,7 @@
       "success": "Éxito",
       "error": "Error",
       "warning": "Advertencia",
-      "info": "Info",
+      "info": "Información",
       "maintenance": "Mantenimiento"
     },
     "totalExecutionTime": "Tiempo Total de Ejecución",
@@ -555,7 +558,7 @@
       "simulationEngine": "Motor de Simulación",
       "feedback": "Comentarios",
       "userManagement": "Gestión de Usuarios",
-      "gridEngine": "Compute Engine"
+      "gridEngine": "Motor de cálculo"
     },
     "stats": {
       "accessLevel": "Nivel de Acceso",
@@ -1366,7 +1369,19 @@
       "windSpeed": "Velocidad del Viento",
       "knots": "nudos",
       "dataRefresh": "Actualización de Datos",
-      "min": "min"
+      "min": "min",
+      "windUnits": {
+        "kmh": "km/h",
+        "mph": "mph",
+        "ms": "m/s",
+        "knots": "nudos"
+      },
+      "textSize": "Tamaño del texto",
+      "textSizes": {
+        "small": "Pequeño",
+        "normal": "Normal",
+        "large": "Grande"
+      }
     },
     "notifications": {
       "title": "Notificaciones",
@@ -1394,6 +1409,21 @@
       "sendNotification": "Enviar Notificación",
       "sent": "¡Notificación enviada!",
       "failedToSend": "Error al enviar"
+    },
+    "modelCreation": {
+      "title": "Tarjeta de introducción al modelo",
+      "description": "Controla la tarjeta de configuración que se muestra antes de los pasos guiados de creación del modelo.",
+      "checking": "Comprobando la preferencia...",
+      "hidden": "La introducción está oculta",
+      "enabled": "La introducción está activada",
+      "hiddenHint": "Actívala de nuevo cuando los usuarios necesiten el resumen de configuración antes de crear un modelo.",
+      "enabledHint": "El resumen de configuración aparecerá antes de crear un nuevo modelo.",
+      "showAgain": "Mostrar de nuevo",
+      "loadError": "No se ha podido cargar esta preferencia.",
+      "enabledMessage": "La tarjeta de introducción se mostrará la próxima vez que crees un modelo.",
+      "updateError": "No se ha podido actualizar la preferencia de la tarjeta de introducción.",
+      "sectionTitle": "Creación de modelos",
+      "guidancePreferences": "Preferencias de ayuda"
     }
   },
   "simulationComparison": {
@@ -1470,7 +1500,17 @@
     "regions": "regiones",
     "myModels": "mis modelos",
     "grids": "cuadrículas",
-    "countries": "países"
+    "countries": "países",
+    "privacyRequired": "Acepta los términos de datos y privacidad para ver el mapa",
+    "modelsCapped": "Mostrando tus {{shown}} modelos más recientes de {{total}}.",
+    "legend": {
+      "title": "Contornos del mapa",
+      "baseMap": "Líneas grises: carreteras y límites administrativos del mapa base seleccionado",
+      "availableRegions": "Índigo discontinuo: regiones administrativas disponibles",
+      "yourModels": "Áreas verdes: tus modelos guardados; selecciona uno para abrirlo",
+      "zoomDetail": "La vista predeterminada es Galicia; el mapa base muestra más detalle al acercarlo."
+    },
+    "newModelShortcut": "Atajo: N"
   },
   "privacy": {
     "dataAndPrivacy": "Datos y privacidad",
@@ -1884,26 +1924,26 @@
     "layer2": {
       "purpose": "Selecciona una región administrativa completa, dibuja un área o sube un límite GeoJSON.",
       "nextStepHint": "A continuación validaremos el área seleccionada y las entradas del modelo.",
-      "terrainModel": "Terrain model (DTM)",
+      "terrainModel": "Modelo digital del terreno (MDT)",
       "dtmHint": "GeoTIFF opcional (.tif) — su cobertura se muestra en el mapa",
-      "dtmInfo": "A Digital Terrain Model — a GeoTIFF where each pixel is the ground elevation. Upload it first to see its coverage outline on the map, then draw your area inside it. Used to derive slope/aspect and as the spatial reference grid. If omitted, the bundled regional terrain is used.",
-      "readingDtm": "Reading DTM coverage…",
-      "coverageShown": "Coverage shown on the map — draw your area inside the outline.",
-      "drawArea": "Draw area",
-      "uploadGeoJson": "Upload GeoJSON",
+      "dtmInfo": "Un modelo digital del terreno: un GeoTIFF en el que cada píxel es la elevación del suelo. Súbelo primero para ver su cobertura en el mapa y dibuja después tu área dentro de ella. Se usa para derivar la pendiente y la orientación, y como malla de referencia espacial. Si no se indica, se utiliza el terreno regional incluido.",
+      "readingDtm": "Leyendo la cobertura del MDT…",
+      "coverageShown": "Cobertura mostrada en el mapa: dibuja tu área dentro del contorno.",
+      "drawArea": "Dibujar área",
+      "uploadGeoJson": "Subir GeoJSON",
       "notSureFormat": "¿No estás seguro del formato?",
-      "formatDesc": "Polygon or MultiPolygon, WGS84 (EPSG:4326), [lon, lat] order.",
-      "sample": "Sample",
+      "formatDesc": "Polygon o MultiPolygon, WGS84 (EPSG:4326), en orden [lon, lat].",
+      "sample": "Ejemplo",
       "statusUploaded": "Límite GeoJSON cargado de {{fileName}}.",
-      "statusUploadedNoName": "GeoJSON boundary loaded.",
-      "statusUploadPrompt": "Upload a GeoJSON file with Polygon or MultiPolygon geometry.",
-      "statusDrawn": "Area defined. You can keep adjusting it or move on.",
+      "statusUploadedNoName": "Límite GeoJSON cargado.",
+      "statusUploadPrompt": "Sube un archivo GeoJSON con geometría Polygon o MultiPolygon.",
+      "statusDrawn": "Área definida. Puedes seguir ajustándola o continuar.",
       "statusDrawPrompt": "Haz clic en el mapa para dibujar tu área. Cierra el polígono para terminar.",
       "areaSummary": "Resumen del área",
       "regions": "{{count}} regiones",
       "status": "Estado",
-      "statusUploadedLabel": "Uploaded",
-      "statusDrawnLabel": "Drawn",
+      "statusUploadedLabel": "Subido",
+      "statusDrawnLabel": "Dibujado",
       "statusNotSet": "No establecido",
       "area": "Área",
       "perimeter": "Perímetro",
@@ -1914,7 +1954,16 @@
       "drawPrompt": "Haz clic en el mapa para dibujar tu área. Cierra el polígono para terminar.",
       "drawToContinue": "Dibuja un área en el mapa para continuar.",
       "blockingUploadGeoJson": "Sube un archivo límite GeoJSON o vuelve a dibujar.",
-      "blockingDrawArea": "Dibuja un área en el mapa para continuar."
+      "blockingDrawArea": "Dibuja un área en el mapa para continuar.",
+      "selectRegion": "Seleccionar región completa",
+      "regionResolving": "Buscando el límite administrativo…",
+      "regionMapSelected": "{{name}} seleccionada · haz clic en otra región para sustituirla",
+      "regionMapPrompt": "Haz clic dentro de una región para seleccionar su límite completo",
+      "statusRegionSelected": "{{name}} seleccionada. Haz clic en otra región para sustituirla.",
+      "statusRegionPrompt": "Haz clic dentro de una región administrativa del mapa para seleccionar su límite completo.",
+      "regionCoverageWarning": "Se utiliza el límite administrativo completo. Los píxeles situados fuera de la cobertura sombreada de datos de incendios pueden no ser calculables.",
+      "statusRegionLabel": "Región seleccionada",
+      "blockingSelectRegion": "Haz clic dentro de una región administrativa del mapa para continuar."
     },
     "layer3": {
       "purpose": "Estas señales alimentan el modelo de riesgo ponderado por AHP. Las tres están habilitadas por defecto y se recomiendan para una evaluación precisa del riesgo de incendios forestales.",
@@ -1969,7 +2018,9 @@
         "areaOfInterest": "Área de interés",
         "riskComponents": "Componentes de riesgo",
         "bufferDistance": "Distancia de búfer"
-      }
+      },
+      "noRegionSelected": "No hay ninguna región administrativa seleccionada.",
+      "selectedRegionDetails": "{{name}} · {{area}}"
     },
     "layer5": {
       "purpose": "Revise la configuración del modelo antes de guardar. El cálculo usará las fechas seleccionadas, área y elecciones de fuentes de datos.",
@@ -1987,7 +2038,8 @@
         "buffer": "Búfer",
         "area": "Área",
         "riskComponents": "Componentes de riesgo"
-      }
+      },
+      "dailyRunInfo": "Cada día simulado se evalúa con la meteorología de esta franja horaria: la parte más calurosa y seca de la tarde."
     },
     "coverage": {
       "title": "Cobertura de datos de incendios",

@@ -1,14 +1,17 @@
 import { useMemo } from "react";
 import { Fill, Stroke, Style, Circle as CircleStyle, Text } from "ol/style";
+import type { Polygon } from "ol/geom";
+import type { FeatureLike } from "ol/Feature";
 
 interface PolygonStyleLabels {
   clickToClose?: string;
   start?: string;
+  edit?: string;
 }
 
-export const usePolygonStyles = (labels: PolygonStyleLabels = {}) => {
+export const usePolygonStyles = (labels: PolygonStyleLabels = {}, editable = true) => {
   return useMemo(() => {
-    const polygonStyle = new Style({
+    const outlineStyle = new Style({
       fill: new Fill({
         color: "transparent",
       }),
@@ -17,6 +20,24 @@ export const usePolygonStyles = (labels: PolygonStyleLabels = {}) => {
         width: 2.5,
       }),
     });
+    const editBadgeStyle = new Style({
+      text: new Text({
+        text: `\u270E ${labels.edit ?? "Edit"}`,
+        font: "600 12px Inter, system-ui, sans-serif",
+        fill: new Fill({ color: "#0e7490" }),
+        stroke: new Stroke({ color: "#ffffff", width: 3 }),
+        padding: [3, 6, 3, 6],
+      }),
+    });
+
+    const polygonStyle = editable
+      ? (feature: FeatureLike) => {
+          const geometry = feature.getGeometry();
+          if (!geometry || geometry.getType() !== "Polygon") return outlineStyle;
+          editBadgeStyle.setGeometry((geometry as Polygon).getInteriorPoint());
+          return [outlineStyle, editBadgeStyle];
+        }
+      : outlineStyle;
 
     const bufferStyle = new Style({
       fill: new Fill({ color: "rgba(251, 191, 36, 0.3)" }),
@@ -62,5 +83,5 @@ export const usePolygonStyles = (labels: PolygonStyleLabels = {}) => {
     });
 
     return { polygonStyle, bufferStyle, startPointStyle, sketchStyle, modifyStyle };
-  }, [labels.clickToClose, labels.start]);
+  }, [editable, labels.clickToClose, labels.edit, labels.start]);
 };

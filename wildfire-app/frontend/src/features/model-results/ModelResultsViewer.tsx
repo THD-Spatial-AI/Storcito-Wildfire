@@ -32,6 +32,7 @@ import {
   FIRE_RISK_DEFAULT_OPACITY,
   POLL_INTERVAL_MS,
   RISK_LEVELS,
+  findResultForModel,
   type ModelResult,
   type RiskLevelValue,
   type VisibleRiskLevels,
@@ -59,6 +60,9 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   useDocumentTitle(t("modelResults.title", "Model Results"));
 
   const resolvedModelId = propModelId ?? (paramId ? Number(paramId) : undefined);
+  const activeModelIdRef = useRef(resolvedModelId);
+  const loadRequestRef = useRef(0);
+  activeModelIdRef.current = resolvedModelId;
 
   const { map } = useMapStore();
   const selectedBaseLayerId = useMapStore((s) => s.selectedBaseLayerId);
@@ -99,7 +103,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   const workspaceSelector = useWorkspaceModelSelector(model, resolvedModelId);
   const { metrics: legendMetrics } = useRiskMetrics(resolvedModelId);
 
-  const activeResult = results[0];
+  const activeResult = findResultForModel(results, resolvedModelId);
   const layerReady = activeResult?.geoserver_status === "configured";
   const layerPending = Boolean(activeResult && !layerReady);
   const pollTimerRef = useRef<number | null>(null);
@@ -110,7 +114,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     selectedLayerKeyRef,
     tileErrors,
     wms3D,
-    layerAttached,
+    attachedResultId,
     attachLayer,
     selectLayer,
     applyDailyFrame,
@@ -129,7 +133,10 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   // ----- Data loading -----
 
   const loadData = useCallback(async () => {
-    if (!resolvedModelId) {
+    const requestedModelId = resolvedModelId;
+    const requestId = ++loadRequestRef.current;
+
+    if (!requestedModelId) {
       setError(t("modelResults.errors.noId", "No model ID provided"));
       setLoading(false);
       return;
@@ -138,16 +145,29 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
       setError(null);
       setLoading(true);
       const [modelRes, resultsRes] = await Promise.all([
-        modelService.getModelById(resolvedModelId),
-        axios.get(`/models/${resolvedModelId}/results`),
+        modelService.getModelById(requestedModelId),
+        axios.get(`/models/${requestedModelId}/results`),
       ]);
 
-      if (modelRes.success && modelRes.data) setModel(modelRes.data);
+      if (
+        requestId !== loadRequestRef.current ||
+        activeModelIdRef.current !== requestedModelId
+      ) {
+        return;
+      }
+
+      setModel(modelRes.success && modelRes.data ? modelRes.data : null);
 
       const raw = resultsRes.data?.data;
       const list: ModelResult[] = Array.isArray(raw) ? raw : [];
       setResults(list);
     } catch (err) {
+      if (
+        requestId !== loadRequestRef.current ||
+        activeModelIdRef.current !== requestedModelId
+      ) {
+        return;
+      }
       setError(
         extractErrorMessage(
           err,
@@ -155,9 +175,23 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
         )
       );
     } finally {
-      setLoading(false);
+      if (
+        requestId === loadRequestRef.current &&
+        activeModelIdRef.current === requestedModelId
+      ) {
+        setLoading(false);
+      }
     }
   }, [resolvedModelId, t]);
+
+  useEffect(() => {
+    setModel(null);
+    setResults([]);
+    setError(null);
+    setLoading(true);
+    setPlaying(false);
+    setShow3D(false);
+  }, [resolvedModelId]);
 
   useEffect(() => {
     loadData();
@@ -165,10 +199,10 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
   // Attach the layer once both the map is ready and the result is configured.
   useEffect(() => {
-    if (!map || !activeResult || layerAttached) return;
+    if (!map || !activeResult || attachedResultId === activeResult.id) return;
     if (activeResult.geoserver_status !== "configured") return;
     attachLayer(activeResult);
-  }, [map, activeResult, attachLayer, layerAttached]);
+  }, [map, activeResult, attachLayer, attachedResultId]);
 
   // Poll for readiness while the layer is still being processed server-side.
   useEffect(() => {
@@ -273,7 +307,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     };
   }, [riskDistribution]);
 
-  const hasRiskLayers = layerAttached;
+  const hasRiskLayers = Boolean(activeResult && attachedResultId === activeResult.id);
   const allRiskLevelsVisible = RISK_LEVELS.every(
     (level) => !riskLevelAvailability[level.value] || visibleRiskLevels[level.value]
   );

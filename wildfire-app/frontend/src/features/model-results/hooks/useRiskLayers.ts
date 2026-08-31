@@ -52,7 +52,7 @@ export const useRiskLayers = ({
   const selectedLayerKeyRef = useRef<string>("risk");
   const [tileErrors, setTileErrors] = useState(0);
   const [wms3D, setWms3D] = useState<{ wmsUrl: string; layerName: string } | null>(null);
-  const [layerAttached, setLayerAttached] = useState(false);
+  const [attachedResultId, setAttachedResultId] = useState<number | null>(null);
 
   const riskLayerEntriesRef = useRef<RiskLayerEntry[]>([]);
   const visibleRiskLevelsRef = useRef<VisibleRiskLevels>(DEFAULT_VISIBLE_RISK_LEVELS);
@@ -129,7 +129,7 @@ export const useRiskLayers = ({
   }, [clearScheduledMapRenderRefreshes, map]);
 
   const removeRiskLayerEntries = useCallback(() => {
-    setLayerAttached(false);
+    setAttachedResultId(null);
     clearTileRetryTimeouts();
     riskLayerEntriesRef.current.forEach(({ layer }) => {
       if (map) map.removeLayer(layer);
@@ -269,7 +269,7 @@ export const useRiskLayers = ({
         const info: LayerInfo | undefined = resp.data?.data;
         if (!info?.wms_url || !info.layer_name) {
           activeLayerInfoRef.current = null;
-          setLayerAttached(false);
+          setAttachedResultId(null);
           onError(t("modelResults.errors.layerIncomplete", "Layer configuration is incomplete"));
           return;
         }
@@ -298,11 +298,11 @@ export const useRiskLayers = ({
         // requesting several intermediate zoom grids for a whole-region model.
         if (info.bounds) fitMapToBounds(map, info.bounds);
         reconcileRiskLayerEntries(activeInfo);
-        setLayerAttached(true);
+        setAttachedResultId(result.id);
       } catch (err) {
         if (requestId !== attachLayerRequestRef.current) return;
         activeLayerInfoRef.current = null;
-        setLayerAttached(false);
+        setAttachedResultId(null);
         onError(
           extractErrorMessage(
             err,
@@ -391,7 +391,9 @@ export const useRiskLayers = ({
     setAvailableLayers([]);
     setTileErrors(0);
     setWms3D(null);
-    setLayerAttached(false);
+    selectedLayerKeyRef.current = "risk";
+    setSelectedLayerKey("risk");
+    setAttachedResultId(null);
     attachLayerInFlightKeyRef.current = null;
     tileLoadStats.clear();
     return () => {
@@ -416,7 +418,8 @@ export const useRiskLayers = ({
     selectedLayerKeyRef,
     tileErrors,
     wms3D,
-    layerAttached,
+    attachedResultId,
+    layerAttached: attachedResultId !== null,
     attachLayer,
     selectLayer,
     applyDailyFrame,

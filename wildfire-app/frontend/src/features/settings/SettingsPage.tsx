@@ -297,9 +297,9 @@ const SettingsPage: React.FC = () => {
                       <Sparkles className="w-3.5 h-3.5 text-foreground" />
                     </div>
                     <div>
-                      <h3 className="text-xs font-semibold text-foreground">Model creation</h3>
+                      <h3 className="text-xs font-semibold text-foreground">{t("settings.modelCreation.sectionTitle", "Model creation")}</h3>
                       <p className="text-[9px] text-muted-foreground uppercase tracking-wider">
-                        Guidance preferences
+                        {t("settings.modelCreation.guidancePreferences", "Guidance preferences")}
                       </p>
                     </div>
                   </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef, Fragment, type FC, type ChangeEvent } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Move, Pencil } from "lucide-react";
 import { useLocation, useParams } from "react-router-dom";
 import { parseDate } from "@internationalized/date";
 import { useTranslation } from "@/i18n";
@@ -70,6 +70,7 @@ export const AreaSelect: FC<AreaSelectProps> = ({
     const [isCreateWsOpen, setIsCreateWsOpen] = useState(false);
     const [wsReloadKey, setWsReloadKey] = useState(0);
     const [currentPointCount, setCurrentPointCount] = useState(0);
+    const [isPanMode, setIsPanMode] = useState(false);
     const [activeConfiguratorStep, setActiveConfiguratorStep] = useState(editMode ? 1 : 0);
     const [tourRequestedConfiguratorStep, setTourRequestedConfiguratorStep] = useState<number | null>(null);
 
@@ -143,7 +144,10 @@ export const AreaSelect: FC<AreaSelectProps> = ({
         !state.isDrawing &&
         state.allPolygons.length === 0;
 
-    const polygonDrawingEnabled = activeConfiguratorStep === 2 && state.areaInputMode === "draw";
+    // Drawing captures clicks, which makes panning fiddly — this lets the user
+    // park the tool, move the map, and pick drawing back up.
+    const polygonDrawingEnabled =
+        activeConfiguratorStep === 2 && state.areaInputMode === "draw" && !isPanMode;
 
     const handleModelNameChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         actions.setModelName(e.target.value);
@@ -202,6 +206,19 @@ export const AreaSelect: FC<AreaSelectProps> = ({
                             selectedRegionName={state.selectedRegionName}
                         />
                         {!editMode && activeConfiguratorStep === 2 && state.areaInputMode === "draw" && (
+                            <button
+                                type="button"
+                                onClick={() => setIsPanMode((current) => !current)}
+                                aria-pressed={isPanMode}
+                                className="absolute bottom-4 left-4 z-40 flex items-center gap-1.5 rounded-lg border border-border bg-card/95 px-2.5 py-1.5 text-xs font-medium text-foreground shadow-lg backdrop-blur-md transition-colors duration-150 hover:bg-muted"
+                            >
+                                {isPanMode ? <Pencil className="h-3.5 w-3.5" /> : <Move className="h-3.5 w-3.5" />}
+                                {isPanMode
+                                    ? t("drawing.resumeDrawing", "Resume drawing")
+                                    : t("drawing.moveMap", "Move map")}
+                            </button>
+                        )}
+                        {!editMode && activeConfiguratorStep === 2 && state.areaInputMode === "draw" && !isPanMode && (
                             <PolygonDrawingGuide
                                 canDraw={polygonDrawingEnabled && state.allPolygons.length === 0}
                                 isDrawing={state.isDrawing}
@@ -264,6 +281,7 @@ export const AreaSelect: FC<AreaSelectProps> = ({
                 labels={{
                     clickToClose: t("drawing.clickToClose"),
                     start: t("drawing.start"),
+                    edit: t("drawing.edit", "Edit"),
                 }}
             />
 

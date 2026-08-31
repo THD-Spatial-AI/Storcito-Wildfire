@@ -10,6 +10,7 @@ import { CopyrightFooter } from "@/components/app-layout/CopyrightFooter";
 import { MapControls } from "@/components/map-controls/MapControls";
 import { BookmarkMenu } from "@/features/interactive-map/components/BookmarkMenu";
 import MapSearchBar from "./MapSearchBar";
+import { useMapKeyboardShortcuts } from "./useMapKeyboardShortcuts";
 import axios from "@/lib/axios";
 import { settingsService } from "@/features/settings/services/settings";
 import { useNavigate } from "react-router-dom";
@@ -38,7 +39,10 @@ export const MapComponent: React.FC = () => {
   const isMapLibre = useMapStore((s) => isMapLibreDarkLayerId(s.selectedBaseLayerId));
 
   // Fetch region boundaries (public) + user model polygons (private)
-  const mapPageLayers = useMapPageLayers(!!user);
+  const mapPageLayers = useMapPageLayers(user?.id);
+  const newModelLabel = t("model.newModel");
+  const openNewModel = useCallback(() => navigate("/app/model-dashboard/new-model"), [navigate]);
+  useMapKeyboardShortcuts(map, { onNewModel: user ? openNewModel : undefined });
 
   const handleModelClick = useCallback(
     (modelId: number, status?: string) => {
@@ -61,10 +65,10 @@ export const MapComponent: React.FC = () => {
   });
 
   const getCurrentView = useCallback(() => {
-    if (!map) return { latitude: 48.83, longitude: 12.96, zoom: 12 };
+    if (!map) return { latitude: 42.8, longitude: -8.5, zoom: 8 };
     const view = map.getView();
     const center = view.getCenter();
-    if (!center) return { latitude: 48.83, longitude: 12.96, zoom: 12 };
+    if (!center) return { latitude: 42.8, longitude: -8.5, zoom: 8 };
     const [lon, lat] = toLonLat(center);
     return { latitude: lat, longitude: lon, zoom: view.getZoom() ?? 12 };
   }, [map]);
@@ -272,40 +276,73 @@ export const MapComponent: React.FC = () => {
 
           <MapControls onZoomIn={zoomIn} onZoomOut={zoomOut} onCenterMap={centerMap} />
 
-          {/* Map info panel — regions + user models (visible on all base layers) */}
-          {map && (mapPageLayers.regionCount > 0 || mapPageLayers.modelCount > 0) && (
-            <div className="md-fade-in absolute bottom-[4.5rem] left-4 z-30 bg-card/95 backdrop-blur-md border border-border/60 rounded-xl shadow-lg px-1 py-1 flex items-center gap-0.5 text-xs">
-              {mapPageLayers.regionCount > 0 && (
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-indigo-500/8 dark:bg-indigo-400/10">
-                  <div className="w-5 h-5 rounded-md bg-indigo-500/15 flex items-center justify-center">
-                    <MapIcon className="w-3 h-3 text-indigo-500" />
-                  </div>
-                  <div className="flex flex-col leading-none">
-                    <span className="text-[11px] font-semibold text-foreground">
-                      {mapPageLayers.regionCount}
-                    </span>
-                    <span className="text-[9px] text-muted-foreground">
-                      {t("map.regions", "regions")}
-                    </span>
-                  </div>
+          {/* Map legend — explains both base-map lines and application overlays. */}
+          {map && (
+            <section
+              aria-label={t("map.legend.title", "Map outlines")}
+              className="md-fade-in absolute bottom-[4.5rem] left-4 z-30 max-w-[min(18rem,calc(100vw-2rem))] rounded-xl border border-border/60 bg-card/95 p-2 text-xs shadow-lg backdrop-blur-md"
+            >
+              <p className="px-1 text-[10px] font-semibold uppercase tracking-wide text-foreground">
+                {t("map.legend.title", "Map outlines")}
+              </p>
+
+              {(mapPageLayers.regionCount > 0 || mapPageLayers.modelCount > 0) && (
+                <div className="mt-1 flex items-center gap-1">
+                  {mapPageLayers.regionCount > 0 && (
+                    <div className="flex items-center gap-1.5 rounded-lg bg-indigo-500/8 px-2 py-1 dark:bg-indigo-400/10">
+                      <MapIcon className="h-3 w-3 text-indigo-500" />
+                      <span className="text-[10px] font-semibold text-foreground">
+                        {mapPageLayers.regionCount} {t("map.regions", "regions")}
+                      </span>
+                    </div>
+                  )}
+                  {mapPageLayers.modelCount > 0 && (
+                    <div
+                      className="flex items-center gap-1.5 rounded-lg bg-emerald-500/8 px-2 py-1 dark:bg-emerald-400/10"
+                      title={
+                        mapPageLayers.modelTotal > mapPageLayers.modelCount
+                          ? t("map.modelsCapped", {
+                              shown: mapPageLayers.modelCount,
+                              total: mapPageLayers.modelTotal,
+                              defaultValue: `Showing your {{shown}} most recent models of {{total}}.`,
+                            })
+                          : undefined
+                      }
+                    >
+                      <Layers className="h-3 w-3 text-emerald-500" />
+                      <span className="text-[10px] font-semibold text-foreground">
+                        {mapPageLayers.modelTotal > mapPageLayers.modelCount
+                          ? `${mapPageLayers.modelCount}/${mapPageLayers.modelTotal}`
+                          : mapPageLayers.modelCount} {t("map.myModels", "my models")}
+                      </span>
+                    </div>
+                  )}
                 </div>
               )}
-              {mapPageLayers.modelCount > 0 && (
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-500/8 dark:bg-emerald-400/10">
-                  <div className="w-5 h-5 rounded-md bg-emerald-500/15 flex items-center justify-center">
-                    <Layers className="w-3 h-3 text-emerald-500" />
-                  </div>
-                  <div className="flex flex-col leading-none">
-                    <span className="text-[11px] font-semibold text-foreground">
-                      {mapPageLayers.modelCount}
-                    </span>
-                    <span className="text-[9px] text-muted-foreground">
-                      {t("map.myModels", "my models")}
-                    </span>
-                  </div>
+
+              <div className="mt-1.5 space-y-1 border-t border-border/60 px-1 pt-1.5 text-[10px] leading-snug text-muted-foreground">
+                <div className="flex items-start gap-2">
+                  <span className="mt-1.5 h-px w-4 shrink-0 bg-slate-500" />
+                  <span>{t("map.legend.baseMap", "Gray lines: roads and administrative boundaries from the selected base map")}</span>
                 </div>
-              )}
-            </div>
+                {mapPageLayers.regionCount > 0 && (
+                  <div className="flex items-start gap-2">
+                    <span className="mt-1 w-4 shrink-0 border-t-2 border-dashed border-indigo-400" />
+                    <span>{t("map.legend.availableRegions", "Dashed indigo: available administrative regions")}</span>
+                  </div>
+                )}
+                {mapPageLayers.modelCount > 0 && (
+                  <div className="flex items-start gap-2">
+                    <span
+                      className="mt-0.5 h-2.5 w-4 shrink-0 rounded-sm border-2"
+                      style={{ borderColor: "rgba(52, 211, 153, 0.95)", background: "rgba(52, 211, 153, 0.18)" }}
+                    />
+                    <span>{t("map.legend.yourModels", "Green areas: your saved models — select one to open it")}</span>
+                  </div>
+                )}
+                <p className="pt-0.5">{t("map.legend.zoomDetail", "The default view is Galicia; the base map reveals more detail as you zoom in.")}</p>
+              </div>
+            </section>
           )}
 
           {map && (
@@ -318,13 +355,18 @@ export const MapComponent: React.FC = () => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
-                  onClick={() => navigate("/app/model-dashboard/new-model")}
-                  className="absolute bottom-20 right-6 w-14 h-14 rounded-2xl shadow-xl transition-all duration-200 flex items-center justify-center bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 z-30"
+                  onClick={openNewModel}
+                  aria-label={newModelLabel}
+                  title={t("map.newModelShortcut", "Shortcut: N")}
+                  className="absolute bottom-20 right-3 flex h-12 max-w-[calc(100vw-1.5rem)] items-center gap-1.5 rounded-2xl bg-primary px-3 text-primary-foreground shadow-xl ring-2 ring-background transition-all duration-200 hover:scale-105 hover:bg-primary/90 sm:right-6 sm:h-14 sm:gap-2 sm:px-5 z-30"
                 >
-                  <Plus className="w-6 h-6" />
+                  <Plus className="h-5 w-5 shrink-0 sm:h-6 sm:w-6" />
+                  <span className="whitespace-nowrap text-xs font-semibold sm:text-sm">
+                    {newModelLabel}
+                  </span>
                 </button>
               </TooltipTrigger>
-              <TooltipContent side="left">{t("model.newModel")}</TooltipContent>
+              <TooltipContent side="left">{newModelLabel}</TooltipContent>
             </Tooltip>
           )}
         </>
@@ -335,7 +377,7 @@ export const MapComponent: React.FC = () => {
       <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-900">
         <div className="text-center px-4">
           <p className="text-gray-600 dark:text-gray-400 text-lg mb-4">
-            Please accept the Data & Privacy terms to view the map
+            {t("map.privacyRequired", "Please accept the Data & Privacy terms to view the map")}
           </p>
           <button
             onClick={handleOpenPrivacyDialog}

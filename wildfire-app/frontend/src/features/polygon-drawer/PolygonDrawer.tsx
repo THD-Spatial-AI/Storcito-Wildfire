@@ -13,18 +13,16 @@ interface PolygonDrawerProps {
   clearTrigger?: number;
   initialPolygons?: [number, number][][];
   bufferDistanceMeters?: number;
-  /** If true, disables drawing after first polygon is created (unless cleared) */
   disableAfterDraw?: boolean;
-  /** If false, keeps existing polygon layers visible but disables draw/modify interactions */
   drawingEnabled?: boolean;
-  /** If true, only displays polygons without allowing editing */
   readOnly?: boolean;
-  /** If true, enables polygon vertex editing (drag vertices, add/remove points) */
+
   enableEditing?: boolean;
   /** Translation labels */
   labels?: {
     clickToClose?: string;
     start?: string;
+    edit?: string;
   };
 }
 
@@ -45,8 +43,9 @@ export const PolygonDrawer: FC<PolygonDrawerProps> = ({
   enableEditing = true,
   labels = {},
 }) => {
-  const styles = usePolygonStyles(labels);
-  const { bufferSourceRef, bufferDistanceRef, recomputeBuffers } = usePolygonBuffer(bufferDistanceMeters);
+  const styles = usePolygonStyles(labels, enableEditing && !readOnly);
+  const { bufferSourceRef, bufferDistanceRef, recomputeBuffers } =
+    usePolygonBuffer(bufferDistanceMeters);
   usePolygonDrawing({
     map,
     onPolygonDrawn,

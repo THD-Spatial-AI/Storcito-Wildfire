@@ -8,6 +8,14 @@ export interface ModelResult {
   geoserver_status: string;
 }
 
+export function findResultForModel(
+  results: ModelResult[],
+  modelId: number | undefined
+): ModelResult | undefined {
+  if (!modelId) return undefined;
+  return results.find((result) => result.model_id === modelId);
+}
+
 export interface LayerBounds {
   minx: number;
   miny: number;
