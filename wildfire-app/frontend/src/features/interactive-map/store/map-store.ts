@@ -8,6 +8,7 @@ import { fromLonLat } from "ol/proj";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { MAP_ZOOM } from '@/features/interactive-map/utils/mapUtils';
 import { useMapLocationStore } from './map-location';
+import { withCartoBasemapKey } from '@/utils/carto-basemap';
 
 // Base layer metadata interface
 interface BaseLayerInfo {
@@ -82,7 +83,9 @@ const baseLayers: BaseLayerInfo[] = [
 		name: "CartoDB Positron",
 		description: "Light theme base map by CartoDB",
 		source: new XYZ({
-			url: "https://{a-d}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+			url: withCartoBasemapKey(
+				"https://{a-d}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+			),
 			attributions: [
 				OSM_ATTR,
 				CARTO_ATTR,
@@ -95,7 +98,9 @@ const baseLayers: BaseLayerInfo[] = [
 		name: "CartoDB Voyager (Raster)",
 		description: "Detailed base map by CartoDB",
 		source: new XYZ({
-			url: "https://{a-d}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
+			url: withCartoBasemapKey(
+				"https://{a-d}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
+			),
 			attributions: [
 				OSM_ATTR,
 				CARTO_ATTR,

@@ -6,6 +6,7 @@ import type Interaction from 'ol/interaction/Interaction';
 import { DoubleClickZoom, DragPan, MouseWheelZoom, PinchZoom } from 'ol/interaction';
 import { BASE_STYLE, BASE_STYLE_VOYAGER, tuneBaseStyle } from './maplibre-styles';
 import { useMapStore, MAPLIBRE_VOYAGER_LAYER_ID } from '@/features/interactive-map/store/map-store';
+import { withCartoBasemapKey } from '@/utils/carto-basemap';
 
 export function useMapLibreMap(olMap: OlMap, visible: boolean, isDrawing: boolean = false) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -51,6 +52,9 @@ export function useMapLibreMap(olMap: OlMap, visible: boolean, isDrawing: boolea
       map = new maplibregl.Map({
         container,
         style: styleUrl,
+        // CARTO's style document points to additional CDN resources. Applying
+        // the key here covers the style, vector tiles, sprites, and glyphs.
+        transformRequest: (url) => ({ url: withCartoBasemapKey(url) }),
         center: [lon, lat],
         zoom: zoom - 1,
         pitch: 0,

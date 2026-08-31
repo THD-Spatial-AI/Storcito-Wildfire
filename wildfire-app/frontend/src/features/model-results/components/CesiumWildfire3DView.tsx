@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import * as Cesium from "cesium";
 import "cesium/Build/Cesium/Widgets/widgets.css";
 import { Plus, Minus } from "lucide-react";
+import { withCartoBasemapKey } from "@/utils/carto-basemap";
 
 interface CesiumWildfire3DViewProps {
   wmsUrl: string;
@@ -181,10 +182,12 @@ export const CesiumWildfire3DView = ({
         );
       });
 
-      // Keyless CARTO base — no Ion imagery dependency.
+      // CARTO base — no Cesium Ion imagery dependency.
       const baseLayer = new Cesium.ImageryLayer(
         new Cesium.UrlTemplateImageryProvider({
-          url: "https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
+          url: withCartoBasemapKey(
+            "https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png"
+          ),
           credit: "© OpenStreetMap contributors, © CARTO",
         })
       );
