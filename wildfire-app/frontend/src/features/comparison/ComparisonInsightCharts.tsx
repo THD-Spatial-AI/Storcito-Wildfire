@@ -1,10 +1,10 @@
-import { FC, useMemo } from 'react';
-import ReactECharts from 'echarts-for-react';
-import type { EChartsOption } from 'echarts';
-import { ArrowRight, MoveDownRight, MoveUpRight } from 'lucide-react';
-import { useTranslation } from '@/i18n';
+import { FC, useMemo } from "react";
+import ReactECharts from "echarts-for-react";
+import type { EChartsOption } from "echarts";
+import { ArrowRight, MoveDownRight, MoveUpRight } from "lucide-react";
+import { useTranslation } from "@/i18n";
 
-import type { RiskMapBounds, RiskMapSample, RiskMapSamples } from './useRiskMapSamples';
+import type { RiskMapBounds, RiskMapSample, RiskMapSamples } from "./useRiskMapSamples";
 
 interface ComparisonInsightChartsProps {
   baselineMap?: RiskMapSamples | null;
@@ -17,22 +17,22 @@ interface ComparisonInsightChartsProps {
   comparisonLabel?: string;
 }
 
-type RiskLevel = Exclude<RiskMapSample['level'], 'unknown'>;
+type RiskLevel = Exclude<RiskMapSample["level"], "unknown">;
 
 const ORDERED_LEVELS: Array<{ level: RiskLevel; label: string; color: string }> = [
-  { level: 'very_low', label: 'Very Low', color: '#2563eb' },
-  { level: 'low', label: 'Low', color: '#16a34a' },
-  { level: 'moderate', label: 'Moderate', color: '#eab308' },
-  { level: 'high', label: 'High', color: '#ea580c' },
-  { level: 'very_high', label: 'Very High', color: '#dc2626' },
+  { level: "very_low", label: "Very Low", color: "#2563eb" },
+  { level: "low", label: "Low", color: "#16a34a" },
+  { level: "moderate", label: "Moderate", color: "#eab308" },
+  { level: "high", label: "High", color: "#ea580c" },
+  { level: "very_high", label: "Very High", color: "#dc2626" },
 ];
 
-const levelIndex = (level: RiskMapSample['level']): number =>
+const levelIndex = (level: RiskMapSample["level"]): number =>
   ORDERED_LEVELS.findIndex((l) => l.level === level);
 
-const CELLS_KEY = 'simulationComparison.cells';
-const BASELINE_COLOR = '#3b82f6';
-const COMPARISON_COLOR = '#8b5cf6';
+const CELLS_KEY = "simulationComparison.cells";
+const BASELINE_COLOR = "#2563eb";
+const COMPARISON_COLOR = "#db2777";
 const DENSITY_BINS = 32;
 
 // Continuous-score bins map to classes by rounding, so class k covers [k-0.5, k+0.5).
@@ -41,12 +41,12 @@ const CLASS_BANDS: Array<{ from: number; to: number; color: string }> = ORDERED_
     from: i === 0 ? 1 : i + 0.5,
     to: i === ORDERED_LEVELS.length - 1 ? 5 : i + 1.5,
     color: level.color,
-  }),
+  })
 );
 
 // Risk-score frequency distribution, as % of valid sampled cells per bin.
 const computeDensity = (
-  samples: RiskMapSamples | null | undefined,
+  samples: RiskMapSamples | null | undefined
 ): Array<[number, number]> | null => {
   if (!samples?.samples.length) return null;
   const counts = new Array<number>(DENSITY_BINS).fill(0);
@@ -111,7 +111,7 @@ const boundsAlign = (a: RiskMapBounds, b: RiskMapBounds): boolean => {
 
 const computeTransitions = (
   baseline: RiskMapSamples | null | undefined,
-  comparison: RiskMapSamples | null | undefined,
+  comparison: RiskMapSamples | null | undefined
 ): TransitionAnalysis | null => {
   if (!baseline?.samples.length || !comparison?.samples.length) return null;
   if (baseline.grid_size !== comparison.grid_size) return null;
@@ -145,8 +145,8 @@ const computeTransitions = (
   return { matrix, matched, unchanged, increased, decreased };
 };
 
-const formatLevel = (level: RiskMapSample['level']): string =>
-  ORDERED_LEVELS.find((l) => l.level === level)?.label ?? 'Unknown';
+const formatLevel = (level: RiskMapSample["level"]): string =>
+  ORDERED_LEVELS.find((l) => l.level === level)?.label ?? "Unknown";
 
 const ChartPlaceholder: FC<{ text: string }> = ({ text }) => (
   <div className="flex h-[316px] items-center justify-center rounded-lg border border-dashed border-border bg-muted/20 text-sm text-muted-foreground">
@@ -183,15 +183,15 @@ export const ComparisonInsightCharts: FC<ComparisonInsightChartsProps> = ({
   comparisonAreaKm2 = null,
   isMapLoading = false,
   mapError = null,
-  baselineLabel = 'Baseline',
-  comparisonLabel = 'Comparison',
+  baselineLabel = "Baseline",
+  comparisonLabel = "Comparison",
 }) => {
   const { t } = useTranslation();
   const hasMapData = Boolean(comparisonMap?.samples.length);
 
   const transitions = useMemo(
     () => computeTransitions(baselineMap, comparisonMap),
-    [baselineMap, comparisonMap],
+    [baselineMap, comparisonMap]
   );
 
   const topTransitions = useMemo<TransitionEntry[]>(() => {
@@ -225,7 +225,7 @@ export const ComparisonInsightCharts: FC<ComparisonInsightChartsProps> = ({
         nodes.push({
           name: `c:${level.level}`,
           itemStyle: { color: level.color, borderColor: level.color },
-          label: { position: 'left' },
+          label: { position: "left" },
         });
       }
     });
@@ -249,7 +249,7 @@ export const ComparisonInsightCharts: FC<ComparisonInsightChartsProps> = ({
 
     return {
       tooltip: {
-        trigger: 'item',
+        trigger: "item",
         borderWidth: 0,
         padding: 10,
         formatter: (raw: unknown) => {
@@ -259,38 +259,37 @@ export const ComparisonInsightCharts: FC<ComparisonInsightChartsProps> = ({
             value?: number;
             data?: { source?: string; target?: string; cellCount?: number };
           };
-          if (params.dataType === 'edge' && params.data?.source && params.data.target) {
+          if (params.dataType === "edge" && params.data?.source && params.data.target) {
             return [
               `<strong>${nodeLabel(params.data.source)} → ${nodeLabel(params.data.target)}</strong>`,
-              `${Number(params.value).toFixed(1)}% ${t('simulationComparison.ofArea', 'of the area')}`,
-              `${(params.data.cellCount ?? 0).toLocaleString()} ${t(CELLS_KEY, 'cells')}`,
-            ].join('<br/>');
+              `${Number(params.value).toFixed(1)}% ${t("simulationComparison.ofArea", "of the area")}`,
+              `${(params.data.cellCount ?? 0).toLocaleString()} ${t(CELLS_KEY, "cells")}`,
+            ].join("<br/>");
           }
-          return `<strong>${nodeLabel(params.name ?? '')}</strong>`;
+          return `<strong>${nodeLabel(params.name ?? "")}</strong>`;
         },
       },
       series: [
         {
-          type: 'sankey',
+          type: "sankey",
           left: 12,
           right: 12,
           top: 28,
           bottom: 8,
           nodeWidth: 14,
           nodeGap: 14,
-          nodeAlign: 'justify',
+          nodeAlign: "justify",
           draggable: false,
-          emphasis: { focus: 'adjacency' },
+          emphasis: { focus: "adjacency" },
           data: nodes,
           links,
           label: {
-            position: 'right',
+            position: "right",
             fontSize: 11,
-            color: '#64748b',
-            formatter: (params: unknown) =>
-              nodeLabel((params as { name?: string }).name ?? ''),
+            color: "#64748b",
+            formatter: (params: unknown) => nodeLabel((params as { name?: string }).name ?? ""),
           },
-          lineStyle: { color: 'gradient', opacity: 0.35, curveness: 0.55 },
+          lineStyle: { color: "gradient", opacity: 0.35, curveness: 0.55 },
         },
       ],
     };
@@ -302,18 +301,20 @@ export const ComparisonInsightCharts: FC<ComparisonInsightChartsProps> = ({
     if (!baselineDensity && !comparisonDensity) return null;
 
     const curves: Array<{ name: string; color: string; data: Array<[number, number]> }> = [];
-    if (baselineDensity) curves.push({ name: baselineLabel, color: BASELINE_COLOR, data: baselineDensity });
-    if (comparisonDensity) curves.push({ name: comparisonLabel, color: COMPARISON_COLOR, data: comparisonDensity });
+    if (baselineDensity)
+      curves.push({ name: baselineLabel, color: BASELINE_COLOR, data: baselineDensity });
+    if (comparisonDensity)
+      curves.push({ name: comparisonLabel, color: COMPARISON_COLOR, data: comparisonDensity });
 
     return {
       grid: { left: 8, right: 16, top: 34, bottom: 8, containLabel: true },
       tooltip: {
-        trigger: 'axis',
+        trigger: "axis",
         valueFormatter: (v) => `${Number(v).toFixed(1)}%`,
       },
       legend: { top: 0, textStyle: { fontSize: 11 }, itemWidth: 14, itemHeight: 3 },
       xAxis: {
-        type: 'value',
+        type: "value",
         min: 1,
         max: 5,
         interval: 1,
@@ -321,17 +322,17 @@ export const ComparisonInsightCharts: FC<ComparisonInsightChartsProps> = ({
         splitLine: { show: false },
       },
       yAxis: {
-        type: 'value',
-        axisLabel: { fontSize: 10, formatter: '{value}%' },
-        splitLine: { lineStyle: { color: '#f1f5f9' } },
+        type: "value",
+        axisLabel: { fontSize: 10, formatter: "{value}%" },
+        splitLine: { lineStyle: { color: "#f1f5f9" } },
       },
       series: curves.map((curve, i) => ({
         name: curve.name,
-        type: 'line' as const,
+        type: "line" as const,
         smooth: true,
-        symbol: 'none',
+        symbol: "none",
         data: curve.data,
-        lineStyle: { width: 2.5, color: curve.color },
+        lineStyle: { width: 2.5, color: curve.color, type: i === 0 ? "solid" : "dashed" },
         itemStyle: { color: curve.color },
         areaStyle: { color: curve.color, opacity: 0.12 },
         // Class-coloured background bands, attached once to the first series.
@@ -362,33 +363,46 @@ export const ComparisonInsightCharts: FC<ComparisonInsightChartsProps> = ({
     const toValues = (shares: number[] | null, totalKm2: number | null): number[] | null => {
       if (!shares) return null;
       return shares.map((share) =>
-        absolute ? Number((share * (totalKm2 ?? 0)).toFixed(3)) : Number((share * 100).toFixed(2)),
+        absolute ? Number((share * (totalKm2 ?? 0)).toFixed(3)) : Number((share * 100).toFixed(2))
       );
     };
 
     const seriesDefs = [
-      { name: baselineLabel, color: BASELINE_COLOR, values: toValues(baselineShares, baselineAreaKm2) },
-      { name: comparisonLabel, color: COMPARISON_COLOR, values: toValues(comparisonShares, comparisonAreaKm2) },
+      {
+        name: baselineLabel,
+        color: BASELINE_COLOR,
+        values: toValues(baselineShares, baselineAreaKm2),
+      },
+      {
+        name: comparisonLabel,
+        color: COMPARISON_COLOR,
+        values: toValues(comparisonShares, comparisonAreaKm2),
+      },
     ].filter((s): s is { name: string; color: string; values: number[] } => s.values !== null);
 
-    const formatValue = (v: number): string =>
-      absolute ? formatAreaValue(v) : `${v.toFixed(1)}%`;
+    const formatValue = (v: number): string => (absolute ? formatAreaValue(v) : `${v.toFixed(1)}%`);
 
     return {
       grid: { left: 8, right: 56, top: 34, bottom: 8, containLabel: true },
       tooltip: {
-        trigger: 'axis',
-        axisPointer: { type: 'shadow' },
+        trigger: "axis",
+        axisPointer: { type: "shadow" },
         valueFormatter: (v) => formatValue(Number(v)),
       },
-      legend: { top: 0, textStyle: { fontSize: 11 }, itemWidth: 12, itemHeight: 12, icon: 'roundRect' },
+      legend: {
+        top: 0,
+        textStyle: { fontSize: 11 },
+        itemWidth: 12,
+        itemHeight: 12,
+        icon: "roundRect",
+      },
       xAxis: {
-        type: 'value',
-        axisLabel: { fontSize: 10, formatter: absolute ? '{value} km²' : '{value}%' },
-        splitLine: { lineStyle: { color: '#f1f5f9' } },
+        type: "value",
+        axisLabel: { fontSize: 10, formatter: absolute ? "{value} km²" : "{value}%" },
+        splitLine: { lineStyle: { color: "#f1f5f9" } },
       },
       yAxis: {
-        type: 'category',
+        type: "category",
         // Categories render bottom-up; reverse so Very Low sits on top.
         data: [...ORDERED_LEVELS].reverse().map((l) => l.label),
         axisTick: { show: false },
@@ -400,52 +414,62 @@ export const ComparisonInsightCharts: FC<ComparisonInsightChartsProps> = ({
             return level ? `{dot${ORDERED_LEVELS.indexOf(level)}|●} ${name}` : name;
           },
           rich: Object.fromEntries(
-            ORDERED_LEVELS.map((l, i) => [`dot${i}`, { color: l.color, fontSize: 12 }]),
+            ORDERED_LEVELS.map((l, i) => [`dot${i}`, { color: l.color, fontSize: 12 }])
           ),
         },
       },
       series: seriesDefs.map((s) => ({
         name: s.name,
-        type: 'bar' as const,
+        type: "bar" as const,
         data: [...s.values].reverse(),
         barMaxWidth: 14,
         itemStyle: { color: s.color, borderRadius: [0, 3, 3, 0] },
         label: {
           show: true,
-          position: 'right' as const,
+          position: "right" as const,
           fontSize: 9,
-          color: '#64748b',
+          color: "#64748b",
           formatter: (params: { value?: unknown }) => {
             const v = Number(params.value);
-            return v > 0 ? formatValue(v) : '';
+            return v > 0 ? formatValue(v) : "";
           },
         },
       })),
     };
-  }, [baselineAreaKm2, baselineLabel, baselineMap, comparisonAreaKm2, comparisonLabel, comparisonMap]);
+  }, [
+    baselineAreaKm2,
+    baselineLabel,
+    baselineMap,
+    comparisonAreaKm2,
+    comparisonLabel,
+    comparisonMap,
+  ]);
 
   const totalCells = comparisonMap?.total_samples ?? 0;
   const validCells = comparisonMap?.valid_samples ?? 0;
   const coverage = totalCells > 0 ? (validCells / totalCells) * 100 : null;
 
   return (
-    <section className="md-rise bg-card border border-border rounded-xl p-5 shadow-sm" style={{ animationDelay: "180ms" }}>
+    <section
+      className="md-rise bg-card border border-border rounded-xl p-5 shadow-sm"
+      style={{ animationDelay: "180ms" }}
+    >
       <header className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <h3 className="text-sm font-semibold text-foreground tracking-tight">
-            {t('simulationComparison.changeAnalysis', 'Risk Change Analysis')}
+            {t("simulationComparison.changeAnalysis", "Risk Change Analysis")}
           </h3>
           <p className="text-[11px] text-muted-foreground">
             {t(
-              'simulationComparison.changeAnalysisSub',
-              'How risk shifted between the baseline and the comparison model, cell by cell on the sampled grid.',
+              "simulationComparison.changeAnalysisSub",
+              "How risk shifted between the baseline and the comparison model, cell by cell on the sampled grid."
             )}
           </p>
         </div>
         {coverage !== null && (
           <div className="rounded-full border border-border bg-muted/30 px-3 py-1 text-[11px] font-medium text-muted-foreground">
-            {validCells.toLocaleString()} / {totalCells.toLocaleString()}{' '}
-            {t('simulationComparison.validCells', 'valid cells')} · {coverage.toFixed(1)}%
+            {validCells.toLocaleString()} / {totalCells.toLocaleString()}{" "}
+            {t("simulationComparison.validCells", "valid cells")} · {coverage.toFixed(1)}%
           </div>
         )}
       </header>
@@ -454,53 +478,58 @@ export const ComparisonInsightCharts: FC<ComparisonInsightChartsProps> = ({
         <ChartPlaceholder
           text={
             isMapLoading
-              ? t('simulationComparison.loadingMapSamples', 'Loading geographic raster samples…')
-              : mapError || t('simulationComparison.noMapSamples', 'Geographic map samples are not available yet.')
+              ? t("simulationComparison.loadingMapSamples", "Loading geographic raster samples…")
+              : mapError ||
+                t(
+                  "simulationComparison.noMapSamples",
+                  "Geographic map samples are not available yet."
+                )
           }
         />
       ) : (
         <div className="space-y-4">
-
           <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
             {densityOption && (
               <div className="xl:col-span-3 rounded-lg border border-border bg-muted/20 p-3">
                 <div className="mb-1">
                   <div className="text-xs font-semibold text-foreground">
-                    {t('simulationComparison.scoreDistribution', 'Risk Score Distribution')}
+                    {t("simulationComparison.scoreDistribution", "Risk Score Distribution")}
                   </div>
                   <div className="text-[11px] text-muted-foreground">
                     {t(
-                      'simulationComparison.scoreDistributionSub',
-                      'Frequency of the continuous risk score across sampled cells. A curve shifted to the right means a more severe model; the coloured bands mark the risk classes.',
+                      "simulationComparison.scoreDistributionSub",
+                      "Frequency of the continuous risk score across sampled cells. A curve shifted to the right means a more severe model; the coloured bands mark the risk classes."
                     )}
                   </div>
                 </div>
                 <ReactECharts
                   option={densityOption}
-                  style={{ height: 260, width: '100%' }}
-                  opts={{ renderer: 'svg' }}
+                  style={{ height: 260, width: "100%" }}
+                  opts={{ renderer: "svg" }}
                   notMerge
                 />
               </div>
             )}
 
             {areaOption && (
-              <div className={`${densityOption ? 'xl:col-span-2' : 'xl:col-span-5'} rounded-lg border border-border bg-muted/20 p-3`}>
+              <div
+                className={`${densityOption ? "xl:col-span-2" : "xl:col-span-5"} rounded-lg border border-border bg-muted/20 p-3`}
+              >
                 <div className="mb-1">
                   <div className="text-xs font-semibold text-foreground">
-                    {t('simulationComparison.areaByClass', 'Area by Risk Class')}
+                    {t("simulationComparison.areaByClass", "Area by Risk Class")}
                   </div>
                   <div className="text-[11px] text-muted-foreground">
                     {t(
-                      'simulationComparison.areaByClassSub',
-                      'Area assigned to each risk class — comparable even when the two models cover differently sized areas.',
+                      "simulationComparison.areaByClassSub",
+                      "Area assigned to each risk class — comparable even when the two models cover differently sized areas."
                     )}
                   </div>
                 </div>
                 <ReactECharts
                   option={areaOption}
-                  style={{ height: 260, width: '100%' }}
-                  opts={{ renderer: 'svg' }}
+                  style={{ height: 260, width: "100%" }}
+                  opts={{ renderer: "svg" }}
                   notMerge
                 />
               </div>
@@ -513,17 +542,17 @@ export const ComparisonInsightCharts: FC<ComparisonInsightChartsProps> = ({
                 <ChangeStat
                   dotClass="bg-slate-400"
                   percent={(transitions.unchanged / transitions.matched) * 100}
-                  label={t('simulationComparison.unchangedShare', 'kept the same class')}
+                  label={t("simulationComparison.unchangedShare", "kept the same class")}
                 />
                 <ChangeStat
                   dotClass="bg-red-500"
                   percent={(transitions.increased / transitions.matched) * 100}
-                  label={t('simulationComparison.increasedShare', 'moved to higher risk')}
+                  label={t("simulationComparison.increasedShare", "moved to higher risk")}
                 />
                 <ChangeStat
                   dotClass="bg-emerald-500"
                   percent={(transitions.decreased / transitions.matched) * 100}
-                  label={t('simulationComparison.decreasedShare', 'moved to lower risk')}
+                  label={t("simulationComparison.decreasedShare", "moved to lower risk")}
                 />
               </div>
 
@@ -532,45 +561,47 @@ export const ComparisonInsightCharts: FC<ComparisonInsightChartsProps> = ({
                   <div className="mb-1 flex items-center justify-between gap-3">
                     <div>
                       <div className="text-xs font-semibold text-foreground">
-                        {t('simulationComparison.riskFlow', 'Risk Flow')}
+                        {t("simulationComparison.riskFlow", "Risk Flow")}
                       </div>
                       <div className="text-[11px] text-muted-foreground">
                         {t(
-                          'simulationComparison.riskFlowSub',
-                          'Bands show the share of the area moving from a baseline class (left) to a comparison class (right).',
+                          "simulationComparison.riskFlowSub",
+                          "Bands show the share of the area moving from a baseline class (left) to a comparison class (right)."
                         )}
                       </div>
                     </div>
                     <div className="hidden sm:flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                       <span className="text-blue-600 dark:text-blue-400">{baselineLabel}</span>
                       <ArrowRight className="w-3 h-3" />
-                      <span className="text-violet-600 dark:text-violet-400">{comparisonLabel}</span>
+                      <span className="text-violet-600 dark:text-violet-400">
+                        {comparisonLabel}
+                      </span>
                     </div>
                   </div>
                   <ReactECharts
                     option={sankeyOption}
-                    style={{ height: 320, width: '100%' }}
-                    opts={{ renderer: 'svg' }}
+                    style={{ height: 320, width: "100%" }}
+                    opts={{ renderer: "svg" }}
                     notMerge
                   />
                 </div>
 
                 <div className="xl:col-span-2 rounded-lg border border-border bg-muted/20 p-3">
                   <div className="text-xs font-semibold text-foreground">
-                    {t('simulationComparison.topTransitions', 'Biggest Changes')}
+                    {t("simulationComparison.topTransitions", "Biggest Changes")}
                   </div>
                   <div className="text-[11px] text-muted-foreground">
                     {t(
-                      'simulationComparison.topTransitionsSub',
-                      'Largest class-to-class shifts by share of the area.',
+                      "simulationComparison.topTransitionsSub",
+                      "Largest class-to-class shifts by share of the area."
                     )}
                   </div>
                   <div className="mt-3 space-y-2">
                     {topTransitions.length === 0 ? (
                       <p className="text-xs text-muted-foreground py-6 text-center">
                         {t(
-                          'simulationComparison.noTransitions',
-                          'No class changes detected — both models assign the same risk class everywhere.',
+                          "simulationComparison.noTransitions",
+                          "No class changes detected — both models assign the same risk class everywhere."
                         )}
                       </p>
                     ) : (
@@ -596,8 +627,7 @@ export const ComparisonInsightCharts: FC<ComparisonInsightChartsProps> = ({
                                 {entry.percent.toFixed(1)}%
                               </div>
                               <div className="text-[10px] text-muted-foreground">
-                                {entry.count.toLocaleString()}{' '}
-                                {t(CELLS_KEY, 'cells')}
+                                {entry.count.toLocaleString()} {t(CELLS_KEY, "cells")}
                               </div>
                             </div>
                           </div>
@@ -612,8 +642,8 @@ export const ComparisonInsightCharts: FC<ComparisonInsightChartsProps> = ({
             <div className="rounded-lg border border-border bg-muted/20 px-4 py-3">
               <p className="text-xs text-muted-foreground">
                 {t(
-                  'simulationComparison.differentAreas',
-                  'The two models cover different areas or grids, so a cell-by-cell change analysis is not possible. Use the side-by-side maps above and the distribution below instead.',
+                  "simulationComparison.differentAreas",
+                  "The two models cover different areas or grids, so a cell-by-cell change analysis is not possible. Use the side-by-side maps above and the distribution below instead."
                 )}
               </p>
             </div>

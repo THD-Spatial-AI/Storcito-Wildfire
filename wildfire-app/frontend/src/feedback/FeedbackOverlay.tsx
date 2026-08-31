@@ -4,13 +4,27 @@ import { FeedbackDialog } from "./FeedbackDialog";
 import { PersonaForm } from "./PersonaForm";
 import { previewFeedback, submitFeedback } from "./api-client";
 import { translations } from "./i18n";
-import type { FeedbackFormState, FeedbackOverlayProps, Language, PersonaData, PreviewResult } from "./types";
+import type {
+  FeedbackFormState,
+  FeedbackOverlayProps,
+  Language,
+  PersonaData,
+  PreviewResult,
+} from "./types";
 import { C } from "./theme";
 
 type OverlayMode = "idle" | "persona" | "selecting" | "dialog";
 
-interface Point { x: number; y: number }
-interface Rect { x1: number; y1: number; x2: number; y2: number }
+interface Point {
+  x: number;
+  y: number;
+}
+interface Rect {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}
 
 const LANG_STORAGE_KEY = "spatialhub-feedback-lang";
 const PERSONA_STORAGE_KEY = "spatialhub-feedback-persona";
@@ -95,7 +109,9 @@ function loadPersona(): PersonaData | null {
 function savePersona(data: PersonaData) {
   try {
     localStorage.setItem(PERSONA_STORAGE_KEY, JSON.stringify(data));
-  } catch {}
+  } catch {
+    // Storage can be unavailable in private browsing; feedback still works for this session.
+  }
 }
 
 // ─── Main overlay ─────────────────────────────────────────────────────────────
@@ -122,6 +138,7 @@ export function FeedbackOverlay({
   const [selectedRect, setSelectedRect] = useState<Rect | null>(null);
   const [screenshotB64, setScreenshotB64] = useState<string | null>(null);
   const [overlayReady, setOverlayReady] = useState(false);
+  const [showLanguages, setShowLanguages] = useState(false);
 
   const [topicOptions, setTopicOptions] = useState<string[]>([]);
   const [loadingTopics, setLoadingTopics] = useState(false);
@@ -133,10 +150,18 @@ export function FeedbackOverlay({
   const workshopMode = import.meta.env.VITE_WORKSHOP_MODE === "true";
 
   useEffect(() => {
-    if (mode !== "selecting") { setOverlayReady(false); return; }
-    let r1: number, r2: number;
-    r1 = requestAnimationFrame(() => { r2 = requestAnimationFrame(() => setOverlayReady(true)); });
-    return () => { cancelAnimationFrame(r1); cancelAnimationFrame(r2); };
+    if (mode !== "selecting") {
+      setOverlayReady(false);
+      return;
+    }
+    let r2 = 0;
+    const r1 = requestAnimationFrame(() => {
+      r2 = requestAnimationFrame(() => setOverlayReady(true));
+    });
+    return () => {
+      cancelAnimationFrame(r1);
+      cancelAnimationFrame(r2);
+    };
   }, [mode]);
 
   // Escape (or Space while selecting) exits the feedback flow.
@@ -161,7 +186,11 @@ export function FeedbackOverlay({
     setLoadingTopics(true);
     previewFeedback(
       { x: tap.x, y: tap.y, screenshot_b64: fullShot },
-      lang, apiUrl, workshopToken, workshopTag, modelId
+      lang,
+      apiUrl,
+      workshopToken,
+      workshopTag,
+      modelId
     )
       .then((r: PreviewResult) => setTopicOptions(r.topic_options ?? []))
       .catch(() => setTopicOptions([]))
@@ -218,14 +247,15 @@ export function FeedbackOverlay({
     const dx = Math.abs(end.x - dragStart.x);
     const dy = Math.abs(end.y - dragStart.y);
 
-    const rect = dx < 10 && dy < 10
-      ? {
-          x1: Math.max(0, dragStart.x - 60) / window.innerWidth,
-          y1: Math.max(0, dragStart.y - 60) / window.innerHeight,
-          x2: Math.min(window.innerWidth, dragStart.x + 60) / window.innerWidth,
-          y2: Math.min(window.innerHeight, dragStart.y + 60) / window.innerHeight,
-        }
-      : toRect(dragStart, end);
+    const rect =
+      dx < 10 && dy < 10
+        ? {
+            x1: Math.max(0, dragStart.x - 60) / window.innerWidth,
+            y1: Math.max(0, dragStart.y - 60) / window.innerHeight,
+            x2: Math.min(window.innerWidth, dragStart.x + 60) / window.innerWidth,
+            y2: Math.min(window.innerHeight, dragStart.y + 60) / window.innerHeight,
+          }
+        : toRect(dragStart, end);
 
     const tap = { x: (rect.x1 + rect.x2) / 2, y: (rect.y1 + rect.y2) / 2 };
     tapCentreRef.current = tap;
@@ -259,16 +289,23 @@ export function FeedbackOverlay({
   async function handleSubmit(form: FeedbackFormState) {
     await submitFeedback(
       { ...form, screenshot_b64: screenshotB64 },
-      apiUrl, workshopToken, workshopTag, modelId, persona
+      apiUrl,
+      workshopToken,
+      workshopTag,
+      modelId,
+      persona
     );
   }
 
-  const dragRect = isDragging && dragStart && dragEnd ? {
-    left: Math.min(dragStart.x, dragEnd.x),
-    top: Math.min(dragStart.y, dragEnd.y),
-    width: Math.abs(dragEnd.x - dragStart.x),
-    height: Math.abs(dragEnd.y - dragStart.y),
-  } : null;
+  const dragRect =
+    isDragging && dragStart && dragEnd
+      ? {
+          left: Math.min(dragStart.x, dragEnd.x),
+          top: Math.min(dragStart.y, dragEnd.y),
+          width: Math.abs(dragEnd.x - dragStart.x),
+          height: Math.abs(dragEnd.y - dragStart.y),
+        }
+      : null;
 
   const tapX = selectedRect ? (selectedRect.x1 + selectedRect.x2) / 2 : 0.5;
   const tapY = selectedRect ? (selectedRect.y1 + selectedRect.y2) / 2 : 0.5;
@@ -365,30 +402,46 @@ export function FeedbackOverlay({
       )}
 
       {mode === "idle" && (
-        <div className="fixed bottom-6 right-6 z-[9999] flex max-w-[calc(100vw-3rem)] flex-wrap items-center justify-end gap-2">
-          {/* Language pill switcher */}
-          <div
-            className="flex items-center gap-0.5 rounded-full p-1 shadow-lg ring-1 ring-white/10"
-            style={{ backgroundColor: C.bg }}
-            role="group"
-            aria-label="Select language"
-          >
-            {LANGUAGE_OPTIONS.map(({ value }) => (
+        <div
+          className="fixed bottom-6 right-6 z-[9999] flex max-w-[calc(100vw-3rem)] items-stretch overflow-hidden rounded-full shadow-lg ring-1 ring-white/10"
+          style={{ backgroundColor: C.bg, boxShadow: `0 4px 20px ${C.primaryGlow}, 0 1px 4px rgba(0,0,0,0.4)` }}
+          role="group"
+          aria-label="Feedback controls"
+        >
+          <FeedbackButton onClick={handleFabClick} embedded />
+          <span className="my-2 w-px shrink-0 bg-white/15" aria-hidden="true" />
+          <div className="flex items-center gap-0.5 p-1" role="group" aria-label="Select language">
+            {showLanguages ? (
+              LANGUAGE_OPTIONS.map(({ value }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => {
+                    handleLanguageChange(value);
+                    setShowLanguages(false);
+                  }}
+                  aria-pressed={language === value}
+                  className={`rounded-full px-2.5 py-1.5 text-xs font-semibold transition-colors duration-150 active:scale-[0.97] focus:outline-none focus:ring-2 focus:ring-white/30 ${
+                    language === value ? "text-white" : "text-zinc-500 hover:text-zinc-200"
+                  }`}
+                  style={language === value ? { backgroundColor: C.primary } : {}}
+                >
+                  {value.toUpperCase()}
+                </button>
+              ))
+            ) : (
               <button
-                key={value}
                 type="button"
-                onClick={() => handleLanguageChange(value)}
-                aria-pressed={language === value}
-                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors duration-150 active:scale-[0.97] focus:outline-none ${
-                  language === value ? "text-white" : "text-zinc-500 hover:text-zinc-200"
-                }`}
-                style={language === value ? { backgroundColor: C.primary } : {}}
+                onClick={() => setShowLanguages(true)}
+                aria-label="Change feedback language"
+                aria-expanded={showLanguages}
+                className="rounded-full px-2.5 py-1.5 text-xs font-semibold text-white transition-colors duration-150 active:scale-[0.97] focus:outline-none focus:ring-2 focus:ring-white/30"
+                style={{ backgroundColor: C.primary }}
               >
-                {value.toUpperCase()}
+                {language.toUpperCase()}
               </button>
-            ))}
+            )}
           </div>
-          <FeedbackButton onClick={handleFabClick} />
         </div>
       )}
     </div>

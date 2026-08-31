@@ -36,7 +36,6 @@ func NewNotificationService(db *gorm.DB, emailService *email.EmailService, redis
 	}
 }
 
-
 func (s *NotificationService) SendModelCompletionNotification(ctx context.Context, userID, userEmail, modelTitle string, modelID uint, status string) error {
 	// Get user settings
 	settings, err := s.store.GetUserSettings(userID)
@@ -139,25 +138,7 @@ func (s *NotificationService) SendModelSharedNotification(ctx context.Context, r
 }
 
 func (s *NotificationService) createBrowserNotification(ctx context.Context, userID, modelTitle string, modelID uint, status string) error {
-	var title, message, notifType string
-
-	if status == "completed" {
-		title = "Model Calculation Complete"
-		message = fmt.Sprintf("Your model '%s' has been successfully calculated and is ready to view.", modelTitle)
-		notifType = "success"
-	} else {
-		title = "Model Calculation Failed"
-		message = fmt.Sprintf("The calculation for model '%s' has failed. Please check the model configuration and try again.", modelTitle)
-		notifType = "error"
-	}
-
-	userNotif := backendModels.UserNotification{
-		UserID:  userID,
-		Title:   title,
-		Message: message,
-		Type:    notifType,
-		Read:    false,
-	}
+	userNotif := buildModelStatusNotification(userID, modelTitle, modelID, status)
 
 	if err := s.store.CreateUserNotification(&userNotif); err != nil {
 		s.log.Errorf("Failed to insert UserNotification into DB: user_id=%s err=%v", userID, err)
@@ -172,6 +153,31 @@ func (s *NotificationService) createBrowserNotification(ctx context.Context, use
 	return nil
 }
 
+func buildModelStatusNotification(userID, modelTitle string, modelID uint, status string) backendModels.UserNotification {
+	var title, message, notifType string
+	var resultModelID *uint
+
+	if status == "completed" {
+		title = "Model Calculation Complete"
+		message = fmt.Sprintf("Your model '%s' has been successfully calculated and is ready to view.", modelTitle)
+		notifType = "success"
+		resultModelID = &modelID
+	} else {
+		title = "Model Calculation Failed"
+		message = fmt.Sprintf("The calculation for model '%s' has failed. Please check the model configuration and try again.", modelTitle)
+		notifType = "error"
+	}
+
+	return backendModels.UserNotification{
+		UserID:  userID,
+		Title:   title,
+		Message: message,
+		Type:    notifType,
+		Read:    false,
+		ModelID: resultModelID,
+	}
+}
+
 func (s *NotificationService) publishRealtimeNotification(ctx context.Context, userID string, notif backendModels.UserNotification) {
 	channel := fmt.Sprintf("user_notifications:%s", userID)
 
@@ -180,15 +186,20 @@ func (s *NotificationService) publishRealtimeNotification(ctx context.Context, u
 	const timestampFormat = "2006-01-02T15:04:05Z"
 	t := notif.CreatedAt
 	utcTime := time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), time.UTC)
-	
-	payload, err := json.Marshal(map[string]interface{}{
+
+	fields := map[string]interface{}{
 		"id":         notif.ID,
 		"title":      notif.Title,
 		"message":    notif.Message,
 		"type":       notif.Type,
 		"read":       notif.Read,
 		"created_at": utcTime.Format(timestampFormat),
-	})
+	}
+	if notif.ModelID != nil {
+		fields["model_id"] = *notif.ModelID
+	}
+
+	payload, err := json.Marshal(fields)
 
 	if err != nil {
 		s.log.Errorf("Failed to marshal notification payload: user_id=%s err=%v", userID, err)

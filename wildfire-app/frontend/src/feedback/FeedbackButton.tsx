@@ -2,17 +2,20 @@ import { C } from './theme';
 
 interface FeedbackButtonProps {
   onClick: (e: React.MouseEvent) => void;
+  embedded?: boolean;
 }
 
-export function FeedbackButton({ onClick }: FeedbackButtonProps) {
+export function FeedbackButton({ onClick, embedded = false }: FeedbackButtonProps) {
   return (
     <button
       onClick={onClick}
       aria-label="Give feedback"
-      className="flex items-center gap-2 rounded-full px-4 py-3 text-sm font-semibold text-white transition-all duration-150 ease-out hover:brightness-90 active:scale-[0.97] focus:outline-none focus:ring-2 focus:ring-white/30 focus:ring-offset-2"
+      className={`flex items-center gap-2 text-sm font-semibold text-white transition-all duration-150 ease-out hover:brightness-90 active:scale-[0.97] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white/30 ${
+        embedded ? "px-3 py-2.5" : "rounded-full px-4 py-3 focus:ring-offset-2"
+      }`}
       style={{
         backgroundColor: C.primary,
-        boxShadow: `0 4px 20px ${C.primaryGlow}, 0 1px 4px rgba(0,0,0,0.4)`,
+        boxShadow: embedded ? undefined : `0 4px 20px ${C.primaryGlow}, 0 1px 4px rgba(0,0,0,0.4)`,
       }}
     >
       <svg
