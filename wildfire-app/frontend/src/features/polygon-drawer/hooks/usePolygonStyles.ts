@@ -12,7 +12,10 @@ interface PolygonStyleLabels {
 /** Edit-badge flag. */
 export const EDIT_BADGE_PROPERTY = "showEditBadge";
 
-export const usePolygonStyles = (labels: PolygonStyleLabels = {}, editable = true) => {
+export const usePolygonStyles = (
+  labels: PolygonStyleLabels = {},
+  editableRef?: { current: boolean },
+) => {
   return useMemo(() => {
     const outlineStyle = new Style({
       fill: new Fill({
@@ -32,8 +35,9 @@ export const usePolygonStyles = (labels: PolygonStyleLabels = {}, editable = tru
         padding: [3, 6, 3, 6],
       }),
     });
-    const polygonStyle = editable
+    const polygonStyle = editableRef
       ? (feature: FeatureLike) => {
+          if (!editableRef.current) return outlineStyle;
           if (!feature.get(EDIT_BADGE_PROPERTY)) return outlineStyle;
           const geometry = feature.getGeometry();
           if (!geometry || geometry.getType() !== "Polygon") return outlineStyle;
@@ -86,5 +90,5 @@ export const usePolygonStyles = (labels: PolygonStyleLabels = {}, editable = tru
     });
 
     return { polygonStyle, bufferStyle, startPointStyle, sketchStyle, modifyStyle };
-  }, [editable, labels.clickToClose, labels.edit, labels.start]);
+  }, [editableRef, labels.clickToClose, labels.edit, labels.start]);
 };

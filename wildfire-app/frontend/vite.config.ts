@@ -12,10 +12,6 @@ export default defineConfig({
 			"@spatialhub/forms": node_path.resolve(__dirname, "../../libs/forms/src"),
 			"@spatialhub/auth": node_path.resolve(__dirname, "../../libs/auth/src"),
 			"@spatialhub/ui": node_path.resolve(__dirname, "../../libs/ui/src"),
-			// i18n is now owned by the wildfire app (src/i18n). The shared auth/forms
-			// libs still import "@spatialhub/i18n", so re-point that alias to the local
-			// module — everything then shares one i18next instance + wildfire's locales.
-			"@spatialhub/i18n": node_path.resolve(__dirname, "src/i18n"),
 			"react": node_path.resolve(__dirname, "node_modules/react"),
 			"react-dom": node_path.resolve(__dirname, "node_modules/react-dom"),
 			"react-i18next": node_path.resolve(__dirname, "node_modules/react-i18next"),

@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import { useEffect, useRef, type FC } from "react";
 import type Map from "ol/Map";
 import { usePolygonBuffer, usePolygonDrawing, usePolygonStyles } from "./hooks";
 
@@ -43,10 +43,16 @@ export const PolygonDrawer: FC<PolygonDrawerProps> = ({
   enableEditing = true,
   labels = {},
 }) => {
-  const styles = usePolygonStyles(labels, enableEditing && !readOnly);
+  const canEditNow = enableEditing && !readOnly && drawingEnabled;
+  const canEditRef = useRef(canEditNow);
+  useEffect(() => {
+    canEditRef.current = canEditNow;
+  }, [canEditNow]);
+
+  const styles = usePolygonStyles(labels, canEditRef);
   const { bufferSourceRef, bufferDistanceRef, recomputeBuffers } =
     usePolygonBuffer(bufferDistanceMeters);
-  usePolygonDrawing({
+  const { vectorSourceRef } = usePolygonDrawing({
     map,
     onPolygonDrawn,
     onPolygonModified,
@@ -67,6 +73,11 @@ export const PolygonDrawer: FC<PolygonDrawerProps> = ({
     bufferDistanceMeters,
     recomputeBuffers,
   });
+
+  // Repaint so the badge appears or disappears with the edit state.
+  useEffect(() => {
+    vectorSourceRef.current?.changed();
+  }, [canEditNow, vectorSourceRef]);
 
   return null;
 };

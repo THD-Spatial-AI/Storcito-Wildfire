@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import Draw, { type DrawEvent } from "ol/interaction/Draw";
+import type MapBrowserEvent from "ol/MapBrowserEvent";
 import Modify from "ol/interaction/Modify";
 import VectorSource from "ol/source/Vector";
 import VectorLayer from "ol/layer/Vector";
@@ -63,6 +64,9 @@ const getNearStartState = (
 
   return Math.hypot(startPixel[0] - cursorPixel[0], startPixel[1] - cursorPixel[1]) < snapDistance;
 };
+
+/** Click radius around the badge anchor. */
+const EDIT_BADGE_HIT_RADIUS = 26;
 
 /** Badge the largest polygon only. */
 const markPrimaryEditFeature = (source: VectorSource) => {
@@ -219,8 +223,52 @@ export const usePolygonDrawing = ({
       source: vectorSource,
       style: styles.polygonStyle,
       zIndex: 2001,
+      // Keeps the badge from printing over map labels such as the coverage note.
+      declutter: true,
     });
     map.addLayer(vectorLayer);
+
+    // The badge is a label, so hit-test it by distance to its anchor point.
+    const badgePixel = () => {
+      const feature = vectorSource.getFeatures().find((f) => f.get(EDIT_BADGE_PROPERTY));
+      const geometry = feature?.getGeometry();
+      if (!(geometry instanceof OLPolygon)) return null;
+      const anchor = geometry.getInteriorPoint().getCoordinates().slice(0, 2);
+      return { pixel: map.getPixelFromCoordinate(anchor), geometry };
+    };
+
+    const isOnBadge = (pixel: number[]) => {
+      if (!drawingEnabledRef.current) return null;
+      const badge = badgePixel();
+      if (!badge?.pixel) return null;
+      const distance = Math.hypot(badge.pixel[0] - pixel[0], badge.pixel[1] - pixel[1]);
+      return distance <= EDIT_BADGE_HIT_RADIUS ? badge.geometry : null;
+    };
+
+    // Zoom to the area so its vertices are big enough to drag.
+    const handleBadgeClick = (event: MapBrowserEvent) => {
+      const geometry = isOnBadge(event.pixel);
+      if (!geometry) return;
+      event.stopPropagation();
+      map.getView().fit(geometry.getExtent(), {
+        padding: [60, 60, 60, 60],
+        duration: 400,
+        maxZoom: 17,
+      });
+    };
+
+    const handleBadgeHover = (event: MapBrowserEvent) => {
+      if (event.dragging) return;
+      const viewport = map.getViewport();
+      if (isOnBadge(event.pixel)) {
+        viewport.style.cursor = "pointer";
+      } else if (viewport.style.cursor === "pointer") {
+        viewport.style.cursor = "";
+      }
+    };
+
+    map.on("singleclick", handleBadgeClick);
+    map.on("pointermove", handleBadgeHover);
 
     const bufferSource = new VectorSource({ wrapX: false });
     bufferSourceRef.current = bufferSource;
@@ -419,6 +467,8 @@ export const usePolygonDrawing = ({
     }
 
     return () => {
+      map.un("singleclick", handleBadgeClick);
+      map.un("pointermove", handleBadgeHover);
       if (handleKeyDown) document.removeEventListener("keydown", handleKeyDown);
       if (handleContextMenu) map.getViewport().removeEventListener("contextmenu", handleContextMenu);
       if (drawInteractionRef.current) map.removeInteraction(drawInteractionRef.current);

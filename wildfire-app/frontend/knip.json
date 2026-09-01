@@ -6,7 +6,6 @@
   "ignoreDependencies": [
     "@spatialhub/auth",
     "@spatialhub/forms",
-    "@spatialhub/i18n",
     "@spatialhub/ui"
   ]
 }

@@ -13,7 +13,7 @@ import { Button } from "./ui-elements/button";
 import { LoadingDots } from "./ui-elements/loading";
 import { cn } from "../utils";
 import { IconX } from "@tabler/icons-react";
-import { useTranslation } from "@spatialhub/i18n";
+import { useTranslation } from "react-i18next";
 
 type FormDataPrimitive = string | number | boolean | File | null;
 export type FormDataConvertible = FormDataPrimitive | FormDataPrimitive[];

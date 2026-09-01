@@ -6,7 +6,6 @@
   "workspaces": [
     "auth",
     "forms",
-    "i18n",
     "ui"
   ],
   "scripts": {

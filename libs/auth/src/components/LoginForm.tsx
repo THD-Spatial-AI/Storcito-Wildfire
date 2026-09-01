@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Mail, Lock, ArrowRight } from "lucide-react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { UniversalForm, type FormSection } from "@spatialhub/forms";
-import { useTranslation } from "@spatialhub/i18n";
+import { useTranslation } from "react-i18next";
 
 export interface LoginFormProps {
   /** Called when setting document title */

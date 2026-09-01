@@ -38,13 +38,9 @@ WORKDIR /build
 COPY libs/ui ./libs/ui
 COPY libs/forms ./libs/forms
 COPY libs/auth ./libs/auth
-COPY libs/i18n ./libs/i18n
 
-# Build libs in dependency order: ui -> i18n -> forms -> auth
+# Build libs in dependency order: ui -> forms -> auth
 WORKDIR /build/libs/ui
-RUN npm install && npm run build
-
-WORKDIR /build/libs/i18n
 RUN npm install && npm run build
 
 WORKDIR /build/libs/forms

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Button } from '@spatialhub/ui';
 import { ChevronRight, ChevronLeft, Check, Globe, Cloud, Map, Bell } from 'lucide-react';
-import { useTranslation } from '@/i18n';
+import { languages as supportedLanguages, useTranslation } from '@/i18n';
 import WeatherSettings from '@/features/weather/WeatherSettings';
 import MapLocationSettings from '@/features/settings/MapLocationSettings';
 import NotificationSettings from '@/features/settings/NotificationSettings';
@@ -314,21 +314,10 @@ const LanguageStep: React.FC<LanguageStepProps> = ({ onLanguageChange }) => {
     }
   };
 
-  const languages = [
-    { code: 'en', name: 'English', flag: '🇬🇧' },
-    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-    { code: 'es', name: 'Español', flag: '🇪🇸' },
-    { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-    { code: 'nl', name: 'Nederlands', flag: '🇳🇱' },
-    { code: 'pl', name: 'Polski', flag: '🇵🇱' },
-    { code: 'cs', name: 'Čeština', flag: '🇨🇿' },
-  ];
-
   return (
     <div className="p-4 bg-background">
       <div className="grid grid-cols-2 gap-2">
-        {languages.map((language) => (
+        {supportedLanguages.map((language) => (
           <button
             key={language.code}
             onClick={() => handleLanguageChange(language.code)}
@@ -341,7 +330,7 @@ const LanguageStep: React.FC<LanguageStepProps> = ({ onLanguageChange }) => {
             <span className="text-xl">{language.flag}</span>
             <div className="text-left">
               <div className="font-medium text-sm text-foreground">
-                {language.name}
+                {language.nativeName}
               </div>
             </div>
             {selectedLanguage === language.code && (
