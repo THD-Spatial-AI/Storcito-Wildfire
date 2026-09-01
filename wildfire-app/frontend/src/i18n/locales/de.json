@@ -2,7 +2,10 @@
   "drawing": {
     "clickToDraw": "Klicken zum Zeichnen",
     "clickToClose": "Klicken zum Schließen",
-    "start": "Start"
+    "start": "Start",
+    "edit": "Bearbeiten",
+    "moveMap": "Karte verschieben",
+    "resumeDrawing": "Weiter zeichnen"
   },
   "common": {
     "save": "Speichern",
@@ -1282,7 +1285,29 @@
       "veryHigh": "Zusätzlicher Schutz nötig",
       "extreme": "Sonnenexposition vermeiden"
     },
-    "dataBy": "Wetterdaten von"
+    "dataBy": "Wetterdaten von",
+    "conditions": {
+      "clear": "Klarer Himmel",
+      "mainlyClear": "Überwiegend klar",
+      "partlyCloudy": "Teilweise bewölkt",
+      "overcast": "Bedeckt",
+      "fog": "Nebel",
+      "rimeFog": "Raureifnebel",
+      "drizzle": "Nieselregen",
+      "freezingDrizzle": "Gefrierender Nieselregen",
+      "rain": "Regen",
+      "heavyRain": "Starker Regen",
+      "freezingRain": "Gefrierender Regen",
+      "snow": "Schnee",
+      "heavySnow": "Starker Schneefall",
+      "snowGrains": "Schneegriesel",
+      "showers": "Regenschauer",
+      "heavyShowers": "Starke Regenschauer",
+      "snowShowers": "Schneeschauer",
+      "thunderstorm": "Gewitter",
+      "thunderstormHail": "Gewitter mit Hagel"
+    },
+    "windSpeedTooltip": "Die Einheit lässt sich unter Einstellungen → Datenanzeige ändern."
   },
   "settings": {
     "title": "Einstellungen",
@@ -1342,7 +1367,19 @@
       "windSpeed": "Windgeschwindigkeit",
       "knots": "Knoten",
       "dataRefresh": "Datenaktualisierung",
-      "min": "Min"
+      "min": "Min",
+      "windUnits": {
+        "kmh": "km/h",
+        "mph": "mph",
+        "ms": "m/s",
+        "knots": "kn"
+      },
+      "textSize": "Schriftgröße",
+      "textSizes": {
+        "small": "Klein",
+        "normal": "Normal",
+        "large": "Groß"
+      }
     },
     "notifications": {
       "title": "Benachrichtigungen",
@@ -1370,6 +1407,21 @@
       "sendNotification": "Benachrichtigung senden",
       "sent": "Benachrichtigung gesendet!",
       "failedToSend": "Senden fehlgeschlagen"
+    },
+    "modelCreation": {
+      "title": "Einführungskarte zum Modell",
+      "description": "Steuert die Einrichtungskarte, die vor den geführten Schritten zur Modellerstellung erscheint.",
+      "checking": "Einstellung wird geprüft ...",
+      "hidden": "Einführung ist ausgeblendet",
+      "enabled": "Einführung ist aktiviert",
+      "hiddenHint": "Aktivieren Sie sie wieder, wenn Nutzer die Zusammenfassung vor dem Erstellen eines Modells benötigen.",
+      "enabledHint": "Die Zusammenfassung erscheint vor dem Erstellen eines neuen Modells.",
+      "showAgain": "Erneut anzeigen",
+      "loadError": "Diese Einstellung konnte nicht geladen werden.",
+      "enabledMessage": "Die Einführungskarte erscheint beim nächsten Erstellen eines Modells.",
+      "updateError": "Die Einstellung für die Einführungskarte konnte nicht aktualisiert werden.",
+      "sectionTitle": "Modellerstellung",
+      "guidancePreferences": "Hilfe-Einstellungen"
     }
   },
   "simulationComparison": {
@@ -1446,7 +1498,18 @@
     "regions": "Regionen",
     "myModels": "Meine Modelle",
     "grids": "Raster",
-    "countries": "Länder"
+    "countries": "Länder",
+    "privacyRequired": "Bitte akzeptieren Sie die Daten- und Datenschutzbestimmungen, um die Karte zu sehen",
+    "legend": {
+      "title": "Kartenumrisse",
+      "baseMap": "Graue Linien: Straßen und Verwaltungsgrenzen der gewählten Basiskarte",
+      "availableRegions": "Indigo gestrichelt: verfügbare Verwaltungsregionen",
+      "yourModels": "Grüne Fläche: Ihr neuestes Modell – auswählen, um die Ergebnisse zu öffnen",
+      "zoomDetail": "Die Standardansicht ist Galicien; beim Hineinzoomen zeigt die Basiskarte mehr Details."
+    },
+    "newModelShortcut": "Tastenkürzel: N",
+    "latestModel": "neuestes Modell",
+    "latestModelOf": "Ihr neuestes Modell von {{total}} erstellten. Öffnen Sie „Simulationen“, um die übrigen zu sehen."
   },
   "privacy": {
     "dataAndPrivacy": "Daten & Datenschutz",
@@ -1851,7 +1914,11 @@
       "dynamicSelectedOne": "Ausgewählter Zeitraum: {{start}} bis {{end}} (1 Tag).",
       "dynamicSelectInside": "Wählen Sie einen Zeitraum innerhalb der verfügbaren Daten: {{start}} bis {{end}}",
       "dynamicAvailable": "Verfügbare dynamische Daten: {{start}} bis {{end}}",
-      "hottest": "Heißeste"
+      "hottest": "Heißeste",
+      "calcModeInfoLabel": "Was die Berechnungsmodi bewirken",
+      "calcModeInfo": "Statisch bewertet einen einzelnen Tag – ein verfügbares Wetterdatum – mit dem AOI-Risiko-Workflow. Dynamisch bewertet einen Zeitraum und behält den täglichen Wetterverlauf bei. Beide nutzen das Wetterfenster von 16:00 bis 17:00 Uhr.",
+      "calcModeHintStatic": "Ein Tag, gewählt aus den verfügbaren Wetterdaten.",
+      "calcModeHintDynamic": "Ein Zeitraum, Tag für Tag bewertet."
     },
     "layer2": {
       "purpose": "Wählen Sie eine vollständige Verwaltungsregion aus, zeichnen Sie ein Gebiet oder laden Sie eine GeoJSON-Grenze hoch.",
@@ -1886,7 +1953,16 @@
       "drawPrompt": "Klicken Sie auf die Karte, um Ihr Gebiet zu zeichnen. Schließen Sie das Polygon, um abzuschließen.",
       "drawToContinue": "Zeichnen Sie ein Gebiet auf der Karte, um fortzufahren.",
       "blockingUploadGeoJson": "Laden Sie eine GeoJSON-Datei hoch oder wechseln Sie zurück zum Zeichnen.",
-      "blockingDrawArea": "Zeichnen Sie ein Gebiet auf der Karte, um fortzufahren."
+      "blockingDrawArea": "Zeichnen Sie ein Gebiet auf der Karte, um fortzufahren.",
+      "selectRegion": "Vollständige Region auswählen",
+      "regionResolving": "Verwaltungsgrenze wird gesucht …",
+      "regionMapSelected": "{{name}} ausgewählt · auf eine andere Region klicken, um sie zu ersetzen",
+      "regionMapPrompt": "In eine Region klicken, um ihre vollständige Grenze auszuwählen",
+      "statusRegionSelected": "{{name}} ausgewählt. Auf eine andere Region klicken, um sie zu ersetzen.",
+      "statusRegionPrompt": "In eine Verwaltungsregion auf der Karte klicken, um ihre vollständige Grenze auszuwählen.",
+      "regionCoverageWarning": "Es wird die vollständige Verwaltungsgrenze verwendet. Pixel außerhalb der schattierten Datenabdeckung sind möglicherweise nicht berechenbar.",
+      "statusRegionLabel": "Region ausgewählt",
+      "blockingSelectRegion": "In eine Verwaltungsregion auf der Karte klicken, um fortzufahren."
     },
     "layer3": {
       "purpose": "Diese Signale speisen das AHP-gewichtete Risikomodell. Alle drei sind standardmäßig aktiviert und für eine genaue Waldbrandrisikobewertung empfohlen.",
@@ -1905,7 +1981,8 @@
       "customDataDesc": "Bringen Sie Ihre eigenen Wetterdaten für dieses Gebiet mit. Wenn leer gelassen, werden die gebündelten regionalen Daten verwendet.",
       "weatherStationData": "Wetterstationsdaten",
       "weatherStationHint": "Excel- oder CSV-Stationsexport (.xlsx / .csv)",
-      "weatherStationInfo": "Stündliche Wettermessungen von einer lokalen Station — Temperatur, Feuchtigkeit, Wind und Niederschlag. Wird zur Berechnung des Feuerwetterindex für dieses Gebiet verwendet. Laden Sie einen Excel- oder CSV-Export hoch; andernfalls werden die regionalen Wetterdaten verwendet."
+      "weatherStationInfo": "Stündliche Wettermessungen von einer lokalen Station — Temperatur, Feuchtigkeit, Wind und Niederschlag. Wird zur Berechnung des Feuerwetterindex für dieses Gebiet verwendet. Laden Sie einen Excel- oder CSV-Export hoch; andernfalls werden die regionalen Wetterdaten verwendet.",
+      "coreSignalsNote": "Vegetation (NDVI) und Infrastruktur sind immer Teil des Modells und lassen sich nicht abschalten. Wird ein Signal oben deaktiviert, entfällt sein Beitrag zur Gewichtung – die Berechnung läuft mit den übrigen Signalen weiter."
     },
     "layer4": {
       "purpose": "Echtzeit-Validierung der Modellkonfiguration. Blocker müssen in ihren jeweiligen Schritten behoben werden, bevor der Lauf gestartet werden kann.",
@@ -1940,7 +2017,9 @@
         "areaOfInterest": "Untersuchungsgebiet",
         "riskComponents": "Risikokomponenten",
         "bufferDistance": "Pufferabstand"
-      }
+      },
+      "noRegionSelected": "Keine Verwaltungsregion ausgewählt.",
+      "selectedRegionDetails": "{{name}} · {{area}}"
     },
     "layer5": {
       "purpose": "Überprüfen Sie die Modelleinstellungen vor dem Speichern. Die Berechnung verwendet die ausgewählten Daten, Gebiete und Datenquellen.",
@@ -1958,7 +2037,8 @@
         "buffer": "Puffer",
         "area": "Gebiet",
         "riskComponents": "Risikokomponenten"
-      }
+      },
+      "dailyRunInfo": "Jeder simulierte Tag wird mit dem Wetter aus diesem Zeitfenster bewertet – dem heißesten und trockensten Teil des Nachmittags."
     },
     "coverage": {
       "title": "Abdeckung der Waldbranddaten",

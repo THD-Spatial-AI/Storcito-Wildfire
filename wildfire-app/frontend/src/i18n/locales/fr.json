@@ -2,7 +2,10 @@
   "drawing": {
     "clickToDraw": "Cliquer pour dessiner",
     "clickToClose": "Cliquer pour fermer",
-    "start": "Début"
+    "start": "Début",
+    "edit": "Modifier",
+    "moveMap": "Déplacer la carte",
+    "resumeDrawing": "Reprendre le dessin"
   },
   "common": {
     "save": "Enregistrer",
@@ -1282,7 +1285,29 @@
       "veryHigh": "Protection supplémentaire nécessaire",
       "extreme": "Éviter l'exposition au soleil"
     },
-    "dataBy": "Données météo par"
+    "dataBy": "Données météo par",
+    "conditions": {
+      "clear": "Ciel dégagé",
+      "mainlyClear": "Plutôt dégagé",
+      "partlyCloudy": "Partiellement nuageux",
+      "overcast": "Couvert",
+      "fog": "Brouillard",
+      "rimeFog": "Brouillard givrant",
+      "drizzle": "Bruine",
+      "freezingDrizzle": "Bruine verglaçante",
+      "rain": "Pluie",
+      "heavyRain": "Fortes pluies",
+      "freezingRain": "Pluie verglaçante",
+      "snow": "Neige",
+      "heavySnow": "Fortes chutes de neige",
+      "snowGrains": "Neige en grains",
+      "showers": "Averses",
+      "heavyShowers": "Fortes averses",
+      "snowShowers": "Averses de neige",
+      "thunderstorm": "Orage",
+      "thunderstormHail": "Orage avec grêle"
+    },
+    "windSpeedTooltip": "Changez l'unité dans Paramètres → Affichage des données."
   },
   "settings": {
     "title": "Paramètres",
@@ -1342,7 +1367,19 @@
       "windSpeed": "Vitesse du Vent",
       "knots": "nœuds",
       "dataRefresh": "Actualisation des Données",
-      "min": "min"
+      "min": "min",
+      "windUnits": {
+        "kmh": "km/h",
+        "mph": "mph",
+        "ms": "m/s",
+        "knots": "nd"
+      },
+      "textSize": "Taille du texte",
+      "textSizes": {
+        "small": "Petite",
+        "normal": "Normale",
+        "large": "Grande"
+      }
     },
     "notifications": {
       "title": "Notifications",
@@ -1370,6 +1407,21 @@
       "sendNotification": "Envoyer Notification",
       "sent": "Notification envoyée !",
       "failedToSend": "Échec de l'envoi"
+    },
+    "modelCreation": {
+      "title": "Carte d'introduction au modèle",
+      "description": "Contrôle la carte de configuration affichée avant les étapes guidées de création d'un modèle.",
+      "checking": "Vérification de la préférence...",
+      "hidden": "L'introduction est masquée",
+      "enabled": "L'introduction est activée",
+      "hiddenHint": "Réactivez-la si les utilisateurs ont besoin du résumé avant de créer un modèle.",
+      "enabledHint": "Le résumé apparaîtra avant la création d'un nouveau modèle.",
+      "showAgain": "Afficher à nouveau",
+      "loadError": "Impossible de charger cette préférence.",
+      "enabledMessage": "La carte d'introduction s'affichera lors de votre prochaine création de modèle.",
+      "updateError": "Impossible de mettre à jour la préférence de la carte d'introduction.",
+      "sectionTitle": "Création de modèles",
+      "guidancePreferences": "Préférences d'aide"
     }
   },
   "simulationComparison": {
@@ -1446,7 +1498,18 @@
     "regions": "régions",
     "myModels": "mes modèles",
     "grids": "grilles",
-    "countries": "pays"
+    "countries": "pays",
+    "privacyRequired": "Veuillez accepter les conditions relatives aux données et à la confidentialité pour voir la carte",
+    "legend": {
+      "title": "Contours de la carte",
+      "baseMap": "Lignes grises : routes et limites administratives du fond de carte sélectionné",
+      "availableRegions": "Pointillés indigo : régions administratives disponibles",
+      "yourModels": "Zone verte : votre dernier modèle — sélectionnez-le pour ouvrir les résultats",
+      "zoomDetail": "La vue par défaut est la Galice ; le fond de carte révèle plus de détails à mesure que vous zoomez."
+    },
+    "newModelShortcut": "Raccourci : N",
+    "latestModel": "dernier modèle",
+    "latestModelOf": "Votre modèle le plus récent, sur {{total}} créés. Ouvrez Simulations pour voir les autres."
   },
   "privacy": {
     "dataAndPrivacy": "Données et confidentialité",
@@ -1851,7 +1914,11 @@
       "dynamicSelectedOne": "Plage sélectionnée: {{start}} à {{end}} (1 jour).",
       "dynamicSelectInside": "Sélectionnez une plage dans les dates disponibles: {{start}} à {{end}}",
       "dynamicAvailable": "Dates dynamiques disponibles: {{start}} à {{end}}",
-      "hottest": "Le plus chaud"
+      "hottest": "Le plus chaud",
+      "calcModeInfoLabel": "Ce que font les modes de calcul",
+      "calcModeInfo": "Le mode statique évalue une seule journée — une date météo disponible — avec le flux de risque AOI. Le mode dynamique évalue une plage de jours en conservant la séquence météo quotidienne. Les deux utilisent la fenêtre météo de 16h00 à 17h00.",
+      "calcModeHintStatic": "Une journée, choisie parmi les dates météo disponibles.",
+      "calcModeHintDynamic": "Une plage de jours, évaluée jour par jour."
     },
     "layer2": {
       "purpose": "Sélectionnez une région administrative complète, dessinez une zone ou importez une limite GeoJSON.",
@@ -1886,7 +1953,16 @@
       "drawPrompt": "Cliquez sur la carte pour dessiner votre zone. Fermez le polygone pour terminer.",
       "drawToContinue": "Dessinez une zone sur la carte pour continuer.",
       "blockingUploadGeoJson": "Téléchargez un fichier GeoJSON ou revenez au dessin.",
-      "blockingDrawArea": "Dessinez une zone sur la carte pour continuer."
+      "blockingDrawArea": "Dessinez une zone sur la carte pour continuer.",
+      "selectRegion": "Sélectionner la région complète",
+      "regionResolving": "Recherche de la limite administrative…",
+      "regionMapSelected": "{{name}} sélectionnée · cliquez sur une autre région pour la remplacer",
+      "regionMapPrompt": "Cliquez dans une région pour sélectionner sa limite complète",
+      "statusRegionSelected": "{{name}} sélectionnée. Cliquez sur une autre région pour la remplacer.",
+      "statusRegionPrompt": "Cliquez dans une région administrative sur la carte pour sélectionner sa limite complète.",
+      "regionCoverageWarning": "La limite administrative complète est utilisée. Les pixels situés hors de l'emprise ombrée des données incendie peuvent ne pas être calculables.",
+      "statusRegionLabel": "Région sélectionnée",
+      "blockingSelectRegion": "Cliquez dans une région administrative sur la carte pour continuer."
     },
     "layer3": {
       "purpose": "Ces signaux alimentent le modèle de risque pondéré AHP. Les trois sont activés par défaut et recommandés pour une évaluation précise.",
@@ -1905,7 +1981,8 @@
       "customDataDesc": "Apportez vos propres données météo. Si laissé vide, les données régionales incluses sont utilisées.",
       "weatherStationData": "Données de station météo",
       "weatherStationHint": "Export Excel ou CSV (.xlsx / .csv)",
-      "weatherStationInfo": "Mesures horaires d'une station locale (température, humidité, etc.). Utilisé pour calculer le FWI. Sinon, les données régionales sont utilisées."
+      "weatherStationInfo": "Mesures horaires d'une station locale (température, humidité, etc.). Utilisé pour calculer le FWI. Sinon, les données régionales sont utilisées.",
+      "coreSignalsNote": "La végétation (NDVI) et les infrastructures font toujours partie du modèle et ne peuvent pas être désactivées. Désactiver un signal ci-dessus retire sa contribution à la pondération — le calcul se poursuit avec les signaux restants."
     },
     "layer4": {
       "purpose": "Validation en temps réel de la configuration. Les bloquants doivent être résolus dans leurs étapes respectives avant de lancer le calcul.",
@@ -1940,7 +2017,9 @@
         "areaOfInterest": "Zone d'intérêt",
         "riskComponents": "Composants de risque",
         "bufferDistance": "Distance tampon"
-      }
+      },
+      "noRegionSelected": "Aucune région administrative sélectionnée.",
+      "selectedRegionDetails": "{{name}} · {{area}}"
     },
     "layer5": {
       "purpose": "Révisez la configuration du modèle avant d'enregistrer. Le calcul utilisera les dates, zones et sources de données sélectionnées.",
@@ -1958,7 +2037,8 @@
         "buffer": "Tampon",
         "area": "Zone",
         "riskComponents": "Composants"
-      }
+      },
+      "dailyRunInfo": "Chaque journée simulée est évaluée avec la météo de cette plage horaire — la partie la plus chaude et la plus sèche de l'après-midi."
     },
     "coverage": {
       "title": "Couverture des données d'incendies",

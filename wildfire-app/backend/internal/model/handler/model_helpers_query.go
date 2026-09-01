@@ -199,6 +199,10 @@ func (h *ModelHandler) postProcessModelWorkspacesBatch(ctx context.Context, user
 }
 
 func (h *ModelHandler) buildQueryWithWorkspaceFilter(c *gin.Context, userCtx *httputil.UserContext, workspaceIDStr string, limit, offset int) (*gorm.DB, bool) {
+	if isMineOnlyRequest(c) {
+		return h.buildOwnedModelsQuery(userCtx), true
+	}
+
 	// Expert users see all models, skip workspace filtering when no workspace specified
 	if userCtx.AccessLevel == constants.AccessLevelExpert && workspaceIDStr == "" {
 		return h.store.DB(), true
@@ -222,6 +226,24 @@ func (h *ModelHandler) buildQueryWithWorkspaceFilter(c *gin.Context, userCtx *ht
 		return query, true
 	}
 	return h.buildUserAccessQuery(c, userCtx), true
+}
+
+// isMineOnlyRequest reports whether the caller asked to be limited to models
+// they own, via ?mine=true.
+func isMineOnlyRequest(c *gin.Context) bool {
+	switch c.Query("mine") {
+	case "1", "true", "TRUE", "True":
+		return true
+	}
+	return false
+}
+
+func (h *ModelHandler) buildOwnedModelsQuery(userCtx *httputil.UserContext) *gorm.DB {
+	return h.store.DB().Where(
+		"user_id = ? OR LOWER(user_email) = LOWER(?)",
+		userCtx.UserID,
+		userCtx.Email,
+	)
 }
 
 func parseWorkspaceID(workspaceIDStr string) (uint, error) {

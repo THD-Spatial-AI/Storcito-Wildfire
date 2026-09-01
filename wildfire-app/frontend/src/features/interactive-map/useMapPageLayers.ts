@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { modelService } from "@/features/model-dashboard/services/modelService";
 import { reprojectGeoJSON } from "@/features/interactive-map/utils/geojsonProjection";
-export const MAP_MODEL_LIMIT = 100;
+export const MAP_MODEL_LIMIT = 1;
 
 interface MapPageLayerData {
   availableBoundaryGeoJSON?: GeoJSON.FeatureCollection;
@@ -19,8 +19,8 @@ export function useMapPageLayers(userId: string | number | null | undefined): Ma
   const fetchUserModels = useCallback(async () => {
     if (userId == null) return undefined;
     try {
-      // Newest first, so the cap below keeps the models a user is actually working on.
       const response = await modelService.getModels({
+        mine: true,
         limit: MAP_MODEL_LIMIT,
         sort_by: "created_at",
         sort_order: "desc",

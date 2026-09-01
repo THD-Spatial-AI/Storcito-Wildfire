@@ -301,19 +301,16 @@ export const MapComponent: React.FC = () => {
                       className="flex items-center gap-1.5 rounded-lg bg-emerald-500/8 px-2 py-1 dark:bg-emerald-400/10"
                       title={
                         mapPageLayers.modelTotal > mapPageLayers.modelCount
-                          ? t("map.modelsCapped", {
-                              shown: mapPageLayers.modelCount,
+                          ? t("map.latestModelOf", {
                               total: mapPageLayers.modelTotal,
-                              defaultValue: `Showing your {{shown}} most recent models of {{total}}.`,
+                              defaultValue: `Your most recent model, of {{total}} you have created. Open Simulations to see the rest.`,
                             })
                           : undefined
                       }
                     >
                       <Layers className="h-3 w-3 text-emerald-500" />
                       <span className="text-[10px] font-semibold text-foreground">
-                        {mapPageLayers.modelTotal > mapPageLayers.modelCount
-                          ? `${mapPageLayers.modelCount}/${mapPageLayers.modelTotal}`
-                          : mapPageLayers.modelCount} {t("map.myModels", "my models")}
+                        {t("map.latestModel", "latest model")}
                       </span>
                     </div>
                   )}
@@ -337,7 +334,7 @@ export const MapComponent: React.FC = () => {
                       className="mt-0.5 h-2.5 w-4 shrink-0 rounded-sm border-2"
                       style={{ borderColor: "rgba(52, 211, 153, 0.95)", background: "rgba(52, 211, 153, 0.18)" }}
                     />
-                    <span>{t("map.legend.yourModels", "Green areas: your saved models — select one to open it")}</span>
+                    <span>{t("map.legend.yourModels", "Green area: your latest model — select it to open the results")}</span>
                   </div>
                 )}
                 <p className="pt-0.5">{t("map.legend.zoomDetail", "The default view is Galicia; the base map reveals more detail as you zoom in.")}</p>

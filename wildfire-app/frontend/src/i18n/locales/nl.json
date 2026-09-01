@@ -1128,7 +1128,29 @@
       "veryHigh": "Extra bescherming nodig",
       "extreme": "Vermijd blootstelling aan de zon"
     },
-    "dataBy": "Weerdata door"
+    "dataBy": "Weerdata door",
+    "conditions": {
+      "clear": "Heldere hemel",
+      "mainlyClear": "Overwegend helder",
+      "partlyCloudy": "Gedeeltelijk bewolkt",
+      "overcast": "Zwaarbewolkt",
+      "fog": "Mist",
+      "rimeFog": "Aanvriezende mist",
+      "drizzle": "Motregen",
+      "freezingDrizzle": "Aanvriezende motregen",
+      "rain": "Regen",
+      "heavyRain": "Zware regen",
+      "freezingRain": "IJzel",
+      "snow": "Sneeuw",
+      "heavySnow": "Zware sneeuwval",
+      "snowGrains": "Motsneeuw",
+      "showers": "Regenbuien",
+      "heavyShowers": "Zware regenbuien",
+      "snowShowers": "Sneeuwbuien",
+      "thunderstorm": "Onweer",
+      "thunderstormHail": "Onweer met hagel"
+    },
+    "windSpeedTooltip": "Wijzig de eenheid bij Instellingen → Gegevensweergave."
   },
   "settings": {
     "title": "Instellingen",
@@ -1188,7 +1210,19 @@
       "windSpeed": "Windsnelheid",
       "knots": "knopen",
       "dataRefresh": "Data Verversing",
-      "min": "min"
+      "min": "min",
+      "windUnits": {
+        "kmh": "km/u",
+        "mph": "mph",
+        "ms": "m/s",
+        "knots": "kn"
+      },
+      "textSize": "Tekstgrootte",
+      "textSizes": {
+        "small": "Klein",
+        "normal": "Normaal",
+        "large": "Groot"
+      }
     },
     "notifications": {
       "title": "Meldingen",
@@ -1216,6 +1250,21 @@
       "sendNotification": "Melding Verzenden",
       "sent": "Melding verzonden!",
       "failedToSend": "Verzenden mislukt"
+    },
+    "modelCreation": {
+      "title": "Introductiekaart van het model",
+      "description": "Bepaalt of de instelkaart verschijnt vóór de begeleide stappen om een model te maken.",
+      "checking": "Voorkeur controleren...",
+      "hidden": "Introductie is verborgen",
+      "enabled": "Introductie staat aan",
+      "hiddenHint": "Zet hem weer aan als gebruikers de samenvatting nodig hebben voordat ze een model maken.",
+      "enabledHint": "De samenvatting verschijnt voordat een nieuw model wordt gemaakt.",
+      "showAgain": "Opnieuw tonen",
+      "loadError": "Deze voorkeur kan niet worden geladen.",
+      "enabledMessage": "De introductiekaart verschijnt de volgende keer dat u een model maakt.",
+      "updateError": "De voorkeur voor de introductiekaart kan niet worden bijgewerkt.",
+      "sectionTitle": "Modellen maken",
+      "guidancePreferences": "Voorkeuren voor begeleiding"
     }
   },
   "simulationComparison": {
@@ -1292,7 +1341,18 @@
     "regions": "regio's",
     "myModels": "mijn modellen",
     "grids": "rasters",
-    "countries": "landen"
+    "countries": "landen",
+    "privacyRequired": "Accepteer de voorwaarden voor gegevens en privacy om de kaart te bekijken",
+    "legend": {
+      "title": "Kaartcontouren",
+      "baseMap": "Grijze lijnen: wegen en bestuurlijke grenzen van de gekozen achtergrondkaart",
+      "availableRegions": "Indigo streepjes: beschikbare bestuurlijke regio's",
+      "yourModels": "Groen gebied: uw nieuwste model — selecteer het om de resultaten te openen",
+      "zoomDetail": "De standaardweergave is Galicië; bij inzoomen toont de achtergrondkaart meer detail."
+    },
+    "newModelShortcut": "Sneltoets: N",
+    "latestModel": "nieuwste model",
+    "latestModelOf": "Uw nieuwste model, van de {{total}} die u hebt gemaakt. Open Simulaties om de rest te zien."
   },
   "privacy": {
     "dataAndPrivacy": "Gegevens & Privacy",
@@ -1315,7 +1375,10 @@
   "drawing": {
     "clickToDraw": "Klik om te tekenen",
     "clickToClose": "Klik om te sluiten",
-    "start": "Start"
+    "start": "Start",
+    "edit": "Bewerken",
+    "moveMap": "Kaart verplaatsen",
+    "resumeDrawing": "Verder tekenen"
   },
   "forms": {
     "user": {
@@ -1851,7 +1914,11 @@
       "dynamicSelectedOne": "Geselecteerd bereik: {{start}} tot {{end}} (1 dag).",
       "dynamicSelectInside": "Selecteer een bereik binnen beschikbare data: {{start}} tot {{end}}",
       "dynamicAvailable": "Beschikbare dynamische data: {{start}} tot {{end}}",
-      "hottest": "Heetste"
+      "hottest": "Heetste",
+      "calcModeInfoLabel": "Wat de rekenmodi doen",
+      "calcModeInfo": "Statisch beoordeelt één dag — één beschikbare weerdatum — met de AOI-risicoworkflow. Dynamisch beoordeelt een reeks dagen en behoudt de dagelijkse weerreeks. Beide gebruiken het weervenster van 16:00 tot 17:00 uur.",
+      "calcModeHintStatic": "Eén dag, gekozen uit de beschikbare weerdata.",
+      "calcModeHintDynamic": "Een reeks dagen, dag voor dag beoordeeld."
     },
     "layer2": {
       "purpose": "Selecteer een volledige administratieve regio, teken een gebied of upload een GeoJSON-grens.",
@@ -1886,7 +1953,16 @@
       "drawPrompt": "Klik op de kaart om uw gebied te tekenen. Sluit de polygoon om te voltooien.",
       "drawToContinue": "Teken een gebied op de kaart om door te gaan.",
       "blockingUploadGeoJson": "Upload een GeoJSON-bestand of schakel terug naar tekenen.",
-      "blockingDrawArea": "Teken een gebied op de kaart om door te gaan."
+      "blockingDrawArea": "Teken een gebied op de kaart om door te gaan.",
+      "selectRegion": "Volledige regio selecteren",
+      "regionResolving": "Bestuurlijke grens zoeken…",
+      "regionMapSelected": "{{name}} geselecteerd · klik op een andere regio om deze te vervangen",
+      "regionMapPrompt": "Klik in een regio om de volledige grens te selecteren",
+      "statusRegionSelected": "{{name}} geselecteerd. Klik op een andere regio om deze te vervangen.",
+      "statusRegionPrompt": "Klik op de kaart in een bestuurlijke regio om de volledige grens te selecteren.",
+      "regionCoverageWarning": "De volledige bestuurlijke grens wordt gebruikt. Pixels buiten het gearceerde gebied met brandgegevens zijn mogelijk niet berekenbaar.",
+      "statusRegionLabel": "Regio geselecteerd",
+      "blockingSelectRegion": "Klik op de kaart in een bestuurlijke regio om verder te gaan."
     },
     "layer3": {
       "purpose": "Deze signalen voeden het AHP-gewogen risicomodel. Alle drie zijn standaard ingeschakeld en aanbevolen voor een nauwkeurige beoordeling.",
@@ -1905,7 +1981,8 @@
       "customDataDesc": "Breng uw eigen weer-inputs mee. Indien leeg, worden de meegeleverde regionale data gebruikt.",
       "weatherStationData": "Weerstation data",
       "weatherStationHint": "Excel- of CSV-export (.xlsx / .csv)",
-      "weatherStationInfo": "Uurlijkse weermetingen van een lokaal station. Wordt gebruikt om FWI te berekenen. Anders worden regionale weerdata gebruikt."
+      "weatherStationInfo": "Uurlijkse weermetingen van een lokaal station. Wordt gebruikt om FWI te berekenen. Anders worden regionale weerdata gebruikt.",
+      "coreSignalsNote": "Vegetatie (NDVI) en infrastructuur maken altijd deel uit van het model en kunnen niet worden uitgezet. Een signaal hierboven uitzetten verwijdert de bijdrage ervan aan de weging — de berekening gaat verder met de overige signalen."
     },
     "layer4": {
       "purpose": "Realtime validatie van de modelconfiguratie. Blokkades moeten worden opgelost voordat de berekening start.",
@@ -1940,7 +2017,9 @@
         "areaOfInterest": "Interessegebied",
         "riskComponents": "Risicocomponenten",
         "bufferDistance": "Buffer afstand"
-      }
+      },
+      "noRegionSelected": "Geen bestuurlijke regio geselecteerd.",
+      "selectedRegionDetails": "{{name}} · {{area}}"
     },
     "layer5": {
       "purpose": "Controleer de modelinstellingen voor het opslaan. De berekening gebruikt de geselecteerde datums, het gebied en de data.",
@@ -1958,7 +2037,8 @@
         "buffer": "Buffer",
         "area": "Gebied",
         "riskComponents": "Componenten"
-      }
+      },
+      "dailyRunInfo": "Elke gesimuleerde dag wordt beoordeeld met het weer uit dit tijdvenster — het heetste en droogste deel van de middag."
     },
     "coverage": {
       "title": "Dekking brandgegevens",

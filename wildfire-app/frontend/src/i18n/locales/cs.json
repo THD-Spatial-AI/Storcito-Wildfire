@@ -1128,7 +1128,29 @@
       "veryHigh": "Potřeba extra ochrana",
       "extreme": "Vyhněte se slunečnímu záření"
     },
-    "dataBy": "Meteorologická data od"
+    "dataBy": "Meteorologická data od",
+    "conditions": {
+      "clear": "Jasno",
+      "mainlyClear": "Převážně jasno",
+      "partlyCloudy": "Polojasno",
+      "overcast": "Zataženo",
+      "fog": "Mlha",
+      "rimeFog": "Mrznoucí mlha",
+      "drizzle": "Mrholení",
+      "freezingDrizzle": "Mrznoucí mrholení",
+      "rain": "Déšť",
+      "heavyRain": "Silný déšť",
+      "freezingRain": "Mrznoucí déšť",
+      "snow": "Sníh",
+      "heavySnow": "Silné sněžení",
+      "snowGrains": "Sněhová zrna",
+      "showers": "Dešťové přeháňky",
+      "heavyShowers": "Silné dešťové přeháňky",
+      "snowShowers": "Sněhové přeháňky",
+      "thunderstorm": "Bouřka",
+      "thunderstormHail": "Bouřka s krupobitím"
+    },
+    "windSpeedTooltip": "Jednotku změníte v Nastavení → Zobrazení dat."
   },
   "settings": {
     "title": "Nastavení",
@@ -1188,7 +1210,19 @@
       "windSpeed": "Rychlost Větru",
       "knots": "uzly",
       "dataRefresh": "Obnovení Dat",
-      "min": "min"
+      "min": "min",
+      "windUnits": {
+        "kmh": "km/h",
+        "mph": "mph",
+        "ms": "m/s",
+        "knots": "uzly"
+      },
+      "textSize": "Velikost textu",
+      "textSizes": {
+        "small": "Malý",
+        "normal": "Normální",
+        "large": "Velký"
+      }
     },
     "notifications": {
       "title": "Oznámení",
@@ -1216,6 +1250,21 @@
       "sendNotification": "Odeslat Oznámení",
       "sent": "Oznámení odesláno!",
       "failedToSend": "Odeslání selhalo"
+    },
+    "modelCreation": {
+      "title": "Úvodní karta modelu",
+      "description": "Určuje, zda se před průvodcem tvorbou modelu zobrazí úvodní karta s nastavením.",
+      "checking": "Kontrola předvolby...",
+      "hidden": "Úvod je skrytý",
+      "enabled": "Úvod je zapnutý",
+      "hiddenHint": "Zapněte jej znovu, když uživatelé potřebují shrnutí před vytvořením modelu.",
+      "enabledHint": "Shrnutí se zobrazí před vytvořením nového modelu.",
+      "showAgain": "Zobrazit znovu",
+      "loadError": "Tuto předvolbu se nepodařilo načíst.",
+      "enabledMessage": "Úvodní karta se zobrazí při příštím vytváření modelu.",
+      "updateError": "Předvolbu úvodní karty se nepodařilo aktualizovat.",
+      "sectionTitle": "Tvorba modelů",
+      "guidancePreferences": "Předvolby nápovědy"
     }
   },
   "simulationComparison": {
@@ -1292,7 +1341,18 @@
     "regions": "regiony",
     "myModels": "moje modely",
     "grids": "mřížky",
-    "countries": "země"
+    "countries": "země",
+    "privacyRequired": "Pro zobrazení mapy přijměte podmínky o datech a soukromí",
+    "legend": {
+      "title": "Obrysy mapy",
+      "baseMap": "Šedé linie: silnice a správní hranice z vybrané podkladové mapy",
+      "availableRegions": "Indigová čárkovaná: dostupné správní regiony",
+      "yourModels": "Zelená plocha: váš nejnovější model — vyberte jej pro zobrazení výsledků",
+      "zoomDetail": "Výchozí pohled je Galicie; při přiblížení ukáže podkladová mapa více detailů."
+    },
+    "newModelShortcut": "Zkratka: N",
+    "latestModel": "nejnovější model",
+    "latestModelOf": "Váš nejnovější model z {{total}} vytvořených. Otevřete Simulace pro zobrazení ostatních."
   },
   "privacy": {
     "dataAndPrivacy": "Data a soukromí",
@@ -1315,7 +1375,10 @@
   "drawing": {
     "clickToDraw": "Klikněte pro kreslení",
     "clickToClose": "Klikněte pro uzavření",
-    "start": "Start"
+    "start": "Start",
+    "edit": "Upravit",
+    "moveMap": "Posunout mapu",
+    "resumeDrawing": "Pokračovat v kreslení"
   },
   "forms": {
     "user": {
@@ -1851,7 +1914,11 @@
       "dynamicSelectedOne": "Vybraný rozsah: {{start}} až {{end}} (1 den).",
       "dynamicSelectInside": "Vyberte rozsah v rámci dostupných dat: {{start}} až {{end}}",
       "dynamicAvailable": "Dostupná dynamická data: {{start}} až {{end}}",
-      "hottest": "Nejteplejší"
+      "hottest": "Nejteplejší",
+      "calcModeInfoLabel": "Co dělají režimy výpočtu",
+      "calcModeInfo": "Statický režim vyhodnotí jeden den — jedno dostupné datum s počasím — pomocí postupu rizika AOI. Dynamický režim vyhodnotí rozsah dnů a zachová denní posloupnost počasí. Oba používají okno počasí 16:00–17:00.",
+      "calcModeHintStatic": "Jeden den vybraný z dostupných dat s počasím.",
+      "calcModeHintDynamic": "Rozsah dnů vyhodnocený den po dni."
     },
     "layer2": {
       "purpose": "Vyberte celý správní region, nakreslete oblast nebo nahrajte hranici GeoJSON.",
@@ -1886,7 +1953,16 @@
       "drawPrompt": "Kliknutím na mapu nakreslete svou oblast. Uzavřete polygon pro dokončení.",
       "drawToContinue": "Nakreslete oblast na mapě pro pokračování.",
       "blockingUploadGeoJson": "Nahrajte soubor GeoJSON nebo se vraťte ke kreslení.",
-      "blockingDrawArea": "Nakreslete oblast na mapě pro pokračování."
+      "blockingDrawArea": "Nakreslete oblast na mapě pro pokračování.",
+      "selectRegion": "Vybrat celý region",
+      "regionResolving": "Hledání správní hranice…",
+      "regionMapSelected": "{{name}} vybrán · kliknutím na jiný region jej nahradíte",
+      "regionMapPrompt": "Kliknutím dovnitř regionu vyberete jeho celou hranici",
+      "statusRegionSelected": "{{name}} vybrán. Kliknutím na jiný region jej nahradíte.",
+      "statusRegionPrompt": "Kliknutím dovnitř správního regionu na mapě vyberete jeho celou hranici.",
+      "regionCoverageWarning": "Používá se celá správní hranice. Pixely mimo vyšrafovaný rozsah dat o požárech nemusí být spočitatelné.",
+      "statusRegionLabel": "Region vybrán",
+      "blockingSelectRegion": "Pokračujte kliknutím dovnitř správního regionu na mapě."
     },
     "layer3": {
       "purpose": "Tyto signály napájejí model rizika. Všechny tři jsou ve výchozím nastavení povoleny a doporučují se pro přesné posouzení.",
@@ -1905,7 +1981,8 @@
       "customDataDesc": "Přineste si vlastní údaje o počasí. Jinak se použijí přibalená regionální data.",
       "weatherStationData": "Údaje meteorologické stanice",
       "weatherStationHint": "Export Excel nebo CSV (.xlsx / .csv)",
-      "weatherStationInfo": "Hodinová měření ze stanice. Používá se k výpočtu FWI. Jinak se použijí regionální data."
+      "weatherStationInfo": "Hodinová měření ze stanice. Používá se k výpočtu FWI. Jinak se použijí regionální data.",
+      "coreSignalsNote": "Vegetace (NDVI) a infrastruktura jsou vždy součástí modelu a nelze je vypnout. Vypnutím některého signálu výše odeberete jeho podíl na vahách — výpočet pokračuje se zbývajícími signály."
     },
     "layer4": {
       "purpose": "Ověření konfigurace v reálném čase. Blokátory musí být odstraněny před spuštěním.",
@@ -1940,7 +2017,9 @@
         "areaOfInterest": "Zájmová oblast",
         "riskComponents": "Komponenty rizika",
         "bufferDistance": "Vzdálenost vyrovnávací paměti"
-      }
+      },
+      "noRegionSelected": "Není vybrán žádný správní region.",
+      "selectedRegionDetails": "{{name}} · {{area}}"
     },
     "layer5": {
       "purpose": "Zkontrolujte nastavení modelu před uložením. Výpočet použije vybraná data, oblast a datové vstupy.",
@@ -1958,7 +2037,8 @@
         "buffer": "Vyrovnávací paměť",
         "area": "Oblast",
         "riskComponents": "Komponenty"
-      }
+      },
+      "dailyRunInfo": "Každý simulovaný den se vyhodnocuje počasím z tohoto okna — z nejteplejší a nejsušší části odpoledne."
     },
     "coverage": {
       "title": "Pokrytí daty o požárech",

@@ -1500,15 +1500,16 @@
     "grids": "grids",
     "countries": "countries",
     "privacyRequired": "Please accept the Data & Privacy terms to view the map",
-    "modelsCapped": "Showing your {{shown}} most recent models of {{total}}.",
     "legend": {
       "title": "Map outlines",
       "baseMap": "Gray lines: roads and administrative boundaries from the selected base map",
       "availableRegions": "Dashed indigo: available administrative regions",
-      "yourModels": "Green areas: your saved models — select one to open it",
+      "yourModels": "Green area: your latest model — select it to open the results",
       "zoomDetail": "The default view is Galicia; the base map reveals more detail as you zoom in."
     },
-    "newModelShortcut": "Shortcut: N"
+    "newModelShortcut": "Shortcut: N",
+    "latestModel": "latest model",
+    "latestModelOf": "Your most recent model, of {{total}} you have created. Open Simulations to see the rest."
   },
   "privacy": {
     "dataAndPrivacy": "Data & Privacy",

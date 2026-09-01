@@ -2,6 +2,7 @@ package routes
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -146,12 +147,19 @@ func registerFrontend(r *gin.Engine) {
 	r.Static("/cesium", "./www/cesium")
 	r.Static("/images", "./www/images")
 	r.StaticFile("/vite.svg", "./www/vite.svg")
+	staticPrefixes := []string{"/assets/", "/cesium/", "/images/"}
 
 	r.NoRoute(func(c *gin.Context) {
 		path := c.Request.URL.Path
-		if len(path) >= 4 && path[:4] == "/api" {
-			c.JSON(404, gin.H{"error": "API endpoint not found"})
+		if strings.HasPrefix(path, "/api") {
+			c.JSON(http.StatusNotFound, gin.H{"error": "API endpoint not found"})
 			return
+		}
+		for _, prefix := range staticPrefixes {
+			if strings.HasPrefix(path, prefix) {
+				c.Status(http.StatusNotFound)
+				return
+			}
 		}
 		c.File("./www/index.html")
 	})

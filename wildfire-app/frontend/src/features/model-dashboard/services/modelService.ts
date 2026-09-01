@@ -1,41 +1,41 @@
-import axios from '@/lib/axios';
-import { ModelStatus } from '@/types/models';
-import type { AxiosResponse } from 'axios';
+import axios from "@/lib/axios";
+import { ModelStatus } from "@/types/models";
+import type { AxiosResponse } from "axios";
 
 /**
- * 
+ *
  * This function avoids ReDoS
- * 
+ *
  * @param title
  * @returns
  */
 function extractBaseTitle(title: string): string {
   if (!title) return title;
-  
+
   // Limit title length to prevent DoS
   if (title.length > 500) {
     title = title.substring(0, 500);
   }
-  
+
   // Check if title ends with " v<number>" pattern
   // Use simple string operations instead of regex
   const trimmedTitle = title.trim();
-  const lastSpaceIndex = trimmedTitle.lastIndexOf(' ');
-  
+  const lastSpaceIndex = trimmedTitle.lastIndexOf(" ");
+
   if (lastSpaceIndex === -1) {
     return trimmedTitle;
   }
-  
+
   const possibleVersion = trimmedTitle.substring(lastSpaceIndex);
   // Simple check: starts with " v" followed by digits
-  if (possibleVersion.length >= 3 && possibleVersion.startsWith(' v')) {
+  if (possibleVersion.length >= 3 && possibleVersion.startsWith(" v")) {
     const numberPart = possibleVersion.substring(2);
     // Check if rest is all digits (safe check without regex)
     if (/^\d{1,5}$/.test(numberPart)) {
       return trimmedTitle.substring(0, lastSpaceIndex);
     }
   }
-  
+
   return trimmedTitle;
 }
 
@@ -121,7 +121,7 @@ export interface ModelShare {
   model_id: number;
   user_id: number | string;
   email: string;
-  permission: 'view' | 'edit';
+  permission: "view" | "edit";
   shared_at: string;
   created_at: string;
   updated_at: string;
@@ -198,7 +198,7 @@ interface ModelStatsResponse {
 }
 
 class ModelService {
-  private readonly baseURL = '/models';
+  private readonly baseURL = "/models";
 
   async createModel(data: CreateModelRequest): Promise<ModelResponse> {
     const response = await axios.post(this.baseURL, data);
@@ -212,6 +212,7 @@ class ModelService {
     workspace_id?: number;
     sort_by?: string;
     sort_order?: string;
+    mine?: boolean;
   }): Promise<ModelListResponse> {
     const response = await axios.get(this.baseURL, { params });
     return response.data;
@@ -245,20 +246,20 @@ class ModelService {
   // Upload optional per-model input files (station data + DTM); no-op when none given.
   async uploadModelInputs(
     id: number,
-    files: { stationData?: File | null; dtm?: File | null },
+    files: { stationData?: File | null; dtm?: File | null }
   ): Promise<void> {
     if (!files.stationData && !files.dtm) return;
     const formData = new FormData();
-    if (files.stationData) formData.append('station_data', files.stationData);
-    if (files.dtm) formData.append('dtm', files.dtm);
+    if (files.stationData) formData.append("station_data", files.stationData);
+    if (files.dtm) formData.append("dtm", files.dtm);
     await axios.post(`${this.baseURL}/${id}/inputs`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: { "Content-Type": "multipart/form-data" },
     });
   }
 
   async downloadModelResults(id: number): Promise<AxiosResponse<Blob>> {
     return axios.get(`${this.baseURL}/${id}/download`, {
-      responseType: 'blob',
+      responseType: "blob",
     });
   }
 
@@ -271,7 +272,7 @@ class ModelService {
     // Fetch original model
     const originalResponse = await this.getModelById(id);
     if (!originalResponse.success) {
-      throw new Error('Failed to fetch original simulation');
+      throw new Error("Failed to fetch original simulation");
     }
 
     const original = originalResponse.data;
@@ -279,7 +280,7 @@ class ModelService {
     // YYYY-MM-DD formatter
     const formatDate = (dateStr: string): string => {
       const date = new Date(dateStr);
-      return date.toISOString().split('T')[0];
+      return date.toISOString().split("T")[0];
     };
 
     let groupId = original.group_id;
@@ -300,7 +301,7 @@ class ModelService {
     } else {
       const allModelsResponse = await this.getModels();
       if (!allModelsResponse.success) {
-        throw new Error('Failed to fetch existing models for version calculation');
+        throw new Error("Failed to fetch existing models for version calculation");
       }
       allModels = allModelsResponse.data;
     }
@@ -310,7 +311,7 @@ class ModelService {
 
     // Check if version part matches pattern " v<number>"
     const versionRegex = /^ v(\d{1,5})$/;
-    const siblings = allModels.filter(model => {
+    const siblings = allModels.filter((model) => {
       if (model.parent_model_id !== parentModelId) return false;
       if (!model.title.startsWith(baseTitle)) return false;
 
@@ -360,7 +361,10 @@ class ModelService {
     return response.data;
   }
 
-  async bulkMoveModels(modelIds: number[], workspaceId: number): Promise<{ success: boolean; message: string }> {
+  async bulkMoveModels(
+    modelIds: number[],
+    workspaceId: number
+  ): Promise<{ success: boolean; message: string }> {
     const response = await axios.patch(`${this.baseURL}/bulk-move`, {
       model_ids: modelIds,
       workspace_id: workspaceId,
@@ -375,7 +379,10 @@ class ModelService {
     return response.data;
   }
 
-  async revokeModelShare(id: number, shareId: number): Promise<{ success: boolean; message: string }> {
+  async revokeModelShare(
+    id: number,
+    shareId: number
+  ): Promise<{ success: boolean; message: string }> {
     const response = await axios.delete(`${this.baseURL}/${id}/shares/${shareId}`);
     return response.data;
   }

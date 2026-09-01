@@ -1128,7 +1128,29 @@
       "veryHigh": "Wymagana dodatkowa ochrona",
       "extreme": "Unikaj ekspozycji na słońce"
     },
-    "dataBy": "Dane pogodowe od"
+    "dataBy": "Dane pogodowe od",
+    "conditions": {
+      "clear": "Bezchmurnie",
+      "mainlyClear": "Przeważnie bezchmurnie",
+      "partlyCloudy": "Częściowe zachmurzenie",
+      "overcast": "Zachmurzenie całkowite",
+      "fog": "Mgła",
+      "rimeFog": "Mgła osadzająca szadź",
+      "drizzle": "Mżawka",
+      "freezingDrizzle": "Marznąca mżawka",
+      "rain": "Deszcz",
+      "heavyRain": "Silny deszcz",
+      "freezingRain": "Marznący deszcz",
+      "snow": "Śnieg",
+      "heavySnow": "Intensywne opady śniegu",
+      "snowGrains": "Krupa śnieżna",
+      "showers": "Przelotne opady deszczu",
+      "heavyShowers": "Silne przelotne opady deszczu",
+      "snowShowers": "Przelotne opady śniegu",
+      "thunderstorm": "Burza",
+      "thunderstormHail": "Burza z gradem"
+    },
+    "windSpeedTooltip": "Jednostkę zmienisz w Ustawieniach → Wyświetlanie danych."
   },
   "settings": {
     "title": "Ustawienia",
@@ -1188,7 +1210,19 @@
       "windSpeed": "Prędkość Wiatru",
       "knots": "węzły",
       "dataRefresh": "Odświeżanie Danych",
-      "min": "min"
+      "min": "min",
+      "windUnits": {
+        "kmh": "km/h",
+        "mph": "mph",
+        "ms": "m/s",
+        "knots": "w."
+      },
+      "textSize": "Rozmiar tekstu",
+      "textSizes": {
+        "small": "Mały",
+        "normal": "Normalny",
+        "large": "Duży"
+      }
     },
     "notifications": {
       "title": "Powiadomienia",
@@ -1216,6 +1250,21 @@
       "sendNotification": "Wyślij Powiadomienie",
       "sent": "Powiadomienie wysłane!",
       "failedToSend": "Wysyłanie nie powiodło się"
+    },
+    "modelCreation": {
+      "title": "Karta wprowadzenia do modelu",
+      "description": "Decyduje o karcie konfiguracji pokazywanej przed prowadzonymi krokami tworzenia modelu.",
+      "checking": "Sprawdzanie ustawienia...",
+      "hidden": "Wprowadzenie jest ukryte",
+      "enabled": "Wprowadzenie jest włączone",
+      "hiddenHint": "Włącz je ponownie, gdy użytkownicy potrzebują podsumowania przed utworzeniem modelu.",
+      "enabledHint": "Podsumowanie pojawi się przed utworzeniem nowego modelu.",
+      "showAgain": "Pokaż ponownie",
+      "loadError": "Nie można wczytać tego ustawienia.",
+      "enabledMessage": "Karta wprowadzenia pojawi się przy następnym tworzeniu modelu.",
+      "updateError": "Nie można zaktualizować ustawienia karty wprowadzenia.",
+      "sectionTitle": "Tworzenie modeli",
+      "guidancePreferences": "Ustawienia wskazówek"
     }
   },
   "simulationComparison": {
@@ -1292,7 +1341,18 @@
     "regions": "regiony",
     "myModels": "moje modele",
     "grids": "siatki",
-    "countries": "kraje"
+    "countries": "kraje",
+    "privacyRequired": "Zaakceptuj warunki dotyczące danych i prywatności, aby zobaczyć mapę",
+    "legend": {
+      "title": "Kontury mapy",
+      "baseMap": "Szare linie: drogi i granice administracyjne z wybranej mapy podkładowej",
+      "availableRegions": "Indygowa przerywana: dostępne regiony administracyjne",
+      "yourModels": "Zielony obszar: Twój najnowszy model — wybierz go, aby otworzyć wyniki",
+      "zoomDetail": "Widok domyślny to Galicja; przy przybliżaniu mapa podkładowa pokazuje więcej szczegółów."
+    },
+    "newModelShortcut": "Skrót: N",
+    "latestModel": "najnowszy model",
+    "latestModelOf": "Twój najnowszy model spośród {{total}} utworzonych. Otwórz Symulacje, aby zobaczyć pozostałe."
   },
   "privacy": {
     "dataAndPrivacy": "Dane i prywatność",
@@ -1315,7 +1375,10 @@
   "drawing": {
     "clickToDraw": "Kliknij, aby rysować",
     "clickToClose": "Kliknij, aby zamknąć",
-    "start": "Start"
+    "start": "Start",
+    "edit": "Edytuj",
+    "moveMap": "Przesuń mapę",
+    "resumeDrawing": "Wznów rysowanie"
   },
   "forms": {
     "user": {
@@ -1851,7 +1914,11 @@
       "dynamicSelectedOne": "Wybrany zakres: {{start}} do {{end}} (1 dzień).",
       "dynamicSelectInside": "Wybierz zakres z dostępnych dat: {{start}} do {{end}}",
       "dynamicAvailable": "Dostępne daty dynamiczne: {{start}} do {{end}}",
-      "hottest": "Najgorętszy"
+      "hottest": "Najgorętszy",
+      "calcModeInfoLabel": "Co robią tryby obliczeń",
+      "calcModeInfo": "Tryb statyczny ocenia jeden dzień — jedną dostępną datę pogodową — w przepływie ryzyka AOI. Tryb dynamiczny ocenia zakres dni, zachowując dzienną sekwencję pogodową. Oba używają okna pogodowego 16:00–17:00.",
+      "calcModeHintStatic": "Jeden dzień, wybrany spośród dostępnych dat pogodowych.",
+      "calcModeHintDynamic": "Zakres dni, oceniany dzień po dniu."
     },
     "layer2": {
       "purpose": "Wybierz cały region administracyjny, narysuj obszar lub prześlij granicę GeoJSON.",
@@ -1886,7 +1953,16 @@
       "drawPrompt": "Kliknij na mapie, aby narysować obszar. Zamknij wielokąt, aby zakończyć.",
       "drawToContinue": "Narysuj obszar na mapie, aby kontynuować.",
       "blockingUploadGeoJson": "Prześlij plik GeoJSON lub wróć do rysowania.",
-      "blockingDrawArea": "Narysuj obszar na mapie, aby kontynuować."
+      "blockingDrawArea": "Narysuj obszar na mapie, aby kontynuować.",
+      "selectRegion": "Wybierz cały region",
+      "regionResolving": "Wyszukiwanie granicy administracyjnej…",
+      "regionMapSelected": "Wybrano: {{name}} · kliknij inny region, aby go zastąpić",
+      "regionMapPrompt": "Kliknij wewnątrz regionu, aby wybrać jego pełną granicę",
+      "statusRegionSelected": "Wybrano: {{name}}. Kliknij inny region, aby go zastąpić.",
+      "statusRegionPrompt": "Kliknij na mapie wewnątrz regionu administracyjnego, aby wybrać jego pełną granicę.",
+      "regionCoverageWarning": "Używana jest pełna granica administracyjna. Piksele poza zacienionym zasięgiem danych o pożarach mogą nie być obliczalne.",
+      "statusRegionLabel": "Wybrano region",
+      "blockingSelectRegion": "Kliknij na mapie wewnątrz regionu administracyjnego, aby kontynuować."
     },
     "layer3": {
       "purpose": "Te sygnały zasilają model ryzyka. Wszystkie trzy są domyślnie włączone i zalecane do dokładnej oceny.",
@@ -1905,7 +1981,8 @@
       "customDataDesc": "Wprowadź własne dane pogodowe. W przeciwnym razie użyte zostaną dane w pakiecie.",
       "weatherStationData": "Dane ze stacji pogodowej",
       "weatherStationHint": "Eksport stacji w Excelu lub CSV (.xlsx / .csv)",
-      "weatherStationInfo": "Godzinowe pomiary ze stacji. Używane do obliczenia FWI. W przeciwnym razie użyte zostaną dane regionalne."
+      "weatherStationInfo": "Godzinowe pomiary ze stacji. Używane do obliczenia FWI. W przeciwnym razie użyte zostaną dane regionalne.",
+      "coreSignalsNote": "Roślinność (NDVI) i infrastruktura zawsze wchodzą w skład modelu i nie można ich wyłączyć. Wyłączenie sygnału powyżej usuwa jego udział w wagach — obliczenia trwają dalej z pozostałymi sygnałami."
     },
     "layer4": {
       "purpose": "Weryfikacja w czasie rzeczywistym. Blokady muszą zostać naprawione przed uruchomieniem.",
@@ -1940,7 +2017,9 @@
         "areaOfInterest": "Obszar zainteresowania",
         "riskComponents": "Komponenty ryzyka",
         "bufferDistance": "Dystans bufora"
-      }
+      },
+      "noRegionSelected": "Nie wybrano regionu administracyjnego.",
+      "selectedRegionDetails": "{{name}} · {{area}}"
     },
     "layer5": {
       "purpose": "Przejrzyj konfigurację modelu przed zapisaniem. Obliczenia użyją wybranych dat, obszaru i danych.",
@@ -1958,7 +2037,8 @@
         "buffer": "Bufor",
         "area": "Obszar",
         "riskComponents": "Komponenty"
-      }
+      },
+      "dailyRunInfo": "Każdy symulowany dzień jest oceniany na podstawie pogody z tego okna — najgorętszej i najsuchszej części popołudnia."
     },
     "coverage": {
       "title": "Zasięg danych o pożarach",
