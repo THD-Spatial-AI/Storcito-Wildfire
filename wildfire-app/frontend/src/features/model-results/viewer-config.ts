@@ -52,7 +52,6 @@ export const POLL_INTERVAL_MS = 10_000;
 // Raster transparency is applied only here; users adjust it with the opacity slider.
 export const FIRE_RISK_DEFAULT_OPACITY = 0.7;
 export const FIRE_RISK_STYLE_VERSION = "risk-style-storcito-v8";
-export const MAP_REFERENCE_DARK_OPACITY = 0.95;
 export const MAP_REFERENCE_LIGHT_ROADS_OPACITY = 0.82;
 export const MAP_REFERENCE_LIGHT_LABELS_OPACITY = 0.62;
 // Transparent transportation overlay, readable over the risk raster.

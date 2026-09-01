@@ -1032,8 +1032,6 @@
       "osmHumanitarian": "Humanitarian style OpenStreetMap",
       "cartoPositron": "Light theme base map by CartoDB",
       "cartoVoyager": "Detailed raster base map by CartoDB",
-      "openTopoMap": "Topographic style map",
-      "maplibreDark": "Dark vector basemap",
       "maplibreVoyager": "Detailed vector basemap"
     },
     "tooltip": "Base Maps"

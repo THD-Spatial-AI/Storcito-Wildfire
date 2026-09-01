@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { isMapLibreDarkLayerId, useMapStore } from "@/features/interactive-map/store/map-store";
+import { isMapLibreLayerId, useMapStore } from "@/features/interactive-map/store/map-store";
 import { useMapProvider } from "@/providers/map-context";
 import { useAuth } from "@/providers/auth-provider";
 import { useDocumentTitle } from "@/hooks/use-document-title";
@@ -36,7 +36,7 @@ export const MapComponent: React.FC = () => {
   const [mapAccepted, setMapAccepted] = useState<boolean>(false);
   const [isCheckingPrivacy, setIsCheckingPrivacy] = useState<boolean>(true); // Add loading state
   const { map } = useMapStore();
-  const isMapLibre = useMapStore((s) => isMapLibreDarkLayerId(s.selectedBaseLayerId));
+  const isMapLibre = useMapStore((s) => isMapLibreLayerId(s.selectedBaseLayerId));
 
   // Fetch region boundaries (public) + user model polygons (private)
   const mapPageLayers = useMapPageLayers(user?.id);

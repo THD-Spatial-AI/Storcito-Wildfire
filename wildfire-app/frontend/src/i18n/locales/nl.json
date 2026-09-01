@@ -875,8 +875,6 @@
       "osmHumanitarian": "Humanitaire stijl OpenStreetMap",
       "cartoPositron": "Lichte thema basiskaart van CartoDB",
       "cartoVoyager": "Gedetailleerde basiskaart van CartoDB",
-      "openTopoMap": "Topografische stijlkaart",
-      "maplibreDark": "Donkere vector-basiskaart",
       "maplibreVoyager": "Gedetailleerde vector-basiskaart (Voyager)"
     },
     "tooltip": "Basiskaarten"

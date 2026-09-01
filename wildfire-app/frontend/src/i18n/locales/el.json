@@ -428,15 +428,13 @@
   },
   "mapLayers": {
     "baseLayers": {
-      "maplibreDark": "Σκούρος διανυσματικός χάρτης βάσης",
       "maplibreVoyager": "Λεπτομερής διανυσματικός χάρτης βάσης (Voyager)",
       "title": "Επίπεδα βάσης",
       "description": "Επιλέξτε το στυλ του χάρτη φόντου",
       "osmStandard": "Τυπικό επίπεδο OpenStreetMap",
       "osmHumanitarian": "Ανθρωπιστικό στυλ OpenStreetMap",
       "cartoPositron": "Ανοιχτόχρωμος χάρτης βάσης από CartoDB",
-      "cartoVoyager": "Λεπτομερής raster χάρτης βάσης από CartoDB",
-      "openTopoMap": "Τοπογραφικό στυλ χάρτη"
+      "cartoVoyager": "Λεπτομερής raster χάρτης βάσης από CartoDB"
     },
     "title": "Επίπεδα χάρτη",
     "description": "Επιλέξτε το στυλ του χάρτη φόντου",

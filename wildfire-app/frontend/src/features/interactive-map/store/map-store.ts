@@ -43,17 +43,27 @@ interface MapStore {
 	setFireRiskOverlay: (layer: TileLayer | null) => void;
 }
 
+// Retired base layers. They are gone from the picker; these ids only survive so
+// a browser that persisted one of them still lands on a layer that exists.
 const LEGACY_MAPLIBRE_LAYER_ID = "maplibre_3d";
 const MAPLIBRE_DARK_LAYER_ID = "maplibre_dark";
+const RETIRED_OPENTOPOMAP_LAYER_ID = "opentopomap";
 export const MAPLIBRE_VOYAGER_LAYER_ID = "maplibre_voyager";
+const DEFAULT_BASE_LAYER_ID = "osm_standard";
 
 export function normalizeBaseLayerId(id: string): string {
-	return id === LEGACY_MAPLIBRE_LAYER_ID ? MAPLIBRE_DARK_LAYER_ID : id;
+	if (id === LEGACY_MAPLIBRE_LAYER_ID || id === MAPLIBRE_DARK_LAYER_ID) {
+		return MAPLIBRE_VOYAGER_LAYER_ID;
+	}
+	if (id === RETIRED_OPENTOPOMAP_LAYER_ID) {
+		return DEFAULT_BASE_LAYER_ID;
+	}
+	return id;
 }
 
-export function isMapLibreDarkLayerId(id: string): boolean {
+export function isMapLibreLayerId(id: string): boolean {
 	const normalized = normalizeBaseLayerId(id);
-	return normalized === MAPLIBRE_DARK_LAYER_ID || normalized === MAPLIBRE_VOYAGER_LAYER_ID;
+	return normalized === MAPLIBRE_VOYAGER_LAYER_ID;
 }
 
 const failedBaseLayersUntil = new globalThis.Map<string, number>();
@@ -171,30 +181,9 @@ const baseLayers: BaseLayerInfo[] = [
 		accessLevel: "expert",
 	},
 	{
-		id: "opentopomap",
-		name: "OpenTopoMap",
-		description: "Topographic style map",
-		source: withTileRetry(new XYZ({
-			url: "https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png",
-			attributions: [
-				OSM_ATTR,
-				'© <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
-			],
-			maxZoom: MAP_ZOOM.MAX,
-		}), "opentopomap"),
-		accessLevel: "intermediate",
-	},
-	{
 		id: MAPLIBRE_VOYAGER_LAYER_ID,
 		name: "MapLibre Voyager",
 		description: "Detailed vector basemap",
-		source: new XYZ({ url: '' }), // Vector source loaded via MapLibre GL
-		accessLevel: "intermediate",
-	},
-	{
-		id: MAPLIBRE_DARK_LAYER_ID,
-		name: "MapLibre Dark",
-		description: "Dark vector basemap",
 		source: new XYZ({ url: '' }), // Vector source loaded via MapLibre GL
 		accessLevel: "intermediate",
 	},
@@ -252,6 +241,13 @@ export const useMapStore = create<MapStore>()(
 				zoom: state.zoom,
 				selectedBaseLayerId: state.selectedBaseLayerId,
 			}),
+			onRehydrateStorage: () => (state) => {
+				if (!state) return;
+				const normalized = normalizeBaseLayerId(state.selectedBaseLayerId);
+				if (normalized !== state.selectedBaseLayerId) {
+					state.setSelectedBaseLayerId(normalized);
+				}
+			},
 		}
 	)
 );

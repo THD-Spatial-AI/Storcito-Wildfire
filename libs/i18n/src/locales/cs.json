@@ -1379,8 +1379,7 @@
       "osmStandard": "Standardní vrstva OpenStreetMap",
       "osmHumanitarian": "Humanitární styl OpenStreetMap",
       "cartoPositron": "Světlá základní mapa od CartoDB",
-      "cartoVoyager": "Podrobná základní mapa od CartoDB",
-      "openTopoMap": "Topografická stylová mapa"
+      "cartoVoyager": "Podrobná základní mapa od CartoDB"
     },
     "dataLayers": {
       "title": "Datové vrstvy",

@@ -155,8 +155,6 @@ const BaseLayerOption: React.FC<BaseLayerOptionProps> = ({ layer }) => {
       osm_humanitarian: t("mapLayers.baseLayers.osmHumanitarian"),
       carto_positron: t("mapLayers.baseLayers.cartoPositron"),
       carto_voyager: t("mapLayers.baseLayers.cartoVoyager"),
-      opentopomap: t("mapLayers.baseLayers.openTopoMap"),
-      maplibre_dark: t("mapLayers.baseLayers.maplibreDark", "Dark vector basemap"),
       maplibre_voyager: t("mapLayers.baseLayers.maplibreVoyager", "Detailed vector basemap"),
     };
     return descriptionMap[layerId] || layer.description;

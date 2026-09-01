@@ -15,7 +15,7 @@ import { useTranslation } from "@/i18n";
 import axios from "@/lib/axios";
 import { useDocumentTitle } from "@/hooks/use-document-title";
 import { MapContainer } from "@/components/shared/MapContainer";
-import { isMapLibreDarkLayerId, useMapStore } from "@/features/interactive-map/store/map-store";
+import { useMapStore } from "@/features/interactive-map/store/map-store";
 import MapSearchBar from "@/features/interactive-map/MapSearchBar";
 import { modelService, Model } from "@/features/model-dashboard/services/modelService";
 import { CreateWorkspaceModal } from "@/components/workspace";
@@ -65,8 +65,6 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   activeModelIdRef.current = resolvedModelId;
 
   const { map } = useMapStore();
-  const selectedBaseLayerId = useMapStore((s) => s.selectedBaseLayerId);
-  const isDarkBaseLayer = isMapLibreDarkLayerId(selectedBaseLayerId);
 
   const [model, setModel] = useState<Model | null>(null);
   const [results, setResults] = useState<ModelResult[]>([]);
@@ -128,7 +126,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     onError: setError,
   });
 
-  useReferenceLayers(map, isDarkBaseLayer, roadsVisible, labelsVisible, scheduleMapRenderRefresh);
+  useReferenceLayers(map, roadsVisible, labelsVisible, scheduleMapRenderRefresh);
 
   // ----- Data loading -----
 

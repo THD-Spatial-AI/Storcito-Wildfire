@@ -7,7 +7,6 @@ import {
   ESRI_ATTRIBUTION,
   ESRI_PLACES_REFERENCE_URL,
   ESRI_TRANSPORTATION_REFERENCE_URL,
-  MAP_REFERENCE_DARK_OPACITY,
   MAP_REFERENCE_LIGHT_LABELS_OPACITY,
   MAP_REFERENCE_LIGHT_ROADS_OPACITY,
 } from "../viewer-config";
@@ -15,7 +14,6 @@ import {
 // Transparent ESRI road/label tiles above the risk raster so the map stays readable.
 export const useReferenceLayers = (
   map: Map | null,
-  isDarkBaseLayer: boolean,
   roadsVisible: boolean,
   labelsVisible: boolean,
   scheduleMapRenderRefresh: () => void
@@ -25,12 +23,8 @@ export const useReferenceLayers = (
 
   useEffect(() => {
     if (!map) return;
-    const roadsOpacity = isDarkBaseLayer
-      ? MAP_REFERENCE_DARK_OPACITY
-      : MAP_REFERENCE_LIGHT_ROADS_OPACITY;
-    const labelsOpacity = isDarkBaseLayer
-      ? MAP_REFERENCE_DARK_OPACITY
-      : MAP_REFERENCE_LIGHT_LABELS_OPACITY;
+    const roadsOpacity = MAP_REFERENCE_LIGHT_ROADS_OPACITY;
+    const labelsOpacity = MAP_REFERENCE_LIGHT_LABELS_OPACITY;
 
     const roadsLayer = new TileLayer({
       source: new XYZ({
@@ -69,7 +63,7 @@ export const useReferenceLayers = (
       if (roadsLayerRef.current === roadsLayer) roadsLayerRef.current = null;
       if (labelsLayerRef.current === labelsLayer) labelsLayerRef.current = null;
     };
-  }, [isDarkBaseLayer, map, scheduleMapRenderRefresh]);
+  }, [map, scheduleMapRenderRefresh]);
 
   useEffect(() => {
     roadsLayerRef.current?.setVisible(roadsVisible);

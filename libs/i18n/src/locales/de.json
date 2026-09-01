@@ -1646,9 +1646,7 @@
       "description": "Wählen Sie den Kartenhintergrund",
       "osmStandard": "Standard-OpenStreetMap-Ebene",
       "osmHumanitarian": "Humanitärer Stil OpenStreetMap",
-      "cartoPositron": "Helles Thema Basiskarte von CartoDB",
-      "cartoVoyager": "Detaillierte Basiskarte von CartoDB",
-      "openTopoMap": "Topografische Stilkarte"
+      "cartoVoyager": "Detaillierte Basiskarte von CartoDB"
     },
     "dataLayers": {
       "title": "Datenebenen",

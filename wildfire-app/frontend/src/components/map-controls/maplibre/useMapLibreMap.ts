@@ -4,10 +4,9 @@ import { toLonLat, fromLonLat } from 'ol/proj';
 import type { Map as OlMap } from 'ol';
 import type Interaction from 'ol/interaction/Interaction';
 import { DoubleClickZoom, DragPan, MouseWheelZoom, PinchZoom } from 'ol/interaction';
-import { BASE_STYLE, BASE_STYLE_VOYAGER, tuneBaseStyle } from './maplibre-styles';
+import { BASE_STYLE_VOYAGER } from './maplibre-styles';
 import {
   markBaseLayerHealthy,
-  MAPLIBRE_VOYAGER_LAYER_ID,
   reportBaseLayerFailure,
   useMapStore,
 } from '@/features/interactive-map/store/map-store';
@@ -57,11 +56,9 @@ export function useMapLibreMap(olMap: OlMap, visible: boolean, isDrawing: boolea
       const zoom = view.getZoom() ?? 14;
       const [lon, lat] = center ? toLonLat(center, view.getProjection()) : [0, 0];
 
-      const styleUrl = selectedBaseLayerId === MAPLIBRE_VOYAGER_LAYER_ID ? BASE_STYLE_VOYAGER : BASE_STYLE;
-
       map = new maplibregl.Map({
         container,
-        style: styleUrl,
+        style: BASE_STYLE_VOYAGER,
         // CARTO's style document points to additional CDN resources. Applying
         // the key here covers the style, vector tiles, sprites, and glyphs.
         transformRequest: (url) => ({ url: withCartoBasemapKey(url) }),
@@ -156,22 +153,6 @@ export function useMapLibreMap(olMap: OlMap, visible: boolean, isDrawing: boolea
           }
         });
       };
-
-      let tuneRaf = 0;
-      const applyStyleTuning = () => {
-        if (tuneRaf) return;
-        tuneRaf = requestAnimationFrame(() => {
-          tuneRaf = 0;
-          if (cancelled || mapRef.current !== createdMap) return;
-          tuneBaseStyle(createdMap, selectedBaseLayerId);
-        });
-      };
-
-      if (createdMap.isStyleLoaded()) {
-        applyStyleTuning();
-      }
-      createdMap.on('styledata', applyStyleTuning);
-      createdMap.on('load', applyStyleTuning);
 
       let fallbackRequested = false;
       const sourceErrorCounts = new Map<string, number>();
@@ -346,14 +327,11 @@ export function useMapLibreMap(olMap: OlMap, visible: boolean, isDrawing: boolea
       olViewport.addEventListener('touchend', onTouchEnd);
 
       cleanupFns.push(
-        () => { createdMap.off('styledata', applyStyleTuning); },
-        () => { createdMap.off('load', applyStyleTuning); },
         () => { createdMap.off('error', handleMapError); },
         () => { createdMap.off('sourcedata', handleSourceData); },
         () => { createdMap.off('load', handleMapLoad); },
         () => { createdMap.off('styledata', resizeMaps); },
         () => { createdMap.off('load', resizeMaps); },
-        () => { if (tuneRaf) cancelAnimationFrame(tuneRaf); },
         () => { if (resizeRaf) cancelAnimationFrame(resizeRaf); },
         () => { resizeObserver?.disconnect(); },
         () => { window.removeEventListener('resize', resizeMaps); },

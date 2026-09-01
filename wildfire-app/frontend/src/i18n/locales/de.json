@@ -1029,8 +1029,6 @@
       "osmHumanitarian": "Humanitärer Stil OpenStreetMap",
       "cartoPositron": "Helles Thema Basiskarte von CartoDB",
       "cartoVoyager": "Detaillierte Basiskarte von CartoDB",
-      "openTopoMap": "Topografische Stilkarte",
-      "maplibreDark": "Dunkle Vektor-Basiskarte",
       "maplibreVoyager": "Detaillierte Vektor-Basiskarte (Voyager)"
     },
     "tooltip": "Basiskarten"

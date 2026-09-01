@@ -1,6 +1,6 @@
 import { useRef, useEffect, useCallback, useMemo } from "react";
 import {
-	isMapLibreDarkLayerId,
+	isMapLibreLayerId,
 	normalizeBaseLayerId,
 	useMapStore,
 } from "@/features/interactive-map/store/map-store";
@@ -84,7 +84,7 @@ export const MapProvider: React.FC<MapProviderProps> = ({ children }) => {
 
 		const normalizedSelectedBaseLayerId = normalizeBaseLayerId(selectedBaseLayerId);
 		const baseLayerInfo = layers.find((l) => l.id === normalizedSelectedBaseLayerId) ?? layers[0];
-		const isMapLibre = isMapLibreDarkLayerId(baseLayerInfo.id);
+		const isMapLibre = isMapLibreLayerId(baseLayerInfo.id);
 		if (baseLayerInfo.id !== selectedBaseLayerId) {
 			setSelectedBaseLayerId(baseLayerInfo.id);
 		}
@@ -125,7 +125,7 @@ export const MapProvider: React.FC<MapProviderProps> = ({ children }) => {
 			if (selected.id !== selectedBaseLayerId) {
 				setSelectedBaseLayerId(selected.id);
 			}
-			if (isMapLibreDarkLayerId(selected.id)) {
+			if (isMapLibreLayerId(selected.id)) {
 				baseLayer.setVisible(false);
 			} else {
 				baseLayer.setVisible(true);
