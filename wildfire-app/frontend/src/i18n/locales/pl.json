@@ -1162,7 +1162,10 @@
       "thunderstorm": "Burza",
       "thunderstormHail": "Burza z gradem"
     },
-    "windSpeedTooltip": "Jednostkę zmienisz w Ustawieniach → Wyświetlanie danych."
+    "windSpeedTooltip": "Jednostkę zmienisz w Ustawieniach → Wyświetlanie danych.",
+    "title": "Informacje o pogodzie",
+    "settings": "Ustawienia pogody",
+    "uvUnavailable": "Brak danych UV (noc)"
   },
   "settings": {
     "title": "Ustawienia",
@@ -1173,7 +1176,8 @@
       "general": "Ogólne",
       "display": "Wyświetlanie",
       "notifications": "Powiadomienia",
-      "advanced": "Zaawansowane"
+      "advanced": "Zaawansowane",
+      "privacyTerms": "Prywatność i warunki"
     },
     "stats": {
       "language": "Język",
@@ -1277,6 +1281,12 @@
       "updateError": "Nie można zaktualizować ustawienia karty wprowadzenia.",
       "sectionTitle": "Tworzenie modeli",
       "guidancePreferences": "Ustawienia wskazówek"
+    },
+    "accessLevels": {
+      "basic": "Podstawowy",
+      "intermediate": "Średnio zaawansowany",
+      "manager": "Menedżer",
+      "expert": "Ekspert"
     }
   },
   "simulationComparison": {
@@ -1364,7 +1374,14 @@
     },
     "newModelShortcut": "Skrót: N",
     "latestModel": "najnowszy model",
-    "latestModelOf": "Twój najnowszy model spośród {{total}} utworzonych. Otwórz Symulacje, aby zobaczyć pozostałe."
+    "latestModelOf": "Twój najnowszy model spośród {{total}} utworzonych. Otwórz Symulacje, aby zobaczyć pozostałe.",
+    "bookmarks": {
+      "title": "Zakładki mapy",
+      "namePlaceholder": "Nazwa zakładki...",
+      "saveCurrentView": "Zapisz bieżący widok",
+      "delete": "Usuń {{name}}",
+      "none": "Brak zakładek"
+    }
   },
   "privacy": {
     "dataAndPrivacy": "Dane i prywatność",
@@ -2086,6 +2103,14 @@
       "avoidBlank": "Unikaj pustych luk",
       "blankDesc": "Puste obszary nie mają ważnych danych rastrowych źródłowych do obliczeń.",
       "availableData": "Dane o pożarach dostępne"
+    },
+    "stepPurposeShow": "Na czym polega ten krok?",
+    "stepPurposeHide": "Ukryj informacje o kroku",
+    "save": {
+      "createFailed": "Nie udało się utworzyć modelu. Spróbuj ponownie.",
+      "updateFailed": "Nie udało się zapisać modelu. Spróbuj ponownie.",
+      "uploadFailed": "Model został zapisany, ale nie udało się przesłać jego plików wejściowych.",
+      "calculationFailed": "Model został zapisany, ale nie udało się uruchomić obliczeń."
     }
   },
   "apiTokens": {

@@ -1162,7 +1162,10 @@
       "thunderstorm": "Onweer",
       "thunderstormHail": "Onweer met hagel"
     },
-    "windSpeedTooltip": "Wijzig de eenheid bij Instellingen → Gegevensweergave."
+    "windSpeedTooltip": "Wijzig de eenheid bij Instellingen → Gegevensweergave.",
+    "title": "Weerinformatie",
+    "settings": "Weerinstellingen",
+    "uvUnavailable": "Geen UV-gegevens (nacht)"
   },
   "settings": {
     "title": "Instellingen",
@@ -1173,7 +1176,8 @@
       "general": "Algemeen",
       "display": "Weergave",
       "notifications": "Meldingen",
-      "advanced": "Geavanceerd"
+      "advanced": "Geavanceerd",
+      "privacyTerms": "Privacy en voorwaarden"
     },
     "stats": {
       "language": "Taal",
@@ -1277,6 +1281,12 @@
       "updateError": "De voorkeur voor de introductiekaart kan niet worden bijgewerkt.",
       "sectionTitle": "Modellen maken",
       "guidancePreferences": "Voorkeuren voor begeleiding"
+    },
+    "accessLevels": {
+      "basic": "Basis",
+      "intermediate": "Gevorderd",
+      "manager": "Beheerder",
+      "expert": "Expert"
     }
   },
   "simulationComparison": {
@@ -1364,7 +1374,14 @@
     },
     "newModelShortcut": "Sneltoets: N",
     "latestModel": "nieuwste model",
-    "latestModelOf": "Uw nieuwste model, van de {{total}} die u hebt gemaakt. Open Simulaties om de rest te zien."
+    "latestModelOf": "Uw nieuwste model, van de {{total}} die u hebt gemaakt. Open Simulaties om de rest te zien.",
+    "bookmarks": {
+      "title": "Kaartbladwijzers",
+      "namePlaceholder": "Naam bladwijzer...",
+      "saveCurrentView": "Huidige weergave opslaan",
+      "delete": "{{name}} verwijderen",
+      "none": "Nog geen bladwijzers"
+    }
   },
   "privacy": {
     "dataAndPrivacy": "Gegevens & Privacy",
@@ -2086,6 +2103,14 @@
       "avoidBlank": "Vermijd lege plekken",
       "blankDesc": "Lege gebieden hebben geen geldige bronrastergegevens voor de berekening.",
       "availableData": "Brandgegevens beschikbaar"
+    },
+    "stepPurposeShow": "Wat houdt deze stap in?",
+    "stepPurposeHide": "Stapinfo verbergen",
+    "save": {
+      "createFailed": "Het model kon niet worden gemaakt. Probeer het opnieuw.",
+      "updateFailed": "Het model kon niet worden opgeslagen. Probeer het opnieuw.",
+      "uploadFailed": "Het model is opgeslagen, maar de invoerbestanden konden niet worden geüpload.",
+      "calculationFailed": "Het model is opgeslagen, maar de berekening kon niet worden gestart."
     }
   },
   "apiTokens": {

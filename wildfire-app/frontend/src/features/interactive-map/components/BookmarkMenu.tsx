@@ -8,6 +8,7 @@ import {
   Button,
 } from "@spatialhub/ui";
 import { useMapBookmarksStore, type MapBookmark } from "@/features/interactive-map/store/map-bookmarks";
+import { useTranslation } from "@/i18n";
 
 interface BookmarkMenuProps {
   getCurrentView: () => { latitude: number; longitude: number; zoom: number };
@@ -15,6 +16,7 @@ interface BookmarkMenuProps {
 }
 
 export const BookmarkMenu: React.FC<BookmarkMenuProps> = ({ getCurrentView, flyTo }) => {
+  const { t } = useTranslation();
   const { bookmarks, addBookmark, removeBookmark } = useMapBookmarksStore();
   const [isNaming, setIsNaming] = useState(false);
   const [newName, setNewName] = useState("");
@@ -38,7 +40,7 @@ export const BookmarkMenu: React.FC<BookmarkMenuProps> = ({ getCurrentView, flyT
           variant="secondary"
           size="icon"
           className="h-8 w-8 shadow-md"
-          aria-label="Map bookmarks"
+          aria-label={t("map.bookmarks.title", "Map bookmarks")}
         >
           <Bookmark className="h-4 w-4" />
         </Button>
@@ -54,18 +56,18 @@ export const BookmarkMenu: React.FC<BookmarkMenuProps> = ({ getCurrentView, flyT
                 if (e.key === "Enter") handleSave();
                 if (e.key === "Escape") { setIsNaming(false); setNewName(""); }
               }}
-              placeholder="Bookmark name..."
+              placeholder={t("map.bookmarks.namePlaceholder", "Bookmark name...")}
               autoFocus
               className="flex-1 text-sm px-2 py-1 rounded border border-input bg-background focus:ring-1 focus:ring-ring"
             />
             <Button size="sm" className="h-7 text-xs" onClick={handleSave} disabled={!newName.trim()}>
-              Save
+              {t("common.save", "Save")}
             </Button>
           </div>
         ) : (
           <DropdownMenuItem onClick={() => setIsNaming(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            Save current view
+            {t("map.bookmarks.saveCurrentView", "Save current view")}
           </DropdownMenuItem>
         )}
 
@@ -85,7 +87,7 @@ export const BookmarkMenu: React.FC<BookmarkMenuProps> = ({ getCurrentView, flyT
               type="button"
               onClick={(e) => { e.stopPropagation(); removeBookmark(bm.id); }}
               className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-destructive/10 transition-opacity"
-              aria-label={`Delete ${bm.name}`}
+              aria-label={t("map.bookmarks.delete", { name: bm.name, defaultValue: "Delete {{name}}" })}
             >
               <Trash2 className="h-3 w-3 text-destructive" />
             </button>
@@ -94,7 +96,7 @@ export const BookmarkMenu: React.FC<BookmarkMenuProps> = ({ getCurrentView, flyT
 
         {bookmarks.length === 0 && !isNaming && (
           <div className="px-2 py-3 text-center text-xs text-muted-foreground">
-            No bookmarks yet
+            {t("map.bookmarks.none", "No bookmarks yet")}
           </div>
         )}
       </DropdownMenuContent>

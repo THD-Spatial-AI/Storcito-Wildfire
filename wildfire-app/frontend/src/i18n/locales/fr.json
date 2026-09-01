@@ -1319,7 +1319,10 @@
       "thunderstorm": "Orage",
       "thunderstormHail": "Orage avec grêle"
     },
-    "windSpeedTooltip": "Changez l'unité dans Paramètres → Affichage des données."
+    "windSpeedTooltip": "Changez l'unité dans Paramètres → Affichage des données.",
+    "title": "Informations météo",
+    "settings": "Paramètres météo",
+    "uvUnavailable": "Données UV indisponibles (nuit)"
   },
   "settings": {
     "title": "Paramètres",
@@ -1330,7 +1333,8 @@
       "general": "Général",
       "display": "Affichage",
       "notifications": "Notifications",
-      "advanced": "Avancé"
+      "advanced": "Avancé",
+      "privacyTerms": "Confidentialité et conditions"
     },
     "stats": {
       "language": "Langue",
@@ -1434,6 +1438,12 @@
       "updateError": "Impossible de mettre à jour la préférence de la carte d'introduction.",
       "sectionTitle": "Création de modèles",
       "guidancePreferences": "Préférences d'aide"
+    },
+    "accessLevels": {
+      "basic": "Basique",
+      "intermediate": "Intermédiaire",
+      "manager": "Gestionnaire",
+      "expert": "Expert"
     }
   },
   "simulationComparison": {
@@ -1521,7 +1531,14 @@
     },
     "newModelShortcut": "Raccourci : N",
     "latestModel": "dernier modèle",
-    "latestModelOf": "Votre modèle le plus récent, sur {{total}} créés. Ouvrez Simulations pour voir les autres."
+    "latestModelOf": "Votre modèle le plus récent, sur {{total}} créés. Ouvrez Simulations pour voir les autres.",
+    "bookmarks": {
+      "title": "Favoris de la carte",
+      "namePlaceholder": "Nom du favori...",
+      "saveCurrentView": "Enregistrer la vue actuelle",
+      "delete": "Supprimer {{name}}",
+      "none": "Aucun favori pour le moment"
+    }
   },
   "privacy": {
     "dataAndPrivacy": "Données et confidentialité",
@@ -2086,6 +2103,14 @@
       "avoidBlank": "Évitez les zones vides",
       "blankDesc": "Les zones vides n'ont pas de données raster valides pour le calcul.",
       "availableData": "Données d'incendies disponibles"
+    },
+    "stepPurposeShow": "En quoi consiste cette étape ?",
+    "stepPurposeHide": "Masquer les infos de l'étape",
+    "save": {
+      "createFailed": "Le modèle n'a pas pu être créé. Veuillez réessayer.",
+      "updateFailed": "Le modèle n'a pas pu être enregistré. Veuillez réessayer.",
+      "uploadFailed": "Le modèle a été enregistré, mais ses fichiers d'entrée n'ont pas pu être envoyés.",
+      "calculationFailed": "Le modèle a été enregistré, mais le calcul n'a pas pu démarrer."
     }
   },
   "apiTokens": {

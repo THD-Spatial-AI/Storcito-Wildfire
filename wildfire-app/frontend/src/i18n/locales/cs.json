@@ -1162,7 +1162,10 @@
       "thunderstorm": "Bouřka",
       "thunderstormHail": "Bouřka s krupobitím"
     },
-    "windSpeedTooltip": "Jednotku změníte v Nastavení → Zobrazení dat."
+    "windSpeedTooltip": "Jednotku změníte v Nastavení → Zobrazení dat.",
+    "title": "Informace o počasí",
+    "settings": "Nastavení počasí",
+    "uvUnavailable": "Data UV nejsou k dispozici (noc)"
   },
   "settings": {
     "title": "Nastavení",
@@ -1173,7 +1176,8 @@
       "general": "Obecné",
       "display": "Zobrazení",
       "notifications": "Oznámení",
-      "advanced": "Pokročilé"
+      "advanced": "Pokročilé",
+      "privacyTerms": "Soukromí a podmínky"
     },
     "stats": {
       "language": "Jazyk",
@@ -1277,6 +1281,12 @@
       "updateError": "Předvolbu úvodní karty se nepodařilo aktualizovat.",
       "sectionTitle": "Tvorba modelů",
       "guidancePreferences": "Předvolby nápovědy"
+    },
+    "accessLevels": {
+      "basic": "Základní",
+      "intermediate": "Pokročilý",
+      "manager": "Manažer",
+      "expert": "Expert"
     }
   },
   "simulationComparison": {
@@ -1364,7 +1374,14 @@
     },
     "newModelShortcut": "Zkratka: N",
     "latestModel": "nejnovější model",
-    "latestModelOf": "Váš nejnovější model z {{total}} vytvořených. Otevřete Simulace pro zobrazení ostatních."
+    "latestModelOf": "Váš nejnovější model z {{total}} vytvořených. Otevřete Simulace pro zobrazení ostatních.",
+    "bookmarks": {
+      "title": "Záložky mapy",
+      "namePlaceholder": "Název záložky...",
+      "saveCurrentView": "Uložit aktuální pohled",
+      "delete": "Smazat {{name}}",
+      "none": "Zatím žádné záložky"
+    }
   },
   "privacy": {
     "dataAndPrivacy": "Data a soukromí",
@@ -2086,6 +2103,14 @@
       "avoidBlank": "Vyhněte se prázdným místům",
       "blankDesc": "Prázdné oblasti nemají platná zdrojová rastrová data pro výpočet.",
       "availableData": "Dostupná data o požárech"
+    },
+    "stepPurposeShow": "Co je tento krok?",
+    "stepPurposeHide": "Skrýt informace o kroku",
+    "save": {
+      "createFailed": "Model se nepodařilo vytvořit. Zkuste to prosím znovu.",
+      "updateFailed": "Model se nepodařilo uložit. Zkuste to prosím znovu.",
+      "uploadFailed": "Model byl uložen, ale jeho vstupní soubory se nepodařilo nahrát.",
+      "calculationFailed": "Model byl uložen, ale výpočet se nepodařilo spustit."
     }
   },
   "apiTokens": {

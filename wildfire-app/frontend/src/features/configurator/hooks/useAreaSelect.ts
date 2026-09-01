@@ -1,6 +1,7 @@
 import { useMapStore } from '@/features/interactive-map/store/map-store';
 import { useMapProvider } from '@/providers/map-context';
 import { useNotification } from '@/features/notifications/hooks/useNotification';
+import { useTranslation } from '@/i18n';
 import type {
     AreaSelectState,
     AreaSelectActions,
@@ -20,6 +21,9 @@ export const useAreaSelect = ({
 }: UseAreaSelectProps) => {
     const state = useAreaSelectState({ editMode });
     const drawing = useMapDrawing({ state });
+    const { t } = useTranslation();
+    const { notification, showSuccess, showError, hide } = useNotification();
+
     const creation = useModelCreation({
         state,
         drawing,
@@ -27,9 +31,14 @@ export const useAreaSelect = ({
         onCancel,
         editMode,
         existingModelId,
+        onError: showError,
+        errorMessages: {
+            create: t('configurator.save.createFailed', 'The model could not be created. Please try again.'),
+            save: t('configurator.save.updateFailed', 'The model could not be saved. Please try again.'),
+            uploadInputs: t('configurator.save.uploadFailed', 'The model was saved, but its input files could not be uploaded.'),
+            startCalculation: t('configurator.save.calculationFailed', 'The model was saved, but the calculation could not be started.'),
+        },
     });
-
-    const { notification, showSuccess, showError, hide } = useNotification();
     const { map } = useMapStore();
     const { mapRef } = useMapProvider();
 

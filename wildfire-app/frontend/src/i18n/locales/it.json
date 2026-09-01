@@ -1162,7 +1162,10 @@
       "thunderstorm": "Temporale",
       "thunderstormHail": "Temporale con grandine"
     },
-    "windSpeedTooltip": "Cambia l'unità in Impostazioni → Visualizzazione dati."
+    "windSpeedTooltip": "Cambia l'unità in Impostazioni → Visualizzazione dati.",
+    "title": "Informazioni meteo",
+    "settings": "Impostazioni meteo",
+    "uvUnavailable": "Dati UV non disponibili (di notte)"
   },
   "settings": {
     "title": "Impostazioni",
@@ -1173,7 +1176,8 @@
       "general": "Generale",
       "display": "Visualizzazione",
       "notifications": "Notifiche",
-      "advanced": "Avanzate"
+      "advanced": "Avanzate",
+      "privacyTerms": "Privacy e condizioni"
     },
     "stats": {
       "language": "Lingua",
@@ -1277,6 +1281,12 @@
       "updateError": "Impossibile aggiornare la preferenza della scheda introduttiva.",
       "sectionTitle": "Creazione di modelli",
       "guidancePreferences": "Preferenze di guida"
+    },
+    "accessLevels": {
+      "basic": "Base",
+      "intermediate": "Intermedio",
+      "manager": "Responsabile",
+      "expert": "Esperto"
     }
   },
   "simulationComparison": {
@@ -1364,7 +1374,14 @@
     },
     "newModelShortcut": "Scorciatoia: N",
     "latestModel": "ultimo modello",
-    "latestModelOf": "Il tuo modello più recente, su {{total}} creati. Apri Simulazioni per vedere gli altri."
+    "latestModelOf": "Il tuo modello più recente, su {{total}} creati. Apri Simulazioni per vedere gli altri.",
+    "bookmarks": {
+      "title": "Segnalibri della mappa",
+      "namePlaceholder": "Nome del segnalibro...",
+      "saveCurrentView": "Salva la vista corrente",
+      "delete": "Elimina {{name}}",
+      "none": "Ancora nessun segnalibro"
+    }
   },
   "privacy": {
     "dataAndPrivacy": "Dati e privacy",
@@ -2086,6 +2103,14 @@
       "avoidBlank": "Evita spazi vuoti",
       "blankDesc": "Le aree vuote non hanno dati raster sorgente validi per il calcolo.",
       "availableData": "Dati sugli incendi disponibili"
+    },
+    "stepPurposeShow": "Che cos'è questo passaggio?",
+    "stepPurposeHide": "Nascondi le info del passaggio",
+    "save": {
+      "createFailed": "Impossibile creare il modello. Riprova.",
+      "updateFailed": "Impossibile salvare il modello. Riprova.",
+      "uploadFailed": "Il modello è stato salvato, ma non è stato possibile caricare i suoi file di input.",
+      "calculationFailed": "Il modello è stato salvato, ma non è stato possibile avviare il calcolo."
     }
   },
   "apiTokens": {

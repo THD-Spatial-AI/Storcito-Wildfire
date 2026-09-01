@@ -1319,7 +1319,10 @@
       "thunderstorm": "Tormenta",
       "thunderstormHail": "Tormenta con granizo"
     },
-    "windSpeedTooltip": "Cambia la unidad en Configuración → Visualización de datos."
+    "windSpeedTooltip": "Cambia la unidad en Configuración → Visualización de datos.",
+    "title": "Información meteorológica",
+    "settings": "Configuración meteorológica",
+    "uvUnavailable": "Datos UV no disponibles (de noche)"
   },
   "settings": {
     "title": "Configuración",
@@ -1330,7 +1333,8 @@
       "general": "General",
       "display": "Visualización",
       "notifications": "Notificaciones",
-      "advanced": "Avanzado"
+      "advanced": "Avanzado",
+      "privacyTerms": "Privacidad y condiciones"
     },
     "stats": {
       "language": "Idioma",
@@ -1434,6 +1438,12 @@
       "updateError": "No se ha podido actualizar la preferencia de la tarjeta de introducción.",
       "sectionTitle": "Creación de modelos",
       "guidancePreferences": "Preferencias de ayuda"
+    },
+    "accessLevels": {
+      "basic": "Básico",
+      "intermediate": "Intermedio",
+      "manager": "Gestor",
+      "expert": "Experto"
     }
   },
   "simulationComparison": {
@@ -1521,7 +1531,14 @@
     },
     "newModelShortcut": "Atajo: N",
     "latestModel": "último modelo",
-    "latestModelOf": "Tu modelo más reciente, de {{total}} que has creado. Abre Simulaciones para ver el resto."
+    "latestModelOf": "Tu modelo más reciente, de {{total}} que has creado. Abre Simulaciones para ver el resto.",
+    "bookmarks": {
+      "title": "Marcadores del mapa",
+      "namePlaceholder": "Nombre del marcador...",
+      "saveCurrentView": "Guardar la vista actual",
+      "delete": "Eliminar {{name}}",
+      "none": "Aún no hay marcadores"
+    }
   },
   "privacy": {
     "dataAndPrivacy": "Datos y privacidad",
@@ -2086,6 +2103,14 @@
       "avoidBlank": "Evite espacios en blanco",
       "blankDesc": "Las áreas en blanco no tienen datos raster fuente válidos para el cálculo.",
       "availableData": "Datos de incendios disponibles"
+    },
+    "stepPurposeShow": "¿Qué es este paso?",
+    "stepPurposeHide": "Ocultar la información del paso",
+    "save": {
+      "createFailed": "No se pudo crear el modelo. Inténtalo de nuevo.",
+      "updateFailed": "No se pudo guardar el modelo. Inténtalo de nuevo.",
+      "uploadFailed": "El modelo se guardó, pero no se pudieron subir sus archivos de entrada.",
+      "calculationFailed": "El modelo se guardó, pero no se pudo iniciar el cálculo."
     }
   },
   "apiTokens": {

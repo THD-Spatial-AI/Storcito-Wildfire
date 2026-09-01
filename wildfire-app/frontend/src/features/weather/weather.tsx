@@ -129,6 +129,8 @@ const WeatherDropdown: React.FC<WeatherDropdownProps> = ({ showSettingsIcon = tr
       description: t(`weather.uvDescriptions.${key}`),
     };
   };
+  const weatherSettingsLabel = t("weather.settings", "Weather settings");
+  const refreshLabel = t("weather.clickToRefresh");
   const describeWeather = (code: number, fallback: string) => {
     const key = WEATHER_CODE_KEYS[code];
     return key ? t(`weather.conditions.${key}`, fallback) : fallback;
@@ -183,7 +185,7 @@ const WeatherDropdown: React.FC<WeatherDropdownProps> = ({ showSettingsIcon = tr
     return (
       <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-card border border-border shadow-sm">
         <div className="w-4 h-4 rounded-full border-2 border-muted-foreground border-t-foreground animate-spin" />
-        <span className="text-xs text-muted-foreground">Loading...</span>
+        <span className="text-xs text-muted-foreground">{t("common.loading", "Loading...")}</span>
       </div>
     );
 
@@ -215,7 +217,7 @@ const WeatherDropdown: React.FC<WeatherDropdownProps> = ({ showSettingsIcon = tr
         ref={dropdownRef}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        aria-label="Weather information"
+        aria-label={t("weather.title", "Weather information")}
       >
         <div className="flex items-center gap-1">
           <Tooltip>
@@ -223,7 +225,7 @@ const WeatherDropdown: React.FC<WeatherDropdownProps> = ({ showSettingsIcon = tr
               <button
                 type="button"
                 onClick={handleClick}
-                aria-label="Weather information - click to refresh"
+                aria-label={refreshLabel}
                 className={cn(
                   "relative flex items-center gap-2 px-2 py-1 rounded-md",
                   "bg-card",
@@ -248,7 +250,7 @@ const WeatherDropdown: React.FC<WeatherDropdownProps> = ({ showSettingsIcon = tr
                 </div>
               </button>
             </TooltipTrigger>
-            <TooltipContent>{t("weather.clickToRefresh")}</TooltipContent>
+            <TooltipContent>{refreshLabel}</TooltipContent>
           </Tooltip>
           {showSettingsIcon && (
             <Tooltip>
@@ -264,12 +266,12 @@ const WeatherDropdown: React.FC<WeatherDropdownProps> = ({ showSettingsIcon = tr
                     "transition-all duration-200",
                     "cursor-pointer"
                   )}
-                  aria-label="Weather settings"
+                  aria-label={weatherSettingsLabel}
                 >
                   <Settings2 className="w-3.5 h-3.5" />
                 </button>
               </TooltipTrigger>
-              <TooltipContent>Weather settings</TooltipContent>
+              <TooltipContent>{weatherSettingsLabel}</TooltipContent>
             </Tooltip>
           )}
         </div>
@@ -346,7 +348,7 @@ const WeatherDropdown: React.FC<WeatherDropdownProps> = ({ showSettingsIcon = tr
                 >
                   <p className="text-xs">
                     {currentWeather.uv_index == null
-                      ? "UV data not available (nighttime)"
+                      ? t("weather.uvUnavailable", "UV data not available (nighttime)")
                       : uvLevel?.description}
                   </p>
                 </TooltipContent>
@@ -388,7 +390,7 @@ const WeatherDropdown: React.FC<WeatherDropdownProps> = ({ showSettingsIcon = tr
             </div>
 
             <div className="w-full mt-3 pt-3 border-t border-border text-xs text-muted-foreground text-center space-y-1">
-              <p>{t("weather.clickToRefresh")}</p>
+              <p>{refreshLabel}</p>
               <p>
                 {t("weather.dataBy")}{" "}
                 <a

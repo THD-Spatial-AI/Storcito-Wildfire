@@ -1319,7 +1319,10 @@
       "thunderstorm": "Thunderstorm",
       "thunderstormHail": "Thunderstorm with hail"
     },
-    "windSpeedTooltip": "Change the unit in Settings → Data display."
+    "windSpeedTooltip": "Change the unit in Settings → Data display.",
+    "title": "Weather information",
+    "settings": "Weather settings",
+    "uvUnavailable": "UV data not available (nighttime)"
   },
   "settings": {
     "title": "Settings",
@@ -1330,7 +1333,8 @@
       "general": "General",
       "display": "Display",
       "notifications": "Notifications",
-      "advanced": "Advanced"
+      "advanced": "Advanced",
+      "privacyTerms": "Privacy & Terms"
     },
     "stats": {
       "language": "Language",
@@ -1434,6 +1438,12 @@
       "updateError": "Could not update the intro card preference.",
       "sectionTitle": "Model creation",
       "guidancePreferences": "Guidance preferences"
+    },
+    "accessLevels": {
+      "basic": "Basic",
+      "intermediate": "Intermediate",
+      "manager": "Manager",
+      "expert": "Expert"
     }
   },
   "simulationComparison": {
@@ -1521,7 +1531,14 @@
     },
     "newModelShortcut": "Shortcut: N",
     "latestModel": "latest model",
-    "latestModelOf": "Your most recent model, of {{total}} you have created. Open Simulations to see the rest."
+    "latestModelOf": "Your most recent model, of {{total}} you have created. Open Simulations to see the rest.",
+    "bookmarks": {
+      "title": "Map bookmarks",
+      "namePlaceholder": "Bookmark name...",
+      "saveCurrentView": "Save current view",
+      "delete": "Delete {{name}}",
+      "none": "No bookmarks yet"
+    }
   },
   "privacy": {
     "dataAndPrivacy": "Data & Privacy",
@@ -2080,6 +2097,14 @@
       "avoidBlank": "Avoid blank gaps",
       "blankDesc": "Blank areas have no valid source raster data for calculation.",
       "availableData": "Wildfire data available"
+    },
+    "stepPurposeShow": "What is this step?",
+    "stepPurposeHide": "Hide step info",
+    "save": {
+      "createFailed": "The model could not be created. Please try again.",
+      "updateFailed": "The model could not be saved. Please try again.",
+      "uploadFailed": "The model was saved, but its input files could not be uploaded.",
+      "calculationFailed": "The model was saved, but the calculation could not be started."
     }
   },
   "apiTokens": {

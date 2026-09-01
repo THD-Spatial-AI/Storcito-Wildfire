@@ -1319,7 +1319,10 @@
       "thunderstorm": "Gewitter",
       "thunderstormHail": "Gewitter mit Hagel"
     },
-    "windSpeedTooltip": "Die Einheit lässt sich unter Einstellungen → Datenanzeige ändern."
+    "windSpeedTooltip": "Die Einheit lässt sich unter Einstellungen → Datenanzeige ändern.",
+    "title": "Wetterinformationen",
+    "settings": "Wettereinstellungen",
+    "uvUnavailable": "UV-Daten nicht verfügbar (nachts)"
   },
   "settings": {
     "title": "Einstellungen",
@@ -1330,7 +1333,8 @@
       "general": "Allgemein",
       "display": "Anzeige",
       "notifications": "Benachrichtigungen",
-      "advanced": "Erweitert"
+      "advanced": "Erweitert",
+      "privacyTerms": "Datenschutz und Bedingungen"
     },
     "stats": {
       "language": "Sprache",
@@ -1434,6 +1438,12 @@
       "updateError": "Die Einstellung für die Einführungskarte konnte nicht aktualisiert werden.",
       "sectionTitle": "Modellerstellung",
       "guidancePreferences": "Hilfe-Einstellungen"
+    },
+    "accessLevels": {
+      "basic": "Basis",
+      "intermediate": "Fortgeschritten",
+      "manager": "Manager",
+      "expert": "Experte"
     }
   },
   "simulationComparison": {
@@ -1521,7 +1531,14 @@
     },
     "newModelShortcut": "Tastenkürzel: N",
     "latestModel": "neuestes Modell",
-    "latestModelOf": "Ihr neuestes Modell von {{total}} erstellten. Öffnen Sie „Simulationen“, um die übrigen zu sehen."
+    "latestModelOf": "Ihr neuestes Modell von {{total}} erstellten. Öffnen Sie „Simulationen“, um die übrigen zu sehen.",
+    "bookmarks": {
+      "title": "Kartenlesezeichen",
+      "namePlaceholder": "Name des Lesezeichens ...",
+      "saveCurrentView": "Aktuelle Ansicht speichern",
+      "delete": "{{name}} löschen",
+      "none": "Noch keine Lesezeichen"
+    }
   },
   "privacy": {
     "dataAndPrivacy": "Daten & Datenschutz",
@@ -2086,6 +2103,14 @@
       "avoidBlank": "Vermeiden Sie leere Lücken",
       "blankDesc": "Leere Gebiete haben keine gültigen Quell-Rasterdaten für die Berechnung.",
       "availableData": "Waldbranddaten verfügbar"
+    },
+    "stepPurposeShow": "Was ist dieser Schritt?",
+    "stepPurposeHide": "Schrittinfo ausblenden",
+    "save": {
+      "createFailed": "Das Modell konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+      "updateFailed": "Das Modell konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
+      "uploadFailed": "Das Modell wurde gespeichert, seine Eingabedateien konnten aber nicht hochgeladen werden.",
+      "calculationFailed": "Das Modell wurde gespeichert, die Berechnung konnte aber nicht gestartet werden."
     }
   },
   "apiTokens": {

@@ -44,7 +44,7 @@ const SettingsPage: React.FC = () => {
     { key: "general", label: t("settings.tabs.general"), icon: LayoutGrid },
     { key: "display", label: t("settings.tabs.display"), icon: Monitor },
     { key: "notifications", label: t("settings.tabs.notifications"), icon: Bell },
-    { key: "privacyTerms", label: "Privacy & Terms", icon: Shield },
+    { key: "privacyTerms", label: t("settings.tabs.privacyTerms", "Privacy & Terms"), icon: Shield },
   ];
 
   // Check if user came from admin dashboard
@@ -69,10 +69,10 @@ const SettingsPage: React.FC = () => {
   const getAccessLevelLabel = (level: string | undefined) => {
     if (!level) return t("settings.stats.user");
     const labels: Record<string, string> = {
-      very_low: "Basic",
-      intermediate: "Intermediate",
-      manager: "Manager",
-      expert: "Expert",
+      very_low: t("settings.accessLevels.basic", "Basic"),
+      intermediate: t("settings.accessLevels.intermediate", "Intermediate"),
+      manager: t("settings.accessLevels.manager", "Manager"),
+      expert: t("settings.accessLevels.expert", "Expert"),
     };
     return labels[level] || t("settings.stats.user");
   };
