@@ -9,6 +9,7 @@ import type Polygon from "ol/geom/Polygon";
 import type Map from "ol/Map";
 import { Feature } from "ol";
 import { Polygon as OLPolygon, Point } from "ol/geom";
+import { EDIT_BADGE_PROPERTY } from "./usePolygonStyles";
 import { platformModifierKeyOnly } from "ol/events/condition";
 import type { StyleLike } from "ol/style/Style";
 
@@ -61,6 +62,26 @@ const getNearStartState = (
   if (!startPixel || !cursorPixel) return null;
 
   return Math.hypot(startPixel[0] - cursorPixel[0], startPixel[1] - cursorPixel[1]) < snapDistance;
+};
+
+/** Badge the largest polygon only. */
+const markPrimaryEditFeature = (source: VectorSource) => {
+  let primary: Feature | null = null;
+  let largestArea = -1;
+
+  for (const feature of source.getFeatures()) {
+    feature.unset(EDIT_BADGE_PROPERTY, true);
+    const geometry = feature.getGeometry();
+    if (!(geometry instanceof OLPolygon)) continue;
+    const area = geometry.getArea();
+    if (area > largestArea) {
+      largestArea = area;
+      primary = feature;
+    }
+  }
+
+  primary?.set(EDIT_BADGE_PROPERTY, true, true);
+  source.changed();
 };
 
 const toLonLatPolygon = (coords: Coordinate[]) => {
@@ -158,6 +179,8 @@ export const usePolygonDrawing = ({
       vectorSourceRef.current?.addFeature(feature);
       allPolygonsRef.current.push(polygonCoords);
     }
+
+    if (vectorSourceRef.current) markPrimaryEditFeature(vectorSourceRef.current);
 
     if (bufferDistanceRef.current > 0) {
       recomputeBuffers(allPolygonsRef.current, bufferDistanceRef.current);
@@ -301,6 +324,7 @@ export const usePolygonDrawing = ({
         }
 
         onDrawingChangeRef.current?.(false);
+        markPrimaryEditFeature(vectorSource);
 
         if (disableAfterDraw && !allowMultiple) {
           map.removeInteraction(draw);

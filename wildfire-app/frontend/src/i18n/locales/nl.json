@@ -107,7 +107,9 @@
       "nextPage": "Volgende pagina"
     },
     "appName": "Beoordeling van bosbrandrisico",
-    "saved": "Opgeslagen"
+    "saved": "Opgeslagen",
+    "copy": "Kopiëren",
+    "copied": "Gekopieerd"
   },
   "dashboard": {
     "stats": {
@@ -357,7 +359,15 @@
     "cannotCalculate": "Kan niet berekenen – geen geschikte modellen geselecteerd",
     "noWebserviceAvailable": "Geen simulatie-engine beschikbaar",
     "cancelled": "Geannuleerd",
-    "modified": "Gewijzigd"
+    "modified": "Gewijzigd",
+    "canEdit": "Kan bewerken",
+    "canView": "Kan bekijken",
+    "noDirectShares": "Dit model is nog met niemand gedeeld.",
+    "peopleWithAccess": "Personen met directe toegang",
+    "peopleWithAccessDescription": "De personen in deze lijst kunnen dit model en de bijbehorende risicolagen openen.",
+    "revokeAccess": "Intrekken",
+    "revokeAccessFor": "Toegang intrekken",
+    "revokingAccess": "Bezig met intrekken…"
   },
   "polygon": {
     "drawRegion": "Teken je regio",
@@ -522,7 +532,9 @@
       "bulkMoveToGroup": "Naar groep verplaatsen",
       "deselectAll": "Alles deselecteren",
       "selectAll": "Alles selecteren",
-      "selected": "{{count}} geselecteerd"
+      "selected": "{{count}} geselecteerd",
+      "apiTokens": "API-tokens",
+      "apiTokensActive": "API-toegang ingeschakeld — tokens beheren"
     },
     "groups": {
       "selectOrCreate": "Selecteer of maak een groep aan",
@@ -1619,7 +1631,16 @@
       "view2d": "2D Kaart",
       "playDaily": "Dagelijkse risicokaarten animeren",
       "fullscreen": "Volledig scherm",
-      "exitFullscreen": "Volledig scherm sluiten"
+      "exitFullscreen": "Volledig scherm sluiten",
+      "dataset": "Laag",
+      "play": "Afspelen",
+      "pause": "Pauzeren",
+      "peakDay": "Dag met hoogste risico",
+      "peakDayHint": "Klik om deze dag te tonen en ga daarna naar de volgende risicovolste dag",
+      "peakDayNext": "Klik om te bekijken · de volgende dag volgt",
+      "rankDay": "Risicodag nr. {{rank}}",
+      "viewMap": "Kaart",
+      "viewTerrain": "Terrein"
     },
     "layers": {
       "labels": "Labels & plaatsen",
@@ -1962,7 +1983,11 @@
       "statusRegionPrompt": "Klik op de kaart in een bestuurlijke regio om de volledige grens te selecteren.",
       "regionCoverageWarning": "De volledige bestuurlijke grens wordt gebruikt. Pixels buiten het gearceerde gebied met brandgegevens zijn mogelijk niet berekenbaar.",
       "statusRegionLabel": "Regio geselecteerd",
-      "blockingSelectRegion": "Klik op de kaart in een bestuurlijke regio om verder te gaan."
+      "blockingSelectRegion": "Klik op de kaart in een bestuurlijke regio om verder te gaan.",
+      "regionNotFound": "Hier is geen bestuurlijke grens gevonden. Klik verder binnen de regio.",
+      "regionLookupFailed": "De bestuurlijke grens kan niet worden geladen. Controleer uw verbinding en probeer het opnieuw.",
+      "regionOutsideCoverage": "Dit punt ligt buiten het gebied met brandgegevens. Klik in het gearceerde gebied.",
+      "regionOutsideCoverageNamed": "Brandgegevens zijn alleen beschikbaar voor {{regions}}. Klik in het gearceerde gebied."
     },
     "layer3": {
       "purpose": "Deze signalen voeden het AHP-gewogen risicomodel. Alle drie zijn standaard ingeschakeld en aanbevolen voor een nauwkeurige beoordeling.",
@@ -1982,7 +2007,15 @@
       "weatherStationData": "Weerstation data",
       "weatherStationHint": "Excel- of CSV-export (.xlsx / .csv)",
       "weatherStationInfo": "Uurlijkse weermetingen van een lokaal station. Wordt gebruikt om FWI te berekenen. Anders worden regionale weerdata gebruikt.",
-      "coreSignalsNote": "Vegetatie (NDVI) en infrastructuur maken altijd deel uit van het model en kunnen niet worden uitgezet. Een signaal hierboven uitzetten verwijdert de bijdrage ervan aan de weging — de berekening gaat verder met de overige signalen."
+      "coreSignalsNote": "Vegetatie (NDVI) en infrastructuur maken altijd deel uit van het model en kunnen niet worden uitgezet. Een signaal hierboven uitzetten verwijdert de bijdrage ervan aan de weging — de berekening gaat verder met de overige signalen.",
+      "precomputedLabel": "Voorberekende regiokaart",
+      "precomputedInfo": "Elke nacht wordt de hele regio geanalyseerd met alle risicolagen aan. Valt uw datum binnen die dekking, dan wordt het resultaat voor uw gebied uit die kaart geknipt en is het er binnen enkele seconden. Zet het uit (of schakel hieronder afzonderlijke lagen) om elke stap specifiek voor uw gebied te berekenen (~1-2 minuten).",
+      "precomputedOnHint": "Resultaat in seconden, geknipt uit de nachtelijke analyse van de hele regio. Alle drie de risicolagen hieronder zitten erin en zijn daarom vergrendeld.",
+      "precomputedOffHint": "Volledige berekening voor precies uw gebied (~1-2 minuten); hieronder kunt u afzonderlijke lagen aan- of uitzetten.",
+      "precomputedRange": "Voorberekende kaarten beslaan precies één dag — kies dezelfde begin- en einddatum om er een te gebruiken. Bij een reeks dagen berekent het model elke dag voor uw gebied en geeft het de dag met het hoogste risico terug (~1-2 minuten).",
+      "precomputedStaticMode": "Voorberekende kaarten bestaan alleen voor dynamische beoordelingen. Het model berekent alle stappen voor uw gebied.",
+      "precomputedUnavailable": "De nachtelijke analyse heeft deze datum nog niet verwerkt. Het model berekent alle stappen voor uw gebied.",
+      "lockedByPrecomputed": "Zit in de voorberekende regiokaart. Zet de schakelaar hierboven uit om lagen aan te passen."
     },
     "layer4": {
       "purpose": "Realtime validatie van de modelconfiguratie. Blokkades moeten worden opgelost voordat de berekening start.",
@@ -2054,5 +2087,39 @@
       "blankDesc": "Lege gebieden hebben geen geldige bronrastergegevens voor de berekening.",
       "availableData": "Brandgegevens beschikbaar"
     }
+  },
+  "apiTokens": {
+    "title": "API-tokens",
+    "subtitle": "Beheer API-toegangstokens voor",
+    "create": "Nieuw token maken",
+    "createdOnce": "Kopieer dit token nu — het wordt nooit meer getoond.",
+    "errors": {
+      "create": "Token maken mislukt",
+      "load": "Tokens laden mislukt",
+      "revoke": "Token intrekken mislukt"
+    },
+    "existing": "Bestaande tokens",
+    "expires": "verloopt",
+    "expiry": "Verloopdatum",
+    "expiry30": "Verloopt over 30 dagen",
+    "expiry90": "Verloopt over 90 dagen",
+    "expiry365": "Verloopt over 1 jaar",
+    "expiryNever": "Verloopt nooit",
+    "generate": "Token genereren",
+    "lastUsed": "laatst gebruikt",
+    "namePlaceholder": "Tokennaam (bijv. analysescript)",
+    "none": "Nog geen tokens.",
+    "revoke": "Intrekken",
+    "scope": "Rechten",
+    "scopeFull": "Lezen en schrijven",
+    "scopeFullShort": "lezen en schrijven",
+    "scopeRead": "Alleen lezen (aanbevolen)",
+    "scopeReadShort": "alleen lezen",
+    "status": {
+      "active": "Actief",
+      "expired": "Verlopen",
+      "revoked": "Ingetrokken"
+    },
+    "usageHint": "Gebruik het token vanuit elke app: Authorization: Bearer <token>. Tokens met alleen-lezen rechten kunnen modellen opvragen en resultaten downloaden met de rechten van deze gebruiker."
   }
 }

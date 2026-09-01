@@ -107,7 +107,9 @@
       "nextPage": "Další stránka"
     },
     "appName": "Hodnocení rizika požárů",
-    "saved": "Uloženo"
+    "saved": "Uloženo",
+    "copy": "Kopírovat",
+    "copied": "Zkopírováno"
   },
   "dashboard": {
     "stats": {
@@ -357,7 +359,15 @@
     "cannotCalculate": "Nelze vypočítat – nejsou vybrány žádné vhodné modely",
     "noWebserviceAvailable": "Simulační engine není k dispozici",
     "cancelled": "Zrušeno",
-    "modified": "Upraveno"
+    "modified": "Upraveno",
+    "canEdit": "Může upravovat",
+    "canView": "Může zobrazit",
+    "noDirectShares": "Tento model zatím nebyl s nikým sdílen.",
+    "peopleWithAccess": "Lidé s přímým přístupem",
+    "peopleWithAccessDescription": "Lidé v tomto seznamu mohou otevřít tento model a jeho vrstvy rizika.",
+    "revokeAccess": "Odvolat",
+    "revokeAccessFor": "Odebrat přístup",
+    "revokingAccess": "Odebírání přístupu…"
   },
   "polygon": {
     "drawRegion": "Nakreslete svůj region",
@@ -522,7 +532,9 @@
       "bulkMoveToGroup": "Přesunout do skupiny",
       "deselectAll": "Zrušit výběr všeho",
       "selectAll": "Vybrat vše",
-      "selected": "{{count}} vybráno"
+      "selected": "{{count}} vybráno",
+      "apiTokens": "API tokeny",
+      "apiTokensActive": "Přístup k API povolen — spravovat tokeny"
     },
     "groups": {
       "selectOrCreate": "Vyberte nebo vytvořte skupinu",
@@ -1619,7 +1631,16 @@
       "view2d": "2D Mapa",
       "playDaily": "Animovat denní mapy rizik",
       "fullscreen": "Celá obrazovka",
-      "exitFullscreen": "Ukončit celou obrazovku"
+      "exitFullscreen": "Ukončit celou obrazovku",
+      "dataset": "Vrstva",
+      "play": "Přehrát",
+      "pause": "Pozastavit",
+      "peakDay": "Den s nejvyšším rizikem",
+      "peakDayHint": "Kliknutím zobrazíte tento den, poté přejdete na další nejrizikovější",
+      "peakDayNext": "Klikněte pro zobrazení · následuje další den",
+      "rankDay": "Rizikový den č. {{rank}}",
+      "viewMap": "Mapa",
+      "viewTerrain": "Terén"
     },
     "layers": {
       "labels": "Popisky a místa",
@@ -1962,7 +1983,11 @@
       "statusRegionPrompt": "Kliknutím dovnitř správního regionu na mapě vyberete jeho celou hranici.",
       "regionCoverageWarning": "Používá se celá správní hranice. Pixely mimo vyšrafovaný rozsah dat o požárech nemusí být spočitatelné.",
       "statusRegionLabel": "Region vybrán",
-      "blockingSelectRegion": "Pokračujte kliknutím dovnitř správního regionu na mapě."
+      "blockingSelectRegion": "Pokračujte kliknutím dovnitř správního regionu na mapě.",
+      "regionNotFound": "Zde nebyla nalezena žádná správní hranice. Zkuste kliknout více dovnitř regionu.",
+      "regionLookupFailed": "Správní hranici se nepodařilo načíst. Zkontrolujte připojení a zkuste to znovu.",
+      "regionOutsideCoverage": "Tento bod je mimo oblast s daty o požárech. Klikněte dovnitř vyšrafované plochy.",
+      "regionOutsideCoverageNamed": "Data o požárech jsou dostupná pouze pro {{regions}}. Klikněte dovnitř vyšrafované plochy."
     },
     "layer3": {
       "purpose": "Tyto signály napájejí model rizika. Všechny tři jsou ve výchozím nastavení povoleny a doporučují se pro přesné posouzení.",
@@ -1982,7 +2007,15 @@
       "weatherStationData": "Údaje meteorologické stanice",
       "weatherStationHint": "Export Excel nebo CSV (.xlsx / .csv)",
       "weatherStationInfo": "Hodinová měření ze stanice. Používá se k výpočtu FWI. Jinak se použijí regionální data.",
-      "coreSignalsNote": "Vegetace (NDVI) a infrastruktura jsou vždy součástí modelu a nelze je vypnout. Vypnutím některého signálu výše odeberete jeho podíl na vahách — výpočet pokračuje se zbývajícími signály."
+      "coreSignalsNote": "Vegetace (NDVI) a infrastruktura jsou vždy součástí modelu a nelze je vypnout. Vypnutím některého signálu výše odeberete jeho podíl na vahách — výpočet pokračuje se zbývajícími signály.",
+      "precomputedLabel": "Předpočítaná regionální mapa",
+      "precomputedInfo": "Každou noc se celý region analyzuje se všemi vrstvami rizika. Pokud je vaše datum pokryté, výsledek pro vaši oblast se z této mapy vyřízne a je k dispozici během několika sekund. Vypněte ji (nebo přepněte jednotlivé vrstvy níže), aby se každý krok spočítal přímo pro vaši oblast (~1-2 minuty).",
+      "precomputedOnHint": "Výsledek během sekund, vyříznutý z noční analýzy celého regionu. Všechny tři vrstvy rizika níže jsou zahrnuté, a proto uzamčené.",
+      "precomputedOffHint": "Úplný výpočet přesně pro vaši oblast (~1-2 minuty); jednotlivé vrstvy můžete přepnout níže.",
+      "precomputedRange": "Předpočítané mapy pokrývají přesně jeden den — vyberte stejné počáteční i koncové datum, abyste ji použili. U rozsahu dat model spočítá každý den pro vaši oblast a vrátí den s nejvyšším rizikem (~1-2 minuty).",
+      "precomputedStaticMode": "Předpočítané mapy existují pouze pro dynamické posouzení. Model spočítá všechny kroky pro vaši oblast.",
+      "precomputedUnavailable": "Noční analýza toto datum zatím nezpracovala. Model spočítá všechny kroky pro vaši oblast.",
+      "lockedByPrecomputed": "Zahrnuto v předpočítané regionální mapě. Vypněte přepínač předpočítání výše, chcete-li vrstvy upravit."
     },
     "layer4": {
       "purpose": "Ověření konfigurace v reálném čase. Blokátory musí být odstraněny před spuštěním.",
@@ -2054,5 +2087,39 @@
       "blankDesc": "Prázdné oblasti nemají platná zdrojová rastrová data pro výpočet.",
       "availableData": "Dostupná data o požárech"
     }
+  },
+  "apiTokens": {
+    "title": "API tokeny",
+    "subtitle": "Správa přístupových tokenů k API pro",
+    "create": "Vytvořit nový token",
+    "createdOnce": "Zkopírujte tento token hned — už se znovu nezobrazí.",
+    "errors": {
+      "create": "Token se nepodařilo vytvořit",
+      "load": "Tokeny se nepodařilo načíst",
+      "revoke": "Token se nepodařilo odvolat"
+    },
+    "existing": "Existující tokeny",
+    "expires": "vyprší",
+    "expiry": "Platnost",
+    "expiry30": "Vyprší za 30 dní",
+    "expiry90": "Vyprší za 90 dní",
+    "expiry365": "Vyprší za 1 rok",
+    "expiryNever": "Nikdy nevyprší",
+    "generate": "Vygenerovat token",
+    "lastUsed": "naposledy použit",
+    "namePlaceholder": "Název tokenu (např. analytický skript)",
+    "none": "Zatím žádné tokeny.",
+    "revoke": "Odvolat",
+    "scope": "Rozsah",
+    "scopeFull": "Čtení i zápis",
+    "scopeFullShort": "čtení i zápis",
+    "scopeRead": "Jen pro čtení (doporučeno)",
+    "scopeReadShort": "jen pro čtení",
+    "status": {
+      "active": "Aktivní",
+      "expired": "Vypršel",
+      "revoked": "Odvolán"
+    },
+    "usageHint": "Token použijte z libovolné aplikace: Authorization: Bearer <token>. Tokeny jen pro čtení mohou vypsat modely a stáhnout výsledky s oprávněními tohoto uživatele."
   }
 }

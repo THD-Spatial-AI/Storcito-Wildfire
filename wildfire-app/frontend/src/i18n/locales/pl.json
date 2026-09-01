@@ -107,7 +107,9 @@
       "nextPage": "Następna strona"
     },
     "appName": "Ocena ryzyka pożarów",
-    "saved": "Zapisano"
+    "saved": "Zapisano",
+    "copy": "Kopiuj",
+    "copied": "Skopiowano"
   },
   "dashboard": {
     "stats": {
@@ -357,7 +359,15 @@
     "calculate": "Oblicz",
     "cannotCalculate": "Nie można obliczyć – nie wybrano odpowiednich modeli",
     "noWebserviceAvailable": "Silnik symulacji niedostępny",
-    "modified": "Zmodyfikowano"
+    "modified": "Zmodyfikowano",
+    "canEdit": "Może edytować",
+    "canView": "Może przeglądać",
+    "noDirectShares": "Ten model nie został jeszcze nikomu udostępniony.",
+    "peopleWithAccess": "Osoby z bezpośrednim dostępem",
+    "peopleWithAccessDescription": "Osoby z tej listy mogą otworzyć ten model i jego warstwy ryzyka.",
+    "revokeAccess": "Unieważnij",
+    "revokeAccessFor": "Odbierz dostęp",
+    "revokingAccess": "Odbieranie dostępu…"
   },
   "polygon": {
     "drawRegion": "Narysuj swój region",
@@ -522,7 +532,9 @@
       "bulkMoveToGroup": "Przenieś do grupy",
       "deselectAll": "Odznacz wszystko",
       "selectAll": "Zaznacz wszystko",
-      "selected": "Wybrano: {{count}}"
+      "selected": "Wybrano: {{count}}",
+      "apiTokens": "Tokeny API",
+      "apiTokensActive": "Dostęp do API włączony — zarządzaj tokenami"
     },
     "groups": {
       "selectOrCreate": "Wybierz lub utwórz grupę",
@@ -1619,7 +1631,16 @@
       "view2d": "Mapa 2D",
       "playDaily": "Animuj codzienne mapy ryzyka",
       "fullscreen": "Pełny ekran",
-      "exitFullscreen": "Zamknij pełny ekran"
+      "exitFullscreen": "Zamknij pełny ekran",
+      "dataset": "Warstwa",
+      "play": "Odtwórz",
+      "pause": "Wstrzymaj",
+      "peakDay": "Dzień najwyższego ryzyka",
+      "peakDayHint": "Kliknij, aby pokazać ten dzień, a następnie przejść do kolejnego o najwyższym ryzyku",
+      "peakDayNext": "Kliknij, aby zobaczyć · dalej następny dzień",
+      "rankDay": "Dzień ryzyka nr {{rank}}",
+      "viewMap": "Mapa",
+      "viewTerrain": "Teren"
     },
     "layers": {
       "labels": "Etykiety i miejsca",
@@ -1962,7 +1983,11 @@
       "statusRegionPrompt": "Kliknij na mapie wewnątrz regionu administracyjnego, aby wybrać jego pełną granicę.",
       "regionCoverageWarning": "Używana jest pełna granica administracyjna. Piksele poza zacienionym zasięgiem danych o pożarach mogą nie być obliczalne.",
       "statusRegionLabel": "Wybrano region",
-      "blockingSelectRegion": "Kliknij na mapie wewnątrz regionu administracyjnego, aby kontynuować."
+      "blockingSelectRegion": "Kliknij na mapie wewnątrz regionu administracyjnego, aby kontynuować.",
+      "regionNotFound": "Nie znaleziono tu granicy administracyjnej. Kliknij bardziej we wnętrzu regionu.",
+      "regionLookupFailed": "Nie udało się wczytać granicy administracyjnej. Sprawdź połączenie i spróbuj ponownie.",
+      "regionOutsideCoverage": "Ten punkt leży poza obszarem objętym danymi o pożarach. Kliknij wewnątrz zacienionego obszaru.",
+      "regionOutsideCoverageNamed": "Dane o pożarach są dostępne tylko dla: {{regions}}. Kliknij wewnątrz zacienionego obszaru."
     },
     "layer3": {
       "purpose": "Te sygnały zasilają model ryzyka. Wszystkie trzy są domyślnie włączone i zalecane do dokładnej oceny.",
@@ -1982,7 +2007,15 @@
       "weatherStationData": "Dane ze stacji pogodowej",
       "weatherStationHint": "Eksport stacji w Excelu lub CSV (.xlsx / .csv)",
       "weatherStationInfo": "Godzinowe pomiary ze stacji. Używane do obliczenia FWI. W przeciwnym razie użyte zostaną dane regionalne.",
-      "coreSignalsNote": "Roślinność (NDVI) i infrastruktura zawsze wchodzą w skład modelu i nie można ich wyłączyć. Wyłączenie sygnału powyżej usuwa jego udział w wagach — obliczenia trwają dalej z pozostałymi sygnałami."
+      "coreSignalsNote": "Roślinność (NDVI) i infrastruktura zawsze wchodzą w skład modelu i nie można ich wyłączyć. Wyłączenie sygnału powyżej usuwa jego udział w wagach — obliczenia trwają dalej z pozostałymi sygnałami.",
+      "precomputedLabel": "Wstępnie obliczona mapa regionu",
+      "precomputedInfo": "Każdej nocy cały region jest analizowany ze wszystkimi warstwami ryzyka. Jeśli Twoja data jest objęta analizą, wynik dla Twojego obszaru jest wycinany z tej mapy i pojawia się w kilka sekund. Wyłącz tę opcję (lub przełącz poszczególne warstwy poniżej), aby obliczyć każdy krok specjalnie dla Twojego obszaru (~1-2 minuty).",
+      "precomputedOnHint": "Wynik w kilka sekund, wycięty z nocnej analizy całego regionu. Wszystkie trzy warstwy ryzyka poniżej są uwzględnione i dlatego zablokowane.",
+      "precomputedOffHint": "Pełne obliczenia dla dokładnie Twojego obszaru (~1-2 minuty); poniżej możesz przełączać poszczególne warstwy.",
+      "precomputedRange": "Wstępnie obliczone mapy obejmują dokładnie jeden dzień — wybierz tę samą datę początkową i końcową, aby z niej skorzystać. Dla zakresu dat model obliczy każdy dzień dla Twojego obszaru i zwróci dzień o najwyższym ryzyku (~1-2 minuty).",
+      "precomputedStaticMode": "Wstępnie obliczone mapy istnieją tylko dla ocen dynamicznych. Model obliczy wszystkie kroki dla Twojego obszaru.",
+      "precomputedUnavailable": "Nocna analiza nie przetworzyła jeszcze tej daty. Model obliczy wszystkie kroki dla Twojego obszaru.",
+      "lockedByPrecomputed": "Zawarta we wstępnie obliczonej mapie regionu. Wyłącz przełącznik powyżej, aby dostosować warstwy."
     },
     "layer4": {
       "purpose": "Weryfikacja w czasie rzeczywistym. Blokady muszą zostać naprawione przed uruchomieniem.",
@@ -2054,5 +2087,39 @@
       "blankDesc": "Puste obszary nie mają ważnych danych rastrowych źródłowych do obliczeń.",
       "availableData": "Dane o pożarach dostępne"
     }
+  },
+  "apiTokens": {
+    "title": "Tokeny API",
+    "subtitle": "Zarządzaj tokenami dostępu do API dla",
+    "create": "Utwórz nowy token",
+    "createdOnce": "Skopiuj ten token teraz — nie zostanie pokazany ponownie.",
+    "errors": {
+      "create": "Nie udało się utworzyć tokenu",
+      "load": "Nie udało się wczytać tokenów",
+      "revoke": "Nie udało się unieważnić tokenu"
+    },
+    "existing": "Istniejące tokeny",
+    "expires": "wygasa",
+    "expiry": "Wygaśnięcie",
+    "expiry30": "Wygasa za 30 dni",
+    "expiry90": "Wygasa za 90 dni",
+    "expiry365": "Wygasa za 1 rok",
+    "expiryNever": "Nigdy nie wygasa",
+    "generate": "Wygeneruj token",
+    "lastUsed": "ostatnio użyty",
+    "namePlaceholder": "Nazwa tokenu (np. skrypt analityczny)",
+    "none": "Brak tokenów.",
+    "revoke": "Unieważnij",
+    "scope": "Zakres",
+    "scopeFull": "Odczyt i zapis",
+    "scopeFullShort": "odczyt i zapis",
+    "scopeRead": "Tylko odczyt (zalecane)",
+    "scopeReadShort": "tylko odczyt",
+    "status": {
+      "active": "Aktywny",
+      "expired": "Wygasł",
+      "revoked": "Unieważniony"
+    },
+    "usageHint": "Użyj tokenu z dowolnej aplikacji: Authorization: Bearer <token>. Tokeny tylko do odczytu mogą pobierać listę modeli i wyniki z uprawnieniami tego użytkownika."
   }
 }

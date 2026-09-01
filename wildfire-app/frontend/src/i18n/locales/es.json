@@ -115,7 +115,9 @@
       "nextPage": "Página siguiente"
     },
     "appName": "Evaluación del riesgo de incendio forestal",
-    "saved": "Guardado"
+    "saved": "Guardado",
+    "copy": "Copiar",
+    "copied": "Copiado"
   },
   "forms": {
     "user": {
@@ -514,7 +516,15 @@
     "bulkCopySubmit": "Crear copias",
     "calculate": "Calcular",
     "cannotCalculate": "No se puede calcular – no hay modelos elegibles seleccionados",
-    "noWebserviceAvailable": "Motor de simulación no disponible"
+    "noWebserviceAvailable": "Motor de simulación no disponible",
+    "canEdit": "Puede editar",
+    "canView": "Puede ver",
+    "noDirectShares": "Este modelo aún no se ha compartido con nadie.",
+    "peopleWithAccess": "Personas con acceso directo",
+    "peopleWithAccessDescription": "Las personas de esta lista pueden abrir este modelo y sus capas de riesgo.",
+    "revokeAccess": "Revocar",
+    "revokeAccessFor": "Revocar acceso",
+    "revokingAccess": "Revocando…"
   },
   "polygon": {
     "drawRegion": "Dibuja tu región",
@@ -679,7 +689,9 @@
       "bulkMoveToGroup": "Mover al grupo",
       "deselectAll": "Deseleccionar todo",
       "selectAll": "Seleccionar todo",
-      "selected": "{{count}} seleccionados"
+      "selected": "{{count}} seleccionados",
+      "apiTokens": "Tokens de API",
+      "apiTokensActive": "Acceso a la API activado: gestionar tokens"
     },
     "groups": {
       "selectOrCreate": "Seleccionar o crear un grupo",
@@ -1619,7 +1631,16 @@
       "view2d": "Mapa 2D",
       "playDaily": "Animar mapas de riesgo diario",
       "fullscreen": "Pantalla completa",
-      "exitFullscreen": "Salir de pantalla completa"
+      "exitFullscreen": "Salir de pantalla completa",
+      "dataset": "Capa",
+      "play": "Reproducir",
+      "pause": "Pausar",
+      "peakDay": "Día de riesgo máximo",
+      "peakDayHint": "Haz clic para mostrar este día y luego pasar al siguiente de mayor riesgo",
+      "peakDayNext": "Haz clic para ver · continúa el día siguiente",
+      "rankDay": "Día de riesgo n.º {{rank}}",
+      "viewMap": "Mapa",
+      "viewTerrain": "Terreno"
     },
     "layers": {
       "labels": "Etiquetas y lugares",
@@ -1962,7 +1983,11 @@
       "statusRegionPrompt": "Haz clic dentro de una región administrativa del mapa para seleccionar su límite completo.",
       "regionCoverageWarning": "Se utiliza el límite administrativo completo. Los píxeles situados fuera de la cobertura sombreada de datos de incendios pueden no ser calculables.",
       "statusRegionLabel": "Región seleccionada",
-      "blockingSelectRegion": "Haz clic dentro de una región administrativa del mapa para continuar."
+      "blockingSelectRegion": "Haz clic dentro de una región administrativa del mapa para continuar.",
+      "regionNotFound": "No se encontró ningún límite administrativo aquí. Prueba a hacer clic más hacia el interior de la región.",
+      "regionLookupFailed": "No se pudo cargar el límite administrativo. Comprueba tu conexión e inténtalo de nuevo.",
+      "regionOutsideCoverage": "Ese punto está fuera del área con datos de incendios. Haz clic dentro de la zona sombreada.",
+      "regionOutsideCoverageNamed": "Solo hay datos de incendios para {{regions}}. Haz clic dentro de la zona sombreada."
     },
     "layer3": {
       "purpose": "Estas señales alimentan el modelo de riesgo ponderado por AHP. Las tres están habilitadas por defecto y se recomiendan para una evaluación precisa del riesgo de incendios forestales.",
@@ -1982,7 +2007,15 @@
       "weatherStationData": "Datos de estación meteorológica",
       "weatherStationHint": "Exportación de estación en Excel o CSV (.xlsx / .csv)",
       "weatherStationInfo": "Mediciones meteorológicas horarias de una estación local — temperatura, humedad, viento y precipitación. Se usa para calcular el FWI para esta área. Sube una exportación Excel o CSV; si se omite, se usan los datos meteorológicos regionales.",
-      "coreSignalsNote": "La vegetación (NDVI) y las infraestructuras forman parte del modelo siempre y no se pueden desactivar. Al desactivar una señal de arriba se elimina su contribución del cálculo de pesos; la ejecución continúa con las señales restantes."
+      "coreSignalsNote": "La vegetación (NDVI) y las infraestructuras forman parte del modelo siempre y no se pueden desactivar. Al desactivar una señal de arriba se elimina su contribución del cálculo de pesos; la ejecución continúa con las señales restantes.",
+      "precomputedLabel": "Mapa regional precalculado",
+      "precomputedInfo": "Cada noche se analiza toda la región con todas las capas de riesgo activadas. Si tu fecha está cubierta, el resultado de tu área se recorta de ese mapa y llega en segundos. Desactívalo (o cambia las capas de abajo) para calcular cada paso específicamente para tu área (~1-2 minutos).",
+      "precomputedOnHint": "Resultado en segundos, recortado del análisis nocturno de toda la región. Las tres capas de riesgo de abajo se incluyen y por eso están bloqueadas.",
+      "precomputedOffHint": "Cálculo completo para tu área exacta (~1-2 minutos); puedes activar o desactivar capas individuales abajo.",
+      "precomputedRange": "Los mapas precalculados cubren exactamente un día: selecciona la misma fecha de inicio y fin para usar uno. Con un rango de fechas, el modelo calcula cada día de tu área y devuelve el día de riesgo máximo (~1-2 minutos).",
+      "precomputedStaticMode": "Los mapas precalculados solo existen para evaluaciones dinámicas. El modelo calculará todos los pasos para tu área.",
+      "precomputedUnavailable": "El análisis nocturno aún no ha procesado esta fecha. El modelo calculará todos los pasos para tu área.",
+      "lockedByPrecomputed": "Incluida en el mapa regional precalculado. Desactiva el interruptor de precalculado de arriba para personalizar las capas."
     },
     "layer4": {
       "purpose": "Validación en tiempo real de la configuración. Los bloqueos deben resolverse en sus respectivos pasos antes de iniciar la ejecución.",
@@ -2054,5 +2087,39 @@
       "blankDesc": "Las áreas en blanco no tienen datos raster fuente válidos para el cálculo.",
       "availableData": "Datos de incendios disponibles"
     }
+  },
+  "apiTokens": {
+    "title": "Tokens de API",
+    "subtitle": "Gestiona los tokens de acceso a la API de",
+    "create": "Crear nuevo token",
+    "createdOnce": "Copia este token ahora: no se volverá a mostrar.",
+    "errors": {
+      "create": "No se pudo crear el token",
+      "load": "No se pudieron cargar los tokens",
+      "revoke": "No se pudo revocar el token"
+    },
+    "existing": "Tokens existentes",
+    "expires": "caduca",
+    "expiry": "Caducidad",
+    "expiry30": "Caduca en 30 días",
+    "expiry90": "Caduca en 90 días",
+    "expiry365": "Caduca en 1 año",
+    "expiryNever": "No caduca nunca",
+    "generate": "Generar token",
+    "lastUsed": "último uso",
+    "namePlaceholder": "Nombre del token (p. ej. script de análisis)",
+    "none": "Aún no hay tokens.",
+    "revoke": "Revocar",
+    "scope": "Alcance",
+    "scopeFull": "Lectura y escritura",
+    "scopeFullShort": "lectura y escritura",
+    "scopeRead": "Solo lectura (recomendado)",
+    "scopeReadShort": "solo lectura",
+    "status": {
+      "active": "Activo",
+      "expired": "Caducado",
+      "revoked": "Revocado"
+    },
+    "usageHint": "Usa el token desde cualquier aplicación: Authorization: Bearer <token>. Los tokens de solo lectura pueden listar modelos y descargar resultados con los permisos de este usuario."
   }
 }

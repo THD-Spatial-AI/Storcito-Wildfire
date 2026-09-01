@@ -115,7 +115,9 @@
       "nextPage": "Page suivante"
     },
     "appName": "Évaluation du risque d'incendie de forêt",
-    "saved": "Enregistré"
+    "saved": "Enregistré",
+    "copy": "Copier",
+    "copied": "Copié"
   },
   "forms": {
     "user": {
@@ -514,7 +516,15 @@
     "bulkCopySubmit": "Créer les copies",
     "calculate": "Calculer",
     "cannotCalculate": "Calcul impossible – aucun modèle éligible sélectionné",
-    "noWebserviceAvailable": "Aucun moteur de simulation disponible"
+    "noWebserviceAvailable": "Aucun moteur de simulation disponible",
+    "canEdit": "Peut modifier",
+    "canView": "Peut consulter",
+    "noDirectShares": "Ce modèle n'a encore été partagé avec personne.",
+    "peopleWithAccess": "Personnes ayant un accès direct",
+    "peopleWithAccessDescription": "Les personnes listées ici peuvent ouvrir ce modèle et ses couches de risque.",
+    "revokeAccess": "Révoquer",
+    "revokeAccessFor": "Révoquer l'accès",
+    "revokingAccess": "Révocation…"
   },
   "polygon": {
     "drawRegion": "Dessinez votre région",
@@ -679,7 +689,9 @@
       "bulkMoveToGroup": "Déplacer vers le groupe",
       "deselectAll": "Tout désélectionner",
       "selectAll": "Tout sélectionner",
-      "selected": "{{count}} sélectionnés"
+      "selected": "{{count}} sélectionnés",
+      "apiTokens": "Jetons d'API",
+      "apiTokensActive": "Accès API activé — gérer les jetons"
     },
     "groups": {
       "selectOrCreate": "Sélectionner ou créer un groupe",
@@ -1619,7 +1631,16 @@
       "view2d": "Carte 2D",
       "playDaily": "Animer les cartes de risque quotidien",
       "fullscreen": "Plein écran",
-      "exitFullscreen": "Quitter le plein écran"
+      "exitFullscreen": "Quitter le plein écran",
+      "dataset": "Couche",
+      "play": "Lancer",
+      "pause": "Pause",
+      "peakDay": "Jour de risque maximal",
+      "peakDayHint": "Cliquez pour afficher ce jour, puis passez au suivant le plus à risque",
+      "peakDayNext": "Cliquez pour voir · le jour suivant enchaîne",
+      "rankDay": "Jour de risque n° {{rank}}",
+      "viewMap": "Carte",
+      "viewTerrain": "Relief"
     },
     "layers": {
       "labels": "Étiquettes et lieux",
@@ -1962,7 +1983,11 @@
       "statusRegionPrompt": "Cliquez dans une région administrative sur la carte pour sélectionner sa limite complète.",
       "regionCoverageWarning": "La limite administrative complète est utilisée. Les pixels situés hors de l'emprise ombrée des données incendie peuvent ne pas être calculables.",
       "statusRegionLabel": "Région sélectionnée",
-      "blockingSelectRegion": "Cliquez dans une région administrative sur la carte pour continuer."
+      "blockingSelectRegion": "Cliquez dans une région administrative sur la carte pour continuer.",
+      "regionNotFound": "Aucune limite administrative n'a été trouvée ici. Cliquez plus à l'intérieur de la région.",
+      "regionLookupFailed": "Impossible de charger la limite administrative. Vérifiez votre connexion et réessayez.",
+      "regionOutsideCoverage": "Ce point est en dehors de la zone couverte par les données incendie. Cliquez dans la zone ombrée.",
+      "regionOutsideCoverageNamed": "Les données incendie ne sont disponibles que pour {{regions}}. Cliquez dans la zone ombrée."
     },
     "layer3": {
       "purpose": "Ces signaux alimentent le modèle de risque pondéré AHP. Les trois sont activés par défaut et recommandés pour une évaluation précise.",
@@ -1982,7 +2007,15 @@
       "weatherStationData": "Données de station météo",
       "weatherStationHint": "Export Excel ou CSV (.xlsx / .csv)",
       "weatherStationInfo": "Mesures horaires d'une station locale (température, humidité, etc.). Utilisé pour calculer le FWI. Sinon, les données régionales sont utilisées.",
-      "coreSignalsNote": "La végétation (NDVI) et les infrastructures font toujours partie du modèle et ne peuvent pas être désactivées. Désactiver un signal ci-dessus retire sa contribution à la pondération — le calcul se poursuit avec les signaux restants."
+      "coreSignalsNote": "La végétation (NDVI) et les infrastructures font toujours partie du modèle et ne peuvent pas être désactivées. Désactiver un signal ci-dessus retire sa contribution à la pondération — le calcul se poursuit avec les signaux restants.",
+      "precomputedLabel": "Carte régionale précalculée",
+      "precomputedInfo": "Chaque nuit, toute la région est analysée avec l'ensemble des couches de risque. Si votre date est couverte, le résultat de votre zone est découpé dans cette carte et arrive en quelques secondes. Désactivez-la (ou modifiez les couches ci-dessous) pour calculer chaque étape spécifiquement pour votre zone (~1-2 minutes).",
+      "precomputedOnHint": "Résultat en quelques secondes, découpé dans l'analyse nocturne de toute la région. Les trois couches de risque ci-dessous sont incluses et donc verrouillées.",
+      "precomputedOffHint": "Calcul complet pour votre zone exacte (~1-2 minutes) ; vous pouvez activer ou désactiver les couches ci-dessous.",
+      "precomputedRange": "Les cartes précalculées couvrent exactement une journée : sélectionnez la même date de début et de fin pour en utiliser une. Sur une plage de dates, le modèle calcule chaque jour pour votre zone et renvoie le jour le plus à risque (~1-2 minutes).",
+      "precomputedStaticMode": "Les cartes précalculées n'existent que pour les évaluations dynamiques. Le modèle calculera toutes les étapes pour votre zone.",
+      "precomputedUnavailable": "L'analyse nocturne n'a pas encore traité cette date. Le modèle calculera toutes les étapes pour votre zone.",
+      "lockedByPrecomputed": "Incluse dans la carte régionale précalculée. Désactivez le commutateur précalculé ci-dessus pour personnaliser les couches."
     },
     "layer4": {
       "purpose": "Validation en temps réel de la configuration. Les bloquants doivent être résolus dans leurs étapes respectives avant de lancer le calcul.",
@@ -2054,5 +2087,39 @@
       "blankDesc": "Les zones vides n'ont pas de données raster valides pour le calcul.",
       "availableData": "Données d'incendies disponibles"
     }
+  },
+  "apiTokens": {
+    "title": "Jetons d'API",
+    "subtitle": "Gérer les jetons d'accès à l'API de",
+    "create": "Créer un jeton",
+    "createdOnce": "Copiez ce jeton maintenant — il ne sera plus jamais affiché.",
+    "errors": {
+      "create": "Échec de la création du jeton",
+      "load": "Échec du chargement des jetons",
+      "revoke": "Échec de la révocation du jeton"
+    },
+    "existing": "Jetons existants",
+    "expires": "expire",
+    "expiry": "Expiration",
+    "expiry30": "Expire dans 30 jours",
+    "expiry90": "Expire dans 90 jours",
+    "expiry365": "Expire dans 1 an",
+    "expiryNever": "N'expire jamais",
+    "generate": "Générer le jeton",
+    "lastUsed": "dernière utilisation",
+    "namePlaceholder": "Nom du jeton (p. ex. script d'analyse)",
+    "none": "Aucun jeton pour le moment.",
+    "revoke": "Révoquer",
+    "scope": "Portée",
+    "scopeFull": "Lecture et écriture",
+    "scopeFullShort": "lecture et écriture",
+    "scopeRead": "Lecture seule (recommandé)",
+    "scopeReadShort": "lecture seule",
+    "status": {
+      "active": "Actif",
+      "expired": "Expiré",
+      "revoked": "Révoqué"
+    },
+    "usageHint": "Utilisez le jeton depuis n'importe quelle application : Authorization: Bearer <token>. Les jetons en lecture seule peuvent lister les modèles et télécharger les résultats avec les droits de cet utilisateur."
   }
 }

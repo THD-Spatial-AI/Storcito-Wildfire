@@ -8,6 +8,7 @@ import { AreaSelectTour } from "@/features/guided-tour/AreaSelectTour";
 import { MapContainer } from "@/components/shared/MapContainer";
 import { useAreaSelect, type AreaData } from "@/features/configurator/hooks/useAreaSelect";
 import { useAdministrativeRegionSelection } from "@/features/configurator/hooks/area-select/useAdministrativeRegionSelection";
+import { useDataCoverage } from "@/features/configurator/hooks/area-select/useDataCoverage";
 import { PolygonDrawer } from "@/features/polygon-drawer";
 import { PolygonDrawingGuide } from "@/components/map-controls/PolygonDrawingGuide";
 import { CreateWorkspaceModal } from "@/components/workspace";
@@ -94,6 +95,7 @@ export const AreaSelect: FC<AreaSelectProps> = ({
     });
 
     const regionSelectionEnabled = activeConfiguratorStep === 2 && state.areaInputMode === "region";
+    const { containsCoordinate, coverageNames } = useDataCoverage();
     useAdministrativeRegionSelection({
         map,
         enabled: regionSelectionEnabled,
@@ -101,6 +103,28 @@ export const AreaSelect: FC<AreaSelectProps> = ({
         onSelected: actions.handleRegionSelected,
         onError: actions.handleRegionSelectionError,
         onCancel: actions.cancelRegionSelection,
+        isWithinCoverage: containsCoordinate,
+        coverageNames,
+        messages: {
+            notFound: t(
+                "configurator.layer2.regionNotFound",
+                "No administrative region boundary was found here. Try clicking farther inside the region.",
+            ),
+            requestFailed: t(
+                "configurator.layer2.regionLookupFailed",
+                "Could not load the administrative boundary. Check your connection and try again.",
+            ),
+            outsideCoverage: coverageNames.length
+                ? t("configurator.layer2.regionOutsideCoverageNamed", {
+                      regions: coverageNames.join(", "),
+                      defaultValue:
+                          "Wildfire data is only available for {{regions}}. Click inside the shaded area.",
+                  })
+                : t(
+                      "configurator.layer2.regionOutsideCoverage",
+                      "That point is outside the area wildfire data covers. Click inside the shaded area.",
+                  ),
+        },
     });
 
     // Fly to default region when map is ready
@@ -144,8 +168,7 @@ export const AreaSelect: FC<AreaSelectProps> = ({
         !state.isDrawing &&
         state.allPolygons.length === 0;
 
-    // Drawing captures clicks, which makes panning fiddly — this lets the user
-    // park the tool, move the map, and pick drawing back up.
+    // Pause drawing to pan.
     const polygonDrawingEnabled =
         activeConfiguratorStep === 2 && state.areaInputMode === "draw" && !isPanMode;
 

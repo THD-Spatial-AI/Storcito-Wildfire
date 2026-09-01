@@ -9,6 +9,9 @@ interface PolygonStyleLabels {
   edit?: string;
 }
 
+/** Edit-badge flag. */
+export const EDIT_BADGE_PROPERTY = "showEditBadge";
+
 export const usePolygonStyles = (labels: PolygonStyleLabels = {}, editable = true) => {
   return useMemo(() => {
     const outlineStyle = new Style({
@@ -29,9 +32,9 @@ export const usePolygonStyles = (labels: PolygonStyleLabels = {}, editable = tru
         padding: [3, 6, 3, 6],
       }),
     });
-
     const polygonStyle = editable
       ? (feature: FeatureLike) => {
+          if (!feature.get(EDIT_BADGE_PROPERTY)) return outlineStyle;
           const geometry = feature.getGeometry();
           if (!geometry || geometry.getType() !== "Polygon") return outlineStyle;
           editBadgeStyle.setGeometry((geometry as Polygon).getInteriorPoint());

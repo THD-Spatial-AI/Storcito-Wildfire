@@ -115,7 +115,9 @@
       "nextPage": "Next page"
     },
     "appName": "Wildfire Risk Assessment",
-    "saved": "Saved"
+    "saved": "Saved",
+    "copy": "Copy",
+    "copied": "Copied"
   },
   "forms": {
     "user": {
@@ -514,7 +516,15 @@
     "failedDefaultMessage": "Calculation failed - webservice unavailable or timeout",
     "waiting": "Waiting",
     "queuedTooltip": "Your model is in the queue - the simulation engine is processing other calculations",
-    "compareRequires2Completed": "Select exactly 2 completed models to compare"
+    "compareRequires2Completed": "Select exactly 2 completed models to compare",
+    "canEdit": "Can edit",
+    "canView": "Can view",
+    "noDirectShares": "This model has not been shared with anyone yet.",
+    "peopleWithAccess": "People with direct access",
+    "peopleWithAccessDescription": "Users listed here can open this model and its risk layers.",
+    "revokeAccess": "Revoke",
+    "revokeAccessFor": "Revoke access",
+    "revokingAccess": "Revoking…"
   },
   "polygon": {
     "drawRegion": "Draw Your Region",
@@ -679,7 +689,9 @@
       "deselectAll": "Deselect all",
       "selected": "{{count}} selected",
       "bulkMoveToGroup": "Move to group",
-      "bulkDelete": "Delete selected"
+      "bulkDelete": "Delete selected",
+      "apiTokens": "API tokens",
+      "apiTokensActive": "API access enabled — manage tokens"
     },
     "groups": {
       "selectOrCreate": "Select or create a group",
@@ -1603,7 +1615,16 @@
       "view2d": "2D Map",
       "playDaily": "Animate daily risk maps",
       "fullscreen": "Fullscreen",
-      "exitFullscreen": "Exit fullscreen"
+      "exitFullscreen": "Exit fullscreen",
+      "dataset": "Layer",
+      "play": "Play",
+      "pause": "Pause",
+      "peakDay": "Peak risk day",
+      "peakDayHint": "Click to show this day, then step to the next-riskiest one",
+      "peakDayNext": "Click to view · next day follows",
+      "rankDay": "#{{rank}} risk day",
+      "viewMap": "Map",
+      "viewTerrain": "Terrain"
     },
     "map": {
       "initializing": "Initializing map…"
@@ -1956,7 +1977,11 @@
       "perimeter": "Perimeter",
       "blockingUploadGeoJson": "Upload a GeoJSON boundary file or switch back to draw.",
       "blockingDrawArea": "Draw an area on the map to continue.",
-      "blockingSelectRegion": "Click inside an administrative region on the map to continue."
+      "blockingSelectRegion": "Click inside an administrative region on the map to continue.",
+      "regionNotFound": "No administrative region boundary was found here. Try clicking farther inside the region.",
+      "regionLookupFailed": "Could not load the administrative boundary. Check your connection and try again.",
+      "regionOutsideCoverage": "That point is outside the area wildfire data covers. Click inside the shaded area.",
+      "regionOutsideCoverageNamed": "Wildfire data is only available for {{regions}}. Click inside the shaded area."
     },
     "layer3": {
       "purpose": "These signals feed the AHP-weighted risk model. All three are enabled by default and recommended for an accurate forest-fire risk assessment.",
@@ -1976,7 +2001,15 @@
       "weatherStationData": "Weather station data",
       "weatherStationHint": "Excel or CSV station export (.xlsx / .csv)",
       "weatherStationInfo": "Hourly weather measurements from a local station — temperature, humidity, wind and precipitation. Used to compute the Fire Weather Index for this area. Upload an Excel or CSV export; if omitted, the bundled regional weather data is used.",
-      "coreSignalsNote": "Vegetation (NDVI) and infrastructure are always part of the model and cannot be switched off. Switching a signal above off removes its contribution from the weighting — the run continues with the remaining signals."
+      "coreSignalsNote": "Vegetation (NDVI) and infrastructure are always part of the model and cannot be switched off. Switching a signal above off removes its contribution from the weighting — the run continues with the remaining signals.",
+      "precomputedLabel": "Precomputed regional map",
+      "precomputedInfo": "Every night the whole region is analysed with all risk layers enabled. When your date is covered, your area's result is clipped from that map and arrives in seconds. Disable it (or toggle individual layers below) to compute every step specifically for your area (~1-2 minutes).",
+      "precomputedOnHint": "Result in seconds, clipped from tonight's whole-region analysis. All three risk layers below are included and therefore locked.",
+      "precomputedOffHint": "Full computation for your exact area (~1-2 minutes); you can toggle individual layers below.",
+      "precomputedRange": "Precomputed maps cover exactly one day - select the same start and end date to use one. For a date range the model computes every day for your area and returns the peak-risk day (~1-2 minutes).",
+      "precomputedStaticMode": "Precomputed maps exist only for dynamic assessments. The model will compute all steps for your area.",
+      "precomputedUnavailable": "The nightly analysis has not processed this date yet. The model will compute all steps for your area.",
+      "lockedByPrecomputed": "Included in the precomputed regional map. Disable the precomputed switch above to customise layers."
     },
     "layer4": {
       "purpose": "Real-time validation of the model configuration. Blockers must be cleared in their respective steps before the run can start.",
@@ -2048,5 +2081,39 @@
       "blankDesc": "Blank areas have no valid source raster data for calculation.",
       "availableData": "Wildfire data available"
     }
+  },
+  "apiTokens": {
+    "title": "API Tokens",
+    "subtitle": "Manage API access tokens for",
+    "create": "Create new token",
+    "createdOnce": "Copy this token now — it will never be shown again.",
+    "errors": {
+      "create": "Failed to create token",
+      "load": "Failed to load tokens",
+      "revoke": "Failed to revoke token"
+    },
+    "existing": "Existing tokens",
+    "expires": "expires",
+    "expiry": "Expiry",
+    "expiry30": "Expires in 30 days",
+    "expiry90": "Expires in 90 days",
+    "expiry365": "Expires in 1 year",
+    "expiryNever": "Never expires",
+    "generate": "Generate token",
+    "lastUsed": "last used",
+    "namePlaceholder": "Token name (e.g. analysis script)",
+    "none": "No tokens yet.",
+    "revoke": "Revoke",
+    "scope": "Scope",
+    "scopeFull": "Read & write",
+    "scopeFullShort": "read & write",
+    "scopeRead": "Read-only (recommended)",
+    "scopeReadShort": "read-only",
+    "status": {
+      "active": "Active",
+      "expired": "Expired",
+      "revoked": "Revoked"
+    },
+    "usageHint": "Use the token from any app: Authorization: Bearer <token>. Read-only tokens can list models and download results with this user's permissions."
   }
 }

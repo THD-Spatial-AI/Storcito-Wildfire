@@ -115,7 +115,9 @@
       "nextPage": "Nächste Seite"
     },
     "appName": "Waldbrandrisikobewertung",
-    "saved": "Gespeichert"
+    "saved": "Gespeichert",
+    "copy": "Kopieren",
+    "copied": "Kopiert"
   },
   "forms": {
     "user": {
@@ -514,7 +516,15 @@
     "failedDefaultMessage": "Berechnung fehlgeschlagen - Webservice nicht verfügbar oder Zeitüberschreitung",
     "waiting": "Wartend",
     "queuedTooltip": "Ihr Modell ist in der Warteschlange - der Simulationsmotor verarbeitet andere Berechnungen",
-    "compareRequires2Completed": "Wählen Sie genau 2 abgeschlossene Modelle zum Vergleichen aus"
+    "compareRequires2Completed": "Wählen Sie genau 2 abgeschlossene Modelle zum Vergleichen aus",
+    "canEdit": "Kann bearbeiten",
+    "canView": "Kann ansehen",
+    "noDirectShares": "Dieses Modell wurde noch mit niemandem geteilt.",
+    "peopleWithAccess": "Personen mit direktem Zugriff",
+    "peopleWithAccessDescription": "Die hier aufgeführten Personen können dieses Modell und seine Risikoebenen öffnen.",
+    "revokeAccess": "Widerrufen",
+    "revokeAccessFor": "Zugriff widerrufen",
+    "revokingAccess": "Wird widerrufen …"
   },
   "polygon": {
     "drawRegion": "Zeichnen Sie Ihre Region",
@@ -679,7 +689,9 @@
       "bulkMoveToGroup": "In Gruppe verschieben",
       "deselectAll": "Auswahl aufheben",
       "selectAll": "Alle auswählen",
-      "selected": "{{count}} ausgewählt"
+      "selected": "{{count}} ausgewählt",
+      "apiTokens": "API-Tokens",
+      "apiTokensActive": "API-Zugriff aktiviert – Tokens verwalten"
     },
     "groups": {
       "selectOrCreate": "Gruppe auswählen oder erstellen",
@@ -1619,7 +1631,16 @@
       "view2d": "2D-Karte",
       "playDaily": "Tägliche Risikokarten animieren",
       "fullscreen": "Vollbild",
-      "exitFullscreen": "Vollbild beenden"
+      "exitFullscreen": "Vollbild beenden",
+      "dataset": "Ebene",
+      "play": "Abspielen",
+      "pause": "Pause",
+      "peakDay": "Tag mit höchstem Risiko",
+      "peakDayHint": "Klicken, um diesen Tag anzuzeigen, dann zum nächstriskantesten wechseln",
+      "peakDayNext": "Klicken zum Ansehen · danach folgt der nächste Tag",
+      "rankDay": "Risikotag Nr. {{rank}}",
+      "viewMap": "Karte",
+      "viewTerrain": "Gelände"
     },
     "layers": {
       "labels": "Beschriftungen & Orte",
@@ -1962,7 +1983,11 @@
       "statusRegionPrompt": "In eine Verwaltungsregion auf der Karte klicken, um ihre vollständige Grenze auszuwählen.",
       "regionCoverageWarning": "Es wird die vollständige Verwaltungsgrenze verwendet. Pixel außerhalb der schattierten Datenabdeckung sind möglicherweise nicht berechenbar.",
       "statusRegionLabel": "Region ausgewählt",
-      "blockingSelectRegion": "In eine Verwaltungsregion auf der Karte klicken, um fortzufahren."
+      "blockingSelectRegion": "In eine Verwaltungsregion auf der Karte klicken, um fortzufahren.",
+      "regionNotFound": "Hier wurde keine Verwaltungsgrenze gefunden. Klicken Sie weiter innerhalb der Region.",
+      "regionLookupFailed": "Die Verwaltungsgrenze konnte nicht geladen werden. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+      "regionOutsideCoverage": "Dieser Punkt liegt außerhalb des Gebiets mit Waldbranddaten. Klicken Sie in die schattierte Fläche.",
+      "regionOutsideCoverageNamed": "Waldbranddaten gibt es nur für {{regions}}. Klicken Sie in die schattierte Fläche."
     },
     "layer3": {
       "purpose": "Diese Signale speisen das AHP-gewichtete Risikomodell. Alle drei sind standardmäßig aktiviert und für eine genaue Waldbrandrisikobewertung empfohlen.",
@@ -1982,7 +2007,15 @@
       "weatherStationData": "Wetterstationsdaten",
       "weatherStationHint": "Excel- oder CSV-Stationsexport (.xlsx / .csv)",
       "weatherStationInfo": "Stündliche Wettermessungen von einer lokalen Station — Temperatur, Feuchtigkeit, Wind und Niederschlag. Wird zur Berechnung des Feuerwetterindex für dieses Gebiet verwendet. Laden Sie einen Excel- oder CSV-Export hoch; andernfalls werden die regionalen Wetterdaten verwendet.",
-      "coreSignalsNote": "Vegetation (NDVI) und Infrastruktur sind immer Teil des Modells und lassen sich nicht abschalten. Wird ein Signal oben deaktiviert, entfällt sein Beitrag zur Gewichtung – die Berechnung läuft mit den übrigen Signalen weiter."
+      "coreSignalsNote": "Vegetation (NDVI) und Infrastruktur sind immer Teil des Modells und lassen sich nicht abschalten. Wird ein Signal oben deaktiviert, entfällt sein Beitrag zur Gewichtung – die Berechnung läuft mit den übrigen Signalen weiter.",
+      "precomputedLabel": "Vorberechnete Regionalkarte",
+      "precomputedInfo": "Jede Nacht wird die gesamte Region mit allen Risikoebenen analysiert. Ist Ihr Datum abgedeckt, wird das Ergebnis für Ihr Gebiet aus dieser Karte ausgeschnitten und liegt in Sekunden vor. Deaktivieren Sie sie (oder schalten Sie unten einzelne Ebenen um), um jeden Schritt speziell für Ihr Gebiet zu berechnen (~1–2 Minuten).",
+      "precomputedOnHint": "Ergebnis in Sekunden, ausgeschnitten aus der nächtlichen Analyse der gesamten Region. Alle drei Risikoebenen unten sind enthalten und deshalb gesperrt.",
+      "precomputedOffHint": "Vollständige Berechnung für genau Ihr Gebiet (~1–2 Minuten); einzelne Ebenen können Sie unten umschalten.",
+      "precomputedRange": "Vorberechnete Karten decken genau einen Tag ab – wählen Sie dasselbe Start- und Enddatum, um eine zu nutzen. Bei einem Zeitraum berechnet das Modell jeden Tag für Ihr Gebiet und liefert den Tag mit dem höchsten Risiko (~1–2 Minuten).",
+      "precomputedStaticMode": "Vorberechnete Karten gibt es nur für dynamische Bewertungen. Das Modell berechnet alle Schritte für Ihr Gebiet.",
+      "precomputedUnavailable": "Die nächtliche Analyse hat dieses Datum noch nicht verarbeitet. Das Modell berechnet alle Schritte für Ihr Gebiet.",
+      "lockedByPrecomputed": "In der vorberechneten Regionalkarte enthalten. Schalten Sie oben die Vorberechnung aus, um Ebenen anzupassen."
     },
     "layer4": {
       "purpose": "Echtzeit-Validierung der Modellkonfiguration. Blocker müssen in ihren jeweiligen Schritten behoben werden, bevor der Lauf gestartet werden kann.",
@@ -2054,5 +2087,39 @@
       "blankDesc": "Leere Gebiete haben keine gültigen Quell-Rasterdaten für die Berechnung.",
       "availableData": "Waldbranddaten verfügbar"
     }
+  },
+  "apiTokens": {
+    "title": "API-Tokens",
+    "subtitle": "API-Zugriffstokens verwalten für",
+    "create": "Neues Token erstellen",
+    "createdOnce": "Kopieren Sie dieses Token jetzt – es wird nie wieder angezeigt.",
+    "errors": {
+      "create": "Token konnte nicht erstellt werden",
+      "load": "Tokens konnten nicht geladen werden",
+      "revoke": "Token konnte nicht widerrufen werden"
+    },
+    "existing": "Vorhandene Tokens",
+    "expires": "läuft ab",
+    "expiry": "Ablauf",
+    "expiry30": "Läuft in 30 Tagen ab",
+    "expiry90": "Läuft in 90 Tagen ab",
+    "expiry365": "Läuft in 1 Jahr ab",
+    "expiryNever": "Läuft nie ab",
+    "generate": "Token generieren",
+    "lastUsed": "zuletzt verwendet",
+    "namePlaceholder": "Token-Name (z. B. Analyse-Skript)",
+    "none": "Noch keine Tokens.",
+    "revoke": "Widerrufen",
+    "scope": "Berechtigung",
+    "scopeFull": "Lesen und schreiben",
+    "scopeFullShort": "lesen und schreiben",
+    "scopeRead": "Nur Lesen (empfohlen)",
+    "scopeReadShort": "nur lesen",
+    "status": {
+      "active": "Aktiv",
+      "expired": "Abgelaufen",
+      "revoked": "Widerrufen"
+    },
+    "usageHint": "Verwenden Sie das Token aus jeder Anwendung: Authorization: Bearer <token>. Tokens mit Nur-Lese-Rechten können Modelle auflisten und Ergebnisse mit den Rechten dieses Nutzers herunterladen."
   }
 }
