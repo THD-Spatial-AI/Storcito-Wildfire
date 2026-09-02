@@ -14,15 +14,15 @@ import {
 	useDuplicateModelMutation,
 	useStartCalculationMutation,
 	useDeleteModelMutation
-} from "@/features/model-dashboard/hooks/useModelsQuery";
+} from "@/features/model-dashboard";
 import { formatDate } from "@/utils/dateHelpers";
-import { getModelStatusColor } from "@/features/model-dashboard/utils/statusHelpers";
-import type { Model } from "@/features/model-dashboard/services/modelService";
+import { getModelStatusColor } from "@/features/model-dashboard";
+import type { Model } from "@/features/model-dashboard";
 import { useWebservices } from "@/features/admin-dashboard/hooks/useWebservices";
 import { useAuthStore } from "@/store/auth-store";
 import { useTranslation } from "@/i18n";
 import { useConfirm } from "@/hooks/useConfirmDialog";
-import { useNotification } from "@/features/notifications/hooks/useNotification";
+import { useNotification } from "@/features/notifications";
 
 interface ModelsManagementProps {
 	onModelAction?: (action: string, modelId: number) => void;
@@ -54,7 +54,7 @@ export const ModelsManagement: React.FC<ModelsManagementProps> = ({ onModelActio
 	const models = modelsResponse?.data || [];
 	const totalItems = modelsResponse?.total || 0;
 
-	// Webservice availability check - refresh every 15 seconds for responsive button updates
+	// Poll availability.
 	const { summary: webserviceSummary } = useWebservices({}, { autoRefresh: true, refreshInterval: 15000 });
 	const hasAvailableWebservice = (webserviceSummary?.available ?? 0) > 0;
 

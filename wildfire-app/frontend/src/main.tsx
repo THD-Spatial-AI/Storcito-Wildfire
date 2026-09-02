@@ -2,7 +2,6 @@ import { createRoot } from "react-dom/client";
 import App from "@/App";
 import "@fontsource-variable/inter";
 import "@/styles/global.css";
-import "@/index.css";
 
 import { initI18n } from "@/i18n";
 import { FeedbackOverlay } from "@/feedback";

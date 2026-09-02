@@ -18,8 +18,7 @@ import {
   Check,
   ChevronDown,
 } from "lucide-react";
-import { config } from "@/configuration/app";
-import { getCSRFToken } from "@/utils/csrf";
+import { submitPublicFeedback } from "@/features/user-feedback";
 import { PrivacyConsentDialog, PrivacyBanner } from "@/features/privacy-controls";
 import { useTranslation, languages, changeLanguage, type LanguageCode } from "@/i18n";
 
@@ -57,8 +56,7 @@ const PERSONAS = [
 
 const CHALLENGE_CARDS = ["hotter", "vegetation", "cascading", "tooling"] as const;
 
-// Category select: the submitted value must be one the feedback backend accepts
-// (bug | feature | improvement | general); the visible label is translated.
+  // Backend category values.
 const CATEGORY_OPTIONS = [
   { value: "general", key: "general" },
   { value: "feature", key: "partnership" },
@@ -135,7 +133,7 @@ export const LandingPage: React.FC = () => {
     document.title = "Wildfire App — Geospatial wildfire risk assessment";
   }, []);
 
-  // Reveal-on-scroll: fade/slide elements marked with data-reveal into view once.
+  // Reveal on scroll.
   const rootRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const root = rootRef.current;
@@ -180,32 +178,16 @@ export const LandingPage: React.FC = () => {
     }
     setStatus("loading");
     try {
-      const baseUrl = config.api.baseUrl || "/api";
-      const fd = new FormData();
-      fd.append("name", form.name);
-      fd.append("email", form.email);
-      fd.append("category", form.category);
-      fd.append("subject", form.subject);
-      fd.append("message", form.message);
-      const res = await fetch(`${baseUrl}/feedback/public`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "X-CSRF-Token": getCSRFToken() || "" },
-        body: fd,
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data?.error || data?.message || t("landing.contact.submitFailed"));
-      }
+      await submitPublicFeedback(form);
       setStatus("success");
       setForm({ name: "", email: "", category: CATEGORY_OPTIONS[0].value, subject: "", message: "" });
     } catch (err) {
       setStatus("error");
-      setError(err instanceof Error ? err.message : t("landing.contact.genericError"));
+      setError(err instanceof Error && err.message ? err.message : t("landing.contact.genericError"));
     }
   };
 
-  // Cookie/data consent — reuses the app's PrivacyConsentDialog, persisted locally for guests
+  // Guest consent.
   const [consentOpen, setConsentOpen] = useState(false);
   const [consentAccepted, setConsentAccepted] = useState(false);
 
@@ -262,7 +244,7 @@ export const LandingPage: React.FC = () => {
 
       {/* Hero Section */}
       <section id="top" className="relative overflow-hidden pt-28 pb-24 md:pt-36 md:pb-32 border-b border-[#D4D2D0] bg-[#EDEAE7]">
-        {/* Background photograph — visible, with directional overlays for legibility */}
+        {/* Background photograph. */}
         <div className="absolute inset-0 bg-[url('/images/landing-page/hero-fire-bg.jpg')] bg-cover bg-center bg-no-repeat opacity-25" />
         <div className="absolute inset-0 bg-[#EDEAE7]/40" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#EDEAE7] via-[#EDEAE7]/80 to-[#EDEAE7]/40" />
@@ -429,8 +411,7 @@ export const LandingPage: React.FC = () => {
             
             <div className="mt-10 grid sm:grid-cols-2 gap-6">
               {CHALLENGE_CARDS.map((card, i) => (
-                // Outer element owns the scroll-reveal transform; inner owns the
-                // hover transform — keeping them separate so the lift works.
+        // Separate transforms.
                 <div key={card} data-reveal style={{ transitionDelay: `${i * 80}ms` }} className="lp-reveal">
                   <div className="group relative flex h-full flex-col p-6 rounded-3xl bg-white border border-[#D4D2D0]/80 shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-all duration-300 ease-out hover:-translate-y-2 hover:border-[#4A3F6B]/70 hover:shadow-[0_16px_40px_rgba(0,0,0,0.10)]">
                     {/* Step counter badge */}
@@ -503,7 +484,7 @@ export const LandingPage: React.FC = () => {
                   style={{ transitionDelay: `${i * 90}ms` }}
                   className="lp-reveal group flex flex-col overflow-hidden rounded-[24px] bg-[#38304F] border border-white/5 transition-all duration-400 hover:bg-[#4A3F6B] hover:-translate-y-1 shadow-2xl relative"
                 >
-                  {/* Image container with padding to mimic the "inset" screen look */}
+                  {/* Inset screen look. */}
                   <div className="relative h-44 p-3 pb-0">
                     <div className="w-full h-full rounded-t-[16px] overflow-hidden relative bg-[#38304F] border border-white/5">
                       <img
@@ -513,7 +494,7 @@ export const LandingPage: React.FC = () => {
                         loading="lazy"
                         className="absolute inset-0 h-full w-full object-cover opacity-70 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105"
                       />
-                      {/* Gradient to blend the bottom edge of the image */}
+                      {/* Bottom edge blend. */}
                       <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#38304F] to-transparent opacity-90 group-hover:from-[#4A3F6B] transition-colors duration-400" />
                     </div>
                   </div>

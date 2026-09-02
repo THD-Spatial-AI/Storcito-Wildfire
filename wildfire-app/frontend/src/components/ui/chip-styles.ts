@@ -1,46 +1,45 @@
-/**
- * Shared chip/badge styling utilities
- */
+/** Chip styling. */
 
 export type ChipColor = "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning";
 export type ChipVariant = "filled" | "outlined" | "gradient";
 export type ChipSize = "small" | "medium";
 
+// Soft-tint semantic styles.
 const CHIP_COLOR_CLASSES: Record<ChipColor, Record<ChipVariant, string>> = {
 	default: {
-		filled: "bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200",
-		outlined: "border-2 border-slate-300 text-slate-700 bg-white hover:bg-slate-50",
-		gradient: "bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700 border border-slate-300"
+		filled: "bg-muted text-foreground ring-1 ring-border hover:bg-muted/70",
+		outlined: "border border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground",
+		gradient: "bg-muted text-foreground ring-1 ring-border hover:bg-muted/70"
 	},
 	primary: {
-		filled: "bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200",
-		outlined: "border-2 border-blue-400 text-blue-700 bg-white hover:bg-blue-50",
-		gradient: "bg-gradient-to-r from-blue-400 to-blue-500 text-white shadow-md hover:shadow-lg"
+		filled: "bg-primary text-primary-foreground hover:bg-primary/90",
+		outlined: "border border-primary/40 bg-primary/5 text-foreground hover:bg-primary/10",
+		gradient: "bg-primary text-primary-foreground hover:bg-primary/90"
 	},
 	secondary: {
-		filled: "bg-amber-100 text-amber-800 border border-amber-200 hover:bg-amber-200",
-		outlined: "border-2 border-amber-400 text-amber-700 bg-white hover:bg-amber-50",
-		gradient: "bg-gradient-to-r from-amber-400 to-orange-400 text-white shadow-md hover:shadow-lg"
+		filled: "bg-amber-500/10 text-amber-700 ring-1 ring-amber-500/20 dark:text-amber-300",
+		outlined: "border border-amber-500/40 bg-amber-500/5 text-amber-700 hover:bg-amber-500/10 dark:text-amber-300",
+		gradient: "bg-amber-500/10 text-amber-700 ring-1 ring-amber-500/20 dark:text-amber-300"
 	},
 	error: {
-		filled: "bg-red-100 text-red-800 border border-red-200 hover:bg-red-200",
-		outlined: "border-2 border-red-400 text-red-700 bg-white hover:bg-red-50",
-		gradient: "bg-gradient-to-r from-red-400 to-red-500 text-white shadow-md hover:shadow-lg"
+		filled: "bg-red-500/10 text-red-700 ring-1 ring-red-500/20 dark:text-red-300",
+		outlined: "border border-red-500/40 bg-red-500/5 text-red-700 hover:bg-red-500/10 dark:text-red-300",
+		gradient: "bg-red-500/10 text-red-700 ring-1 ring-red-500/20 dark:text-red-300"
 	},
 	info: {
-		filled: "bg-cyan-100 text-cyan-800 border border-cyan-200 hover:bg-cyan-200",
-		outlined: "border-2 border-cyan-400 text-cyan-700 bg-white hover:bg-cyan-50",
-		gradient: "bg-gradient-to-r from-cyan-400 to-blue-400 text-white shadow-md hover:shadow-lg"
+		filled: "bg-cyan-500/10 text-cyan-700 ring-1 ring-cyan-500/20 dark:text-cyan-300",
+		outlined: "border border-cyan-500/40 bg-cyan-500/5 text-cyan-700 hover:bg-cyan-500/10 dark:text-cyan-300",
+		gradient: "bg-cyan-500/10 text-cyan-700 ring-1 ring-cyan-500/20 dark:text-cyan-300"
 	},
 	success: {
-		filled: "bg-emerald-100 text-emerald-800 border border-emerald-200 hover:bg-emerald-200",
-		outlined: "border-2 border-emerald-400 text-emerald-700 bg-white hover:bg-emerald-50",
-		gradient: "bg-gradient-to-r from-emerald-400 to-green-500 text-white shadow-md hover:shadow-lg"
+		filled: "bg-emerald-500/10 text-emerald-700 ring-1 ring-emerald-500/20 dark:text-emerald-300",
+		outlined: "border border-emerald-500/40 bg-emerald-500/5 text-emerald-700 hover:bg-emerald-500/10 dark:text-emerald-300",
+		gradient: "bg-emerald-500/10 text-emerald-700 ring-1 ring-emerald-500/20 dark:text-emerald-300"
 	},
 	warning: {
-		filled: "bg-yellow-100 text-yellow-800 border border-yellow-200 hover:bg-yellow-200",
-		outlined: "border-2 border-yellow-400 text-yellow-700 bg-white hover:bg-yellow-50",
-		gradient: "bg-gradient-to-r from-yellow-400 to-orange-400 text-white shadow-md hover:shadow-lg"
+		filled: "bg-yellow-500/10 text-yellow-700 ring-1 ring-yellow-500/25 dark:text-yellow-300",
+		outlined: "border border-yellow-500/40 bg-yellow-500/5 text-yellow-700 hover:bg-yellow-500/10 dark:text-yellow-300",
+		gradient: "bg-yellow-500/10 text-yellow-700 ring-1 ring-yellow-500/25 dark:text-yellow-300"
 	},
 };
 
@@ -51,11 +50,11 @@ export const getChipClasses = (
 	hasClick: boolean,
 	customClass?: string
 ): string => {
-	const baseClasses = "inline-flex items-center font-medium rounded-full transition-all duration-200 shadow-sm";
-	const sizeClasses = size === "small" 
-		? "px-2.5 py-1 text-xs font-semibold" 
-		: "px-3 py-1.5 text-sm font-semibold";
-	const hoverClasses = hasClick ? "cursor-pointer hover:scale-105 active:scale-95" : "";
-	
-	return `${baseClasses} ${sizeClasses} ${CHIP_COLOR_CLASSES[color][variant]} ${hoverClasses} ${customClass || ''}`;
+	const baseClasses = "inline-flex items-center font-medium rounded-full transition-colors duration-150";
+	const sizeClasses = size === "small"
+		? "px-2.5 py-0.5 text-xs"
+		: "px-3 py-1 text-sm";
+	const interactiveClasses = hasClick ? "cursor-pointer" : "";
+
+	return `${baseClasses} ${sizeClasses} ${CHIP_COLOR_CLASSES[color][variant]} ${interactiveClasses} ${customClass || ''}`;
 };
