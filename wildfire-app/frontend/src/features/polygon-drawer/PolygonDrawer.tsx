@@ -18,6 +18,8 @@ interface PolygonDrawerProps {
   readOnly?: boolean;
 
   enableEditing?: boolean;
+  /** Sends the user back to edit. */
+  onEditRequest?: () => void;
   /** Translation labels */
   labels?: {
     clickToClose?: string;
@@ -41,9 +43,10 @@ export const PolygonDrawer: FC<PolygonDrawerProps> = ({
   drawingEnabled = true,
   readOnly = false,
   enableEditing = true,
+  onEditRequest,
   labels = {},
 }) => {
-  const canEditNow = enableEditing && !readOnly && drawingEnabled;
+  const canEditNow = !readOnly && ((enableEditing && drawingEnabled) || Boolean(onEditRequest));
   const canEditRef = useRef(canEditNow);
   useEffect(() => {
     canEditRef.current = canEditNow;
@@ -72,6 +75,7 @@ export const PolygonDrawer: FC<PolygonDrawerProps> = ({
     bufferDistanceRef,
     bufferDistanceMeters,
     recomputeBuffers,
+    onEditRequest,
   });
 
   // Repaint so the badge appears or disappears with the edit state.

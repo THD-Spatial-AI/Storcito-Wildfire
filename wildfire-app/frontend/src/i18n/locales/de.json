@@ -1553,6 +1553,12 @@
       "saveCurrentView": "Aktuelle Ansicht speichern",
       "delete": "{{name}} löschen",
       "none": "Noch keine Lesezeichen"
+    },
+    "shortcuts": {
+      "title": "Tastenkürzel",
+      "zoom": "Vergrößern und verkleinern",
+      "pan": "Karte verschieben",
+      "newModel": "Neues Modell"
     }
   },
   "privacy": {

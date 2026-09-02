@@ -373,6 +373,7 @@ export const AreaSelect: FC<AreaSelectProps> = ({
         disableAfterDraw={true}
         drawingEnabled={polygonDrawingEnabled}
         enableEditing={true}
+        onEditRequest={isMapSidebar ? () => wizard.jumpTo(2) : undefined}
         labels={{
           clickToClose: t("drawing.clickToClose"),
           start: t("drawing.start"),

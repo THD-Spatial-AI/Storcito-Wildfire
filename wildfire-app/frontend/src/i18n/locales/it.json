@@ -1387,6 +1387,12 @@
       "saveCurrentView": "Salva la vista corrente",
       "delete": "Elimina {{name}}",
       "none": "Ancora nessun segnalibro"
+    },
+    "shortcuts": {
+      "title": "Scorciatoie da tastiera",
+      "zoom": "Ingrandisci e riduci",
+      "pan": "Sposta la mappa",
+      "newModel": "Nuovo modello"
     }
   },
   "privacy": {

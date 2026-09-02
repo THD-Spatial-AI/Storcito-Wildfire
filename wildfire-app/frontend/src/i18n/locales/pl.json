@@ -1387,6 +1387,12 @@
       "saveCurrentView": "Zapisz bieżący widok",
       "delete": "Usuń {{name}}",
       "none": "Brak zakładek"
+    },
+    "shortcuts": {
+      "title": "Skróty klawiszowe",
+      "zoom": "Przybliż i oddal",
+      "pan": "Przesuń mapę",
+      "newModel": "Nowy model"
     }
   },
   "privacy": {

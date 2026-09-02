@@ -1553,6 +1553,12 @@
       "saveCurrentView": "Save current view",
       "delete": "Delete {{name}}",
       "none": "No bookmarks yet"
+    },
+    "shortcuts": {
+      "title": "Keyboard shortcuts",
+      "zoom": "Zoom in and out",
+      "pan": "Move the map",
+      "newModel": "New model"
     }
   },
   "privacy": {

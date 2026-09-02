@@ -47,6 +47,7 @@ interface UsePolygonDrawingOptions {
   bufferDistanceRef: RefObject<number>;
   bufferDistanceMeters: number;
   recomputeBuffers: (polygons: [number, number][][], distanceMeters?: number) => void;
+  onEditRequest?: () => void;
 }
 
 const getNearStartState = (
@@ -124,6 +125,7 @@ export const usePolygonDrawing = ({
   bufferDistanceRef,
   bufferDistanceMeters,
   recomputeBuffers,
+  onEditRequest,
 }: UsePolygonDrawingOptions) => {
   const onPolygonDrawnRef = useRef(onPolygonDrawn);
   const onPolygonModifiedRef = useRef(onPolygonModified);
@@ -134,6 +136,10 @@ export const usePolygonDrawing = ({
   const startPointSourceRef = useRef<VectorSource | null>(null);
   const allPolygonsRef = useRef<[number, number][][]>([]);
   const drawingEnabledRef = useRef<boolean>(drawingEnabled);
+  const onEditRequestRef = useRef(onEditRequest);
+  useEffect(() => {
+    onEditRequestRef.current = onEditRequest;
+  }, [onEditRequest]);
   const drawInteractionRef = useRef<Draw | null>(null);
   const modifyInteractionRef = useRef<Modify | null>(null);
   const modifyDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -252,7 +258,7 @@ export const usePolygonDrawing = ({
     };
 
     const isOnBadge = (pixel: number[]) => {
-      if (!drawingEnabledRef.current) return null;
+      if (!drawingEnabledRef.current && !onEditRequestRef.current) return null;
       const badge = badgePixel();
       if (!badge?.pixel) return null;
       const distance = Math.hypot(badge.pixel[0] - pixel[0], badge.pixel[1] - pixel[1]);
@@ -264,6 +270,10 @@ export const usePolygonDrawing = ({
       const geometry = isOnBadge(event.pixel);
       if (!geometry) return;
       event.stopPropagation();
+      if (!drawingEnabledRef.current) {
+        onEditRequestRef.current?.();
+        return;
+      }
       map.getView().fit(geometry.getExtent(), {
         padding: [60, 60, 60, 60],
         duration: 400,

@@ -1553,6 +1553,12 @@
       "saveCurrentView": "Enregistrer la vue actuelle",
       "delete": "Supprimer {{name}}",
       "none": "Aucun favori pour le moment"
+    },
+    "shortcuts": {
+      "title": "Raccourcis clavier",
+      "zoom": "Zoom avant et arrière",
+      "pan": "Déplacer la carte",
+      "newModel": "Nouveau modèle"
     }
   },
   "privacy": {

@@ -1387,6 +1387,12 @@
       "saveCurrentView": "Uložit aktuální pohled",
       "delete": "Smazat {{name}}",
       "none": "Zatím žádné záložky"
+    },
+    "shortcuts": {
+      "title": "Klávesové zkratky",
+      "zoom": "Přiblížit a oddálit",
+      "pan": "Posunout mapu",
+      "newModel": "Nový model"
     }
   },
   "privacy": {

@@ -1553,6 +1553,12 @@
       "saveCurrentView": "Gardar a vista actual",
       "delete": "Eliminar {{name}}",
       "none": "Aínda non hai marcadores"
+    },
+    "shortcuts": {
+      "title": "Atallos de teclado",
+      "zoom": "Achegar e afastar",
+      "pan": "Mover o mapa",
+      "newModel": "Novo modelo"
     }
   },
   "privacy": {

@@ -23,6 +23,9 @@ import { useMapPageOLLayers } from "./useMapPageOLLayers";
 
 const PRIVACY_ACCEPTED_EVENT = "privacy-accepted";
 
+const SHORTCUT_KEY_CLASS =
+  "inline-flex h-4 min-w-4 items-center justify-center rounded border border-border bg-muted px-1 font-mono text-[9px] text-foreground";
+
 export const MapComponent: React.FC = () => {
   useDocumentTitle("Interactive Map");
   const { t } = useTranslation();
@@ -313,6 +316,32 @@ export const MapComponent: React.FC = () => {
                   </div>
                 )}
                 <p className="pt-0.5">{t("map.legend.zoomDetail", "The default view is Galicia; the base map reveals more detail as you zoom in.")}</p>
+
+                <div className="mt-1.5 border-t border-border/60 pt-1.5">
+                  <p className="mb-1 font-medium text-foreground">
+                    {t("map.shortcuts.title", "Keyboard shortcuts")}
+                  </p>
+                  <ul className="space-y-0.5">
+                    <li className="flex items-center gap-1.5">
+                      <kbd className={SHORTCUT_KEY_CLASS}>+</kbd>
+                      <kbd className={SHORTCUT_KEY_CLASS}>−</kbd>
+                      <span>{t("map.shortcuts.zoom", "Zoom in and out")}</span>
+                    </li>
+                    <li className="flex items-center gap-1.5">
+                      <kbd className={SHORTCUT_KEY_CLASS}>↑</kbd>
+                      <kbd className={SHORTCUT_KEY_CLASS}>↓</kbd>
+                      <kbd className={SHORTCUT_KEY_CLASS}>←</kbd>
+                      <kbd className={SHORTCUT_KEY_CLASS}>→</kbd>
+                      <span>{t("map.shortcuts.pan", "Move the map")}</span>
+                    </li>
+                    {user && (
+                      <li className="flex items-center gap-1.5">
+                        <kbd className={SHORTCUT_KEY_CLASS}>N</kbd>
+                        <span>{t("map.shortcuts.newModel", "New model")}</span>
+                      </li>
+                    )}
+                  </ul>
+                </div>
               </div>
             </section>
           )}

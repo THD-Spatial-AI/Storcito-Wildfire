@@ -1387,6 +1387,12 @@
       "saveCurrentView": "Huidige weergave opslaan",
       "delete": "{{name}} verwijderen",
       "none": "Nog geen bladwijzers"
+    },
+    "shortcuts": {
+      "title": "Sneltoetsen",
+      "zoom": "In- en uitzoomen",
+      "pan": "Kaart verplaatsen",
+      "newModel": "Nieuw model"
     }
   },
   "privacy": {
