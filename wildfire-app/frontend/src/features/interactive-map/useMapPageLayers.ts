@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { modelService } from "@/features/model-dashboard/services/modelService";
+import { modelService } from "@/features/model-dashboard";
 import { reprojectGeoJSON } from "@/features/interactive-map/utils/geojsonProjection";
 export const MAP_MODEL_LIMIT = 1;
 

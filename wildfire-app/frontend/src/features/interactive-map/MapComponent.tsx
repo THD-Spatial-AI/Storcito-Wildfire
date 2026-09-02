@@ -11,8 +11,7 @@ import { MapControls } from "@/components/map-controls/MapControls";
 import { BookmarkMenu } from "@/features/interactive-map/components/BookmarkMenu";
 import MapSearchBar from "./MapSearchBar";
 import { useMapKeyboardShortcuts } from "./useMapKeyboardShortcuts";
-import axios from "@/lib/axios";
-import { settingsService } from "@/features/settings/services/settings";
+import { settingsService } from "@/features/settings";
 import { useNavigate } from "react-router-dom";
 import { Plus, Map as MapIcon, Layers } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@spatialhub/ui";
@@ -38,7 +37,7 @@ export const MapComponent: React.FC = () => {
   const { map } = useMapStore();
   const isMapLibre = useMapStore((s) => isMapLibreLayerId(s.selectedBaseLayerId));
 
-  // Fetch region boundaries (public) + user model polygons (private)
+  // Fetch map layers.
   const mapPageLayers = useMapPageLayers(user?.id);
   const newModelLabel = t("model.newModel");
   const openNewModel = useCallback(() => navigate("/app/model-dashboard/new-model"), [navigate]);
@@ -55,7 +54,7 @@ export const MapComponent: React.FC = () => {
     [navigate]
   );
 
-  // OL layers for boundaries and user models.
+  // Boundary and model layers.
   useMapPageOLLayers({
     map,
     isMapLibre,
@@ -97,98 +96,78 @@ export const MapComponent: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // Hybrid approach: Check localStorage first, then verify with database for logged-in users
+    // Cache first, then verify.
     const checkPrivacy = async () => {
       setIsCheckingPrivacy(true);
 
-      // First, check localStorage for immediate feedback (works for both logged-in and non-logged-in users)
+      // Instant local read.
       const localPrivacy = localStorage.getItem("privacy_accepted");
 
       if (!user) {
-        // For non-logged-in users, rely solely on localStorage
+        // Guests: local only.
         const accepted = localPrivacy === "true";
         setMapAccepted(accepted);
         setIsCheckingPrivacy(false);
         return;
       }
 
-      // For logged-in users: use localStorage for instant UI, then sync with database
+      // Local first, then sync.
       if (localPrivacy === "true") {
         setMapAccepted(true);
         setIsCheckingPrivacy(false);
 
-        // Verify with backend in background (sync database state to localStorage)
-        axios
-          .get("/settings")
-          .then(({ data }) => {
-            if (data.success && data.data) {
-              const dbAccepted = data.data.privacy_accepted;
-              setMapAccepted(dbAccepted);
-              localStorage.setItem("privacy_accepted", String(dbAccepted));
-            }
-          })
-          .catch(() => {
-            // Ignore errors, keep cached value
-          });
+        // Background verify.
+        void settingsService.getPrivacyAccepted().then((dbAccepted) => {
+          if (dbAccepted === null) return; // Keep cache.
+          setMapAccepted(dbAccepted);
+          localStorage.setItem("privacy_accepted", String(dbAccepted));
+        });
         return;
       }
 
-      // No localStorage cache, check database
-      try {
-        const { data } = await axios.get("/settings");
-        if (data?.success && data?.data?.privacy_accepted) {
-          setMapAccepted(true);
-          localStorage.setItem("privacy_accepted", "true");
-        } else {
-          setMapAccepted(false);
-          localStorage.setItem("privacy_accepted", "false");
-        }
-      } catch {
-        // Error means settings not created yet or API issue
-        setMapAccepted(false);
-        localStorage.setItem("privacy_accepted", "false");
-      } finally {
-        setIsCheckingPrivacy(false);
-      }
+      // No cache: ask server.
+      const dbAccepted = await settingsService.getPrivacyAccepted();
+      const accepted = dbAccepted === true;
+      setMapAccepted(accepted);
+      localStorage.setItem("privacy_accepted", String(accepted));
+      setIsCheckingPrivacy(false);
     };
 
     checkPrivacy();
   }, [user]); // Re-check when user changes
 
   const handleAcceptPrivacy = async () => {
-    // Update state immediately for instant UI feedback
+    // Instant feedback.
     setMapAccepted(true);
     setShowPrivacyDialog(false);
 
-    // Update localStorage (hybrid approach - persists across logout)
+    // Persist locally.
     localStorage.setItem("privacy_accepted", "true");
 
-    // Save to database for logged-in users
+    // Persist for users.
     if (user) {
       try {
-        await axios.put("/settings/privacy-accepted", { accepted: true });
-        settingsService.invalidateCache();
-        // Wait for database update before triggering onboarding check
+        await settingsService.setPrivacyAccepted(true);
+        // Await save first.
         setTimeout(() => {
           globalThis.dispatchEvent(new CustomEvent(PRIVACY_ACCEPTED_EVENT));
         }, 500);
       } catch {
-        // Still dispatch event even if save fails
+        // Dispatch regardless.
         settingsService.invalidateCache();
         globalThis.dispatchEvent(new CustomEvent(PRIVACY_ACCEPTED_EVENT));
       }
     } else {
-      // For non-logged-in users, dispatch immediately
+      // Guests: dispatch now.
       globalThis.dispatchEvent(new CustomEvent(PRIVACY_ACCEPTED_EVENT));
     }
   };
 
   const handleDenyPrivacy = async () => {
-    // Save denial to database for logged-in users
+    // Persist denial.
     if (user) {
       try {
-        await axios.put("/settings/privacy-accepted", { accepted: false });
-        settingsService.invalidateCache();
+        await settingsService.setPrivacyAccepted(false);
       } catch {
         // ignore
       }
@@ -210,13 +189,13 @@ export const MapComponent: React.FC = () => {
   };
 
   useEffect(() => {
-    // Only initialize map if privacy has been accepted and check is complete
+    // Needs privacy consent.
     if (map || authLoading || isCheckingPrivacy || !mapAccepted) return;
     initializeMap(mapRef, initMapInstance, setMuted);
   }, [map, mapRef, initMapInstance, authLoading, mapAccepted, isCheckingPrivacy]);
 
   useEffect(() => {
-    // Only attach map to container if privacy has been accepted
+    // Needs privacy consent.
     if (!authLoading && map && mapRef.current && mapAccepted) {
       const timer = setTimeout(() => {
         const container = mapRef.current;
@@ -235,7 +214,7 @@ export const MapComponent: React.FC = () => {
     }
   }, [muted, map, clearDrawingLayers]);
 
-  // Cleanup: detach map from container on component unmount
+  // Detach on unmount.
   useEffect(() => {
     const currentMap = map;
     return () => {
@@ -245,7 +224,7 @@ export const MapComponent: React.FC = () => {
     };
   }, [map]);
 
-  // Determine what content to show
+  // Pick content.
   const renderMapContent = () => {
     if (isCheckingPrivacy) {
       return (
@@ -276,7 +255,7 @@ export const MapComponent: React.FC = () => {
 
           <MapControls onZoomIn={zoomIn} onZoomOut={zoomOut} onCenterMap={centerMap} />
 
-          {/* Map legend — explains both base-map lines and application overlays. */}
+          {/* Map legend. */}
           {map && (
             <section
               aria-label={t("map.legend.title", "Map outlines")}
@@ -318,10 +297,6 @@ export const MapComponent: React.FC = () => {
               )}
 
               <div className="mt-1.5 space-y-1 border-t border-border/60 px-1 pt-1.5 text-[10px] leading-snug text-muted-foreground">
-                <div className="flex items-start gap-2">
-                  <span className="mt-1.5 h-px w-4 shrink-0 bg-slate-500" />
-                  <span>{t("map.legend.baseMap", "Gray lines: roads and administrative boundaries from the selected base map")}</span>
-                </div>
                 {mapPageLayers.regionCount > 0 && (
                   <div className="flex items-start gap-2">
                     <span className="mt-1 w-4 shrink-0 border-t-2 border-dashed border-indigo-400" />
@@ -332,7 +307,7 @@ export const MapComponent: React.FC = () => {
                   <div className="flex items-start gap-2">
                     <span
                       className="mt-0.5 h-2.5 w-4 shrink-0 rounded-sm border-2"
-                      style={{ borderColor: "rgba(52, 211, 153, 0.95)", background: "rgba(52, 211, 153, 0.18)" }}
+                      style={{ borderColor: "#059669", background: "rgba(16, 185, 129, 0.28)" }}
                     />
                     <span>{t("map.legend.yourModels", "Green area: your latest model — select it to open the results")}</span>
                   </div>
