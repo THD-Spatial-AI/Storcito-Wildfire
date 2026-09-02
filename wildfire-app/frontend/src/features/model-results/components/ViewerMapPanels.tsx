@@ -3,11 +3,7 @@ import { Flame, Layers, MapPin, Route } from "lucide-react";
 import { useTranslation } from "@/i18n";
 
 import type { RiskDistribution } from "../hooks/useRiskMetrics";
-import {
-  RISK_LEVELS,
-  type RiskLevelValue,
-  type VisibleRiskLevels,
-} from "../viewer-config";
+import { RISK_LEVELS, type RiskLevelValue, type VisibleRiskLevels } from "../viewer-config";
 
 const PanelCheckbox: FC<{
   checked: boolean;
@@ -39,19 +35,17 @@ const PanelCheckbox: FC<{
   </div>
 );
 
-const PanelCard: FC<{
-  position: string;
+export const PanelCard: FC<{
+  position?: string;
   icon: ReactNode;
   title: string;
   children: ReactNode;
 }> = ({ position, icon, title, children }) => (
   <section
-    className={`md-fade-in absolute ${position} z-10 w-44 overflow-hidden rounded-xl border border-border/60 bg-card/95 text-xs shadow-lg backdrop-blur-md transition-all duration-300`}
+    className={`md-fade-in ${position ? `absolute ${position}` : ""} z-10 w-44 overflow-hidden rounded-xl border border-border/60 bg-card/95 text-xs shadow-lg backdrop-blur-md transition-all duration-300`}
   >
     <header className="flex items-center gap-2 border-b border-border/60 bg-muted/30 px-2.5 py-1.5">
-      <span className="flex h-4 w-4 items-center justify-center text-muted-foreground">
-        {icon}
-      </span>
+      <span className="flex h-4 w-4 items-center justify-center text-muted-foreground">{icon}</span>
       <span className="text-[10px] font-semibold uppercase tracking-wide text-foreground">
         {title}
       </span>
@@ -127,14 +121,11 @@ export const RiskLegendPanel: FC<RiskLegendPanelProps> = ({
 
   return (
     <PanelCard
-      position="bottom-10 left-2"
       icon={<Flame className="h-3.5 w-3.5" />}
       title={t("modelResults.legend.title", "Fire Risk")}
     >
       <div className="p-1">
-        <label
-          className={`${rowClass} mb-1 cursor-pointer border-b border-border/60 pb-1.5`}
-        >
+        <label className={`${rowClass} mb-1 cursor-pointer border-b border-border/60 pb-1.5`}>
           <PanelCheckbox checked={allRiskLevelsVisible} onChange={onToggleAll} accent="orange" />
           <span className="flex-1 text-[11px] font-semibold text-foreground">
             {t("modelResults.legend.allLevels", "All available levels")}

@@ -43,6 +43,7 @@ import { ViewerPlayerOverlay } from "./components/ViewerPlayerOverlay";
 import { ViewerSidebarRail } from "./components/ViewerSidebarRail";
 import { ViewerStatusBanners } from "./components/ViewerStatusBanners";
 import { OverlaysPanel, RiskLegendPanel } from "./components/ViewerMapPanels";
+import { ViewerShortcutsPanel } from "./components/ViewerShortcutsPanel";
 import { RiskTimelinePanel } from "./components/RiskTimelinePanel";
 
 // Lazy-load Cesium.
@@ -420,15 +421,26 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
         />
       )}
 
-      {hasRiskLayers && (
-        <RiskLegendPanel
-          visibleRiskLevels={visibleRiskLevels}
-          riskLevelAvailability={riskLevelAvailability}
-          riskDistribution={riskDistribution}
-          allRiskLevelsVisible={allRiskLevelsVisible}
-          onToggleAll={setAllRiskLevelsVisible}
-          onToggleLevel={toggleRiskLevel}
-        />
+      {(hasRiskLayers || showShortcuts) && (
+        <div className="absolute bottom-10 left-2 z-10 flex w-44 flex-col gap-2">
+          {hasRiskLayers && (
+            <RiskLegendPanel
+              visibleRiskLevels={visibleRiskLevels}
+              riskLevelAvailability={riskLevelAvailability}
+              riskDistribution={riskDistribution}
+              allRiskLevelsVisible={allRiskLevelsVisible}
+              onToggleAll={setAllRiskLevelsVisible}
+              onToggleLevel={toggleRiskLevel}
+            />
+          )}
+          {showShortcuts && (
+            <ViewerShortcutsPanel
+              canPlay={layerReady && dailyFrames.length >= 2}
+              can3D={Boolean(wms3D)}
+              hasRiskLayers={hasRiskLayers}
+            />
+          )}
+        </div>
       )}
 
       {showTimeline && dailyFrames.length >= 2 && (
@@ -474,7 +486,6 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
           switcherLayers={switcherLayers}
           activeLayerKey={playingFrameDate ? "risk" : selectedLayerKey}
           onSelectLayer={handleSelectLayer}
-          canPlay={layerReady && dailyFrames.length >= 2}
           showShortcuts={showShortcuts}
           onToggleShortcuts={() => setShowShortcuts((v) => !v)}
         />
