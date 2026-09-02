@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "@/lib/axios";
 
 import { useWorkspaceStore, type Workspace } from "@/components/workspace";
-import type { Model } from "@/features/model-dashboard/services/modelService";
+import type { Model } from "@/features/model-dashboard";
 
-// Workspace + completed-model selector state for the viewer header.
+// Header selector state.
 export const useWorkspaceModelSelector = (
   model: Model | null,
   resolvedModelId: number | undefined

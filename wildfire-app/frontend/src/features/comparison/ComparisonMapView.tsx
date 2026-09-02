@@ -5,7 +5,7 @@ import {
   PlayPauseButton,
   PlayerStat,
   formatFrameDate,
-} from "@/features/model-results/components/DailyPlayerControls";
+} from "@/features/model-results";
 
 import "ol/ol.css";
 import OLMap from "ol/Map";
@@ -19,8 +19,8 @@ import { intersects as extentsIntersect } from "ol/extent";
 import proj4 from "proj4";
 import { register as registerProj4 } from "ol/proj/proj4";
 
-import axios from "@/lib/axios";
-import type { Model } from "@/features/model-dashboard/services/modelService";
+import { getModelResults, getResultLayer } from "@/features/model-results";
+import type { Model } from "@/features/model-dashboard";
 
 interface ComparisonMapViewProps {
   model1: Model;
@@ -55,7 +55,7 @@ interface LayerInfo {
   available_layers?: AvailableLayer[];
 }
 
-// Dynamic runs publish one risk map per day (risk_<date> layers).
+// One layer per day.
 const DAILY_FRAME_KEY = /^risk_\d{4}-\d{2}-\d{2}$/;
 
 const extractDailyFrames = (info: LayerInfo): AvailableLayer[] =>
@@ -146,10 +146,10 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
   const [leftExtent, setLeftExtent] = useState<number[] | null>(null);
   const [rightExtent, setRightExtent] = useState<number[] | null>(null);
 
-  // ---------- daily frame player (same behaviour as the results viewer) ----------
+  // Daily frame player.
   const [leftFrames, setLeftFrames] = useState<AvailableLayer[]>([]);
   const [rightFrames, setRightFrames] = useState<AvailableLayer[]>([]);
-  // null = the run's overall risk map, as loaded.
+  // null = overall map.
   const [frameIndex, setFrameIndex] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
 
@@ -162,7 +162,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
   const leftFrame = frameForSide(leftFrames, frameIndex);
   const rightFrame = frameForSide(rightFrames, frameIndex);
 
-  // Swap the WMS layer in place so frames advance without the maps jumping.
+  // Swap in place.
   useEffect(() => {
     if (leftFrame) leftLayerRef.current?.getSource()?.updateParams({ LAYERS: leftFrame.layer_name });
   }, [leftFrame]);
@@ -186,7 +186,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
   useEffect(() => {
     const onChange = () => {
       setIsFullscreen(Boolean(document.fullscreenElement));
-      // OL needs a size refresh once the container has its fullscreen dimensions.
+      // Refresh after resize.
       window.setTimeout(() => {
         leftMapRef.current?.updateSize();
         rightMapRef.current?.updateSize();
@@ -281,7 +281,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
     };
   }, [synced]);
 
-  // ---------- load layer for a side ----------
+  // Load side layer.
   const loadSide = async (
     model: Model,
     mapRef: React.MutableRefObject<OLMap | null>,
@@ -293,10 +293,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
     setState({ loading: true, error: null, layerReady: false });
     setFrames([]);
     try {
-      const resultsRes = await axios.get(`/models/${model.id}/results`);
-      const results: ModelResultStub[] = Array.isArray(resultsRes.data?.data)
-        ? resultsRes.data.data
-        : [];
+      const results = await getModelResults<ModelResultStub>(model.id);
       const configured = results.find((r) => r.geoserver_status === "configured");
       if (!configured) {
         setState({
@@ -310,8 +307,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
         return;
       }
 
-      const layerRes = await axios.get(`/results/${configured.id}/layer`);
-      const info: LayerInfo | undefined = layerRes.data?.data;
+      const info = await getResultLayer<LayerInfo>(configured.id);
       if (!info?.wms_url || !info.layer_name) {
         setState({
           loading: false,
@@ -324,7 +320,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
       const map = mapRef.current;
       if (!map) return;
 
-      // Remove previous layer if any.
+      // Drop previous layer.
       if (layerRef.current) {
         map.removeLayer(layerRef.current);
         layerRef.current = null;
@@ -359,7 +355,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
     }
   };
 
-  // ---------- react to model changes ----------
+  // React to model change.
   useEffect(() => {
     setLeftExtent(null);
     setPlaying(false);
@@ -396,7 +392,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model2.id]);
 
-  // Non-overlapping extents: syncing would hide one model, so go Independent.
+  // Disjoint: go independent.
   useEffect(() => {
     if (!leftExtent || !rightExtent) return;
     if (!extentsIntersect(leftExtent, rightExtent)) {

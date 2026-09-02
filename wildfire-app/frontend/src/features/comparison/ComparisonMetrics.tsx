@@ -13,13 +13,13 @@ import {
   TrendingUp,
 } from 'lucide-react';
 
-import type { Model } from '@/features/model-dashboard/services/modelService';
+import type { Model } from '@/features/model-dashboard';
 import {
   useRiskMetrics,
   type RiskDistribution,
   type RiskLevel,
   type RiskMetrics,
-} from '@/features/model-results/hooks/useRiskMetrics';
+} from '@/features/model-results';
 import { ComparisonInsightCharts } from './ComparisonInsightCharts';
 import { DistributionComparisonChart } from './DistributionComparisonChart';
 import { useRiskMapSamples } from './useRiskMapSamples';

@@ -9,7 +9,7 @@ import {
   ArrowLeft,
   CalendarDays,
 } from 'lucide-react';
-import { modelService, Model } from '@/features/model-dashboard/services/modelService';
+import { modelService, Model } from '@/features/model-dashboard';
 import { Workspace } from '@/components/workspace';
 import { useWorkspaceStore } from '@/components/workspace';
 import { WorkspaceSelector } from '@/components/workspace';

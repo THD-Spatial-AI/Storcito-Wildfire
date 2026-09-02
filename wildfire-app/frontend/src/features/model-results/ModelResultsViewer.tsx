@@ -12,12 +12,12 @@ import {
 import { useParams } from "react-router-dom";
 import { useTranslation } from "@/i18n";
 
-import axios from "@/lib/axios";
+import { getModelResults } from "./services/resultsService";
 import { useDocumentTitle } from "@/hooks/use-document-title";
 import { MapContainer } from "@/components/shared/MapContainer";
-import { useMapStore } from "@/features/interactive-map/store/map-store";
+import { useMapStore } from "@/features/interactive-map";
 import MapSearchBar from "@/features/interactive-map/MapSearchBar";
-import { modelService, Model } from "@/features/model-dashboard/services/modelService";
+import { modelService, Model } from "@/features/model-dashboard";
 import { CreateWorkspaceModal } from "@/components/workspace";
 
 import { useRiskMetrics } from "./hooks/useRiskMetrics";
@@ -45,7 +45,7 @@ import { ViewerStatusBanners } from "./components/ViewerStatusBanners";
 import { OverlaysPanel, RiskLegendPanel } from "./components/ViewerMapPanels";
 import { RiskTimelinePanel } from "./components/RiskTimelinePanel";
 
-// Cesium is several MB, so load the 3D view (and Cesium with it) only when opened.
+// Lazy-load Cesium.
 const CesiumWildfire3DView = lazy(() =>
   import("./components/CesiumWildfire3DView").then((m) => ({ default: m.CesiumWildfire3DView }))
 );
@@ -83,7 +83,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   const [roadsVisible, setRoadsVisible] = useState(true);
   const [labelsVisible, setLabelsVisible] = useState(false);
 
-  // Fullscreen the document, not the viewer div: body portals stay visible.
+  // Fullscreen the document.
   const [isFullscreen, setIsFullscreen] = useState(false);
   useEffect(() => {
     const onChange = () => setIsFullscreen(Boolean(document.fullscreenElement));
@@ -142,9 +142,9 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     try {
       setError(null);
       setLoading(true);
-      const [modelRes, resultsRes] = await Promise.all([
+      const [modelRes, list] = await Promise.all([
         modelService.getModelById(requestedModelId),
-        axios.get(`/models/${requestedModelId}/results`),
+        getModelResults<ModelResult>(requestedModelId),
       ]);
 
       if (
@@ -156,8 +156,6 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
       setModel(modelRes.success && modelRes.data ? modelRes.data : null);
 
-      const raw = resultsRes.data?.data;
-      const list: ModelResult[] = Array.isArray(raw) ? raw : [];
       setResults(list);
     } catch (err) {
       if (
@@ -195,14 +193,14 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     loadData();
   }, [loadData]);
 
-  // Attach the layer once both the map is ready and the result is configured.
+  // Attach when ready.
   useEffect(() => {
     if (!map || !activeResult || attachedResultId === activeResult.id) return;
     if (activeResult.geoserver_status !== "configured") return;
     attachLayer(activeResult);
   }, [map, activeResult, attachLayer, attachedResultId]);
 
-  // Poll for readiness while the layer is still being processed server-side.
+  // Poll for readiness.
   useEffect(() => {
     if (!layerPending) return;
     pollTimerRef.current = window.setInterval(() => {
@@ -224,7 +222,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     [activeResult, selectLayer]
   );
 
-  // ----- Daily risk animation (dynamic runs publish layers/risk_<date>.tif per day) -----
+  // Daily risk animation.
 
   const dailyFrames = useMemo(
     () =>
@@ -233,7 +231,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
         .sort((a, b) => a.key.localeCompare(b.key)),
     [availableLayers]
   );
-  // Daily frames are driven by the player, so keep them out of the dataset switcher.
+  // Player owns frames.
   const switcherLayers = useMemo(
     () => availableLayers.filter((l) => !DAILY_FRAME_KEY_PATTERN.test(l.key)),
     [availableLayers]
@@ -250,7 +248,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
       setPlaying(false);
       return;
     }
-    // Resume from the frame currently shown (or start at the first day).
+    // Resume current frame.
     const current = dailyFrames.findIndex((f) => f.key === selectedLayerKeyRef.current);
     playFrameRef.current = current >= 0 ? current : -1;
     const tick = () => {
@@ -282,7 +280,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     [applyDailyFrame, dailyFrames]
   );
 
-  // ----- Derived UI state -----
+  // Derived state.
 
   const dateRange = useMemo(() => {
     if (!model?.from_date || !model?.to_date) return null;
@@ -380,7 +378,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
         />
       )}
 
-      {/* 3D terrain sits inside the map container below the shared overlays. */}
+      {/* 3D terrain layer. */}
       {show3D && wms3D && (
         <Suspense fallback={null}>
           <CesiumWildfire3DView
