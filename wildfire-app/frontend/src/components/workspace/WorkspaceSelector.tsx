@@ -55,13 +55,13 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
 
             let initialWorkspace: Workspace | null = null;
 
-            // Check if current workspace still exists
+            // Still exists?
             if (activeWorkspace) {
                 const foundWorkspace = workspaceList.find(w => w.id === activeWorkspace.id);
                 if (foundWorkspace) {
                     initialWorkspace = foundWorkspace;
                 } else {
-                    // Current workspace was deleted, switch to default
+                    // Deleted: use default.
                     initialWorkspace = defaultWorkspace || workspaceList[0] || null;
                 }
             }
@@ -72,7 +72,7 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
 
             setSelectedWorkspace(initialWorkspace);
 
-            // Only propagate if workspace ID actually changed
+            // Propagate on change.
             const activeWorkspaceId = activeWorkspace?.id ?? null;
             const initialWorkspaceIdToSet = initialWorkspace?.id ?? null;
             if (isInitialLoad || activeWorkspace == null || activeWorkspaceId !== initialWorkspaceIdToSet) {
@@ -108,7 +108,7 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
         };
     }, [isOpen]);
 
-    // Track the last processed workspace ID to prevent infinite loops
+    // Guard against loops.
     const lastActiveWorkspaceIdRef = useRef<number | null>(null);
 
     useEffect(() => {
@@ -116,7 +116,7 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
             return;
         }
 
-        // Prevent infinite loop by checking if we've already processed this workspace
+        // Skip if processed.
         const currentId = activeWorkspace?.id ?? null;
         if (lastActiveWorkspaceIdRef.current === currentId) {
             return;
@@ -188,7 +188,7 @@ export const WorkspaceSelector: React.FC<WorkspaceSelectorProps> = ({
                         className={`group flex items-center bg-card border border-border transition-all duration-200 ${
                             compact
                                 ? 'gap-1.5 px-2 py-1 rounded hover:border-muted-foreground/50 hover:shadow-sm'
-                                : 'gap-2.5 px-3 py-1.5 rounded-lg hover:border-muted-foreground/50 hover:shadow-sm'
+                                : 'h-9 gap-2.5 px-3 rounded-lg hover:border-muted-foreground/50 hover:bg-muted/60'
                         }`}
                         disabled={isLoading}
                     >

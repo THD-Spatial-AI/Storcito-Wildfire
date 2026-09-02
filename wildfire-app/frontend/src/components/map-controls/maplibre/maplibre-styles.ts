@@ -14,7 +14,8 @@ export const BOUNDARY_COLORS = {
 } as const;
 
 export const USER_MODEL_COLORS = {
-  fill: 'rgba(52, 211, 153, 0.18)',
-  stroke: 'rgba(52, 211, 153, 0.95)',
-  hoverFill: 'rgba(52, 211, 153, 0.32)',
+  fill: 'rgba(16, 185, 129, 0.28)',
+  stroke: '#059669',
+  hoverFill: 'rgba(16, 185, 129, 0.42)',
+  casing: 'rgba(255, 255, 255, 0.9)',
 } as const;

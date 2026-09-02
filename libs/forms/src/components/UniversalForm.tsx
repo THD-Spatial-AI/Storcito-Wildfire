@@ -157,7 +157,7 @@ const UniversalForm: React.FC<UniversalFormProps> = ({
   }, [values, validationErrors, errors, handleFieldChange, passwordVisibility]);
 
   const onOpenChange = useCallback((open: boolean) => {
-    // Close when dialog requests it; remain controlled by parent
+    // Parent-controlled close.
     if (!open) onClose();
   }, [onClose]);
 
@@ -181,8 +181,8 @@ const UniversalForm: React.FC<UniversalFormProps> = ({
           className={cn(
             "absolute z-10 right-3 top-3",
             "size-8 justify-center items-center flex cursor-pointer rounded-lg",
-            "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300",
-            "hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            "text-muted-foreground hover:text-foreground",
+            "hover:bg-muted transition-colors duration-150"
           )}
         >
           <IconX className="size-4" />
@@ -193,7 +193,7 @@ const UniversalForm: React.FC<UniversalFormProps> = ({
 				{renderFormHeader({ inline, headerContent, title, description, variantStyles, FormIcon })}
 			</div>
 
-			<div className="relative max-h-[60dvh] overflow-auto no-scrollbar border-y border-border">
+			<div className="relative -mx-5 max-h-[60dvh] overflow-auto no-scrollbar border-t border-border px-5">
 				<form onSubmit={(e) => { e.preventDefault(); onSubmit(); }} className="h-full flex flex-col" ref={formRef}>
 					<div className="relative space-y-6 py-4">
 						{sections.map((section, sectionIdx) => (
@@ -201,10 +201,10 @@ const UniversalForm: React.FC<UniversalFormProps> = ({
 								{(section.title || section.description) && (
 									<div className="pb-2">
 										{section.title && (
-											<h3 className="text-base font-semibold text-foreground">{section.title}</h3>
+											<h3 className="text-sm font-semibold text-foreground">{section.title}</h3>
 										)}
 										{section.description && (
-											<p className="text-sm text-muted-foreground mt-0.5">{section.description}</p>
+											<p className="text-xs text-muted-foreground mt-0.5">{section.description}</p>
 										)}
 									</div>
 								)}
@@ -233,7 +233,7 @@ const UniversalForm: React.FC<UniversalFormProps> = ({
     return <div className={containerClasses}>{renderContent()}</div>;
   }
 
-  // Don't render the dialog until isOpen is true to prevent animation glitches
+  // Avoid animation glitch.
   if (!isOpen) {
     return null;
   }
@@ -250,7 +250,7 @@ const UniversalForm: React.FC<UniversalFormProps> = ({
   );
 };
 
-// Helper functions for rendering form fields
+// Field renderers.
 type RenderContext = {
   field: FormField;
   FieldIcon: LucideIcon | undefined;
@@ -265,8 +265,8 @@ type RenderContext = {
 
 function getInputClasses(FieldIcon: LucideIcon | undefined, disabled: boolean | undefined, fieldError: string | undefined): string {
   return `
-    block w-full ${FieldIcon ? "pl-10" : "pl-4"} pr-4 py-3 text-sm border rounded-xl
-    placeholder-muted-foreground transition-all duration-200 min-h-[2.875rem] text-foreground
+    block w-full ${FieldIcon ? "pl-10" : "pl-3.5"} pr-3.5 py-2.5 text-sm border rounded-lg
+    placeholder-muted-foreground transition-colors duration-150 min-h-10 text-foreground
     ${
       disabled
         ? "bg-muted border-border text-muted-foreground cursor-not-allowed"
@@ -361,7 +361,7 @@ const CustomSelectField: React.FC<{ ctx: RenderContext }> = ({ ctx }) => {
           onClick={() => !field.disabled && setIsOpen(!isOpen)}
           disabled={field.disabled}
           className={cn(
-            "flex items-center gap-2 w-full px-4 py-3 text-sm border rounded-xl transition-all duration-200 min-h-[2.875rem]",
+            "flex items-center gap-2 w-full px-3.5 py-2.5 text-sm border rounded-lg transition-colors duration-150 min-h-10",
             field.disabled
               ? "bg-muted border-border text-muted-foreground cursor-not-allowed"
               : "bg-background dark:bg-input border-border hover:border-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-muted-foreground",
@@ -529,7 +529,7 @@ function renderInputField(ctx: RenderContext) {
           value={typeof values[field.key] === "string" || typeof values[field.key] === "number" ? (values[field.key] as string | number) : ""}
           onChange={(e) => {
             const rawValue = e.target.value;
-            // Filter phone input to only allow valid characters
+            // Phone input filter.
             if (field.type === "tel") {
               const filteredValue = rawValue.replaceAll(/[^\d\s\-+()]/g, '');
               handleFieldChange(field, filteredValue);
@@ -601,7 +601,7 @@ function renderInputField(ctx: RenderContext) {
   );
 }
 
-// Type for variant styles returned by getFormVariantStyles
+// Variant style type.
 type FormVariantStyles = {
   background: string;
   card: string;
@@ -610,7 +610,7 @@ type FormVariantStyles = {
   button: string;
 };
 
-// Helper function to get variant styles
+// Variant styles.
 function getFormVariantStyles(variant: "default" | "user" | "webservice", Icon: LucideIcon | undefined): FormVariantStyles {
   const baseStyles = {
     background: "bg-white dark:bg-gray-900",
@@ -620,16 +620,16 @@ function getFormVariantStyles(variant: "default" | "user" | "webservice", Icon: 
 
   const variantConfig = {
     user: {
-      iconBg: "bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-200 dark:to-gray-300",
-      button: "bg-gray-900 dark:bg-gray-100 hover:bg-gray-800 dark:hover:bg-gray-200",
+      iconBg: "bg-primary",
+      button: "bg-primary hover:bg-primary/90",
     },
     webservice: {
-      iconBg: "bg-gradient-to-br from-gray-700 to-gray-800 dark:from-gray-300 dark:to-gray-400",
-      button: "bg-gray-800 dark:bg-gray-200 hover:bg-gray-700 dark:hover:bg-gray-300",
+      iconBg: "bg-primary",
+      button: "bg-primary hover:bg-primary/90",
     },
     default: {
-      iconBg: "bg-gradient-to-br from-gray-700 to-gray-900 dark:from-gray-200 dark:to-gray-400",
-      button: "bg-gray-900 dark:bg-gray-100 hover:bg-gray-800 dark:hover:bg-gray-200",
+      iconBg: "bg-primary",
+      button: "bg-primary hover:bg-primary/90",
     },
   };
 
@@ -637,7 +637,7 @@ function getFormVariantStyles(variant: "default" | "user" | "webservice", Icon: 
   return { ...baseStyles, ...config };
 }
 
-// Helper function to get container classes
+// Container classes.
 function getContainerClasses(inline: boolean, maxWidth: "sm" | "md" | "lg" | "xl" | "2xl") {
   const maxWidthClasses = {
     sm: inline ? "max-w-sm" : "sm:max-w-sm",
@@ -653,7 +653,7 @@ function getContainerClasses(inline: boolean, maxWidth: "sm" | "md" | "lg" | "xl
   return cn(baseClass, widthClass);
 }
 
-// Helper function to render form header
+// Form header.
 interface RenderFormHeaderParams {
   inline: boolean;
   headerContent: React.ReactNode | undefined;
@@ -672,8 +672,8 @@ function renderFormHeader(params: RenderFormHeaderParams) {
       <div className="w-full text-center">
         {title && (
           <h2 className="inline-flex items-center gap-2 text-xl font-semibold text-foreground">
-            <span className={cn("w-8 h-8 ", variantStyles.iconBg, "rounded-xl flex items-center justify-center shadow-lg")}>
-              <FormIcon className="w-4 h-4 text-white dark:text-gray-900" />
+            <span className={cn("w-8 h-8 ", variantStyles.iconBg, "rounded-lg flex items-center justify-center shadow-sm")}>
+              <FormIcon className="w-4 h-4 text-primary-foreground" />
             </span>
             {title}
           </h2>
@@ -686,9 +686,9 @@ function renderFormHeader(params: RenderFormHeaderParams) {
   return (
     <AlertDialogHeader className="pr-10">
       {title && (
-        <AlertDialogTitle className="flex items-center gap-2.5 text-xl">
-          <span className={cn("w-9 h-9 ", variantStyles.iconBg, "rounded-xl flex items-center justify-center shadow-lg")}>
-            <FormIcon className="w-4.5 h-4.5 text-white dark:text-gray-900" />
+        <AlertDialogTitle className="flex items-center gap-3 text-lg font-semibold tracking-tight">
+          <span className={cn("w-9 h-9 ", variantStyles.iconBg, "rounded-lg flex items-center justify-center shadow-sm")}>
+            <FormIcon className="w-4.5 h-4.5 text-primary-foreground" />
           </span>
           {title}
         </AlertDialogTitle>
@@ -698,7 +698,7 @@ function renderFormHeader(params: RenderFormHeaderParams) {
   );
 }
 
-// Helper function to render form footer
+// Form footer.
 interface RenderFormFooterParams {
   readonly inline: boolean;
   readonly loading: boolean;
@@ -721,7 +721,7 @@ function renderFormFooter(params: RenderFormFooterParams) {
         variant="ghost" 
         disabled={loading} 
         onClick={onClose} 
-        className="rounded-xl cursor-pointer text-sm h-10 px-5 font-medium text-muted-foreground hover:text-foreground hover:bg-accent"
+        className="rounded-lg cursor-pointer text-sm h-10 px-4 font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
       >
         {cancelText || t("common.cancel")}
       </Button>
@@ -733,7 +733,7 @@ function renderFormFooter(params: RenderFormFooterParams) {
         type="submit"
         style={{ ["--width" as string]: buttonWidth ? `${buttonWidth}px` : undefined }}
         className={cn(
-          "rounded-xl cursor-pointer text-sm h-10 px-6 font-medium min-w-[calc(var(--spacing)_*_20)]",
+          "rounded-lg cursor-pointer text-sm h-10 px-5 font-medium min-w-[calc(var(--spacing)_*_20)]",
           "bg-primary text-primary-foreground",
           "hover:bg-primary/90",
           "disabled:opacity-50 disabled:cursor-not-allowed",
@@ -749,7 +749,7 @@ function renderFormFooter(params: RenderFormFooterParams) {
   return inline ? (
     <div className="pt-4 flex items-center justify-end gap-3">{buttons}</div>
   ) : (
-    <AlertDialogFooter className="pt-4 gap-3">{buttons}</AlertDialogFooter>
+    <AlertDialogFooter className="-mx-5 -mb-5 mt-4 gap-3 rounded-b-2xl border-t border-border bg-muted/20 px-5 py-3.5">{buttons}</AlertDialogFooter>
   );
 }
 

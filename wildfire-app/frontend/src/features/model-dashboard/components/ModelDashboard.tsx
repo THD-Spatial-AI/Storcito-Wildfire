@@ -162,13 +162,12 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 	const { summary: webserviceSummary } = useWebservices({}, { autoRefresh: true, refreshInterval: 10000 });
 	const hasAvailableWebservice = (webserviceSummary?.available ?? 0) > 0;
 
-	// Exactly the page slice from the API; child rows show their parent via
-	// the parent_model_title field, so off-page parents are not merged in.
+	// Page slice only.
 	const models = useMemo(() => modelsResponse?.data || [], [modelsResponse?.data]);
 	const totalItems = modelsResponse?.total || 0;
 	const isLoading = isLoadingModels;
 
-	// Use stats directly from React Query, fallback to defaults
+	// Stats with defaults.
 	const stats = useMemo(() => {
 		if (statsResponse?.success && statsResponse.data) {
 			return statsResponse.data;
@@ -176,16 +175,16 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 		return DEFAULT_STATS;
 	}, [statsResponse]);
 
-	// Check if model limit is reached
+	// Model limit check.
 	const isModelLimitReached = useMemo(() => {
 		if (stats.is_unlimited) return false;
 		if (!stats.model_limit) return false;
 		return stats.total >= stats.model_limit;
 	}, [stats.total, stats.model_limit, stats.is_unlimited]);
 
-	// No-op function for compatibility - mutations handle cache invalidation automatically
+	// No-op for compatibility.
 	const loadStats = useCallback(async () => {
-		// Stats are handled by React Query - mutations invalidate the cache
+		// Stats via React Query.
 	}, []);
 
 	const {
@@ -236,7 +235,7 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 	const handleRefresh = useCallback(async () => {
 		setIsRefreshing(true);
 		try {
-			// Reload both workspaces and models
+			// Reload all.
 			setWsReloadKey((k) => k + 1);
 			await loadModels();
 		} finally {
@@ -284,7 +283,7 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 	const favoriteIdSet = useMemo(() => new Set(favoriteIds), [favoriteIds]);
 
 	const sortedModels = useMemo(() => {
-		// Server already sorts by orderBy/order — only reorder favorites to top
+		// Favorites to top.
 		return [...filteredModels].sort((a, b) => {
 			const aFav = favoriteIdSet.has(a.id) ? 0 : 1;
 			const bFav = favoriteIdSet.has(b.id) ? 0 : 1;
@@ -390,9 +389,9 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 
 	const handleCopyWorkspaceSuccess = async (copiedWorkspace: Workspace, sourceWorkspace: Workspace) => {
 		try {
-			// Reload workspace list to include the new workspace
+			// Reload workspace list.
 			setWsReloadKey((k) => k + 1);
-			// Switch to the new workspace
+			// Switch workspace.
 			handleWorkspaceChange(copiedWorkspace);
 			await loadModels();
 			await loadStats();
@@ -428,7 +427,7 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 			onConfirm: async () => {
 				try {
 					await workspaceService.deleteWorkspace(currentWorkspace.id);
-					// Load default workspace after deletion
+					// Load default workspace.
 					const defaultWorkspace = await workspaceService.getDefaultWorkspace();
 					handleWorkspaceChange(defaultWorkspace);
 					setWsReloadKey((k) => k + 1);
@@ -459,7 +458,7 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 	}, []);
 
 	const handleMoveToWorkspace = useCallback((model: Model) => {
-		// Blur active element to prevent aria-hidden focus warning
+		// Blur before hiding.
 		if (document.activeElement instanceof HTMLElement) {
 			document.activeElement.blur();
 		}
@@ -470,15 +469,15 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 	}, []);
 
 	const handleBulkMoveToWorkspace = useCallback(() => {
-		// Blur active element to prevent aria-hidden focus warning
+		// Blur before hiding.
 		if (document.activeElement instanceof HTMLElement) {
 			document.activeElement.blur();
 		}
 		const ownedModels = selectedModels.filter((model: Model) => canUserDeleteModel(model));
 		
-		// Exclude parent models if their children are also being moved
+		// Exclude moved parents.
 		const modelsToMove = ownedModels.filter(model => {
-			// Check if any selected model has this model as parent
+			// Has selected child?
 			const hasChildInSelection = ownedModels.some(
 				m => m.parent_model_id === model.id
 			);
@@ -662,8 +661,8 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 
 return (
 		<Fragment>
-			<div className="md-scope relative p-4 sm:p-6 w-full bg-background overflow-x-hidden overflow-y-scroll">
-				<div className="w-full space-y-5">
+			<div className="md-scope relative w-full bg-background overflow-x-hidden overflow-y-scroll">
+				<div className="w-full px-4 py-6 sm:px-6 lg:px-8 space-y-6">
 					<ModelDashboardFilters
 						groups={groups}
 						selectedGroup={selectedGroup}
