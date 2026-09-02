@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, CheckCircle2, AlertCircle, Loader2, ChevronDown, Server, Database, Globe, Map, Zap, Check, Clock } from 'lucide-react';
-import axios from '@/lib/axios';
+import { notificationsService } from '@/features/notifications/services/notifications';
 import { useTranslation } from '@/i18n';
 
 interface NotificationForm {
@@ -65,7 +65,7 @@ const NotificationManagement: React.FC = () => {
     setErrorMessage('');
 
     try {
-      await axios.post('/notifications/send', {
+      await notificationsService.sendMaintenance({
         service: form.service,
         scheduled_date: form.date,
         scheduled_time: getTimeString(),
@@ -98,7 +98,7 @@ const NotificationManagement: React.FC = () => {
   return (
     <div className="space-y-1.5">
       <form onSubmit={handleSubmit} className="space-y-1.5">
-        {/* Service Selection - Button style like LanguageSettings */}
+        {/* Service selection. */}
         <div className="space-y-1" ref={dropdownRef}>
           <div className="relative">
             <button
@@ -157,7 +157,7 @@ const NotificationManagement: React.FC = () => {
           </div>
         </div>
 
-        {/* Date & Time - Single row */}
+        {/* Date and time. */}
         <div className="flex items-center gap-2">
           <input
             type="date"

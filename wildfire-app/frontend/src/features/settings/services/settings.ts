@@ -44,10 +44,10 @@ class SettingsService {
   private readonly CACHE_TTL = 5000; // 5 seconds
 
   /**
-   * Get all user settings as a key-value map
+   * All settings.
    */
   async getAllSettings(): Promise<UserSettings> {
-    // Return cached data if fresh
+    // Serve fresh cache.
     if (this._settingsCache && Date.now() - this._settingsCache.timestamp < this.CACHE_TTL) {
       return this._settingsCache.data;
     }
@@ -72,13 +72,13 @@ class SettingsService {
     return this._pendingFetch;
   }
 
-  /** Invalidate settings cache (call after writing settings) */
+  /** Invalidate cache. */
   invalidateCache(): void {
     this._settingsCache = null;
   }
 
   /**
-   * Get a specific setting by key
+   * One setting.
    */
   async getSetting(key: string): Promise<string | null> {
     try {
@@ -96,7 +96,43 @@ class SettingsService {
   }
 
   /**
-   * Set or update a setting
+   * Read consent flag.
+   */
+  async getPrivacyAccepted(): Promise<boolean | null> {
+    try {
+      const { data } = await axios.get<{ success: boolean; data?: Record<string, unknown> }>(this.BASE_PATH);
+      const value = data?.data?.privacy_accepted;
+      if (value === undefined || value === null) return null;
+      return parseBooleanSetting(value, false);
+    } catch {
+      return null;
+    }
+  }
+
+  /** Patch settings. */
+  async updateSettings(patch: Record<string, unknown>): Promise<boolean> {
+    try {
+      await axios.patch<{ success: boolean }>(this.BASE_PATH, patch);
+      this.invalidateCache();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /** Persist consent. */
+  async setPrivacyAccepted(accepted: boolean): Promise<boolean> {
+    try {
+      await axios.put<{ success: boolean }>(`${this.BASE_PATH}/privacy-accepted`, { accepted });
+      this.invalidateCache();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Write a setting.
    */
   async setSetting(key: string, value: string): Promise<boolean> {
     try {
@@ -261,7 +297,7 @@ class SettingsService {
     }
   }
 
-  /** Mark the area-select onboarding tour as completed. */
+  /** Complete area tour. */
   async markAreaSelectTourCompleted(): Promise<boolean> {
     try {
       await axios.patch<{ success: boolean }>(this.BASE_PATH, { area_select_tour_completed: true });
@@ -272,7 +308,7 @@ class SettingsService {
     }
   }
 
-  /** Save whether the model creation intro card should be skipped. */
+  /** Save intro preference. */
   async setModelIntroCardDismissed(dismissed: boolean): Promise<boolean> {
     try {
       await axios.patch<{ success: boolean }>(this.BASE_PATH, { model_intro_card_dismissed: dismissed });
@@ -284,7 +320,7 @@ class SettingsService {
     }
   }
 
-  /** Mark the product tour as completed. */
+  /** Complete product tour. */
   async markProductTourCompleted(): Promise<boolean> {
     try {
       await axios.put<{ success: boolean }>(`${this.BASE_PATH}/product-tour-completed`, { completed: true });
@@ -299,7 +335,7 @@ class SettingsService {
   // Polygon Limits
 
   /**
-   * Get all polygon limits for all access levels
+   * All polygon limits.
    */
   async getPolygonLimits(): Promise<Record<string, number>> {
     try {
@@ -320,7 +356,7 @@ class SettingsService {
   }
 
   /**
-   * Get the polygon limit for the current user
+   * Own polygon limit.
    */
   async getMyPolygonLimit(): Promise<{ access_level: string; building_limit: number }> {
     try {
@@ -335,7 +371,7 @@ class SettingsService {
   }
 
   /**
-   * Update polygon limits (experts only)
+   * Update polygon limits.
    */
   async updatePolygonLimits(limits: Record<string, number>): Promise<boolean> {
     try {
@@ -348,7 +384,7 @@ class SettingsService {
   }
 
   /**
-   * Update a single polygon limit (experts only)
+   * Update one limit.
    */
   async updatePolygonLimit(accessLevel: string, buildingLimit: number): Promise<boolean> {
     try {
@@ -366,7 +402,7 @@ class SettingsService {
   // Model Limits
 
   /**
-   * Get all model limits for all access levels
+   * All model limits.
    */
   async getModelLimits(): Promise<Record<string, number>> {
     try {
@@ -387,7 +423,7 @@ class SettingsService {
   }
 
   /**
-   * Get the model limit for the current user with usage info
+   * Own model limit.
    */
   async getMyModelLimit(): Promise<{
     access_level: string;
@@ -427,7 +463,7 @@ class SettingsService {
   }
 
   /**
-   * Update model limits (experts only)
+   * Update model limits.
    */
   async updateModelLimits(limits: Record<string, number>): Promise<boolean> {
     try {
@@ -440,7 +476,7 @@ class SettingsService {
   }
 
   /**
-   * Update a single model limit (experts only)
+   * Update one limit.
    */
   async updateModelLimit(accessLevel: string, modelLimit: number): Promise<boolean> {
     try {

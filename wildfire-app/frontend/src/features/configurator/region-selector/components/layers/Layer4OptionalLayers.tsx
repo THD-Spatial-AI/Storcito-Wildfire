@@ -1,8 +1,10 @@
 import type { FC } from "react";
 import { CloudRain, Mountain, Flame, AlertCircle, Zap, Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@spatialhub/ui";
 import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 import { LayerShell } from "./shared/LayerShell";
+import { ChoiceCard, ChoiceCardGroup, QuestionSection } from "../wizard";
 import { FileUploadField } from "./shared/FileUploadField";
 import type { ConfiguratorContext, OptionalLayerKey } from "./types";
 
@@ -12,7 +14,7 @@ interface OptionalLayerItem {
   hint: string;
   icon: typeof CloudRain;
   weight: string;
-  accent: string;
+  info: string;
 }
 
 export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
@@ -36,7 +38,10 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
       ),
       icon: CloudRain,
       weight: t("configurator.layer3.fwiWeight", "30% weight"),
-      accent: "from-sky-500/15 to-sky-500/0 text-sky-600 dark:text-sky-400",
+      info: t(
+        "configurator.layer3.fwiInfo",
+        "The Fire Weather Index combines wind, relative humidity, temperature and drought into one measure of how readily a fire would start and spread. It carries the largest weight because weather changes fastest and drives fire behaviour most strongly."
+      ),
     },
     {
       id: "terrain_analysis",
@@ -44,7 +49,10 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
       hint: t("configurator.layer3.terrainHint", "Elevation, slope and aspect influence on spread"),
       icon: Mountain,
       weight: t("configurator.layer3.terrainWeight", "6% weight"),
-      accent: "from-emerald-500/15 to-emerald-500/0 text-emerald-600 dark:text-emerald-400",
+      info: t(
+        "configurator.layer3.terrainInfo",
+        "Slope, elevation and aspect shape how a fire moves: it accelerates uphill, and sun-facing slopes dry out faster. Derived from the digital terrain model for your area."
+      ),
     },
     {
       id: "historical_fires",
@@ -55,7 +63,10 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
       ),
       icon: Flame,
       weight: t("configurator.layer3.historicalWeight", "4% weight"),
-      accent: "from-orange-500/15 to-orange-500/0 text-orange-600 dark:text-orange-400",
+      info: t(
+        "configurator.layer3.historicalInfo",
+        "Where fires have burned before they tend to burn again, because the underlying causes — land use, access and ignition sources — persist. Based on recorded past fire incidents in the area."
+      ),
     },
   ];
 
@@ -75,7 +86,7 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
         className={cn(
           "mb-3 rounded-xl border p-3 transition-all",
           precomputedOn
-            ? "border-violet-500/40 bg-gradient-to-br from-violet-500/10 to-violet-500/0"
+            ? "border-primary/40 bg-primary/5"
             : "border-border bg-muted/30"
         )}
       >
@@ -85,7 +96,7 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
               className={cn(
                 "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border",
                 precomputedOn
-                  ? "border-violet-500/50 text-violet-600 dark:text-violet-400 bg-background/60"
+                  ? "border-primary/40 text-primary bg-background/60"
                   : "border-border text-muted-foreground bg-background/40"
               )}
             >
@@ -95,15 +106,23 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
               <span className="text-sm font-medium text-foreground">
                 {t("configurator.layer3.precomputedLabel", "Precomputed regional map")}
               </span>
-              <span
-                className="cursor-help text-muted-foreground"
-                title={t(
-                  "configurator.layer3.precomputedInfo",
-                  "Every night the whole region is analysed with all risk layers enabled. When your date is covered, your area's result is clipped from that map and arrives in seconds. Disable it (or toggle individual layers below) to compute every step specifically for your area (~1-2 minutes)."
-                )}
-              >
-                <Info className="h-3.5 w-3.5" />
-              </span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    aria-label={t("configurator.layer3.precomputedInfoLabel", "About the precomputed regional map")}
+                    className="cursor-pointer text-muted-foreground transition-colors duration-150 hover:text-foreground focus:outline-none"
+                  >
+                    <Info className="h-3.5 w-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-[280px] text-xs">
+                  {t(
+                    "configurator.layer3.precomputedInfo",
+                    "Every night the whole region is analysed with all risk layers enabled. When your date is covered, your area's result is clipped from that map and arrives in seconds. Disable it (or toggle individual layers below) to compute every step specifically for your area (~1-2 minutes)."
+                  )}
+                </TooltipContent>
+              </Tooltip>
             </div>
           </div>
           <button
@@ -116,13 +135,13 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
               "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200",
               precomputedAvailable ? "active:scale-95" : "cursor-not-allowed opacity-40",
               precomputedOn
-                ? "bg-violet-500"
+                ? "bg-primary"
                 : "bg-muted-foreground/30 hover:bg-muted-foreground/40"
             )}
           >
             <span
               className={cn(
-                "inline-block h-4 w-4 transform rounded-full bg-white shadow-md ring-1 ring-black/5 transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
+                "inline-block h-4 w-4 transform rounded-full bg-card shadow-sm ring-1 ring-border transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
                 precomputedOn ? "translate-x-[18px]" : "translate-x-0.5"
               )}
             />
@@ -156,76 +175,36 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
         </p>
       </div>
 
-      <div className="space-y-2.5" data-tour="optional-layers">
-        {ITEMS.map((it, index) => {
-          const enabled = ctx.optionalLayers[it.id];
-          const Icon = it.icon;
-          return (
-            <div
-              key={it.id}
-              style={{ animationDelay: `${Math.min(index * 30, 240)}ms` }}
-              className={cn(
-                "md-row-in group relative flex items-start gap-2.5 rounded-xl border bg-gradient-to-br p-3 transition-all duration-200",
-                enabled
-                  ? cn("border-foreground/15 shadow-sm", it.accent)
-                  : "border-border bg-muted/30 from-transparent to-transparent"
+      <QuestionSection
+        index={1}
+        title={t("configurator.layer3.signalsQuestion", "Which signals should feed the risk model?")}
+      >
+        <div data-tour="optional-layers">
+          <ChoiceCardGroup columns={3}>
+            {ITEMS.map((it) => (
+              <ChoiceCard
+                key={it.id}
+                icon={<it.icon className="h-5 w-5" />}
+                label={it.label}
+                description={precomputedOn ? it.weight : `${it.weight} · ${it.hint}`}
+                info={it.info}
+                selected={ctx.optionalLayers[it.id]}
+                disabled={precomputedOn}
+                multiple
+                onSelect={() => ctx.toggleOptionalLayer(it.id)}
+              />
+            ))}
+          </ChoiceCardGroup>
+          {precomputedOn && (
+            <p className="mt-2 text-[11px] leading-snug text-muted-foreground">
+              {t(
+                "configurator.layer3.lockedByPrecomputed",
+                "Included in the precomputed regional map. Disable the precomputed switch above to customise layers."
               )}
-            >
-              <span
-                className={cn(
-                  "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border transition-colors duration-200",
-                  enabled
-                    ? "border-current bg-background/60"
-                    : "border-border bg-background/40 text-muted-foreground"
-                )}
-              >
-                <Icon className="h-4 w-4" />
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm font-medium text-foreground">{it.label}</span>
-                  <button
-                    type="button"
-                    disabled={precomputedOn}
-                    title={
-                      precomputedOn
-                        ? t(
-                            "configurator.layer3.lockedByPrecomputed",
-                            "Included in the precomputed regional map. Disable the precomputed switch above to customise layers."
-                          )
-                        : undefined
-                    }
-                    onClick={() => ctx.toggleOptionalLayer(it.id)}
-                    role="switch"
-                    aria-checked={enabled}
-                    aria-label={`Toggle ${it.label}`}
-                    className={cn(
-                      "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                      precomputedOn ? "cursor-not-allowed opacity-50" : "active:scale-95",
-                      enabled
-                        ? "bg-emerald-500"
-                        : "bg-muted-foreground/30 hover:bg-muted-foreground/40"
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "inline-block h-4 w-4 transform rounded-full bg-white shadow-md ring-1 ring-black/5 transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                        enabled ? "translate-x-[18px]" : "translate-x-0.5"
-                      )}
-                    />
-                  </button>
-                </div>
-                <span className="mt-1 inline-block rounded-full border border-border bg-background/70 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-muted-foreground">
-                  {it.weight}
-                </span>
-                <span className="mt-1 block text-[11px] leading-snug text-muted-foreground">
-                  {it.hint}
-                </span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+            </p>
+          )}
+        </div>
+      </QuestionSection>
       <p className="mt-3 text-[11px] leading-snug text-muted-foreground">
         {t(
           "configurator.layer3.coreSignalsNote",
@@ -254,7 +233,7 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
             "configurator.layer3.customDataDesc",
             "Bring your own weather inputs for this area. If left empty, the bundled regional data is used."
           )}
-          {/* The DTM is uploaded earlier, in the Area Selection step. */}
+          {/* Uploaded in step 2. */}
         </p>
         <div className="space-y-2">
           <FileUploadField

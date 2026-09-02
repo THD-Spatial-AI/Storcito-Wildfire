@@ -40,9 +40,15 @@ const Row: FC<{ label: string; value: ReactNode; index?: number; info?: string }
 export const Layer6SaveCalculate: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
     const { t } = useTranslation();
     const { state, optionalLayers, allPolygonsCount, areaStats } = ctx;
+    // Translated layer labels.
+    const layerLabelKeys: Record<string, string> = {
+        weather_overlay: "configurator.layer3.fwiLabel",
+        terrain_analysis: "configurator.layer3.terrainLabel",
+        historical_fires: "configurator.layer3.historicalLabel",
+    };
     const activeMods = Object.entries(optionalLayers)
         .filter(([, v]) => v)
-        .map(([k]) => k.replace(/_/g, " "));
+        .map(([k]) => (layerLabelKeys[k] ? t(layerLabelKeys[k]) : k.replace(/_/g, " ")));
 
     return (
         <LayerShell purpose={t("configurator.layer5.purpose", "Review the model setup before saving. The calculation will use the selected dates, area and data source choices.")}>
@@ -59,7 +65,15 @@ export const Layer6SaveCalculate: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) =
                     <Row index={0} label={t("configurator.layer5.labels.modelName", "Model name")} value={state.modelName} />
                     <Row index={1} label={t("configurator.layer5.labels.from", "From")} value={state.fromDate} />
                     <Row index={2} label={t("configurator.layer5.labels.to", "To")} value={state.toDate} />
-                    <Row index={3} label={t("configurator.layer5.labels.mode", "Mode")} value={state.calculationMode} />
+                    <Row
+                        index={3}
+                        label={t("configurator.layer5.labels.mode", "Mode")}
+                        value={
+                            state.calculationMode === "static"
+                                ? t("configurator.layer1.calcModeStatic", "Static")
+                                : t("configurator.layer1.calcModeDynamic", "Dynamic")
+                        }
+                    />
                     <Row
                         index={4}
                         label={t("configurator.layer5.labels.dailyRun", "Daily run")}

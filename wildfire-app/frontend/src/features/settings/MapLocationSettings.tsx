@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMapLocationStore } from '@/features/interactive-map/store/map-location';
-import { GeocodingResult } from '@/features/interactive-map/services/geocoding';
-import { updateMapToSavedLocation } from '@/features/interactive-map/store/map-store';
+import { GeocodingResult } from '@/features/interactive-map';
+import { updateMapToSavedLocation } from '@/features/interactive-map';
 import { Loader2 } from 'lucide-react';
 import { LocationSearch } from './components/LocationSearch';
 import { SavedLocationsList } from './components/SavedLocationsList';

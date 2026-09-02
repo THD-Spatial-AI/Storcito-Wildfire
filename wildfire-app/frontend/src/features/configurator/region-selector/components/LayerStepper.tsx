@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState, type ChangeEvent, type FC } from "react";
-import { ChevronLeft, ChevronRight, Loader2, CheckCircle2, Sparkles, X, Play, RotateCcw } from "lucide-react";
+import { useEffect, useMemo, type ChangeEvent, type FC } from "react";
+import { ChevronLeft, ChevronRight, Loader2, CheckCircle2, Sparkles, X, Play } from "lucide-react";
 import { useTranslation } from "@/i18n";
 import area from "@turf/area";
 import length from "@turf/length";
@@ -7,10 +7,10 @@ import { polygon, lineString } from "@turf/helpers";
 
 import { Button } from "@spatialhub/ui";
 import { cn } from "@/lib/utils";
-import { settingsService } from "@/features/settings/services/settings";
 import { dateRangeHasOnlyAvailableDates } from "@/features/configurator/utils/dateAvailability";
 import { ringWithinFootprint } from "@/features/configurator/utils/dtmFootprint";
 import type { AreaSelectState, AreaSelectActions } from "@/features/configurator/types/area-select";
+import type { WizardStepsApi } from "@/features/configurator/hooks/area-select/useWizardSteps";
 
 import {
     LAYERS,
@@ -24,6 +24,7 @@ import {
     type AreaStats,
     type DateBounds,
 } from "./layers";
+import { MAP_STEP_PANEL_WIDTH, SIDEBAR_PANEL_WIDTH_CSS } from "./wizard";
 
 interface LayerStepperProps {
     state: AreaSelectState;
@@ -36,49 +37,8 @@ interface LayerStepperProps {
     onStepChange?: (step: number) => void;
     tourRequestedStep?: number | null;
     onTourStepHandled?: () => void;
+    wizard: WizardStepsApi;
 }
-
-interface StepLayout {
-    panel: string;
-    body: string;
-    nav: string;
-}
-
-const getStepLayout = (step: number): StepLayout => {
-    // Docked flush against the sidebar (top-left), sized to its content (not full
-    // height), only the right edge rounded so it reads as part of the navigation.
-    const basePanel = "left-0 top-0 max-h-full max-w-[calc(100vw-1.5rem)] rounded-r-2xl";
-
-    switch (step) {
-        case 1:
-            return {
-                panel: cn(basePanel, "w-[300px]"),
-                body: "px-4 py-4",
-                nav: "px-3 py-2",
-            };
-        case 2:
-            return {
-                panel: cn(basePanel, "w-[300px]"),
-                body: "px-3 py-3",
-                nav: "px-3 py-2",
-            };
-        case 4:
-        case 5:
-            return {
-                panel: cn(basePanel, "w-[300px]"),
-                body: "px-4 py-3",
-                nav: "px-3 py-2",
-            };
-        default:
-            return {
-                panel: cn(basePanel, "w-[300px]"),
-                body: "px-4 py-4",
-                nav: "px-3 py-2",
-            };
-    }
-};
-
-const isTruthySetting = (value: unknown) => value === true || value === "true" || value === 1 || value === "1";
 
 export const LayerStepper: FC<LayerStepperProps> = ({
     state,
@@ -91,44 +51,24 @@ export const LayerStepper: FC<LayerStepperProps> = ({
     onStepChange,
     tourRequestedStep,
     onTourStepHandled,
+    wizard,
 }) => {
-    const [hasStarted, setHasStarted] = useState<boolean>(editMode);
-    const [introPreferenceLoading, setIntroPreferenceLoading] = useState<boolean>(() => !editMode);
-    const [dismissIntroCard, setDismissIntroCard] = useState(false);
-    const [isSavingIntroPreference, setIsSavingIntroPreference] = useState(false);
-    const [step, setStep] = useState<number>(1);
-    const [completed, setCompleted] = useState<Set<number>>(
-        () => (editMode ? new Set(LAYERS.map((l) => l.id)) : new Set()),
-    );
+    const {
+        step,
+        hasStarted,
+        introPreferenceLoading,
+        dismissIntroCard,
+        isSavingIntroPreference,
+        goNext: advance,
+        goBack,
+        start,
+        setDismissIntroCard,
+        setStep,
+    } = wizard;
 
     const { optionalLayers } = state;
     const { toggleOptionalLayer } = actions;
     const { t } = useTranslation();
-
-    useEffect(() => {
-        if (editMode) return;
-        let cancelled = false;
-
-        (async () => {
-            try {
-                const data = (await settingsService.getAllSettings()) as Record<string, unknown>;
-                if (cancelled) return;
-
-                if (isTruthySetting(data.model_intro_card_dismissed)) {
-                    setDismissIntroCard(true);
-                    setHasStarted(true);
-                }
-            } catch {
-                /* Keep showing the intro card if settings cannot be loaded. */
-            } finally {
-                if (!cancelled) setIntroPreferenceLoading(false);
-            }
-        })();
-
-        return () => {
-            cancelled = true;
-        };
-    }, [editMode]);
 
     useEffect(() => {
         onStepChange?.(hasStarted ? step : 0);
@@ -137,11 +77,9 @@ export const LayerStepper: FC<LayerStepperProps> = ({
     useEffect(() => {
         if (tourRequestedStep == null) return;
 
-        const requestedStep = Math.min(Math.max(tourRequestedStep, 1), LAYER_COUNT);
-        setHasStarted(true);
-        setStep(requestedStep);
+        setStep(Math.min(Math.max(tourRequestedStep, 1), LAYER_COUNT));
         onTourStepHandled?.();
-    }, [onTourStepHandled, tourRequestedStep]);
+    }, [onTourStepHandled, setStep, tourRequestedStep]);
 
     const areaStats = useMemo<AreaStats | null>(() => {
         if (polygonCoordinates.length === 0) return null;
@@ -191,34 +129,34 @@ export const LayerStepper: FC<LayerStepperProps> = ({
         switch (step) {
             case 1: {
                 const missing: string[] = [];
-                if (!state.modelName.trim()) missing.push("a model name");
-                if (!state.fromDate || !state.toDate) missing.push("a start and end date");
+                if (!state.modelName.trim()) missing.push(t("configurator.blocking.modelName", "a model name"));
+                if (!state.fromDate || !state.toDate) missing.push(t("configurator.blocking.dateRange", "a start and end date"));
                 if (state.calculationMode === "static" && state.isLoadingStaticDates) {
-                    return "Loading available static dates.";
+                    return t("configurator.blocking.staticLoading", "Loading available static dates.");
                 }
                 if (state.calculationMode === "static" && state.staticDatesError) {
                     return state.staticDatesError;
                 }
                 if (state.calculationMode === "static" && state.availableStaticDates.length === 0) {
-                    return "No static dates are currently available.";
+                    return t("configurator.blocking.staticEmpty", "No static dates are currently available.");
                 }
                 if (state.calculationMode === "static" && state.fromDate && state.toDate && state.fromDate !== state.toDate) {
-                    return "Static mode requires the same start and end date.";
+                    return t("configurator.blocking.staticSameDate", "Static mode requires the same start and end date.");
                 }
                 if (state.calculationMode === "static" && state.fromDate && !state.availableStaticDates.includes(state.fromDate)) {
-                    return "Select an available static date.";
+                    return t("configurator.blocking.staticUnavailable", "Select an available static date.");
                 }
                 if (state.calculationMode === "dynamic" && state.isLoadingDynamicDates) {
-                    return "Loading available dynamic dates.";
+                    return t("configurator.blocking.dynamicLoading", "Loading available dynamic dates.");
                 }
                 if (state.calculationMode === "dynamic" && state.dynamicDatesError) {
                     return state.dynamicDatesError;
                 }
                 if (state.calculationMode === "dynamic" && state.availableDynamicDates.length === 0) {
-                    return "No dynamic dates are currently available.";
+                    return t("configurator.blocking.dynamicEmpty", "No dynamic dates are currently available.");
                 }
                 if (state.calculationMode === "dynamic" && state.fromDate && state.toDate && state.fromDate > state.toDate) {
-                    return "Dynamic mode requires the start date to be before or equal to the end date.";
+                    return t("configurator.blocking.dynamicOrder", "Dynamic mode requires the start date to be before or equal to the end date.");
                 }
                 if (
                     state.calculationMode === "dynamic" &&
@@ -226,9 +164,14 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                     state.toDate &&
                     !dateRangeHasOnlyAvailableDates(state.fromDate, state.toDate, state.availableDynamicDates)
                 ) {
-                    return "Select a fully available dynamic date range.";
+                    return t("configurator.blocking.dynamicRange", "Select a fully available dynamic date range.");
                 }
-                return missing.length ? `Please add ${missing.join(" and ")} to continue.` : null;
+                return missing.length
+                    ? t("configurator.blocking.missingFields", {
+                        missing: missing.join(t("configurator.blocking.and", " and ")),
+                        defaultValue: `Please add ${missing.join(" and ")} to continue.`,
+                    })
+                    : null;
             }
             case 2:
                 if (state.areaInputMode === "region" && state.isResolvingRegion) {
@@ -255,7 +198,7 @@ export const LayerStepper: FC<LayerStepperProps> = ({
                     polygonCoordinates.length > 0 &&
                     !polygonCoordinates.every((ring) => ringWithinFootprint(ring, state.dtmFootprint!))
                 ) {
-                    return "Your area is outside the uploaded DTM coverage. Move/redraw it within the DTM footprint shown on the map, or remove the DTM.";
+                    return t("configurator.blocking.dtmOutside", "Your area is outside the uploaded DTM coverage. Move/redraw it within the DTM footprint shown on the map, or remove the DTM.");
                 }
                 return null;
             default:
@@ -306,36 +249,7 @@ export const LayerStepper: FC<LayerStepperProps> = ({
 
     const goNext = () => {
         if (!canAdvance) return;
-        setCompleted((prev) => new Set(prev).add(step));
-        setStep((s) => Math.min(LAYER_COUNT, s + 1));
-    };
-
-    const goBack = () => setStep((s) => Math.max(1, s - 1));
-
-    const jumpTo = (id: number) => {
-        if (id === step) return;
-        if (editMode || id < step || completed.has(id)) {
-            setStep(id);
-        }
-    };
-
-    const restartModelTour = () => {
-        globalThis.dispatchEvent(new CustomEvent("restart-area-select-tour"));
-    };
-
-    const handleIntroPreferenceChange = (checked: boolean) => {
-        setDismissIntroCard(checked);
-        setIsSavingIntroPreference(true);
-        void settingsService.setModelIntroCardDismissed(checked).finally(() => {
-            setIsSavingIntroPreference(false);
-        });
-    };
-
-    const handleIntroStart = () => {
-        if (dismissIntroCard) {
-            void settingsService.setModelIntroCardDismissed(true);
-        }
-        setHasStarted(true);
+        advance();
     };
 
     if (introPreferenceLoading && !hasStarted) {
@@ -345,206 +259,152 @@ export const LayerStepper: FC<LayerStepperProps> = ({
     if (!hasStarted) {
         return (
             <IntroCard
-                onStart={handleIntroStart}
+                onStart={start}
                 onCancel={actions.handleCancel}
                 dismissIntroCard={dismissIntroCard}
                 isSavingPreference={isSavingIntroPreference}
-                onDismissIntroPreferenceChange={handleIntroPreferenceChange}
+                onDismissIntroPreferenceChange={setDismissIntroCard}
             />
         );
     }
 
     const currentLayer = LAYERS[step - 1];
 
-    const progressPercent = Math.round((step / LAYER_COUNT) * 100);
-    const layout = getStepLayout(step);
+    const isMapStep = step === 2;
+    // Map stays visible.
+    const isMapSidebar = step > 2 && allPolygonsCount > 0;
+    const showsMap = isMapStep || isMapSidebar;
+    const panelWidth = isMapStep
+        ? `${MAP_STEP_PANEL_WIDTH}px`
+        : isMapSidebar
+            ? SIDEBAR_PANEL_WIDTH_CSS
+            : "100%";
 
-    return (
-        <div
-            data-tour="configurator-panel"
-            className={cn(
-                "md-scope md-rise pointer-events-auto absolute z-30 flex flex-col overflow-hidden border border-border bg-background/98 shadow-xl backdrop-blur dark:bg-gray-900/98",
-                layout.panel,
-            )}
-        >
-            {/* Header */}
-            <div className="relative border-b border-border bg-background px-4 py-3 dark:bg-gray-900">
-                <button
-                    type="button"
-                    onClick={restartModelTour}
-                    className="absolute right-10 top-3 rounded-md p-1.5 text-muted-foreground transition-all duration-150 hover:bg-muted hover:text-foreground hover:scale-110 active:scale-95"
-                    aria-label="Restart guided tour"
-                    title="Restart guided tour"
-                    data-tour="restart-model-tour"
-                >
-                    <RotateCcw className="w-4 h-4" />
-                </button>
-                <button
-                    type="button"
-                    onClick={actions.handleCancel}
-                    className="absolute right-3 top-3 rounded-md p-1.5 text-muted-foreground transition-all duration-150 hover:bg-muted hover:text-foreground hover:scale-110 active:scale-95"
-                    aria-label="Cancel"
-                >
-                    <X className="w-4 h-4" />
-                </button>
+    const body = (
+        <>
+            <header className={cn("md-rise", isMapStep ? "mb-3" : "mb-8 text-center")}>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    {t("configurator.stepper.stepOf", `Step ${step} of ${LAYER_COUNT}`, { step, total: LAYER_COUNT })}
+                </p>
+                <h2 className={cn("mt-1 font-semibold tracking-tight text-foreground", isMapStep ? "text-base" : "text-2xl")}>
+                    {t(currentLayer.titleKey, currentLayer.title)}
+                </h2>
+                <p className={cn("mt-1 text-muted-foreground", isMapStep ? "text-[11px]" : "text-sm")}>
+                    {t(currentLayer.subtitleKey, currentLayer.subtitle)}
+                </p>
+            </header>
 
-                <div className="mb-3 flex items-center gap-2 pr-16">
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border bg-muted text-foreground">
-                        {currentLayer.icon}
-                    </span>
-                    <div className="min-w-0">
-                        <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-                            {t("configurator.stepper.stepOf", `Step ${step} of ${LAYER_COUNT}`, { step, total: LAYER_COUNT })}
-                        </div>
-                        <h2 className="break-words text-base font-semibold leading-tight text-foreground">
-                            {t(currentLayer.titleKey, currentLayer.title)}
-                        </h2>
-                    </div>
-                </div>
-
-                <div className="mb-2 flex items-center justify-between gap-3 text-[11px]">
-                    <span className="text-muted-foreground">{t(currentLayer.subtitleKey, currentLayer.subtitle)}</span>
-                    <span className="font-medium tabular-nums text-foreground">{progressPercent}%</span>
-                </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-                    <div
-                        className="h-full rounded-full bg-foreground transition-[width] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
-                        style={{ width: `${progressPercent}%` }}
-                    />
-                </div>
-            </div>
-
-            <nav
-                className={cn("border-b border-border bg-muted/25", layout.nav)}
-                aria-label="Configurator layers"
-                data-tour="configurator-steps"
-            >
-                <ol className="flex items-center">
-                    {LAYERS.map((l, idx) => {
-                        const done = completed.has(l.id) && l.id !== step;
-                        const isCurrent = l.id === step;
-                        const reachable = editMode || l.id <= step || completed.has(l.id);
-                        const connectorActive = completed.has(l.id) || l.id < step;
-                        return (
-                            <li key={l.id} className={cn("flex items-center", idx < LAYERS.length - 1 && "flex-1")}>
-                                <button
-                                    type="button"
-                                    onClick={() => reachable && jumpTo(l.id)}
-                                    disabled={!reachable}
-                                    title={`${l.id}. ${l.title}`}
-                                    className={cn(
-                                        "relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-all duration-200",
-                                        reachable && "hover:scale-105 active:scale-95",
-                                        isCurrent && "bg-foreground text-background ring-4 ring-foreground/15",
-                                        done && "bg-foreground text-background hover:bg-foreground/90",
-                                        !isCurrent && !done && reachable && "border-2 border-border bg-background text-muted-foreground hover:border-foreground/40 hover:text-foreground",
-                                        !isCurrent && !done && !reachable && "cursor-not-allowed border-2 border-dashed border-border bg-background text-muted-foreground/40",
-                                    )}
-                                    aria-current={isCurrent ? "step" : undefined}
-                                    aria-label={`Step ${l.id}: ${l.title}`}
-                                >
-                                    {done ? <CheckCircle2 className="h-4 w-4" /> : l.id}
-                                </button>
-                                {idx < LAYERS.length - 1 && (
-                                    <span
-                                        className={cn(
-                                            "mx-1.5 h-0.5 flex-1 rounded-full transition-colors duration-300",
-                                            connectorActive ? "bg-foreground" : "bg-border",
-                                        )}
-                                    />
-                                )}
-                            </li>
-                        );
-                    })}
-                </ol>
-            </nav>
-
-            {/* Body (scrollable) — keyed on step so each layer replays the entrance motion */}
-            <section key={step} className={cn("md-rise overflow-y-auto", layout.body)}>
+            {/* Keyed for motion. */}
+            <section key={step} className="md-rise">
                 {step === 1 && <Layer1ModelInit ctx={ctx} />}
                 {step === 2 && <Layer2AreaSelect ctx={ctx} />}
                 {step === 3 && <Layer4OptionalLayers ctx={ctx} />}
                 {step === 4 && <Layer5FinalReview ctx={ctx} />}
                 {step === 5 && <Layer6SaveCalculate ctx={ctx} />}
             </section>
+        </>
+    );
 
-            {/* Footer */}
-            <div className="border-t border-border bg-background px-4 py-3 dark:bg-gray-900">
-                {blockingReason && (
-                    <p
-                        className="md-fade-in mb-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-2.5 py-2 text-[11px] leading-snug text-amber-700 dark:text-amber-300"
-                        data-tour="blocking-status"
-                    >
-                        {blockingReason}
-                    </p>
-                )}
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={goBack}
-                        disabled={step === 1}
-                        className="h-9 cursor-pointer text-xs transition-all duration-200 hover:shadow-md active:scale-[0.98] disabled:hover:shadow-none disabled:active:scale-100"
-                    >
-                        <ChevronLeft className="w-3.5 h-3.5" /> {t("configurator.stepper.back", "Back")}
-                    </Button>
-
-                    {step < LAYER_COUNT ? (
-                        <Button size="sm" onClick={goNext} disabled={!canAdvance} className="h-9 cursor-pointer text-xs transition-all duration-200 hover:shadow-md active:scale-[0.98] disabled:hover:shadow-none disabled:active:scale-100">
-                            {t("configurator.stepper.continue", "Continue")} <ChevronRight className="w-3.5 h-3.5" />
-                        </Button>
-                    ) : (
-                        <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => actions.handleSave({ runAfterSave: false })}
-                                disabled={finalDisabled}
-                                className="h-9 cursor-pointer text-xs transition-all duration-200 hover:shadow-md active:scale-[0.98] disabled:hover:shadow-none disabled:active:scale-100"
-                            >
-                                {state.isSaving ? (
-                                    <>
-                                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                        {t("configurator.stepper.saving", "Saving...")}
-                                    </>
-                                ) : (
-                                    <>
-                                        <CheckCircle2 className="w-3.5 h-3.5" />
-                                        {editMode ? t("configurator.stepper.update", "Update") : t("configurator.stepper.save", "Save")}
-                                    </>
-                                )}
-                            </Button>
-                            <Button
-                                size="sm"
-                                onClick={() => actions.handleSave({ runAfterSave: true })}
-                                disabled={finalDisabled}
-                                className="h-9 cursor-pointer border-0 bg-foreground text-xs text-background transition-all duration-200 hover:bg-foreground/90 hover:shadow-md active:scale-[0.98] disabled:hover:shadow-none disabled:active:scale-100"
-                                data-tour="save-button"
-                            >
-                                {state.isSaving ? (
-                                    <>
-                                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                        {t("configurator.stepper.starting", "Starting...")}
-                                    </>
-                                ) : (
-                                    <>
-                                        <Play className="w-3.5 h-3.5" />
-                                        {t("configurator.stepper.saveAndRun", "Save & run")}
-                                    </>
-                                )}
-                            </Button>
-                        </div>
+    const footer = (
+                <div className="border-t border-border bg-background px-4 py-3">
+                    {blockingReason && (
+                        <p
+                            className="md-fade-in mb-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-2.5 py-2 text-[11px] leading-snug text-amber-700 dark:text-amber-300"
+                            data-tour="blocking-status"
+                        >
+                            {blockingReason}
+                        </p>
                     )}
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={goBack}
+                            disabled={step === 1}
+                            className="h-9 cursor-pointer text-xs transition-all duration-200 hover:shadow-md active:scale-[0.98] disabled:hover:shadow-none disabled:active:scale-100"
+                        >
+                            <ChevronLeft className="w-3.5 h-3.5" /> {t("configurator.stepper.back", "Back")}
+                        </Button>
+
+                        {step < LAYER_COUNT ? (
+                            <Button size="sm" onClick={goNext} disabled={!canAdvance} className="h-9 cursor-pointer text-xs transition-all duration-200 hover:shadow-md active:scale-[0.98] disabled:hover:shadow-none disabled:active:scale-100">
+                                {t("configurator.stepper.continue", "Continue")} <ChevronRight className="w-3.5 h-3.5" />
+                            </Button>
+                        ) : (
+                            <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => actions.handleSave({ runAfterSave: false })}
+                                    disabled={finalDisabled}
+                                    className="h-9 cursor-pointer text-xs transition-all duration-200 hover:shadow-md active:scale-[0.98] disabled:hover:shadow-none disabled:active:scale-100"
+                                >
+                                    {state.isSaving ? (
+                                        <>
+                                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                            {t("configurator.stepper.saving", "Saving...")}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <CheckCircle2 className="w-3.5 h-3.5" />
+                                            {editMode ? t("configurator.stepper.update", "Update") : t("configurator.stepper.save", "Save")}
+                                        </>
+                                    )}
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    onClick={() => actions.handleSave({ runAfterSave: true })}
+                                    disabled={finalDisabled}
+                                    className="h-9 cursor-pointer border-0 bg-primary text-xs text-primary-foreground transition-all duration-200 hover:bg-primary/90 hover:shadow-md active:scale-[0.98] disabled:hover:shadow-none disabled:active:scale-100"
+                                    data-tour="save-button"
+                                >
+                                    {state.isSaving ? (
+                                        <>
+                                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                            {t("configurator.stepper.starting", "Starting...")}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Play className="w-3.5 h-3.5" />
+                                            {t("configurator.stepper.saveAndRun", "Save & run")}
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
+                        )}
+                    </div>
                 </div>
+    );
+
+    // Animated width.
+    return (
+        <div
+            data-tour="configurator-panel"
+            style={{ width: panelWidth }}
+            className={cn(
+                "md-scope pointer-events-auto absolute left-0 top-0 z-30 flex h-full max-w-full flex-col overflow-hidden bg-background",
+                "transition-[width] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
+                showsMap && "border-r border-border shadow-xl",
+            )}
+        >
+            <div className="flex-1 overflow-y-auto">
+                <div
+                    className={cn(
+                        "w-full",
+                        isMapStep ? "px-4 py-4" : "mx-auto max-w-3xl px-5 py-8 sm:px-8",
+                    )}
+                >
+                    {body}
+                </div>
+            </div>
+            <div className={cn("w-full shrink-0", !isMapStep && "mx-auto max-w-3xl px-5 pb-4 sm:px-8")}>
+                {footer}
             </div>
         </div>
     );
 };
 
-// ────────────────────────────────────────────────────────────────────────────
-// Intro card – shown before the user starts the configurator so they know
-// what creating a model entails before they begin.
-// ────────────────────────────────────────────────────────────────────────────
+// Intro card.
 
 const IntroCard: FC<{
     onStart: () => void;
@@ -557,12 +417,12 @@ const IntroCard: FC<{
     return (
     <div className="md-scope pointer-events-auto absolute inset-0 z-30 flex items-center justify-center px-4">
         <div className="md-fade-in absolute inset-0 bg-foreground/20 backdrop-blur-sm" onClick={onCancel} />
-        <div className="md-rise relative w-[min(760px,100%)] overflow-hidden rounded-2xl border border-border bg-background shadow-2xl dark:bg-gray-900">
+        <div className="md-rise relative w-[min(760px,100%)] overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
 
             {/* Header */}
             <div className="relative px-7 pt-7 pb-5">
                 <div className="flex items-start gap-4">
-                    <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-foreground text-background shadow-lg ring-1 ring-foreground/10">
+                    <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg">
                         <Sparkles className="h-6 w-6" />
                     </span>
                     <div className="min-w-0 flex-1">
@@ -579,8 +439,8 @@ const IntroCard: FC<{
                     <button
                         type="button"
                         onClick={onCancel}
-                        aria-label="Close"
-                        className="rounded-md p-1.5 text-muted-foreground transition-all duration-150 hover:bg-muted hover:text-foreground hover:scale-110 active:scale-95"
+                        aria-label={t("common.close", "Close")}
+                        className="rounded-md p-1.5 text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground"
                     >
                         <X className="h-4 w-4" />
                     </button>
@@ -588,15 +448,15 @@ const IntroCard: FC<{
             </div>
 
             {/* Steps grid */}
-            <div className="relative border-t border-border/60 bg-muted/30 px-7 py-5 dark:bg-gray-800/30">
+            <div className="relative border-t border-border/60 bg-muted/30 px-7 py-5">
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {LAYERS.map((l, idx) => (
                         <div
                             key={l.id}
                             style={{ animationDelay: `${Math.min(idx * 30, 240)}ms` }}
-                            className="md-row-in group relative flex items-start gap-3 rounded-lg border border-border/70 bg-background px-3 py-2.5 transition-all duration-200 hover:border-foreground/40 hover:shadow-sm dark:bg-gray-900"
+                            className="md-row-in group relative flex items-start gap-3 rounded-lg border border-border/70 bg-card px-3 py-2.5 transition-colors duration-200 hover:border-foreground/40"
                         >
-                            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-foreground transition-colors duration-200 group-hover:bg-foreground group-hover:text-background">
+                            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-foreground transition-colors duration-200 group-hover:bg-primary group-hover:text-primary-foreground">
                                 {l.icon}
                             </span>
                             <div className="min-w-0 flex-1">
@@ -642,7 +502,7 @@ const IntroCard: FC<{
                     <Button
                         size="sm"
                         onClick={onStart}
-                        className="cursor-pointer border-0 bg-foreground text-background transition-all duration-200 hover:bg-foreground/90 hover:shadow-md active:scale-[0.98]"
+                        className="cursor-pointer border-0 bg-primary text-primary-foreground transition-all duration-200 hover:bg-primary/90 hover:shadow-md active:scale-[0.98]"
                     >
                         {t("configurator.stepper.introStart", "Get started")} <ChevronRight className="ml-0.5 h-4 w-4" />
                     </Button>

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type FC } from "react";
 import { DateRangePicker, Dialog, Group, Label, Popover, Button as Trigger } from "react-aria-components";
 import { parseDate } from "@internationalized/date";
-import { CalendarIcon, Check, ChevronDown, Info } from "lucide-react";
+import { CalendarIcon, CalendarRange, Check, ChevronDown, Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@spatialhub/ui";
 import { useTranslation } from "@/i18n";
 
@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { dateRangeHasOnlyAvailableDates } from "@/features/configurator/utils/dateAvailability";
 
 import { LayerShell } from "./shared/LayerShell";
+import { ChoiceCard, ChoiceCardGroup, QuestionSection } from "../wizard";
 import type { ConfiguratorContext } from "./types";
 
 function getStaticDateStatus(
@@ -104,7 +105,7 @@ const StaticDateDropdown: FC<StaticDateDropdownProps> = ({
                 type="button"
                 onClick={() => !disabled && setIsOpen((current) => !current)}
                 disabled={disabled}
-                className="group flex w-full items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1.5 text-left text-sm text-foreground transition-all duration-200 hover:border-muted-foreground/50 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+                className="group flex w-full items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1.5 text-left text-sm text-foreground transition-all duration-200 hover:border-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-60"
             >
                 <div className="flex h-6 w-6 items-center justify-center rounded bg-muted">
                     <CalendarIcon className="h-3.5 w-3.5 text-muted-foreground" />
@@ -123,7 +124,7 @@ const StaticDateDropdown: FC<StaticDateDropdownProps> = ({
                     <div className="max-h-56 overflow-y-auto p-1.5">
                         {orderedDates.length === 0 ? (
                             <div className="px-3 py-4 text-center text-sm text-muted-foreground">
-                                No dates available.
+                                {t("configurator.layer1.noDates", "No dates available.")}
                             </div>
                         ) : (
                             <div className="space-y-0.5">
@@ -149,7 +150,7 @@ const StaticDateDropdown: FC<StaticDateDropdownProps> = ({
                                                         {day}
                                                     </span>
                                                     {availableStaticDates.length === 1 && (
-                                                        <span className="rounded bg-blue-100 px-1 py-0.5 text-[9px] font-medium text-blue-600 dark:bg-blue-900/30 dark:text-blue-300">
+                                                        <span className="rounded bg-primary/10 px-1 py-0.5 text-[9px] font-medium text-primary">
                                                             {t("configurator.layer1.hottest", "Hottest")}
                                                         </span>
                                                     )}
@@ -239,83 +240,94 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
             purpose={t("configurator.layer1.purpose", "Name this wildfire simulation and choose the date window you want to assess.")}
             nextStepHint={t("configurator.layer1.nextStepHint", "Next you'll outline the geographic area on the map.")}
         >
-            <div className="space-y-3">
-                <div data-tour="model-name">
-                    <label htmlFor="layer-model-name" className="block text-xs font-medium text-foreground mb-1">
-                        {t("configurator.layer1.modelNameLabel", "Model name")} <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                        id="layer-model-name"
-                        type="text"
-                        value={state.modelName}
-                        onChange={handleModelNameChange}
-                        placeholder={t("configurator.layer1.modelNamePlaceholder", "e.g. Galicia Summer 2026 Wildfire Risk")}
-                        className="w-full px-2.5 py-1.5 border border-border rounded-md hover:border-muted-foreground/40 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-background dark:bg-gray-700 text-foreground text-sm transition-colors duration-150"
-                    />
-                    <p className="text-[11px] text-muted-foreground mt-1">{t("configurator.layer1.modelNameHint", "So you can find it later.")}</p>
-                </div>
-
-                <div data-tour="calculation-mode">
-                    <div className="mb-1 flex items-center gap-1">
-                        <label className="block text-xs font-medium text-foreground">
-                            {t("configurator.layer1.calcModeLabel", "Calculation mode")}
-                        </label>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <button
-                                    type="button"
-                                    aria-label={t("configurator.layer1.calcModeInfoLabel", "What the calculation modes do")}
-                                    className="text-muted-foreground transition-all duration-150 hover:text-foreground hover:scale-110 active:scale-95 focus:outline-none"
-                                >
-                                    <Info className="h-3.5 w-3.5" />
-                                </button>
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-[260px] text-xs">
-                                {t("configurator.layer1.calcModeInfo", "Static assesses a single day — one available weather date — using the AOI risk workflow. Dynamic assesses a range of days, keeping the daily weather sequence. Both use the 16:00–17:00 weather window.")}
-                            </TooltipContent>
-                        </Tooltip>
+            <div className="space-y-8">
+                <QuestionSection
+                    index={1}
+                    title={t("configurator.layer1.modelNameQuestion", "What do you want to call this model?")}
+                    description={t("configurator.layer1.modelNameHint", "So you can find it later.")}
+                >
+                    <div data-tour="model-name">
+                        <input
+                            id="layer-model-name"
+                            type="text"
+                            value={state.modelName}
+                            onChange={handleModelNameChange}
+                            placeholder={t("configurator.layer1.modelNamePlaceholder", "e.g. Galicia Summer 2026 Wildfire Risk")}
+                            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground transition-colors duration-150 hover:border-muted-foreground/40 focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring"
+                        />
+                        {!state.modelName.trim() && (
+                            <div className="md-fade-in mt-2 flex flex-wrap items-center gap-1.5">
+                                <span className="text-[11px] text-muted-foreground">
+                                    {t("configurator.layer1.suggestedNamesLabel", "Quick picks")}:
+                                </span>
+                                {[1, 2, 3, 4].map((n) => {
+                                    const suggestion = t(`configurator.layer1.suggestedName${n}`);
+                                    return (
+                                        <button
+                                            key={n}
+                                            type="button"
+                                            onClick={() => actions.setModelName(suggestion)}
+                                            className="rounded-full border border-border bg-card px-2.5 py-1 text-[11px] font-medium text-muted-foreground transition-colors duration-150 hover:border-muted-foreground/40 hover:bg-muted hover:text-foreground"
+                                        >
+                                            {suggestion}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
-                    <div className="grid grid-cols-2 overflow-hidden rounded-md border border-border">
-                        {(["static", "dynamic"] as const).map((mode) => {
-                            const selected = state.calculationMode === mode;
-                            return (
-                                <button
-                                    key={mode}
-                                    type="button"
-                                    onClick={() => actions.setCalculationMode(mode)}
-                                    className={cn(
-                                        "px-2.5 py-1.5 text-xs capitalize transition-all duration-200 active:scale-[0.98]",
-                                        selected
-                                            ? "bg-foreground text-background"
-                                            : "bg-background text-foreground hover:bg-muted",
-                                    )}
-                                >
-                                    {mode === "static" ? t("configurator.layer1.calcModeStatic", "static") : t("configurator.layer1.calcModeDynamic", "dynamic")}
-                                </button>
-                            );
-                        })}
+                </QuestionSection>
+
+                <QuestionSection
+                    index={2}
+                    title={t("configurator.layer1.calcModeQuestion", "How should the risk be calculated?")}
+                    description={t("configurator.layer1.calcModeInfo", "Static assesses a single day — one available weather date — using the AOI risk workflow. Dynamic assesses a range of days, keeping the daily weather sequence. Both use the 16:00–17:00 weather window.")}
+                >
+                    <div data-tour="calculation-mode">
+                        <ChoiceCardGroup columns={2}>
+                            <ChoiceCard
+                                icon={<CalendarIcon className="h-5 w-5" />}
+                                label={t("configurator.layer1.calcModeStatic", "Static")}
+                                description={t("configurator.layer1.calcModeHintStatic", "The hottest day of each available year.")}
+                                info={t(
+                                    "configurator.layer1.calcModeStaticInfo",
+                                    "The date is picked for you: for each available year, the day that recorded the highest temperature — the worst-case weather for that year. Assessed from 16:00 to 17:00."
+                                )}
+                                selected={state.calculationMode === "static"}
+                                onSelect={() => actions.setCalculationMode("static")}
+                            />
+                            <ChoiceCard
+                                icon={<CalendarRange className="h-5 w-5" />}
+                                label={t("configurator.layer1.calcModeDynamic", "Dynamic")}
+                                description={t("configurator.layer1.calcModeHintDynamic", "A range of days, assessed day by day.")}
+                                info={t(
+                                    "configurator.layer1.calcModeDynamicInfo",
+                                    "You choose the range and it is assessed exactly as selected: every day is modelled with its own weather and the run returns the peak-risk day. Each day uses the 16:00–17:00 window."
+                                )}
+                                selected={state.calculationMode === "dynamic"}
+                                onSelect={() => actions.setCalculationMode("dynamic")}
+                            />
+                        </ChoiceCardGroup>
                     </div>
-                    <p className="text-[11px] text-muted-foreground mt-1">
-                        {state.calculationMode === "static"
-                            ? t("configurator.layer1.calcModeHintStatic", "One day, chosen from the available weather dates.")
-                            : t("configurator.layer1.calcModeHintDynamic", "A range of days, assessed day by day.")}
-                    </p>
-                </div>
+                </QuestionSection>
 
-
+                <QuestionSection
+                    index={3}
+                    title={t("configurator.layer1.periodQuestion", "Which period should it assess?")}
+                >
                 <div data-tour="date-range">
                     {state.calculationMode === "static" ? (
                         <>
                             <div className="flex items-center gap-1">
                                 <label htmlFor="static-date" className="block text-xs font-medium text-foreground">
-                                    {t("simulation.simulationPeriod")} <span className="text-red-500">*</span>
+                                    {t("simulation.simulationPeriod")} <span className="text-destructive">*</span>
                                 </label>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <button
                                             type="button"
-                                            aria-label="How the static date is selected"
-                                            className="text-muted-foreground transition-all duration-150 hover:text-foreground hover:scale-110 active:scale-95 focus:outline-none"
+                                            aria-label={t("configurator.layer1.staticDateInfoAria", "How the static date is selected")}
+                                            className="text-muted-foreground transition-colors duration-150 hover:text-foreground focus:outline-none"
                                         >
                                             <Info className="h-3.5 w-3.5" />
                                         </button>
@@ -352,10 +364,10 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                                 className="*:not-first:mt-1"
                             >
                                 <Label className="text-foreground text-xs font-medium">
-                                    {t("simulation.simulationPeriod")} <span className="text-red-500">*</span>
+                                    {t("simulation.simulationPeriod")} <span className="text-destructive">*</span>
                                 </Label>
                                 <div className="flex">
-                                    <Group className={cn(DATE_INPUT_STYLE, "xl:px-0 lg:px-2 relative dark:bg-gray-700 dark:border-gray-600")}>
+                                    <Group className={cn(DATE_INPUT_STYLE, "xl:px-0 lg:px-2 relative")}>
                                         <DateInput slot="start" unstyled className="text-xs pl-2.5 pr-1 py-1.5 flex-1" />
                                         <span aria-hidden="true" className="text-muted-foreground/70 px-1.5 py-1.5">–</span>
                                         <DateInput slot="end" unstyled className="text-xs pl-1 pr-9 py-1.5 flex-1" />
@@ -364,7 +376,7 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                                         </Trigger>
                                     </Group>
                                 </div>
-                                <Popover className="bg-background dark:bg-gray-800 z-50 rounded-md border border-border shadow-lg outline-hidden" offset={4}>
+                                <Popover className="bg-popover z-50 rounded-md border border-border shadow-lg outline-hidden" offset={4}>
                                     <Dialog className="max-h-[inherit] overflow-auto p-2">
                                         <RangeCalendar
                                             onChange={handleDynamicRangeChange}
@@ -384,7 +396,7 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                         </>
                     )}
                 </div>
-
+                </QuestionSection>
             </div>
         </LayerShell>
     );

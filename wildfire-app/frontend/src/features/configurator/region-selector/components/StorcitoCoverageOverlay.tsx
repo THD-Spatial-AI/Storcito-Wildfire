@@ -10,7 +10,7 @@ import { useTranslation } from "@/i18n";
 import {
     webservicesService,
     type StorcitoCoverageFeatureCollection,
-} from "@/features/admin-dashboard/services/webservices";
+} from "@/features/admin-dashboard";
 
 interface StorcitoCoverageOverlayProps {
     map: Map | null;
@@ -155,24 +155,24 @@ export const StorcitoCoverageOverlay = ({ map }: StorcitoCoverageOverlayProps) =
     return (
         <>
             <style>{COVERAGE_CARD_ANIMATION_CSS}</style>
-            <div className="wildfire-coverage-animated hidden lg:block absolute bottom-4 right-4 z-20 w-[340px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-slate-300/60 bg-slate-100/95 text-xs text-slate-950 shadow-2xl shadow-black/10 backdrop-blur-md">
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-400/80 to-transparent wildfire-coverage-sheen" />
-                <div className="flex items-start gap-3 border-b border-slate-200 bg-slate-200/70 px-3.5 py-3">
-                    <div className="relative grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-slate-300/60 bg-slate-900/10 text-slate-900 overflow-hidden">
-                        {coverage && <span className="wildfire-coverage-icon-pulse absolute inset-1 rounded-lg bg-slate-900/15" />}
+            <div className="wildfire-coverage-animated hidden lg:block absolute bottom-4 right-4 z-20 w-[340px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-border bg-card/95 text-xs text-card-foreground shadow-xl backdrop-blur-md">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent wildfire-coverage-sheen" />
+                <div className="flex items-start gap-3 border-b border-border bg-muted/60 px-3.5 py-3">
+                    <div className="relative grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-border bg-muted text-foreground overflow-hidden">
+                        {coverage && <span className="wildfire-coverage-icon-pulse absolute inset-1 rounded-lg bg-foreground/10" />}
                         {coverage ? <MapPinned className="relative h-5 w-5" /> : <AlertTriangle className="relative h-5 w-5 text-amber-600" />}
                     </div>
                     <div className="min-w-0 flex-1">
-                        <div className="font-semibold leading-tight text-slate-950">
+                        <div className="font-semibold leading-tight text-foreground">
                             {coverage ? t("configurator.coverage.title", "Wildfire data coverage") : error}
                         </div>
                         {coverage && (
                             <div className="mt-1 flex flex-wrap gap-1.5">
-                                <span className="rounded-full border border-slate-300 bg-slate-900/5 px-2 py-0.5 text-[10px] font-medium text-slate-700">
+                                <span className="rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
                                     {t("configurator.coverage.exactFootprint", "Exact raster footprint")}
                                 </span>
                                 {footprintShare && (
-                                    <span className="rounded-full border border-slate-200 bg-white/80 px-2 py-0.5 text-[10px] font-medium text-slate-600">
+                                    <span className="rounded-full border border-border bg-background/80 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
                                         {t("configurator.coverage.mainFootprint", { percent: parseInt(footprintShare) || 0, defaultValue: footprintShare })}
                                     </span>
                                 )}
@@ -183,7 +183,8 @@ export const StorcitoCoverageOverlay = ({ map }: StorcitoCoverageOverlayProps) =
 
                 {coverage && (
                     <div className="grid grid-cols-[104px_1fr] gap-3 px-3.5 py-3">
-                        <div className="relative h-[104px] overflow-hidden rounded-xl border border-slate-200 bg-slate-100 wildfire-coverage-glow">
+                        {/* Light in both themes. */}
+                        <div className="relative h-[104px] overflow-hidden rounded-xl border border-border bg-slate-100 wildfire-coverage-glow">
                             <div className="absolute inset-0 opacity-70 [background-image:linear-gradient(90deg,rgba(148,163,184,0.25)_1px,transparent_1px),linear-gradient(rgba(148,163,184,0.25)_1px,transparent_1px)] [background-size:16px_16px]" />
                             <div
                                 className="absolute inset-3 overflow-hidden bg-slate-900/20"
@@ -208,18 +209,18 @@ export const StorcitoCoverageOverlay = ({ map }: StorcitoCoverageOverlayProps) =
                             <div className="absolute left-8 top-7 h-4 w-7 rounded-md border border-white/80 bg-white/95 shadow-sm" />
                             <div className="absolute bottom-7 right-5 h-5 w-8 rounded-md border border-white/80 bg-white/95 shadow-sm" />
                             <span className="absolute left-3 top-3 h-2 w-2 rounded-full bg-slate-900 shadow-[0_0_0_4px_rgba(15,23,42,0.15)]" />
-                            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[9px] font-semibold text-slate-700">
+                            <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[9px] font-semibold text-muted-foreground">
                                 <span>{t("configurator.coverage.data", "Data")}</span>
-                                <span className="text-slate-600">{t("configurator.coverage.noData", "No data")}</span>
+                                <span className="text-muted-foreground/80">{t("configurator.coverage.noData", "No data")}</span>
                             </div>
                         </div>
 
                         <div className="space-y-2.5 text-[11px] leading-snug">
                             <div className="flex gap-2">
-                                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-900" />
+                                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-foreground" />
                                 <div>
-                                    <div className="font-medium text-slate-950">{t("configurator.coverage.useShaded", "Use shaded areas")}</div>
-                                    <div className="text-slate-600">
+                                    <div className="font-medium text-foreground">{t("configurator.coverage.useShaded", "Use shaded areas")}</div>
+                                    <div className="text-muted-foreground">
                                         {dateRange ? t("configurator.coverage.requiredAvailableDates", `Required wildfire inputs are available for ${dateRange}.`, { dates: dateRange }) : t("configurator.coverage.requiredAvailable", "Required wildfire inputs are available.")}
                                     </div>
                                 </div>
@@ -227,8 +228,8 @@ export const StorcitoCoverageOverlay = ({ map }: StorcitoCoverageOverlayProps) =
                             <div className="flex gap-2">
                                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600" />
                                 <div>
-                                    <div className="font-medium text-slate-950">{t("configurator.coverage.avoidBlank", "Avoid blank gaps")}</div>
-                                    <div className="text-slate-600">
+                                    <div className="font-medium text-foreground">{t("configurator.coverage.avoidBlank", "Avoid blank gaps")}</div>
+                                    <div className="text-muted-foreground">
                                         {t("configurator.coverage.blankDesc", "Blank areas have no valid source raster data for calculation.")}
                                     </div>
                                 </div>

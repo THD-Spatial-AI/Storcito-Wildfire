@@ -1,20 +1,13 @@
-import type { ChangeEvent, FC } from "react";
+import { useRef, type ChangeEvent, type FC } from "react";
 import { AlertCircle, Download, Loader2, MapPin, MapPinned, Mountain, Pencil, Ruler, UploadCloud } from "lucide-react";
 import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 import { BufferDistanceField } from "../BufferDistanceField";
 import { LayerShell } from "./shared/LayerShell";
+import { ChoiceCard, ChoiceCardGroup, QuestionSection } from "../wizard";
 import { FileUploadField } from "./shared/FileUploadField";
 import type { ConfiguratorContext } from "./types";
-
-const modeButtonClass = (active: boolean) =>
-    cn(
-        "flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-left transition-all duration-200 active:scale-[0.98]",
-        active
-            ? "border-foreground bg-foreground text-background shadow-sm"
-            : "border-border bg-card text-foreground hover:bg-muted/60 hover:shadow-sm",
-    );
 
 const getStatusMessage = (
     hasError: boolean,
@@ -53,6 +46,7 @@ const getStatusMessage = (
 };
 
 export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
+    const uploadInputRef = useRef<HTMLInputElement>(null);
     const { t } = useTranslation();
     const { state, actions, allPolygonsCount, areaStats } = ctx;
     const drawn = allPolygonsCount > 0;
@@ -157,41 +151,43 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                 )}
             </div>
 
-            <div className="grid grid-cols-2 gap-2" data-tour="area-input-mode">
-                <button
-                    type="button"
-                    onClick={() => actions.setAreaInputMode("draw")}
-                    className={modeButtonClass(isDrawMode)}
-                >
-                    <Pencil className="h-3 w-3 shrink-0" />
-                    <span className="text-[11px] font-semibold leading-tight whitespace-nowrap">{t("configurator.layer2.drawArea", "Draw area")}</span>
-                </button>
-
-                <label
-                    onClick={() => actions.setAreaInputMode("upload")}
-                    className={cn(modeButtonClass(isUploadMode), "cursor-pointer")}
-                >
-                    <UploadCloud className="h-3 w-3 shrink-0" />
-                    <span className="text-[11px] font-semibold leading-tight whitespace-nowrap">{t("configurator.layer2.uploadGeoJson", "Upload GeoJSON")}</span>
+            <QuestionSection
+                index={1}
+                title={t("configurator.layer2.areaModeQuestion", "How do you want to define the area?")}
+            >
+                <div data-tour="area-input-mode">
+                    <ChoiceCardGroup columns={3}>
+                        <ChoiceCard
+                            icon={<Pencil className="h-5 w-5" />}
+                            label={t("configurator.layer2.drawArea", "Draw area")}
+                            selected={isDrawMode}
+                            onSelect={() => actions.setAreaInputMode("draw")}
+                        />
+                        <ChoiceCard
+                            icon={<UploadCloud className="h-5 w-5" />}
+                            label={t("configurator.layer2.uploadGeoJson", "Upload GeoJSON")}
+                            selected={isUploadMode}
+                            onSelect={() => {
+                                actions.setAreaInputMode("upload");
+                                uploadInputRef.current?.click();
+                            }}
+                        />
+                        <ChoiceCard
+                            icon={<MapPinned className="h-5 w-5" />}
+                            label={t("configurator.layer2.selectRegion", "Select complete region")}
+                            selected={isRegionMode}
+                            onSelect={() => actions.setAreaInputMode("region")}
+                        />
+                    </ChoiceCardGroup>
                     <input
+                        ref={uploadInputRef}
                         type="file"
                         accept=".geojson,.json,application/geo+json,application/json"
                         className="sr-only"
                         onChange={handleUploadChange}
                     />
-                </label>
-
-                <button
-                    type="button"
-                    onClick={() => actions.setAreaInputMode("region")}
-                    className={cn(modeButtonClass(isRegionMode), "col-span-2 justify-center")}
-                >
-                    <MapPinned className="h-3 w-3 shrink-0" />
-                    <span className="text-[11px] font-semibold leading-tight whitespace-nowrap">
-                        {t("configurator.layer2.selectRegion", "Select complete region")}
-                    </span>
-                </button>
-            </div>
+                </div>
+            </QuestionSection>
 
             {!isRegionMode && (
                 <div className="md-fade-in flex items-center justify-between gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-3 py-2 text-xs">
@@ -204,7 +200,7 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                     <button
                         type="button"
                         onClick={handleDownloadSample}
-                        className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-foreground bg-foreground px-2.5 py-1.5 text-[11px] font-semibold text-background transition-all duration-200 hover:bg-foreground/90 hover:shadow-md active:scale-[0.98]"
+                        className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-border bg-card px-2.5 py-1.5 text-[11px] font-semibold text-foreground transition-colors duration-150 hover:bg-muted/60"
                     >
                         <Download className="h-3 w-3" />
                         {t("configurator.layer2.sample", "Sample")}

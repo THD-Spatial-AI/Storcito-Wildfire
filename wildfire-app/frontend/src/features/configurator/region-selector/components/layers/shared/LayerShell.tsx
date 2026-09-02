@@ -19,14 +19,10 @@ const readStoredPreference = () => {
   }
 };
 
-/**
- * Minimal wrapper for every layer body. The orchestrator already shows the
- * layer title and subtitle, so we only render a tiny "next step" hint below
- * the content when provided.
- */
+/** Layer body wrapper. */
 export const LayerShell: FC<LayerShellProps> = ({ purpose, nextStepHint, children }) => {
   const { t } = useTranslation();
-  // Testers found the wizard text-heavy, so the explanation stays one click away.
+  // Collapsed by default.
   const [showPurpose, setShowPurpose] = useState(readStoredPreference);
 
   const togglePurpose = useCallback(() => {
@@ -35,7 +31,7 @@ export const LayerShell: FC<LayerShellProps> = ({ purpose, nextStepHint, childre
       try {
         localStorage.setItem(PURPOSE_STORAGE_KEY, next ? "1" : "0");
       } catch {
-        // Preference is a convenience; ignore storage failures.
+        // Ignore storage errors.
       }
       return next;
     });
@@ -66,7 +62,7 @@ export const LayerShell: FC<LayerShellProps> = ({ purpose, nextStepHint, childre
       {children}
       {nextStepHint && (
         <div
-          className="md-fade-in flex items-start gap-1.5 border-t border-border/60 pt-3 text-[11px] text-muted-foreground"
+          className="md-fade-in relative z-0 flex items-start gap-1.5 border-t border-border/60 pt-3 text-[11px] text-muted-foreground"
           style={{ animationDelay: "120ms" }}
         >
           <ArrowRight className="w-3 h-3 mt-0.5 shrink-0" />
