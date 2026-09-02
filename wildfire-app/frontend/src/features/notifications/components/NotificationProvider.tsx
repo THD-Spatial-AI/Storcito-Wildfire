@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useBrowserNotifications } from '@/features/notifications/hooks/useBrowserNotifications';
 import NotificationPanel from './NotificationPanel';
-import { settingsService } from '@/features/settings/services/settings';
+import { settingsService } from '@/features/settings';
 import { useAuthStore } from '@/store/auth-store';
 
 const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -9,10 +9,10 @@ const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [loading, setLoading] = useState(true);
   const user = useAuthStore((state) => state.user);
 
-  // Load notification preferences only when user is authenticated
+  // Authenticated only.
   useEffect(() => {
     const loadPreferences = async () => {
-      // Skip loading if user is not authenticated
+      // Skip for guests.
       if (!user) {
         setLoading(false);
         return;
@@ -31,7 +31,7 @@ const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     loadPreferences();
   }, [user]);
 
-  // Only enable browser notifications when user is authenticated
+  // Authenticated only.
   const { currentNotification, clearNotification } = useBrowserNotifications(
     browserNotificationsEnabled && !!user,
     true // Use in-app panel

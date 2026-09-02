@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { settingsService } from '@/features/settings/services/settings';
+import { settingsService } from '@/features/settings';
 import { useAuthStore } from '@/store/auth-store';
 
 interface UserSettings {
@@ -24,14 +24,14 @@ export const useOnboarding = () => {
       }
 
       try {
-        // Always fetch from server (service handles caching + dedup)
+        // Service handles caching.
         const settings = (await settingsService.getAllSettings()) as unknown as UserSettings;
 
-        // Show onboarding only if not completed and privacy is accepted
+        // Needs consent first.
         setShowOnboarding(!settings.onboarding_completed && settings.privacy_accepted);
       } catch (error) {
         if (import.meta.env.DEV) console.error('Error checking onboarding status:', error);
-        // Don't show onboarding if we can't verify
+        // Hide when unverified.
         setShowOnboarding(false);
       } finally {
         setIsLoading(false);
@@ -40,7 +40,7 @@ export const useOnboarding = () => {
 
     checkOnboardingStatus();
 
-    // Listen for privacy acceptance event to re-check onboarding status
+    // Re-check on consent.
     const handlePrivacyAccepted = () => {
       // Delay to allow transition
       setTimeout(() => {

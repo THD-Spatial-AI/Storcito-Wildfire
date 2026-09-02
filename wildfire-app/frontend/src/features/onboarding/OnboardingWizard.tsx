@@ -2,10 +2,10 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Button } from '@spatialhub/ui';
 import { ChevronRight, ChevronLeft, Check, Globe, Cloud, Map, Bell } from 'lucide-react';
 import { languages as supportedLanguages, useTranslation } from '@/i18n';
-import WeatherSettings from '@/features/weather/WeatherSettings';
+import { WeatherSettings } from '@/features/weather';
 import MapLocationSettings from '@/features/settings/MapLocationSettings';
 import NotificationSettings from '@/features/settings/NotificationSettings';
-import axios from '@/lib/axios';
+import { settingsService } from '@/features/settings';
 
 interface OnboardingWizardProps {
   isOpen: boolean;
@@ -19,7 +19,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isOpen, onComplete 
   const [isVisible, setIsVisible] = useState(false);
   const [langKey, setLangKey] = useState(0);
 
-  // Called when language is changed in LanguageStep
+  // Language changed.
   const handleLanguageChanged = () => {
     setLangKey(k => k + 1);
   };
@@ -41,7 +41,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isOpen, onComplete 
     return index + 1;
   };
 
-  // Fade-in effect when dialog opens
+  // Fade in.
   useEffect(() => {
     if (isOpen) {
       const timer = setTimeout(() => {
@@ -53,7 +53,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isOpen, onComplete 
     }
   }, [isOpen]);
 
-  // Step configuration - components are rendered separately to ensure proper re-rendering on language change
+  // Step config.
   const stepConfig = useMemo(() => [
     {
       id: 'welcome',
@@ -87,7 +87,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isOpen, onComplete 
     },
   ], []);
 
-  // Render step component based on current step - this ensures fresh rendering on language change
+  // Render current step.
   const renderStepComponent = (stepId: string) => {
     switch (stepId) {
       case 'welcome':
@@ -128,18 +128,18 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isOpen, onComplete 
   const handleComplete = async () => {
     setIsCompleting(true);
     try {
-      // Mark onboarding as completed in the backend
-      await axios.patch('/settings', { onboarding_completed: true });
+      // Persist completion.
+      await settingsService.updateSettings({ onboarding_completed: true });
       onComplete();
 
-      // Dispatch event to trigger product tour check
+      // Trigger tour check.
       globalThis.dispatchEvent(new CustomEvent('onboarding-completed'));
     } catch (error) {
       if (import.meta.env.DEV) console.error('Error completing onboarding:', error);
-      // Still complete the onboarding even if the API call fails
+      // Complete regardless.
       onComplete();
 
-      // Still dispatch event even if save fails
+      // Dispatch regardless.
       globalThis.dispatchEvent(new CustomEvent('onboarding-completed'));
     } finally {
       setIsCompleting(false);
@@ -147,7 +147,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isOpen, onComplete 
   };
 
   const handleSkip = () => {
-    // Allow user to skip onboarding
+    // Skip onboarding.
     handleComplete();
   };
 
@@ -190,7 +190,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isOpen, onComplete 
           ))}
         </div>
 
-        {/* Step Content - key forces re-render on language change */}
+        {/* Key forces re-render. */}
         <div key={`${currentStepData.id}-${langKey}-${i18n.language}`} className="border-t border-b border-border bg-background overflow-hidden transition-all duration-300 ease-in-out">
           {renderStepComponent(currentStepData.id)}
         </div>
@@ -302,13 +302,13 @@ const LanguageStep: React.FC<LanguageStepProps> = ({ onLanguageChange }) => {
   const handleLanguageChange = async (code: string) => {
     setSelectedLanguage(code);
     try {
-      // Change i18n language immediately for instant UI update
+      // Apply language now.
       await i18n.changeLanguage(code);
       localStorage.setItem('app_language', code);
       // Notify parent to re-render
       onLanguageChange?.();
-      // Save language preference to backend
-      await axios.patch('/settings', { language: code });
+      // Persist language.
+      await settingsService.updateSettings({ language: code });
     } catch (error) {
       if (import.meta.env.DEV) console.error('Error saving language:', error);
     }

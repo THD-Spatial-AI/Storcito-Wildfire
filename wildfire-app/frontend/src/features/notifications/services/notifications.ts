@@ -32,6 +32,17 @@ class NotificationsService {
         const { data } = await axios.delete<NotificationActionResponse>('/notifications/clear-all');
         return data;
     }
+
+    /** Schedule maintenance. */
+    async sendMaintenance(payload: {
+        service: string;
+        scheduled_date: string;
+        scheduled_time: string;
+        message: string;
+        type: "maintenance";
+    }): Promise<void> {
+        await axios.post('/notifications/send', payload);
+    }
 }
 
 export const notificationsService = new NotificationsService();

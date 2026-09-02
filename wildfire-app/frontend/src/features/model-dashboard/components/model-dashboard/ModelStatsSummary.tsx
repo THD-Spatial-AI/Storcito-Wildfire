@@ -6,7 +6,7 @@ interface ModelStatsSummaryProps {
 	className?: string;
 }
 
-// Compact inline stats strip (label + value pairs) shown in the table toolbar area.
+// Inline stats strip.
 export function ModelStatsSummary({ stats, className = "" }: ModelStatsSummaryProps) {
 	const { t } = useTranslation();
 
@@ -23,13 +23,17 @@ export function ModelStatsSummary({ stats, className = "" }: ModelStatsSummaryPr
 	];
 
 	return (
-		<div className={`flex flex-wrap items-center gap-2 ${className}`}>
+		<div className={`flex flex-wrap items-center gap-1.5 ${className}`}>
 			{items.map((s) => (
 				<div
 					key={s.label}
-					className="flex h-9 items-center gap-2 rounded-lg border border-border bg-muted/30 px-3"
+					className={`flex h-9 items-center gap-2 rounded-lg border px-3 transition-colors duration-150 ${
+						s.highlight
+							? "border-destructive/40 bg-destructive/5"
+							: "border-border/60 bg-muted/40"
+					}`}
 				>
-					<span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+					<span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
 						{s.label}
 					</span>
 					<span

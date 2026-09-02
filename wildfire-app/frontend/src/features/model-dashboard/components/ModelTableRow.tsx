@@ -86,7 +86,7 @@ const ModelNameCell: React.FC<ModelNameCellProps> = ({
 			<TooltipTrigger asChild>
 				<button
 					onClick={() => startTitleEdit(model)}
-					className="flex items-center gap-2 py-1.5 px-2.5 rounded-lg hover:bg-muted transition-colors group/title max-w-[240px]"
+					className="flex items-center gap-2 py-1.5 px-2.5 rounded-lg hover:bg-muted transition-colors group/title max-w-[280px]"
 				>
 					{level > 0 && (
 						<div className="flex items-center mr-0.5">
@@ -181,7 +181,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
 
 	const rowClassName = `group transition-colors duration-150 hover:bg-muted/40 ${
 		level > 0 ? "border-l-2 border-border bg-muted/20" : ""
-	} ${isSelected ? "bg-muted/60 shadow-[inset_2px_0_0_0_var(--primary)]" : ""}`;
+	} ${isSelected ? "bg-muted/50 shadow-[inset_2px_0_0_0_var(--primary)]" : ""}`;
 
 	return (
 		<tr className={rowClassName}>
@@ -196,7 +196,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
 					<button
 						type="button"
 						onClick={(e) => { e.stopPropagation(); toggleFavorite(model.id); }}
-						className="rounded-md p-1 transition-all duration-150 hover:bg-muted hover:scale-110 active:scale-95"
+						className="rounded-md p-1 transition-colors duration-150 hover:bg-muted"
 						aria-label={favorited ? "Remove from favorites" : "Add to favorites"}
 					>
 						<Star className={`h-3.5 w-3.5 transition-colors ${favorited ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"}`} />

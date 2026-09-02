@@ -1,8 +1,8 @@
 import React from "react";
-import { useRiskMetrics, type RiskLevel } from "@/features/model-results/hooks/useRiskMetrics";
+import { useRiskMetrics, type RiskLevel } from "@/features/model-results";
 import { useTranslation } from "@/i18n";
 
-// Mirrors the 5-level risk theme used on the model results page for consistency.
+// Matches results theme.
 const THEME: Record<RiskLevel, { labelKey: string; cls: string; dot: string }> = {
   very_low: {
     labelKey: "modelResults.legend.levels.very_low",
@@ -35,7 +35,7 @@ interface RiskLevelBadgeProps {
   modelId: number;
 }
 
-// Risk-level badge for a completed model; renders nothing until metrics load.
+// Risk badge.
 const RiskLevelBadge: React.FC<RiskLevelBadgeProps> = ({ modelId }) => {
   const { metrics, ready } = useRiskMetrics(modelId);
   const { t } = useTranslation();

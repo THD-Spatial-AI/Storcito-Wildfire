@@ -1,26 +1,26 @@
 import React, { Fragment, useState, useCallback, useEffect, useMemo } from "react";
-import { FolderInput, Copy, Play, Trash2 } from "lucide-react";
 import { useDocumentTitle } from "@/hooks/use-document-title";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import { Model, ModelStats } from "@/features/model-dashboard/services/modelService";
 import { useConfirm } from "@/hooks/useConfirmDialog";
 import { useModelsQuery, useModelStatsQuery } from "@/features/model-dashboard/hooks/useModelsQuery";
-import { type Workspace, workspaceService } from "@/components/workspace";
+import { type Workspace } from "@/components/workspace";
 import { useWorkspaceStore } from "@/components/workspace";
 import { useAuthStore } from "@/store/auth-store";
 import { useModelDashboardHandlers } from '@/features/model-dashboard/hooks/useModelDashboardHandlers';
+import { useModelDashboardModals } from '@/features/model-dashboard/hooks/useModelDashboardModals';
+import { useBulkActionConfigs } from '@/features/model-dashboard/hooks/useBulkActionConfigs';
 import { useModelSelection } from '@/features/model-dashboard/hooks/useModelSelection';
 import { useBulkOperations } from '@/features/model-dashboard/hooks/useBulkOperations';
 import { useDeleteConfirm } from '@/hooks/useDeleteConfirm';
-import { type ActionConfig } from "@/components/shared/ModelActionGroup";
 import { useFavoriteModelsStore } from "@/features/model-dashboard/store/favorite-models";
 import { isModelDisabled as checkModelDisabled, isModelCompleted } from "@/features/model-dashboard/utils/statusHelpers";
-import { useWebservices } from "@/features/admin-dashboard/hooks/useWebservices";
+import { useWebservices } from "@/features/admin-dashboard";
 import { processModelTimingUpdates, type TimingUpdate } from "@/features/model-dashboard/utils/modelTimingUtils";
 import { organizeModelsHierarchically } from "@/features/model-dashboard/utils/dashboardHelpers";
 import { useTranslation } from "@/i18n";
-import { useNotification } from "@/features/notifications/hooks/useNotification";
+import { useNotification } from "@/features/notifications";
 import { hasMinimumAccessLevel } from "@/utils/access-level";
 import { ModelDashboardFilters } from "./model-dashboard/ModelDashboardFilters";
 import { ModelDashboardBulkActions } from "./model-dashboard/ModelDashboardBulkActions";
@@ -76,11 +76,6 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 	const initializeWorkspace = useWorkspaceStore(state => state.initializeWorkspace);
     const user = useAuthStore(state => state.user);
 
-	const [isCreateWsOpen, setIsCreateWsOpen] = useState(false);
-	const [isShareWsOpen, setIsShareWsOpen] = useState(false);
-	const [isRenameWsOpen, setIsRenameWsOpen] = useState(false);
-	const [isCopyWsOpen, setIsCopyWsOpen] = useState(false);
-	const [wsReloadKey, setWsReloadKey] = useState(0);
 	const [isRefreshing, setIsRefreshing] = useState(false);
 	const { notification, showSuccess, showError, hide: hideNotification } = useNotification();
 
@@ -243,6 +238,36 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 		}
 	}, [loadModels]);
 
+	// Modal state.
+	const {
+		isCreateWsOpen, setIsCreateWsOpen,
+		isShareWsOpen, setIsShareWsOpen,
+		isRenameWsOpen, setIsRenameWsOpen,
+		isCopyWsOpen, setIsCopyWsOpen,
+		wsReloadKey, setWsReloadKey,
+		shareModal, setShareModal,
+		moveModelModal, setMoveModelModal,
+		bulkCopyModal, setBulkCopyModal,
+		handleCopyWorkspaceSuccess,
+		handleRenameWorkspaceSuccess,
+		handleDeleteWorkspace,
+		handleShare,
+		handleMoveToWorkspace,
+		handleBulkMoveToWorkspace,
+		handleBulkCopy,
+	} = useModelDashboardModals({
+		currentWorkspace,
+		selectedModels,
+		canUserDeleteModel,
+		setCurrentWorkspace,
+		onWorkspaceChange: handleWorkspaceChange,
+		loadModels,
+		loadStats,
+		confirm,
+		showSuccess,
+		showError,
+	});
+
 	const handlePageChange = useCallback((page: number) => {
 		setCurrentPage(page);
 	}, []);
@@ -361,85 +386,6 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 
 
 
-	const [shareModal, setShareModal] = useState<{
-		isOpen: boolean;
-		model: Model | null;
-	}>({
-		isOpen: false,
-		model: null,
-	});
-
-
-	const [moveModelModal, setMoveModelModal] = useState<{
-		isOpen: boolean;
-		model: Model | null;
-		models?: Model[];
-	}>({
-		isOpen: false,
-		model: null,
-	});
-
-	const [bulkCopyModal, setBulkCopyModal] = useState<{
-		isOpen: boolean;
-		models: Model[];
-	}>({
-		isOpen: false,
-		models: [],
-	});
-
-	const handleCopyWorkspaceSuccess = async (copiedWorkspace: Workspace, sourceWorkspace: Workspace) => {
-		try {
-			// Reload workspace list.
-			setWsReloadKey((k) => k + 1);
-			// Switch workspace.
-			handleWorkspaceChange(copiedWorkspace);
-			await loadModels();
-			await loadStats();
-
-			showSuccess(`Workspace "${copiedWorkspace.name}" created successfully with all models copied from "${sourceWorkspace.name}".`);
-		} catch (error) {
-			if (import.meta.env.DEV) console.error("Failed to load copied workspace:", error);
-			showError("Workspace copied but failed to load. Please refresh the page.");
-		}
-	};
-
-	const handleRenameWorkspaceSuccess = async (updatedWorkspace: Workspace) => {
-		try {
-			// Update the current workspace
-			setCurrentWorkspace(updatedWorkspace);
-			setWsReloadKey((k) => k + 1);
-
-			showSuccess(`Workspace renamed to "${updatedWorkspace.name}" successfully.`);
-		} catch (error) {
-			if (import.meta.env.DEV) console.error("Failed to update workspace:", error);
-			showError("Workspace renamed but failed to refresh. Please reload the page.");
-		}
-	};
-
-	const handleDeleteWorkspace = async () => {
-		if (!currentWorkspace) return;
-
-		await confirm({
-			type: "delete",
-			itemType: "workspace",
-			itemName: currentWorkspace.name,
-			description: `This will permanently delete the workspace "${currentWorkspace.name}" and all models in it. This action cannot be undone.`,
-			onConfirm: async () => {
-				try {
-					await workspaceService.deleteWorkspace(currentWorkspace.id);
-					// Load default workspace.
-					const defaultWorkspace = await workspaceService.getDefaultWorkspace();
-					handleWorkspaceChange(defaultWorkspace);
-					setWsReloadKey((k) => k + 1);
-					await loadStats();
-				} catch (error) {
-					if (import.meta.env.DEV) console.error("Failed to delete workspace:", error);
-					alert("Failed to delete workspace. Please try again.");
-				}
-			}
-		});
-	};
-
 	const handleNewModel = useCallback((): void => {
 		if (currentWorkspace) {
 			navigate("/app/model-dashboard/new-model", {
@@ -450,119 +396,9 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 		}
 	}, [currentWorkspace, navigate]);
 
-	const handleShare = useCallback((model: Model) => {
-		setShareModal({
-			isOpen: true,
-			model,
-		});
-	}, []);
-
-	const handleMoveToWorkspace = useCallback((model: Model) => {
-		// Blur before hiding.
-		if (document.activeElement instanceof HTMLElement) {
-			document.activeElement.blur();
-		}
-		setMoveModelModal({
-			isOpen: true,
-			model,
-		});
-	}, []);
-
-	const handleBulkMoveToWorkspace = useCallback(() => {
-		// Blur before hiding.
-		if (document.activeElement instanceof HTMLElement) {
-			document.activeElement.blur();
-		}
-		const ownedModels = selectedModels.filter((model: Model) => canUserDeleteModel(model));
-		
-		// Exclude moved parents.
-		const modelsToMove = ownedModels.filter(model => {
-			// Has selected child?
-			const hasChildInSelection = ownedModels.some(
-				m => m.parent_model_id === model.id
-			);
-			return !hasChildInSelection;
-		});
-		
-		setMoveModelModal({
-			isOpen: true,
-			model: null,
-			models: modelsToMove,
-		});
-	}, [canUserDeleteModel, selectedModels]);
-
-	const canDeleteAnySelected = useMemo(() => {
-		return selectedModels.some((model: Model) =>
-			!isModelDisabled(model) && canUserDeleteModel(model)
-		);
-	}, [selectedModels, canUserDeleteModel, isModelDisabled]);
-
-	const canMoveAnySelected = useMemo(() => {
-		return selectedModels.some((model: Model) => canUserDeleteModel(model));
-	}, [selectedModels, canUserDeleteModel]);
-
-	const canCalculateAnySelected = useMemo(() => {
-		return hasAvailableWebservice && selectedModels.some((model: Model) => !isModelDisabled(model));
-	}, [selectedModels, isModelDisabled, hasAvailableWebservice]);
-
-	const calculatableCount = useMemo(() => {
-		return selectedModels.filter((model: Model) => !isModelDisabled(model)).length;
-	}, [selectedModels, isModelDisabled]);
-
-	const handleBulkCalculate = useCallback(async () => {
-		const calculatableModels = selectedModels.filter((model: Model) => !isModelDisabled(model));
-		const modelIds = calculatableModels.map((m) => m.id);
-		await handleCalculate(modelIds);
-		clearSelection();
-	}, [selectedModels, isModelDisabled, handleCalculate, clearSelection]);
 	const handleCalculateSingle = useCallback((model: Model) => {
 		handleCalculate([model.id]);
 	}, [handleCalculate]);
-
-	const handleBulkCopy = useCallback(() => {
-		if (document.activeElement instanceof HTMLElement) {
-			document.activeElement.blur();
-		}
-		setBulkCopyModal({
-			isOpen: true,
-			models: [...selectedModels],
-		});
-	}, [selectedModels]);
-
-	const deletableCount = useMemo(() => {
-		return selectedModels.filter((model: Model) =>
-			!isModelDisabled(model) && canUserDeleteModel(model)
-		).length;
-	}, [selectedModels, canUserDeleteModel, isModelDisabled]);
-
-	const getMoveTooltip = useCallback(() => {
-		const modelWord = selectedModels.length > 1 ? t('model.models').toLowerCase() : t('model.title').toLowerCase();
-		if (canMoveAnySelected) {
-			return `${t('model.move')} ${selectedModels.length} ${t('model.selected')} ${modelWord}`;
-		}
-		return t('model.cannotMove');
-	}, [selectedModels.length, canMoveAnySelected, t]);
-
-	const getCalculateTooltip = useCallback(() => {
-		if (!hasAvailableWebservice) {
-			return t('model.noWebserviceAvailable');
-		}
-		if (canCalculateAnySelected) {
-			return `${t('model.calculate')} ${calculatableCount} ${t('model.selected')}`;
-		}
-		return t('model.cannotCalculate');
-	}, [hasAvailableWebservice, canCalculateAnySelected, calculatableCount, t]);
-
-	const getCopyTooltip = useCallback(() => {
-		return `${t('model.copy')} ${selectedModels.length} ${t('model.selected')}`;
-	}, [selectedModels.length, t]);
-
-	const getDeleteTooltip = useCallback(() => {
-		if (canDeleteAnySelected) {
-			return `${t('model.delete')} ${deletableCount} ${t('model.selected')}`;
-		}
-		return t('model.cannotDelete');
-	}, [canDeleteAnySelected, deletableCount, t]);
 
 	const canCompareSelected = useMemo(() => {
 		if (selectedModels.length !== 2) return false;
@@ -582,39 +418,17 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 
 
 
-	const bulkActions: ActionConfig[] = useMemo(() => [
-		{
-			key: "bulk-move",
-			icon: FolderInput,
-			tooltip: getMoveTooltip(),
-			variant: "secondary" as const,
-			onClick: handleBulkMoveToWorkspace,
-			disabled: !canMoveAnySelected,
-		},
-		{
-			key: "bulk-copy",
-			icon: Copy,
-			tooltip: getCopyTooltip(),
-			variant: "purple" as const,
-			onClick: handleBulkCopy,
-		},
-		{
-			key: "bulk-calculate",
-			icon: Play,
-			tooltip: getCalculateTooltip(),
-			variant: "success" as const,
-			onClick: handleBulkCalculate,
-			disabled: !canCalculateAnySelected,
-		},
-		{
-			key: "bulk-delete",
-			icon: Trash2,
-			tooltip: getDeleteTooltip(),
-			variant: "danger" as const,
-			onClick: showBulkDeleteConfirm,
-			disabled: !canDeleteAnySelected,
-		},
-	], [getMoveTooltip, getCopyTooltip, getCalculateTooltip, getDeleteTooltip, handleBulkMoveToWorkspace, handleBulkCopy, handleBulkCalculate, showBulkDeleteConfirm, canMoveAnySelected, canCalculateAnySelected, canDeleteAnySelected]);
+	const bulkActions = useBulkActionConfigs({
+		selectedModels,
+		isModelDisabled,
+		canUserDeleteModel,
+		hasAvailableWebservice,
+		handleCalculate,
+		clearSelection,
+		handleBulkMoveToWorkspace,
+		handleBulkCopy,
+		showBulkDeleteConfirm,
+	});
 
 	const modelDashboardActions = useMemo<ModelDashboardActionsContextValue>(() => ({
 		selectedModels,
