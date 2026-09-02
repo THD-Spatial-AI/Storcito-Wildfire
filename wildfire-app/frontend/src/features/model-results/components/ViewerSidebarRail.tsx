@@ -4,7 +4,6 @@ import {
   Check,
   Eye,
   EyeOff,
-  Keyboard,
   Layers2,
   Maximize2,
   Minimize2,
@@ -36,8 +35,6 @@ interface ViewerSidebarRailProps {
   switcherLayers: AvailableLayer[];
   activeLayerKey: string;
   onSelectLayer: (key: string) => void;
-  showShortcuts: boolean;
-  onToggleShortcuts: () => void;
 }
 
 // Right-hand button rail: 3D, fullscreen, timeline, visibility, dataset switcher.
@@ -56,8 +53,6 @@ export const ViewerSidebarRail: FC<ViewerSidebarRailProps> = ({
   switcherLayers,
   activeLayerKey,
   onSelectLayer,
-  showShortcuts,
-  onToggleShortcuts,
 }) => {
   const { t } = useTranslation();
 
@@ -131,12 +126,6 @@ export const ViewerSidebarRail: FC<ViewerSidebarRailProps> = ({
             </DropdownMenuContent>
           </DropdownMenu>
         )}
-        <SidebarButton
-          icon={Keyboard}
-          tooltip={t("modelResults.shortcuts.title", "Keyboard shortcuts")}
-          onClick={onToggleShortcuts}
-          isActive={showShortcuts}
-        />
       </div>
     </aside>
   );

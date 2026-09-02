@@ -81,7 +81,6 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   const [playing, setPlaying] = useState(false);
   const playFrameRef = useRef(0);
   const [showTimeline, setShowTimeline] = useState(false);
-  const [showShortcuts, setShowShortcuts] = useState(false);
   const [roadsVisible, setRoadsVisible] = useState(true);
   const [labelsVisible, setLabelsVisible] = useState(false);
 
@@ -149,10 +148,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
         getModelResults<ModelResult>(requestedModelId),
       ]);
 
-      if (
-        requestId !== loadRequestRef.current ||
-        activeModelIdRef.current !== requestedModelId
-      ) {
+      if (requestId !== loadRequestRef.current || activeModelIdRef.current !== requestedModelId) {
         return;
       }
 
@@ -160,10 +156,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
       setResults(list);
     } catch (err) {
-      if (
-        requestId !== loadRequestRef.current ||
-        activeModelIdRef.current !== requestedModelId
-      ) {
+      if (requestId !== loadRequestRef.current || activeModelIdRef.current !== requestedModelId) {
         return;
       }
       setError(
@@ -173,10 +166,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
         )
       );
     } finally {
-      if (
-        requestId === loadRequestRef.current &&
-        activeModelIdRef.current === requestedModelId
-      ) {
+      if (requestId === loadRequestRef.current && activeModelIdRef.current === requestedModelId) {
         setLoading(false);
       }
     }
@@ -309,8 +299,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
   // Map keyboard shortcuts.
   useMapKeyboardShortcuts(map, {
-    onTogglePlay:
-      layerReady && dailyFrames.length >= 2 ? () => setPlaying((v) => !v) : undefined,
+    onTogglePlay: layerReady && dailyFrames.length >= 2 ? () => setPlaying((v) => !v) : undefined,
     onToggleFullscreen: toggleFullscreen,
     onToggle3D: wms3D ? () => setShow3D((v) => !v) : undefined,
     onToggleLayerVisible: hasRiskLayers ? () => setLayerVisible((v) => !v) : undefined,
@@ -421,27 +410,23 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
         />
       )}
 
-      {(hasRiskLayers || showShortcuts) && (
-        <div className="absolute bottom-10 left-2 z-10 flex w-44 flex-col gap-2">
-          {hasRiskLayers && (
-            <RiskLegendPanel
-              visibleRiskLevels={visibleRiskLevels}
-              riskLevelAvailability={riskLevelAvailability}
-              riskDistribution={riskDistribution}
-              allRiskLevelsVisible={allRiskLevelsVisible}
-              onToggleAll={setAllRiskLevelsVisible}
-              onToggleLevel={toggleRiskLevel}
-            />
-          )}
-          {showShortcuts && (
-            <ViewerShortcutsPanel
-              canPlay={layerReady && dailyFrames.length >= 2}
-              can3D={Boolean(wms3D)}
-              hasRiskLayers={hasRiskLayers}
-            />
-          )}
-        </div>
-      )}
+      <div className="absolute bottom-10 left-2 z-10 flex w-44 flex-col gap-2">
+        {hasRiskLayers && (
+          <RiskLegendPanel
+            visibleRiskLevels={visibleRiskLevels}
+            riskLevelAvailability={riskLevelAvailability}
+            riskDistribution={riskDistribution}
+            allRiskLevelsVisible={allRiskLevelsVisible}
+            onToggleAll={setAllRiskLevelsVisible}
+            onToggleLevel={toggleRiskLevel}
+          />
+        )}
+        <ViewerShortcutsPanel
+          canPlay={layerReady && dailyFrames.length >= 2}
+          can3D={Boolean(wms3D)}
+          hasRiskLayers={hasRiskLayers}
+        />
+      </div>
 
       {showTimeline && dailyFrames.length >= 2 && (
         <RiskTimelinePanel
@@ -486,8 +471,6 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
           switcherLayers={switcherLayers}
           activeLayerKey={playingFrameDate ? "risk" : selectedLayerKey}
           onSelectLayer={handleSelectLayer}
-          showShortcuts={showShortcuts}
-          onToggleShortcuts={() => setShowShortcuts((v) => !v)}
         />
       </div>
 
