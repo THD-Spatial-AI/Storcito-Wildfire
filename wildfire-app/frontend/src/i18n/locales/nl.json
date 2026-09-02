@@ -1631,6 +1631,13 @@
     "summaryFooter": "{{countries}} landen · {{regions}} regio's · {{grids}} rasters"
   },
   "modelResults": {
+    "shortcuts": {
+      "title": "Sneltoetsen",
+      "playPause": "Dagelijkse animatie afspelen / pauzeren",
+      "fullscreen": "Volledig scherm in-/uitschakelen",
+      "terrain": "3D-terrein in-/uitschakelen",
+      "toggleLayer": "Risicolaag tonen / verbergen"
+    },
     "details": {
       "awaiting": "Wachten op resultaat…",
       "country": "Land",
@@ -2147,6 +2154,7 @@
       "dailyRunInfo": "Elke gesimuleerde dag wordt beoordeeld met het weer uit dit tijdvenster — het heetste en droogste deel van de middag."
     },
     "coverage": {
+      "legendLine": "Gestippelde lijn: beschikbare gegevensdekking",
       "title": "Dekking brandgegevens",
       "unavailable": "Dekking niet beschikbaar",
       "exactFootprint": "Exacte raster voetafdruk",

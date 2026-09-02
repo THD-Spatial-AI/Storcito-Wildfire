@@ -1631,6 +1631,13 @@
     "summaryFooter": "{{countries}} countries · {{regions}} regions · {{grids}} grids"
   },
   "modelResults": {
+    "shortcuts": {
+      "title": "Keyboard shortcuts",
+      "playPause": "Play / pause daily animation",
+      "fullscreen": "Toggle fullscreen",
+      "terrain": "Toggle 3D terrain",
+      "toggleLayer": "Show / hide risk layer"
+    },
     "title": "Model Results",
     "errors": {
       "noId": "No model ID provided",
@@ -2141,6 +2148,7 @@
       "dailyRunInfo": "Every simulated day is assessed with the weather from this window — the hottest, driest part of the afternoon."
     },
     "coverage": {
+      "legendLine": "Dashed line: available data coverage",
       "title": "Wildfire data coverage",
       "unavailable": "Coverage unavailable",
       "exactFootprint": "Exact raster footprint",

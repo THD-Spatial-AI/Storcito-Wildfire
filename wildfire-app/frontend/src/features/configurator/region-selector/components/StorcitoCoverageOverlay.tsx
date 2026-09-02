@@ -155,6 +155,12 @@ export const StorcitoCoverageOverlay = ({ map }: StorcitoCoverageOverlayProps) =
     return (
         <>
             <style>{COVERAGE_CARD_ANIMATION_CSS}</style>
+            {coverage && (
+                <div className="absolute bottom-4 left-4 z-20 flex items-center gap-2 rounded-lg border border-border bg-card/95 px-2.5 py-1.5 text-[10px] font-medium text-muted-foreground shadow-lg backdrop-blur-md">
+                    <span aria-hidden="true" className="w-5 border-t-2 border-dashed border-foreground/80" />
+                    {t("configurator.coverage.legendLine", "Dashed line: available data coverage")}
+                </div>
+            )}
             <div className="wildfire-coverage-animated hidden lg:block absolute bottom-4 right-4 z-20 w-[340px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-border bg-card/95 text-xs text-card-foreground shadow-xl backdrop-blur-md">
                 <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent wildfire-coverage-sheen" />
                 <div className="flex items-start gap-3 border-b border-border bg-muted/60 px-3.5 py-3">

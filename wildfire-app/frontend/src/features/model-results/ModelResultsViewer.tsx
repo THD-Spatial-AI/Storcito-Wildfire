@@ -15,7 +15,7 @@ import { useTranslation } from "@/i18n";
 import { getModelResults } from "./services/resultsService";
 import { useDocumentTitle } from "@/hooks/use-document-title";
 import { MapContainer } from "@/components/shared/MapContainer";
-import { useMapStore } from "@/features/interactive-map";
+import { useMapStore, useMapKeyboardShortcuts } from "@/features/interactive-map";
 import MapSearchBar from "@/features/interactive-map/MapSearchBar";
 import { modelService, Model } from "@/features/model-dashboard";
 import { CreateWorkspaceModal } from "@/components/workspace";
@@ -80,6 +80,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   const [playing, setPlaying] = useState(false);
   const playFrameRef = useRef(0);
   const [showTimeline, setShowTimeline] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
   const [roadsVisible, setRoadsVisible] = useState(true);
   const [labelsVisible, setLabelsVisible] = useState(false);
 
@@ -304,6 +305,15 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   }, [riskDistribution]);
 
   const hasRiskLayers = Boolean(activeResult && attachedResultId === activeResult.id);
+
+  // Map keyboard shortcuts.
+  useMapKeyboardShortcuts(map, {
+    onTogglePlay:
+      layerReady && dailyFrames.length >= 2 ? () => setPlaying((v) => !v) : undefined,
+    onToggleFullscreen: toggleFullscreen,
+    onToggle3D: wms3D ? () => setShow3D((v) => !v) : undefined,
+    onToggleLayerVisible: hasRiskLayers ? () => setLayerVisible((v) => !v) : undefined,
+  });
   const allRiskLevelsVisible = RISK_LEVELS.every(
     (level) => !riskLevelAvailability[level.value] || visibleRiskLevels[level.value]
   );
@@ -464,6 +474,9 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
           switcherLayers={switcherLayers}
           activeLayerKey={playingFrameDate ? "risk" : selectedLayerKey}
           onSelectLayer={handleSelectLayer}
+          canPlay={layerReady && dailyFrames.length >= 2}
+          showShortcuts={showShortcuts}
+          onToggleShortcuts={() => setShowShortcuts((v) => !v)}
         />
       </div>
 

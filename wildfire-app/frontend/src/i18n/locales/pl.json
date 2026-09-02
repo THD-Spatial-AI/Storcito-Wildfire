@@ -1631,6 +1631,13 @@
     "summaryFooter": "{{countries}} krajów · {{regions}} regionów · {{grids}} siatek"
   },
   "modelResults": {
+    "shortcuts": {
+      "title": "Skróty klawiszowe",
+      "playPause": "Odtwórz / wstrzymaj animację dzienną",
+      "fullscreen": "Przełącz pełny ekran",
+      "terrain": "Przełącz teren 3D",
+      "toggleLayer": "Pokaż / ukryj warstwę ryzyka"
+    },
     "details": {
       "awaiting": "Oczekiwanie na wynik…",
       "country": "Kraj",
@@ -2147,6 +2154,7 @@
       "dailyRunInfo": "Każdy symulowany dzień jest oceniany na podstawie pogody z tego okna — najgorętszej i najsuchszej części popołudnia."
     },
     "coverage": {
+      "legendLine": "Linia przerywana: dostępny zakres danych",
       "title": "Zasięg danych o pożarach",
       "unavailable": "Zasięg niedostępny",
       "exactFootprint": "Dokładny ślad rastrowy",

@@ -1631,6 +1631,13 @@
     "summaryFooter": "{{countries}} zemí · {{regions}} regionů · {{grids}} mřížek"
   },
   "modelResults": {
+    "shortcuts": {
+      "title": "Klávesové zkratky",
+      "playPause": "Přehrát / pozastavit denní animaci",
+      "fullscreen": "Přepnout celou obrazovku",
+      "terrain": "Přepnout 3D terén",
+      "toggleLayer": "Zobrazit / skrýt vrstvu rizika"
+    },
     "details": {
       "awaiting": "Čekání na výsledek…",
       "country": "Země",
@@ -2147,6 +2154,7 @@
       "dailyRunInfo": "Každý simulovaný den se vyhodnocuje počasím z tohoto okna — z nejteplejší a nejsušší části odpoledne."
     },
     "coverage": {
+      "legendLine": "Čárkovaná čára: dostupné pokrytí daty",
       "title": "Pokrytí daty o požárech",
       "unavailable": "Pokrytí nedostupné",
       "exactFootprint": "Přesný rastrový otisk",

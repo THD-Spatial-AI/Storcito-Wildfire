@@ -1631,6 +1631,13 @@
     "summaryFooter": "{{countries}} pays · {{regions}} régions · {{grids}} grilles"
   },
   "modelResults": {
+    "shortcuts": {
+      "title": "Raccourcis clavier",
+      "playPause": "Lire / mettre en pause l'animation quotidienne",
+      "fullscreen": "Basculer en plein écran",
+      "terrain": "Basculer le terrain 3D",
+      "toggleLayer": "Afficher / masquer la couche de risque"
+    },
     "details": {
       "awaiting": "En attente du résultat…",
       "country": "Pays",
@@ -2147,6 +2154,7 @@
       "dailyRunInfo": "Chaque journée simulée est évaluée avec la météo de cette plage horaire — la partie la plus chaude et la plus sèche de l'après-midi."
     },
     "coverage": {
+      "legendLine": "Ligne pointillée : couverture des données disponible",
       "title": "Couverture des données d'incendies",
       "unavailable": "Couverture non disponible",
       "exactFootprint": "Empreinte raster exacte",

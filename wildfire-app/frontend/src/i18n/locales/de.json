@@ -1631,6 +1631,13 @@
     "summaryFooter": "{{countries}} Länder · {{regions}} Regionen · {{grids}} Raster"
   },
   "modelResults": {
+    "shortcuts": {
+      "title": "Tastenkürzel",
+      "playPause": "Tägliche Animation abspielen / pausieren",
+      "fullscreen": "Vollbild umschalten",
+      "terrain": "3D-Gelände umschalten",
+      "toggleLayer": "Risikoebene ein-/ausblenden"
+    },
     "details": {
       "awaiting": "Warten auf Ergebnis…",
       "country": "Land",
@@ -2147,6 +2154,7 @@
       "dailyRunInfo": "Jeder simulierte Tag wird mit dem Wetter aus diesem Zeitfenster bewertet – dem heißesten und trockensten Teil des Nachmittags."
     },
     "coverage": {
+      "legendLine": "Gestrichelte Linie: verfügbare Datenabdeckung",
       "title": "Abdeckung der Waldbranddaten",
       "unavailable": "Abdeckung nicht verfügbar",
       "exactFootprint": "Exakter Raster-Fußabdruck",

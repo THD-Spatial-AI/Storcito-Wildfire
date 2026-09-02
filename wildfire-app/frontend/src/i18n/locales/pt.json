@@ -883,6 +883,7 @@
       "dailyRunInfo": "Cada dia simulado é avaliado com a meteorologia desta janela horária — a parte mais quente e seca da tarde."
     },
     "coverage": {
+      "legendLine": "Linha tracejada: cobertura de dados disponível",
       "title": "Cobertura de dados de incêndio",
       "unavailable": "Cobertura indisponível",
       "exactFootprint": "Área raster exata",
@@ -1187,6 +1188,13 @@
     "exitFullscreen": "Sair do ecrã inteiro"
   },
   "modelResults": {
+    "shortcuts": {
+      "title": "Atalhos de teclado",
+      "playPause": "Reproduzir / pausar a animação diária",
+      "fullscreen": "Alternar ecrã inteiro",
+      "terrain": "Alternar terreno 3D",
+      "toggleLayer": "Mostrar / ocultar a camada de risco"
+    },
     "title": "Resultados do modelo",
     "errors": {
       "noId": "Não foi fornecido nenhum ID de modelo",

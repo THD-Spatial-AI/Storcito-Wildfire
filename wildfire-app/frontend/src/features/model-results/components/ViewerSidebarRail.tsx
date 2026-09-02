@@ -4,6 +4,7 @@ import {
   Check,
   Eye,
   EyeOff,
+  Keyboard,
   Layers2,
   Maximize2,
   Minimize2,
@@ -18,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@spatialhub/ui";
 import SidebarButton from "@/components/ui/SidebarButton";
+import { ViewerShortcutsPanel } from "./ViewerShortcutsPanel";
 import type { AvailableLayer } from "../viewer-config";
 
 interface ViewerSidebarRailProps {
@@ -35,6 +37,9 @@ interface ViewerSidebarRailProps {
   switcherLayers: AvailableLayer[];
   activeLayerKey: string;
   onSelectLayer: (key: string) => void;
+  canPlay: boolean;
+  showShortcuts: boolean;
+  onToggleShortcuts: () => void;
 }
 
 // Right-hand button rail: 3D, fullscreen, timeline, visibility, dataset switcher.
@@ -53,6 +58,9 @@ export const ViewerSidebarRail: FC<ViewerSidebarRailProps> = ({
   switcherLayers,
   activeLayerKey,
   onSelectLayer,
+  canPlay,
+  showShortcuts,
+  onToggleShortcuts,
 }) => {
   const { t } = useTranslation();
 
@@ -126,7 +134,20 @@ export const ViewerSidebarRail: FC<ViewerSidebarRailProps> = ({
             </DropdownMenuContent>
           </DropdownMenu>
         )}
+        <SidebarButton
+          icon={Keyboard}
+          tooltip={t("modelResults.shortcuts.title", "Keyboard shortcuts")}
+          onClick={onToggleShortcuts}
+          isActive={showShortcuts}
+        />
       </div>
+      {showShortcuts && (
+        <ViewerShortcutsPanel
+          canPlay={canPlay}
+          can3D={can3D}
+          hasRiskLayers={hasRiskLayers}
+        />
+      )}
     </aside>
   );
 };

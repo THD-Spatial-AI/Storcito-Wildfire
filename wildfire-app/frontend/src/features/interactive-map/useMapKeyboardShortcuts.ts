@@ -4,6 +4,14 @@ import type { Map as OlMap } from 'ol';
 interface Options {
   /** Called for the "new model" shortcut; omitted for signed-out visitors. */
   onNewModel?: () => void;
+  /** Space: play/pause (results viewer). */
+  onTogglePlay?: () => void;
+  /** F: fullscreen. */
+  onToggleFullscreen?: () => void;
+  /** T: 3D terrain. */
+  onToggle3D?: () => void;
+  /** L: layer visibility. */
+  onToggleLayerVisible?: () => void;
 }
 
 const ZOOM_STEP = 1;
@@ -16,11 +24,26 @@ function isTypingTarget(target: EventTarget | null): boolean {
   return ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName);
 }
 
+/** Space must not re-trigger a focused button. */
+function isActivatableTarget(target: EventTarget | null): boolean {
+  const el = target as HTMLElement | null;
+  return !!el && ['BUTTON', 'A'].includes(el.tagName);
+}
+
 /**
  * Keyboard shortcuts for the map: +/- to zoom, arrows to pan, N for a new
- * model. Testers asked for these to avoid reaching for the mouse for everything.
+ * model. The results viewer adds Space/F/T/L via the optional callbacks.
  */
-export function useMapKeyboardShortcuts(map: OlMap | null, { onNewModel }: Options = {}) {
+export function useMapKeyboardShortcuts(
+  map: OlMap | null,
+  {
+    onNewModel,
+    onTogglePlay,
+    onToggleFullscreen,
+    onToggle3D,
+    onToggleLayerVisible,
+  }: Options = {}
+) {
   useEffect(() => {
     if (!map) return;
 
@@ -64,6 +87,25 @@ export function useMapKeyboardShortcuts(map: OlMap | null, { onNewModel }: Optio
           if (!onNewModel) return;
           onNewModel();
           break;
+        case ' ':
+          if (!onTogglePlay || isActivatableTarget(event.target)) return;
+          onTogglePlay();
+          break;
+        case 'f':
+        case 'F':
+          if (!onToggleFullscreen) return;
+          onToggleFullscreen();
+          break;
+        case 't':
+        case 'T':
+          if (!onToggle3D) return;
+          onToggle3D();
+          break;
+        case 'l':
+        case 'L':
+          if (!onToggleLayerVisible) return;
+          onToggleLayerVisible();
+          break;
         default:
           return;
       }
@@ -73,5 +115,5 @@ export function useMapKeyboardShortcuts(map: OlMap | null, { onNewModel }: Optio
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [map, onNewModel]);
+  }, [map, onNewModel, onTogglePlay, onToggleFullscreen, onToggle3D, onToggleLayerVisible]);
 }

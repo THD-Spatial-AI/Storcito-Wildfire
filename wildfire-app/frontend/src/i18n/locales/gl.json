@@ -1631,6 +1631,13 @@
     "summaryFooter": "{{countries}} países · {{regions}} rexións · {{grids}} cuadrículas"
   },
   "modelResults": {
+    "shortcuts": {
+      "title": "Atallos de teclado",
+      "playPause": "Reproducir / pausar a animación diaria",
+      "fullscreen": "Alternar pantalla completa",
+      "terrain": "Alternar terreo 3D",
+      "toggleLayer": "Mostrar / agochar a capa de risco"
+    },
     "title": "Resultados do modelo",
     "errors": {
       "noId": "Non se proporcionou ID de modelo",
@@ -2141,6 +2148,7 @@
       "dailyRunInfo": "Cada día simulado avalíase coa meteoroloxía desta franxa horaria: a parte máis calorosa e seca da tarde."
     },
     "coverage": {
+      "legendLine": "Liña descontinua: cobertura de datos dispoñible",
       "title": "Cobertura de datos de incendios",
       "unavailable": "Cobertura non dispoñible",
       "exactFootprint": "Pegada ráster exacta",
