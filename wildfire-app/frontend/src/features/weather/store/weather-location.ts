@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { settingsService } from '@/features/settings/services/settings';
+import { settingsService } from '@/features/settings';
 import { 
   BaseLocation, 
   isAuthenticated, 
@@ -32,7 +32,7 @@ const DEFAULT_LOCATION: WeatherLocation = {
   source: 'preset'
 };
 
-// Helper to sync state to backend
+// Sync to backend.
 const syncToBackend = async (
   location: WeatherLocation,
   customLocations: WeatherLocation[],

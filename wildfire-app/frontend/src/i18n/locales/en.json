@@ -1994,11 +1994,13 @@
       "hottest": "Hottest",
       "calcModeInfoLabel": "What the calculation modes do",
       "calcModeInfo": "Static assesses a single day — one available weather date — using the AOI risk workflow. Dynamic assesses a range of days, keeping the daily weather sequence. Both use the 16:00–17:00 weather window.",
-      "calcModeHintStatic": "One day, chosen from the available weather dates.",
+      "calcModeHintStatic": "The hottest day of each available year.",
       "calcModeHintDynamic": "A range of days, assessed day by day.",
       "modelNameQuestion": "What do you want to call this model?",
       "calcModeQuestion": "How should the risk be calculated?",
-      "periodQuestion": "Which period should it assess?"
+      "periodQuestion": "Which period should it assess?",
+      "calcModeStaticInfo": "The date is picked for you: for each available year, the day that recorded the highest temperature — the worst-case weather for that year. Assessed from 16:00 to 17:00.",
+      "calcModeDynamicInfo": "You choose the range and it is assessed exactly as selected: every day is modelled with its own weather and the run returns the peak-risk day. Each day uses the 16:00–17:00 window."
     },
     "layer2": {
       "purpose": "Select a complete administrative region, draw an area, or upload a GeoJSON boundary.",
@@ -2070,7 +2072,11 @@
       "precomputedStaticMode": "Precomputed maps exist only for dynamic assessments. The model will compute all steps for your area.",
       "precomputedUnavailable": "The nightly analysis has not processed this date yet. The model will compute all steps for your area.",
       "lockedByPrecomputed": "Included in the precomputed regional map. Disable the precomputed switch above to customise layers.",
-      "signalsQuestion": "Which signals should feed the risk model?"
+      "signalsQuestion": "Which signals should feed the risk model?",
+      "precomputedInfoLabel": "About the precomputed regional map",
+      "fwiInfo": "The Fire Weather Index combines wind, relative humidity, temperature and drought into one measure of how readily a fire would start and spread. It carries the largest weight because weather changes fastest and drives fire behaviour most strongly.",
+      "terrainInfo": "Slope, elevation and aspect shape how a fire moves: it accelerates uphill, and sun-facing slopes dry out faster. Derived from the digital terrain model for your area.",
+      "historicalInfo": "Where fires have burned before they tend to burn again, because the underlying causes — land use, access and ignition sources — persist. Based on recorded past fire incidents in the area."
     },
     "layer4": {
       "purpose": "Real-time validation of the model configuration. Blockers must be cleared in their respective steps before the run can start.",

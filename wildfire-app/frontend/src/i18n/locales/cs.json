@@ -1994,11 +1994,13 @@
       "hottest": "Nejteplejší",
       "calcModeInfoLabel": "Co dělají režimy výpočtu",
       "calcModeInfo": "Statický režim vyhodnotí jeden den — jedno dostupné datum s počasím — pomocí postupu rizika AOI. Dynamický režim vyhodnotí rozsah dnů a zachová denní posloupnost počasí. Oba používají okno počasí 16:00–17:00.",
-      "calcModeHintStatic": "Jeden den vybraný z dostupných dat s počasím.",
+      "calcModeHintStatic": "Nejteplejší den každého dostupného roku.",
       "calcModeHintDynamic": "Rozsah dnů vyhodnocený den po dni.",
       "modelNameQuestion": "Jak chcete tento model pojmenovat?",
       "calcModeQuestion": "Jak se má riziko počítat?",
-      "periodQuestion": "Jaké období se má vyhodnotit?"
+      "periodQuestion": "Jaké období se má vyhodnotit?",
+      "calcModeStaticInfo": "Datum se volí automaticky: pro každý dostupný rok den s nejvyšší naměřenou teplotou — nejnepříznivější počasí daného roku. Vyhodnocuje se od 16:00 do 17:00.",
+      "calcModeDynamicInfo": "Rozsah si volíte vy a vyhodnotí se přesně tak, jak jste jej zvolili: každý den se modeluje s vlastním počasím a výpočet vrátí den s nejvyšším rizikem. Každý den používá okno 16:00–17:00."
     },
     "layer2": {
       "purpose": "Vyberte celý správní region, nakreslete oblast nebo nahrajte hranici GeoJSON.",
@@ -2076,7 +2078,11 @@
       "precomputedStaticMode": "Předpočítané mapy existují pouze pro dynamické posouzení. Model spočítá všechny kroky pro vaši oblast.",
       "precomputedUnavailable": "Noční analýza toto datum zatím nezpracovala. Model spočítá všechny kroky pro vaši oblast.",
       "lockedByPrecomputed": "Zahrnuto v předpočítané regionální mapě. Vypněte přepínač předpočítání výše, chcete-li vrstvy upravit.",
-      "signalsQuestion": "Které signály mají do modelu rizika vstupovat?"
+      "signalsQuestion": "Které signály mají do modelu rizika vstupovat?",
+      "precomputedInfoLabel": "O předpočítané regionální mapě",
+      "fwiInfo": "Index požárního počasí spojuje vítr, relativní vlhkost, teplotu a sucho do jediné míry toho, jak snadno by požár vznikl a šířil se. Má největší váhu, protože počasí se mění nejrychleji a nejvíce určuje chování ohně.",
+      "terrainInfo": "Sklon, nadmořská výška a orientace svahu určují, jak se oheň pohybuje: do kopce zrychluje a přisluněné svahy vysychají rychleji. Odvozeno z digitálního modelu terénu vaší oblasti.",
+      "historicalInfo": "Kde už hořelo, hoří obvykle znovu, protože základní příčiny — využití půdy, přístupnost a zdroje zapálení — přetrvávají. Vychází ze zaznamenaných dřívějších požárů v oblasti."
     },
     "layer4": {
       "purpose": "Ověření konfigurace v reálném čase. Blokátory musí být odstraněny před spuštěním.",

@@ -1994,11 +1994,13 @@
       "hottest": "Le plus chaud",
       "calcModeInfoLabel": "Ce que font les modes de calcul",
       "calcModeInfo": "Le mode statique évalue une seule journée — une date météo disponible — avec le flux de risque AOI. Le mode dynamique évalue une plage de jours en conservant la séquence météo quotidienne. Les deux utilisent la fenêtre météo de 16h00 à 17h00.",
-      "calcModeHintStatic": "Une journée, choisie parmi les dates météo disponibles.",
+      "calcModeHintStatic": "Le jour le plus chaud de chaque année disponible.",
       "calcModeHintDynamic": "Une plage de jours, évaluée jour par jour.",
       "modelNameQuestion": "Comment voulez-vous nommer ce modèle ?",
       "calcModeQuestion": "Comment le risque doit-il être calculé ?",
-      "periodQuestion": "Quelle période doit-il évaluer ?"
+      "periodQuestion": "Quelle période doit-il évaluer ?",
+      "calcModeStaticInfo": "La date est choisie automatiquement : pour chaque année disponible, le jour ayant enregistré la température la plus élevée — la météo la plus défavorable de cette année-là. Évaluée de 16h00 à 17h00.",
+      "calcModeDynamicInfo": "Vous choisissez la plage et elle est évaluée telle quelle : chaque jour est modélisé avec sa propre météo et le calcul renvoie le jour le plus à risque. Chaque jour utilise la fenêtre 16h00–17h00."
     },
     "layer2": {
       "purpose": "Sélectionnez une région administrative complète, dessinez une zone ou importez une limite GeoJSON.",
@@ -2076,7 +2078,11 @@
       "precomputedStaticMode": "Les cartes précalculées n'existent que pour les évaluations dynamiques. Le modèle calculera toutes les étapes pour votre zone.",
       "precomputedUnavailable": "L'analyse nocturne n'a pas encore traité cette date. Le modèle calculera toutes les étapes pour votre zone.",
       "lockedByPrecomputed": "Incluse dans la carte régionale précalculée. Désactivez le commutateur précalculé ci-dessus pour personnaliser les couches.",
-      "signalsQuestion": "Quels signaux doivent alimenter le modèle de risque ?"
+      "signalsQuestion": "Quels signaux doivent alimenter le modèle de risque ?",
+      "precomputedInfoLabel": "À propos de la carte régionale précalculée",
+      "fwiInfo": "L'indice forêt-météo combine vent, humidité relative, température et sécheresse en une seule mesure de la facilité avec laquelle un feu se déclencherait et se propagerait. Il pèse le plus lourd car la météo change le plus vite et conditionne le plus le comportement du feu.",
+      "terrainInfo": "La pente, l'altitude et l'exposition déterminent la façon dont le feu se déplace : il accélère en montée, et les versants ensoleillés s'assèchent plus vite. Dérivé du modèle numérique de terrain de votre zone.",
+      "historicalInfo": "Là où le feu est déjà passé, il repasse souvent, car les causes de fond — usage du sol, accès et sources d'ignition — persistent. Fondé sur les incendies enregistrés dans la zone."
     },
     "layer4": {
       "purpose": "Validation en temps réel de la configuration. Les bloquants doivent être résolus dans leurs étapes respectives avant de lancer le calcul.",

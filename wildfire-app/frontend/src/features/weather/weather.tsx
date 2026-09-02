@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@spatialhub/ui";
 import { cn } from "@/lib/utils";
-import { useDataDisplayStore } from "@/features/settings/store/data-display";
+import { useDataDisplayStore } from "@/features/settings";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "@/i18n";
 import { useWeatherData, useWeatherSearch } from "@/features/weather/hooks";
@@ -139,7 +139,7 @@ const WeatherDropdown: React.FC<WeatherDropdownProps> = ({ showSettingsIcon = tr
     temperatureUnit === "fahrenheit"
       ? `${Math.round((celsius * 9) / 5 + 32)}°`
       : `${Math.round(celsius)}°`;
-  // Wind arrives in km/h; show it in whatever unit Settings → Data display asks for.
+  // Convert wind unit.
   const formatWindSpeed = (kmh: number | null | undefined) => {
     if (kmh == null) return "--";
     const converted =

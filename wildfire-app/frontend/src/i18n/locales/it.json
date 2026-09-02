@@ -1994,11 +1994,13 @@
       "hottest": "Più caldo",
       "calcModeInfoLabel": "Cosa fanno le modalità di calcolo",
       "calcModeInfo": "La modalità statica valuta un solo giorno — una data meteo disponibile — con il flusso di rischio AOI. La modalità dinamica valuta un intervallo di giorni mantenendo la sequenza meteo giornaliera. Entrambe usano la finestra meteo dalle 16:00 alle 17:00.",
-      "calcModeHintStatic": "Un solo giorno, scelto tra le date meteo disponibili.",
+      "calcModeHintStatic": "Il giorno più caldo di ogni anno disponibile.",
       "calcModeHintDynamic": "Un intervallo di giorni, valutato giorno per giorno.",
       "modelNameQuestion": "Come vuoi chiamare questo modello?",
       "calcModeQuestion": "Come deve essere calcolato il rischio?",
-      "periodQuestion": "Quale periodo deve valutare?"
+      "periodQuestion": "Quale periodo deve valutare?",
+      "calcModeStaticInfo": "La data è scelta automaticamente: per ogni anno disponibile, il giorno con la temperatura più alta registrata — il meteo peggiore di quell'anno. Valutata dalle 16:00 alle 17:00.",
+      "calcModeDynamicInfo": "Scegli tu l'intervallo e viene valutato esattamente così: ogni giorno è modellato con il proprio meteo e l'esecuzione restituisce il giorno di rischio massimo. Ogni giorno usa la finestra 16:00–17:00."
     },
     "layer2": {
       "purpose": "Seleziona un'intera regione amministrativa, disegna un'area o carica un confine GeoJSON.",
@@ -2076,7 +2078,11 @@
       "precomputedStaticMode": "Le mappe precalcolate esistono solo per le valutazioni dinamiche. Il modello calcolerà tutti i passaggi per la tua area.",
       "precomputedUnavailable": "L'analisi notturna non ha ancora elaborato questa data. Il modello calcolerà tutti i passaggi per la tua area.",
       "lockedByPrecomputed": "Inclusa nella mappa regionale precalcolata. Disattiva l'interruttore del precalcolo qui sopra per personalizzare i livelli.",
-      "signalsQuestion": "Quali segnali devono alimentare il modello di rischio?"
+      "signalsQuestion": "Quali segnali devono alimentare il modello di rischio?",
+      "precomputedInfoLabel": "Informazioni sulla mappa regionale precalcolata",
+      "fwiInfo": "L'Indice Meteorologico di Incendio combina vento, umidità relativa, temperatura e siccità in un'unica misura della facilità con cui un incendio si innescherebbe e si propagherebbe. Ha il peso maggiore perché il meteo cambia più rapidamente e condiziona di più il comportamento del fuoco.",
+      "terrainInfo": "Pendenza, quota ed esposizione determinano come si muove il fuoco: accelera in salita e i versanti soleggiati si asciugano prima. Derivato dal modello digitale del terreno della tua area.",
+      "historicalInfo": "Dove il fuoco è già passato tende a tornare, perché le cause di fondo — uso del suolo, accessi e fonti di innesco — persistono. Basato sugli incendi registrati nella zona."
     },
     "layer4": {
       "purpose": "Convalida in tempo reale della configurazione. I blocchi devono essere risolti nei rispettivi passaggi prima di eseguire il calcolo.",

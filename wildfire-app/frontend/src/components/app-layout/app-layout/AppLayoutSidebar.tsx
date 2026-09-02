@@ -46,7 +46,7 @@ export const AppLayoutSidebar: React.FC<AppLayoutSidebarProps> = ({
   getUserInitial,
 }) => {
   return (
-    <aside className="fixed left-0 bottom-0 bg-card border-r border-border shadow-lg z-[51] w-[var(--sidebar-width)] top-[var(--topbar-height)]">
+    <aside className="fixed left-0 bottom-0 bg-card border-r border-border z-[51] w-[var(--sidebar-width)] top-[var(--topbar-height)]">
       <div className="flex flex-col items-center gap-3 py-4">
         <Authorized>
           {sidebarItems.map((item) => (
@@ -61,7 +61,7 @@ export const AppLayoutSidebar: React.FC<AppLayoutSidebarProps> = ({
           ))}
         </Authorized>
 
-        {/* Keep the map tool separate from the primary navigation. */}
+        {/* Separate from navigation. */}
         <Authorized>
           <div className="w-6 h-px bg-border" />
         </Authorized>

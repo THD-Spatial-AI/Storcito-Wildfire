@@ -1994,11 +1994,13 @@
       "hottest": "Máis caloroso",
       "calcModeInfoLabel": "Que fai cada modo de cálculo",
       "calcModeInfo": "Estático avalía un só día —unha data meteorolóxica dispoñible— co fluxo de traballo de risco AOI. Dinámico avalía un rango de días e mantén a secuencia meteorolóxica diaria. Ambos usan a xanela meteorolóxica de 16:00 a 17:00.",
-      "calcModeHintStatic": "Un só día, elixido entre as datas meteorolóxicas dispoñibles.",
+      "calcModeHintStatic": "O día máis caloroso de cada ano dispoñible.",
       "calcModeHintDynamic": "Un rango de días, avaliado día a día.",
       "modelNameQuestion": "Como queres chamarlle a este modelo?",
       "calcModeQuestion": "Como se debe calcular o risco?",
-      "periodQuestion": "Que período debe avaliar?"
+      "periodQuestion": "Que período debe avaliar?",
+      "calcModeStaticInfo": "A data escóllese automaticamente: para cada ano dispoñible, o día que rexistrou a temperatura máis alta, é dicir, a meteoroloxía máis desfavorable dese ano. Avalíase de 16:00 a 17:00.",
+      "calcModeDynamicInfo": "Ti escolles o intervalo e avalíase tal cal: cada día modélase coa súa propia meteoroloxía e a execución devolve o día de risco máximo. Cada día usa a xanela de 16:00 a 17:00."
     },
     "layer2": {
       "purpose": "Selecciona unha rexión administrativa completa, debuxa unha área ou sobe un límite GeoJSON.",
@@ -2070,7 +2072,11 @@
       "precomputedStaticMode": "Os mapas precalculados só existen para avaliacións dinámicas. O modelo calculará todos os pasos para a túa área.",
       "precomputedUnavailable": "A análise nocturna aínda non procesou esta data. O modelo calculará todos os pasos para a túa área.",
       "lockedByPrecomputed": "Incluída no mapa rexional precalculado. Desactiva o interruptor de precalculado de arriba para personalizar as capas.",
-      "signalsQuestion": "Que sinais deben alimentar o modelo de risco?"
+      "signalsQuestion": "Que sinais deben alimentar o modelo de risco?",
+      "precomputedInfoLabel": "Sobre o mapa rexional precalculado",
+      "fwiInfo": "O Índice Meteorolóxico de Incendios combina vento, humidade relativa, temperatura e seca nunha única medida da facilidade coa que un lume comezaría e se propagaría. Ten o maior peso porque a meteoroloxía cambia máis rápido e condiciona máis o comportamento do lume.",
+      "terrainInfo": "A pendente, a altitude e a orientación determinan como se move o lume: acelera costa arriba e as ladeiras soleadas sécanse antes. Derívase do modelo dixital do terreo da túa área.",
+      "historicalInfo": "Onde xa houbo incendios adoita habelos de novo, porque as causas de fondo —usos do solo, accesos e fontes de ignición— persisten. Baséase nos incendios rexistrados na zona."
     },
     "layer4": {
       "purpose": "Validación en tempo real da configuración. Os bloqueos deben resolverse nos seus respectivos pasos antes de iniciar a execución.",

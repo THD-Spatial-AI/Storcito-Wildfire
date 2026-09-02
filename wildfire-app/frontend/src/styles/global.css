@@ -1,10 +1,10 @@
 /* Tailwind CSS directives */
 @import "tailwindcss";
 
-/* Use class-based dark mode instead of media query */
+/* Class-based dark mode. */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Include shared libraries for Tailwind to scan */
+/* Scan shared libs. */
 /* stylelint-disable-next-line at-rule-no-unknown */
 @source "../../../../libs/forms/src";
 /* stylelint-disable-next-line at-rule-no-unknown */
@@ -168,7 +168,7 @@
     @apply bg-blue-100 text-blue-900;
   }
 
-  /* Scrollbar styles for webkit browsers */
+  /* Webkit scrollbars. */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -187,7 +187,7 @@
   }
 }
 
-/* Component layer for reusable components */
+/* Component layer. */
 @layer components {
   /* Loading spinner */
   .spinner {
@@ -205,9 +205,9 @@
   }
 }
 
-/* Utility layer for custom utilities */
+/* Utility layer. */
 @layer utilities {
-  /* Hide scrollbar but keep functionality */
+  /* Hide scrollbar. */
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -217,7 +217,7 @@
     display: none;
   }
 
-  /* Safe area utilities for mobile */
+  /* Mobile safe areas. */
   .safe-top {
     padding-top: env(safe-area-inset-top);
   }
@@ -243,7 +243,7 @@
   display: none !important;
 }
 
-/* Smooth panel appear animation - expands from center */
+/* Panel appear. */
 @keyframes panel-appear {
   0% {
     opacity: 0;
@@ -260,7 +260,7 @@
   transform-origin: center center;
 }
 
-/* --- Model Dashboard: entrance motion & micro-interactions --- */
+/* Dashboard motion. */
 @keyframes md-fade-in {
   from {
     opacity: 0;
@@ -338,16 +338,13 @@
   }
 }
 
-/* The global *:focus rule strips focus outlines; restore an accessible,
-   palette-based focus ring scoped to the model dashboard. */
+/* Restore focus ring. */
 .md-scope :focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
 
-/* Landing page: scroll-reveal + micro-interactions.
-   In @layer components so Tailwind hover utilities (e.g. hover:-translate-y-2)
-   win the transform cascade and the card lift works after reveal. */
+/* Landing motion. */
 @layer components {
   .lp-reveal {
     opacity: 0;
@@ -389,7 +386,7 @@
   }
 }
 
-/* Login side panel heading: crisp two-step extrusion, no blur so the text stays sharp */
+/* Sharp extruded heading. */
 .auth-title-3d {
   text-shadow:
     0 1px 0 rgba(150, 150, 185, 0.9),
@@ -397,9 +394,9 @@
     0 3px 2px rgba(0, 0, 0, 0.35);
 }
 
-/* --- PREMIUM LANDING PAGE ANIMATIONS & DECORATIONS --- */
+/* Landing decorations. */
 
-/* Tech Grid Background Pattern */
+/* Grid background. */
 .lp-grid-pattern {
   background-size: 40px 40px;
   background-image:
@@ -407,7 +404,7 @@
     linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
 }
 
-/* Floating animation for App Mockup */
+/* Mockup float. */
 @keyframes float-y {
   0%,
   100% {
@@ -453,7 +450,7 @@
   animation: ping-slow 3s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
 
-/* Glowing text and buttons */
+/* Glow effects. */
 .btn-glow-amber {
   box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -463,7 +460,7 @@
   transform: translateY(-2px);
 }
 
-/* Slow drifting glow balls */
+/* Drifting glows. */
 @keyframes drift-glow {
   0%,
   100% {
@@ -535,7 +532,7 @@
   animation: spark-rise 6s infinite 0.1s;
 }
 
-/* Bento card hover glows */
+/* Card hover glow. */
 .bento-glow-card {
   position: relative;
   overflow: hidden;
@@ -568,7 +565,7 @@
   opacity: 1;
 }
 
-/* Light theme bento cards */
+/* Light bento cards. */
 .light-bento-card {
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.06);
@@ -599,7 +596,7 @@
   opacity: 1;
 }
 
-/* Responsive adjustments for 3D mockup transforms */
+/* Responsive mockup. */
 @media (max-width: 1023px) {
   .animate-float-mockup {
     animation: float-y-mobile 6s ease-in-out infinite;
@@ -616,7 +613,7 @@
     transform: translateY(-8px);
   }
 }
-/* Floating capsule header styling */
+/* Capsule header. */
 .floating-capsule-nav-container {
   margin-top: 16px;
   padding-left: 16px;
@@ -635,7 +632,7 @@
   transition: all 0.3s ease;
 }
 
-/* Premium Card light theme cards */
+/* Light theme cards. */
 .premium-glow-card {
   position: relative;
   border-radius: 24px;
@@ -654,7 +651,7 @@
     0 0 20px -2px rgba(245, 158, 11, 0.05);
 }
 
-/* Premium Card light theme card spot glow */
+/* Card spot glow. */
 .premium-glow-card::before {
   content: "";
   position: absolute;
@@ -696,4 +693,35 @@
   background: linear-gradient(135deg, #1e1b4b 0%, #2e2d52 60%, #4f46e5 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* Joyride dark mode. */
+.dark .react-joyride__tooltip {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+}
+
+.dark .react-joyride__tooltip h3,
+.dark .react-joyride__tooltip p,
+.dark .react-joyride__tooltip span {
+  color: var(--foreground) !important;
+}
+
+.dark .react-joyride__tooltip .text-gray-900 {
+  color: var(--foreground) !important;
+}
+
+.dark .react-joyride__tooltip .text-gray-600,
+.dark .react-joyride__tooltip .text-gray-500,
+.dark .react-joyride__tooltip .text-gray-700 {
+  color: var(--muted-foreground) !important;
+}
+
+.dark .react-joyride__tooltip .bg-gray-50,
+.dark .react-joyride__tooltip .bg-gray-100 {
+  background-color: var(--muted) !important;
+}
+
+.dark .react-joyride__tooltip .border-gray-200 {
+  border-color: var(--border) !important;
 }

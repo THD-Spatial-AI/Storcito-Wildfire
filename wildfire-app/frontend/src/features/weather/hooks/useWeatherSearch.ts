@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { geocodingService, GeocodingResult } from '@/features/interactive-map/services/geocoding';
+import { geocodingService, GeocodingResult } from '@/features/interactive-map';
 import { useWeatherLocationStore } from '@/features/weather/store/weather-location';
 
 export const useWeatherSearch = () => {

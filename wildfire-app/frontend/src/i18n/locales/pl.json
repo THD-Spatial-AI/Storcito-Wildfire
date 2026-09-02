@@ -1994,11 +1994,13 @@
       "hottest": "Najgorętszy",
       "calcModeInfoLabel": "Co robią tryby obliczeń",
       "calcModeInfo": "Tryb statyczny ocenia jeden dzień — jedną dostępną datę pogodową — w przepływie ryzyka AOI. Tryb dynamiczny ocenia zakres dni, zachowując dzienną sekwencję pogodową. Oba używają okna pogodowego 16:00–17:00.",
-      "calcModeHintStatic": "Jeden dzień, wybrany spośród dostępnych dat pogodowych.",
+      "calcModeHintStatic": "Najgorętszy dzień każdego dostępnego roku.",
       "calcModeHintDynamic": "Zakres dni, oceniany dzień po dniu.",
       "modelNameQuestion": "Jak chcesz nazwać ten model?",
       "calcModeQuestion": "Jak należy obliczyć ryzyko?",
-      "periodQuestion": "Jaki okres ma zostać oceniony?"
+      "periodQuestion": "Jaki okres ma zostać oceniony?",
+      "calcModeStaticInfo": "Data jest wybierana automatycznie: dla każdego dostępnego roku dzień o najwyższej zanotowanej temperaturze — najgorsza pogoda tego roku. Oceniana od 16:00 do 17:00.",
+      "calcModeDynamicInfo": "To Ty wybierasz zakres i jest on oceniany dokładnie tak, jak go wskazano: każdy dzień modelowany jest z własną pogodą, a obliczenia zwracają dzień o najwyższym ryzyku. Każdy dzień korzysta z okna 16:00–17:00."
     },
     "layer2": {
       "purpose": "Wybierz cały region administracyjny, narysuj obszar lub prześlij granicę GeoJSON.",
@@ -2076,7 +2078,11 @@
       "precomputedStaticMode": "Wstępnie obliczone mapy istnieją tylko dla ocen dynamicznych. Model obliczy wszystkie kroki dla Twojego obszaru.",
       "precomputedUnavailable": "Nocna analiza nie przetworzyła jeszcze tej daty. Model obliczy wszystkie kroki dla Twojego obszaru.",
       "lockedByPrecomputed": "Zawarta we wstępnie obliczonej mapie regionu. Wyłącz przełącznik powyżej, aby dostosować warstwy.",
-      "signalsQuestion": "Które sygnały mają zasilać model ryzyka?"
+      "signalsQuestion": "Które sygnały mają zasilać model ryzyka?",
+      "precomputedInfoLabel": "O wstępnie obliczonej mapie regionu",
+      "fwiInfo": "Wskaźnik zagrożenia pożarowego łączy wiatr, wilgotność względną, temperaturę i suszę w jedną miarę tego, jak łatwo pożar by powstał i się rozprzestrzenił. Ma największą wagę, bo pogoda zmienia się najszybciej i najsilniej kształtuje zachowanie ognia.",
+      "terrainInfo": "Nachylenie, wysokość i ekspozycja decydują o tym, jak porusza się ogień: przyspiesza pod górę, a stoki nasłonecznione szybciej wysychają. Wyliczane z cyfrowego modelu terenu Twojego obszaru.",
+      "historicalInfo": "Tam, gdzie już się paliło, zwykle pali się ponownie, bo przyczyny źródłowe — użytkowanie terenu, dostępność i źródła zapłonu — pozostają. Na podstawie zarejestrowanych wcześniejszych pożarów w okolicy."
     },
     "layer4": {
       "purpose": "Weryfikacja w czasie rzeczywistym. Blokady muszą zostać naprawione przed uruchomieniem.",

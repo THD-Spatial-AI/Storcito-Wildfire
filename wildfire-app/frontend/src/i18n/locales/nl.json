@@ -1994,11 +1994,13 @@
       "hottest": "Heetste",
       "calcModeInfoLabel": "Wat de rekenmodi doen",
       "calcModeInfo": "Statisch beoordeelt één dag — één beschikbare weerdatum — met de AOI-risicoworkflow. Dynamisch beoordeelt een reeks dagen en behoudt de dagelijkse weerreeks. Beide gebruiken het weervenster van 16:00 tot 17:00 uur.",
-      "calcModeHintStatic": "Eén dag, gekozen uit de beschikbare weerdata.",
+      "calcModeHintStatic": "De heetste dag van elk beschikbaar jaar.",
       "calcModeHintDynamic": "Een reeks dagen, dag voor dag beoordeeld.",
       "modelNameQuestion": "Hoe wilt u dit model noemen?",
       "calcModeQuestion": "Hoe moet het risico worden berekend?",
-      "periodQuestion": "Welke periode moet worden beoordeeld?"
+      "periodQuestion": "Welke periode moet worden beoordeeld?",
+      "calcModeStaticInfo": "De datum wordt automatisch gekozen: voor elk beschikbaar jaar de dag met de hoogst gemeten temperatuur — het ongunstigste weer van dat jaar. Beoordeeld van 16:00 tot 17:00 uur.",
+      "calcModeDynamicInfo": "U kiest de reeks en die wordt precies zo beoordeeld: elke dag wordt met zijn eigen weer gemodelleerd en de run geeft de dag met het hoogste risico terug. Elke dag gebruikt het venster 16:00–17:00 uur."
     },
     "layer2": {
       "purpose": "Selecteer een volledige administratieve regio, teken een gebied of upload een GeoJSON-grens.",
@@ -2076,7 +2078,11 @@
       "precomputedStaticMode": "Voorberekende kaarten bestaan alleen voor dynamische beoordelingen. Het model berekent alle stappen voor uw gebied.",
       "precomputedUnavailable": "De nachtelijke analyse heeft deze datum nog niet verwerkt. Het model berekent alle stappen voor uw gebied.",
       "lockedByPrecomputed": "Zit in de voorberekende regiokaart. Zet de schakelaar hierboven uit om lagen aan te passen.",
-      "signalsQuestion": "Welke signalen moeten het risicomodel voeden?"
+      "signalsQuestion": "Welke signalen moeten het risicomodel voeden?",
+      "precomputedInfoLabel": "Over de voorberekende regiokaart",
+      "fwiInfo": "De Fire Weather Index vat wind, relatieve vochtigheid, temperatuur en droogte samen in één maat voor hoe makkelijk een brand ontstaat en zich verspreidt. Hij weegt het zwaarst omdat het weer het snelst verandert en het brandgedrag het sterkst bepaalt.",
+      "terrainInfo": "Helling, hoogte en expositie bepalen hoe een brand zich beweegt: hij versnelt bergopwaarts en hellingen op het zuiden drogen sneller uit. Afgeleid van het digitale terreinmodel van uw gebied.",
+      "historicalInfo": "Waar het eerder heeft gebrand, brandt het vaak opnieuw, omdat de onderliggende oorzaken — landgebruik, toegankelijkheid en ontstekingsbronnen — blijven bestaan. Gebaseerd op geregistreerde eerdere branden in het gebied."
     },
     "layer4": {
       "purpose": "Realtime validatie van de modelconfiguratie. Blokkades moeten worden opgelost voordat de berekening start.",

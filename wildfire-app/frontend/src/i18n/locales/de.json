@@ -1994,11 +1994,13 @@
       "hottest": "Heißeste",
       "calcModeInfoLabel": "Was die Berechnungsmodi bewirken",
       "calcModeInfo": "Statisch bewertet einen einzelnen Tag – ein verfügbares Wetterdatum – mit dem AOI-Risiko-Workflow. Dynamisch bewertet einen Zeitraum und behält den täglichen Wetterverlauf bei. Beide nutzen das Wetterfenster von 16:00 bis 17:00 Uhr.",
-      "calcModeHintStatic": "Ein Tag, gewählt aus den verfügbaren Wetterdaten.",
+      "calcModeHintStatic": "Der heißeste Tag jedes verfügbaren Jahres.",
       "calcModeHintDynamic": "Ein Zeitraum, Tag für Tag bewertet.",
       "modelNameQuestion": "Wie soll dieses Modell heißen?",
       "calcModeQuestion": "Wie soll das Risiko berechnet werden?",
-      "periodQuestion": "Welchen Zeitraum soll es bewerten?"
+      "periodQuestion": "Welchen Zeitraum soll es bewerten?",
+      "calcModeStaticInfo": "Das Datum wird automatisch gewählt: für jedes verfügbare Jahr der Tag mit der höchsten gemessenen Temperatur — das ungünstigste Wetter dieses Jahres. Bewertet von 16:00 bis 17:00 Uhr.",
+      "calcModeDynamicInfo": "Sie wählen den Zeitraum, und er wird genau so bewertet: jeder Tag wird mit seinem eigenen Wetter modelliert und der Lauf liefert den Tag mit dem höchsten Risiko. Jeder Tag nutzt das Fenster 16:00–17:00 Uhr."
     },
     "layer2": {
       "purpose": "Wählen Sie eine vollständige Verwaltungsregion aus, zeichnen Sie ein Gebiet oder laden Sie eine GeoJSON-Grenze hoch.",
@@ -2076,7 +2078,11 @@
       "precomputedStaticMode": "Vorberechnete Karten gibt es nur für dynamische Bewertungen. Das Modell berechnet alle Schritte für Ihr Gebiet.",
       "precomputedUnavailable": "Die nächtliche Analyse hat dieses Datum noch nicht verarbeitet. Das Modell berechnet alle Schritte für Ihr Gebiet.",
       "lockedByPrecomputed": "In der vorberechneten Regionalkarte enthalten. Schalten Sie oben die Vorberechnung aus, um Ebenen anzupassen.",
-      "signalsQuestion": "Welche Signale sollen in das Risikomodell einfließen?"
+      "signalsQuestion": "Welche Signale sollen in das Risikomodell einfließen?",
+      "precomputedInfoLabel": "Über die vorberechnete Regionalkarte",
+      "fwiInfo": "Der Fire Weather Index fasst Wind, relative Luftfeuchte, Temperatur und Trockenheit zu einem Maß dafür zusammen, wie leicht ein Feuer entsteht und sich ausbreitet. Er hat das größte Gewicht, weil sich das Wetter am schnellsten ändert und das Feuerverhalten am stärksten bestimmt.",
+      "terrainInfo": "Hangneigung, Höhe und Exposition bestimmen, wie sich ein Feuer bewegt: Es beschleunigt bergauf, und sonnenzugewandte Hänge trocknen schneller aus. Abgeleitet aus dem digitalen Geländemodell Ihres Gebiets.",
+      "historicalInfo": "Wo es schon gebrannt hat, brennt es meist wieder, weil die zugrunde liegenden Ursachen — Landnutzung, Zugänglichkeit und Zündquellen — fortbestehen. Basiert auf erfassten früheren Bränden im Gebiet."
     },
     "layer4": {
       "purpose": "Echtzeit-Validierung der Modellkonfiguration. Blocker müssen in ihren jeweiligen Schritten behoben werden, bevor der Lauf gestartet werden kann.",
