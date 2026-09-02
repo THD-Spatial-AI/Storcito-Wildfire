@@ -1,5 +1,9 @@
 {
   "common": {
+    "choose": "Wybierz",
+    "aboutItem": "Informacje o {{label}}",
+    "removeItem": "Usuń {{label}}",
+    "processing": "Przetwarzanie…",
     "save": "Zapisz",
     "cancel": "Anuluj",
     "delete": "Usuń",
@@ -109,7 +113,8 @@
     "appName": "Ocena ryzyka pożarów",
     "saved": "Zapisano",
     "copy": "Kopiuj",
-    "copied": "Skopiowano"
+    "copied": "Skopiowano",
+    "done": "Gotowe"
   },
   "dashboard": {
     "stats": {
@@ -249,6 +254,7 @@
     }
   },
   "workspace": {
+    "selectorHint": "Wybierz lub utwórz obszar roboczy, aby uporządkować modele",
     "workspace": "Przestrzeń robocza",
     "workspaces": "Przestrzenie robocze",
     "selectWorkspace": "Wybierz przestrzeń roboczą",
@@ -1368,7 +1374,7 @@
     "legend": {
       "title": "Kontury mapy",
       "baseMap": "Szare linie: drogi i granice administracyjne z wybranej mapy podkładowej",
-      "availableRegions": "Indygowa przerywana: dostępne regiony administracyjne",
+      "availableRegions": "Linia przerywana: obszar objęty danymi o pożarach",
       "yourModels": "Zielony obszar: Twój najnowszy model — wybierz go, aby otworzyć wyniki",
       "zoomDetail": "Widok domyślny to Galicja; przy przybliżaniu mapa podkładowa pokazuje więcej szczegółów."
     },
@@ -1524,6 +1530,15 @@
       }
     },
     "moveModel": {
+      "title": "Przenieś model",
+      "titlePlural": "Przenieś modele",
+      "description": "Przenieś „{{title}}” do innego obszaru roboczego",
+      "descriptionPlural": "Przenieś {{count}} wybrane modele do innego obszaru roboczego",
+      "submitPlural": "Przenieś {{count}} modele",
+      "errorSelect": "Wybierz obszar roboczy",
+      "errorMove": "Nie udało się przenieść modelu. Spróbuj ponownie.",
+      "errorMovePlural": "Nie udało się przenieść modeli. Spróbuj ponownie.",
+      "noWorkspaces": "Brak innych obszarów roboczych. Najpierw utwórz nowy obszar roboczy.",
       "destination": {
         "title": "Miejsce Docelowe",
         "description": "Wybierz docelową przestrzeń roboczą dla modelu"
@@ -1900,6 +1915,23 @@
     "Vedra": "Vedra"
   },
   "configurator": {
+    "blocking": {
+      "modelName": "nazwę modelu",
+      "dateRange": "datę początkową i końcową",
+      "and": " i ",
+      "missingFields": "Dodaj {{missing}}, aby kontynuować.",
+      "staticLoading": "Ładowanie dostępnych dat statycznych.",
+      "staticEmpty": "Brak dostępnych dat statycznych.",
+      "staticSameDate": "Tryb statyczny wymaga tej samej daty początkowej i końcowej.",
+      "staticUnavailable": "Wybierz dostępną datę statyczną.",
+      "dynamicLoading": "Ładowanie dostępnych dat dynamicznych.",
+      "dynamicEmpty": "Brak dostępnych dat dynamicznych.",
+      "dynamicOrder": "Tryb dynamiczny wymaga, aby data początkowa była wcześniejsza lub równa dacie końcowej.",
+      "dynamicRange": "Wybierz w pełni dostępny zakres dat dynamicznych.",
+      "dtmOutside": "Obszar znajduje się poza zasięgiem przesłanego DTM. Przesuń go lub narysuj ponownie w obrębie zasięgu DTM widocznego na mapie albo usuń DTM."
+    },
+    "loadingModel": "Ładowanie modelu",
+    "loadingModelDesc": "Proszę czekać, trwa ładowanie modelu...",
     "registry": {
       "layer1Title": "Inicjalizacja Modelu",
       "layer1Subtitle": "Nazwa i czas symulacji",
@@ -1931,14 +1963,21 @@
       "step": "KROK"
     },
     "layer1": {
+      "suggestedNamesLabel": "Sugestie",
+      "suggestedName1": "Letnie ryzyko pożaru",
+      "suggestedName2": "Monitoring lasów nadmorskich",
+      "suggestedName3": "Ocena zboczy",
+      "suggestedName4": "Tygodniowa prognoza pożarów",
+      "noDates": "Brak dostępnych dat.",
+      "staticDateInfoAria": "Jak wybierana jest data statyczna",
       "purpose": "Nazwij tę symulację i wybierz przedział dat do oceny.",
       "nextStepHint": "Następnie nakreślisz obszar geograficzny na mapie.",
       "modelNameLabel": "Nazwa modelu",
       "modelNamePlaceholder": "np. Galicja Lato 2026 Ryzyko",
       "modelNameHint": "Opisowa nazwa, aby łatwiej odnaleźć ten model później.",
       "calcModeLabel": "Tryb obliczeń",
-      "calcModeStatic": "statyczny",
-      "calcModeDynamic": "dynamiczny",
+      "calcModeStatic": "Statyczny",
+      "calcModeDynamic": "Dynamiczny",
       "calcModeHint": "Statyczny używa workflow dla jednej daty. Dynamiczny zachowuje tryb dla workflow dynamicznego.",
       "staticHint": "Uruchomienia statyczne używają dostępnej daty, od 16:00 do 17:00.",
       "dynamicHint": "Uruchomienia dynamiczne zachowują zakres (od 16:00 do 17:00).",
@@ -1956,7 +1995,10 @@
       "calcModeInfoLabel": "Co robią tryby obliczeń",
       "calcModeInfo": "Tryb statyczny ocenia jeden dzień — jedną dostępną datę pogodową — w przepływie ryzyka AOI. Tryb dynamiczny ocenia zakres dni, zachowując dzienną sekwencję pogodową. Oba używają okna pogodowego 16:00–17:00.",
       "calcModeHintStatic": "Jeden dzień, wybrany spośród dostępnych dat pogodowych.",
-      "calcModeHintDynamic": "Zakres dni, oceniany dzień po dniu."
+      "calcModeHintDynamic": "Zakres dni, oceniany dzień po dniu.",
+      "modelNameQuestion": "Jak chcesz nazwać ten model?",
+      "calcModeQuestion": "Jak należy obliczyć ryzyko?",
+      "periodQuestion": "Jaki okres ma zostać oceniony?"
     },
     "layer2": {
       "purpose": "Wybierz cały region administracyjny, narysuj obszar lub prześlij granicę GeoJSON.",
@@ -2004,7 +2046,8 @@
       "regionNotFound": "Nie znaleziono tu granicy administracyjnej. Kliknij bardziej we wnętrzu regionu.",
       "regionLookupFailed": "Nie udało się wczytać granicy administracyjnej. Sprawdź połączenie i spróbuj ponownie.",
       "regionOutsideCoverage": "Ten punkt leży poza obszarem objętym danymi o pożarach. Kliknij wewnątrz zacienionego obszaru.",
-      "regionOutsideCoverageNamed": "Dane o pożarach są dostępne tylko dla: {{regions}}. Kliknij wewnątrz zacienionego obszaru."
+      "regionOutsideCoverageNamed": "Dane o pożarach są dostępne tylko dla: {{regions}}. Kliknij wewnątrz zacienionego obszaru.",
+      "areaModeQuestion": "Jak chcesz wyznaczyć obszar?"
     },
     "layer3": {
       "purpose": "Te sygnały zasilają model ryzyka. Wszystkie trzy są domyślnie włączone i zalecane do dokładnej oceny.",
@@ -2032,7 +2075,8 @@
       "precomputedRange": "Wstępnie obliczone mapy obejmują dokładnie jeden dzień — wybierz tę samą datę początkową i końcową, aby z niej skorzystać. Dla zakresu dat model obliczy każdy dzień dla Twojego obszaru i zwróci dzień o najwyższym ryzyku (~1-2 minuty).",
       "precomputedStaticMode": "Wstępnie obliczone mapy istnieją tylko dla ocen dynamicznych. Model obliczy wszystkie kroki dla Twojego obszaru.",
       "precomputedUnavailable": "Nocna analiza nie przetworzyła jeszcze tej daty. Model obliczy wszystkie kroki dla Twojego obszaru.",
-      "lockedByPrecomputed": "Zawarta we wstępnie obliczonej mapie regionu. Wyłącz przełącznik powyżej, aby dostosować warstwy."
+      "lockedByPrecomputed": "Zawarta we wstępnie obliczonej mapie regionu. Wyłącz przełącznik powyżej, aby dostosować warstwy.",
+      "signalsQuestion": "Które sygnały mają zasilać model ryzyka?"
     },
     "layer4": {
       "purpose": "Weryfikacja w czasie rzeczywistym. Blokady muszą zostać naprawione przed uruchomieniem.",
@@ -2111,6 +2155,10 @@
       "updateFailed": "Nie udało się zapisać modelu. Spróbuj ponownie.",
       "uploadFailed": "Model został zapisany, ale nie udało się przesłać jego plików wejściowych.",
       "calculationFailed": "Model został zapisany, ale nie udało się uruchomić obliczeń."
+    },
+    "wizard": {
+      "question": "Pytanie {{index}}",
+      "steps": "Kroki modelu"
     }
   },
   "apiTokens": {

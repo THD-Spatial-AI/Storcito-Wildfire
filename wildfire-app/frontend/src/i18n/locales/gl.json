@@ -8,6 +8,10 @@
     "resumeDrawing": "Seguir debuxando"
   },
   "common": {
+    "choose": "Escoller",
+    "aboutItem": "Acerca de {{label}}",
+    "removeItem": "Quitar {{label}}",
+    "processing": "Procesando…",
     "save": "Gardar",
     "cancel": "Cancelar",
     "delete": "Eliminar",
@@ -117,7 +121,8 @@
     "appName": "Avaliación do risco de incendio forestal",
     "saved": "Gardado",
     "copy": "Copiar",
-    "copied": "Copiado"
+    "copied": "Copiado",
+    "done": "Feito"
   },
   "forms": {
     "user": {
@@ -234,6 +239,15 @@
       }
     },
     "moveModel": {
+      "title": "Mover modelo",
+      "titlePlural": "Mover modelos",
+      "description": "Mover \"{{title}}\" a outro espazo de traballo",
+      "descriptionPlural": "Mover {{count}} modelos seleccionados a outro espazo de traballo",
+      "submitPlural": "Mover {{count}} modelos",
+      "errorSelect": "Selecciona un espazo de traballo",
+      "errorMove": "Non se puido mover o modelo. Téntao de novo.",
+      "errorMovePlural": "Non se puideron mover os modelos. Téntao de novo.",
+      "noWorkspaces": "Non hai outros espazos de traballo dispoñibles. Crea primeiro un novo espazo de traballo.",
       "destination": {
         "title": "Destino",
         "description": "Seleccione o espazo de traballo destino para o modelo"
@@ -406,6 +420,7 @@
     }
   },
   "workspace": {
+    "selectorHint": "Selecciona ou crea un espazo de traballo para organizar os teus modelos",
     "workspace": "Espazo de traballo",
     "workspaces": "Espazos de traballo",
     "selectWorkspace": "Seleccionar espazo de traballo",
@@ -1525,7 +1540,7 @@
     "legend": {
       "title": "Contornos do mapa",
       "baseMap": "Liñas grises: estradas e límites administrativos do mapa base seleccionado",
-      "availableRegions": "Índigo descontinuo: rexións administrativas dispoñibles",
+      "availableRegions": "Liña descontinua: zona con datos de lumes",
       "yourModels": "Área verde: o teu último modelo — selecciónao para abrir os resultados",
       "zoomDetail": "A vista predeterminada é Galicia; o mapa base mostra máis detalle ao achegalo."
     },
@@ -1900,6 +1915,23 @@
     "Vedra": "Vedra"
   },
   "configurator": {
+    "blocking": {
+      "modelName": "un nome de modelo",
+      "dateRange": "unha data de inicio e de fin",
+      "and": " e ",
+      "missingFields": "Engade {{missing}} para continuar.",
+      "staticLoading": "Cargando as datas estáticas dispoñibles.",
+      "staticEmpty": "Non hai datas estáticas dispoñibles actualmente.",
+      "staticSameDate": "O modo estático require a mesma data de inicio e de fin.",
+      "staticUnavailable": "Selecciona unha data estática dispoñible.",
+      "dynamicLoading": "Cargando as datas dinámicas dispoñibles.",
+      "dynamicEmpty": "Non hai datas dinámicas dispoñibles actualmente.",
+      "dynamicOrder": "O modo dinámico require que a data de inicio sexa anterior ou igual á de fin.",
+      "dynamicRange": "Selecciona un rango de datas dinámicas totalmente dispoñible.",
+      "dtmOutside": "A túa área está fóra da cobertura do DTM subido. Móvea ou debúxaa de novo dentro da pegada do DTM mostrada no mapa, ou elimina o DTM."
+    },
+    "loadingModel": "Cargando o modelo",
+    "loadingModelDesc": "Agarda mentres cargamos o teu modelo...",
     "registry": {
       "layer1Title": "Inicialización do modelo",
       "layer1Subtitle": "Nome e período de simulación",
@@ -1931,14 +1963,21 @@
       "step": "PASO"
     },
     "layer1": {
+      "suggestedNamesLabel": "Suxestións",
+      "suggestedName1": "Risco de lume estival",
+      "suggestedName2": "Vixilancia forestal costeira",
+      "suggestedName3": "Avaliación de ladeiras",
+      "suggestedName4": "Perspectiva semanal de lumes",
+      "noDates": "Non hai datas dispoñibles.",
+      "staticDateInfoAria": "Como se selecciona a data estática",
       "purpose": "Nomea esta simulación de incendio e elixe a xanela de datas que queres avaliar.",
       "nextStepHint": "A continuación, delinearás a área xeográfica no mapa.",
       "modelNameLabel": "Nome do modelo",
       "modelNamePlaceholder": "ex. Galicia Verán 2026 Risco de Incendio",
       "modelNameHint": "Para poder atopalo despois.",
       "calcModeLabel": "Modo de cálculo",
-      "calcModeStatic": "estático",
-      "calcModeDynamic": "dinámico",
+      "calcModeStatic": "Estático",
+      "calcModeDynamic": "Dinámico",
       "calcModeHint": "Estático usa o fluxo de traballo de risco AOI para unha data. Dinámico mantén o modo para o fluxo de traballo dinámico.",
       "staticHint": "As execucións estáticas usan unha data meteorolóxica dispoñible, de 16:00 a 17:00.",
       "dynamicHint": "As execucións dinámicas manteñen o rango seleccionado (xanela 16:00 a 17:00).",
@@ -1956,7 +1995,10 @@
       "calcModeInfoLabel": "Que fai cada modo de cálculo",
       "calcModeInfo": "Estático avalía un só día —unha data meteorolóxica dispoñible— co fluxo de traballo de risco AOI. Dinámico avalía un rango de días e mantén a secuencia meteorolóxica diaria. Ambos usan a xanela meteorolóxica de 16:00 a 17:00.",
       "calcModeHintStatic": "Un só día, elixido entre as datas meteorolóxicas dispoñibles.",
-      "calcModeHintDynamic": "Un rango de días, avaliado día a día."
+      "calcModeHintDynamic": "Un rango de días, avaliado día a día.",
+      "modelNameQuestion": "Como queres chamarlle a este modelo?",
+      "calcModeQuestion": "Como se debe calcular o risco?",
+      "periodQuestion": "Que período debe avaliar?"
     },
     "layer2": {
       "purpose": "Selecciona unha rexión administrativa completa, debuxa unha área ou sobe un límite GeoJSON.",
@@ -1998,7 +2040,8 @@
       "regionNotFound": "Non se atopou ningún límite administrativo aquí. Proba a facer clic máis cara ao interior da rexión.",
       "regionLookupFailed": "Non se puido cargar o límite administrativo. Comproba a túa conexión e téntao de novo.",
       "regionOutsideCoverage": "Ese punto está fóra da área con datos de incendios. Fai clic dentro da zona sombreada.",
-      "regionOutsideCoverageNamed": "Só hai datos de incendios para {{regions}}. Fai clic dentro da zona sombreada."
+      "regionOutsideCoverageNamed": "Só hai datos de incendios para {{regions}}. Fai clic dentro da zona sombreada.",
+      "areaModeQuestion": "Como queres definir a área?"
     },
     "layer3": {
       "purpose": "Estes sinais alimentan o modelo de risco ponderado por AHP. Os tres están activados por defecto e recoméndanse para unha avaliación precisa do risco de incendios forestais.",
@@ -2026,7 +2069,8 @@
       "precomputedRange": "Os mapas precalculados cobren exactamente un día: selecciona a mesma data de inicio e fin para usar un. Cun rango de datas, o modelo calcula cada día da túa área e devolve o día de risco máximo (~1-2 minutos).",
       "precomputedStaticMode": "Os mapas precalculados só existen para avaliacións dinámicas. O modelo calculará todos os pasos para a túa área.",
       "precomputedUnavailable": "A análise nocturna aínda non procesou esta data. O modelo calculará todos os pasos para a túa área.",
-      "lockedByPrecomputed": "Incluída no mapa rexional precalculado. Desactiva o interruptor de precalculado de arriba para personalizar as capas."
+      "lockedByPrecomputed": "Incluída no mapa rexional precalculado. Desactiva o interruptor de precalculado de arriba para personalizar as capas.",
+      "signalsQuestion": "Que sinais deben alimentar o modelo de risco?"
     },
     "layer4": {
       "purpose": "Validación en tempo real da configuración. Os bloqueos deben resolverse nos seus respectivos pasos antes de iniciar a execución.",
@@ -2105,6 +2149,10 @@
       "updateFailed": "Non se puido gardar o modelo. Téntao de novo.",
       "uploadFailed": "O modelo gardouse, pero non se puideron subir os seus ficheiros de entrada.",
       "calculationFailed": "O modelo gardouse, pero non se puido iniciar o cálculo."
+    },
+    "wizard": {
+      "question": "Pregunta {{index}}",
+      "steps": "Pasos do modelo"
     }
   },
   "apiTokens": {

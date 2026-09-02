@@ -8,6 +8,10 @@
     "resumeDrawing": "Reprendre le dessin"
   },
   "common": {
+    "choose": "Choisir",
+    "aboutItem": "À propos de {{label}}",
+    "removeItem": "Supprimer {{label}}",
+    "processing": "Traitement…",
     "save": "Enregistrer",
     "cancel": "Annuler",
     "delete": "Supprimer",
@@ -117,7 +121,8 @@
     "appName": "Évaluation du risque d'incendie de forêt",
     "saved": "Enregistré",
     "copy": "Copier",
-    "copied": "Copié"
+    "copied": "Copié",
+    "done": "Terminé"
   },
   "forms": {
     "user": {
@@ -234,6 +239,15 @@
       }
     },
     "moveModel": {
+      "title": "Déplacer le modèle",
+      "titlePlural": "Déplacer les modèles",
+      "description": "Déplacer « {{title}} » vers un autre espace de travail",
+      "descriptionPlural": "Déplacer {{count}} modèles sélectionnés vers un autre espace de travail",
+      "submitPlural": "Déplacer {{count}} modèles",
+      "errorSelect": "Veuillez sélectionner un espace de travail",
+      "errorMove": "Échec du déplacement du modèle. Veuillez réessayer.",
+      "errorMovePlural": "Échec du déplacement des modèles. Veuillez réessayer.",
+      "noWorkspaces": "Aucun autre espace de travail disponible. Créez d'abord un nouvel espace de travail.",
       "destination": {
         "title": "Destination",
         "description": "Sélectionnez l'espace de travail cible pour le modèle"
@@ -406,6 +420,7 @@
     }
   },
   "workspace": {
+    "selectorHint": "Sélectionnez ou créez un espace de travail pour organiser vos modèles",
     "workspace": "Espace de travail",
     "workspaces": "Espaces de travail",
     "selectWorkspace": "Sélectionner un espace de travail",
@@ -1525,7 +1540,7 @@
     "legend": {
       "title": "Contours de la carte",
       "baseMap": "Lignes grises : routes et limites administratives du fond de carte sélectionné",
-      "availableRegions": "Pointillés indigo : régions administratives disponibles",
+      "availableRegions": "Ligne en pointillés : zone couverte par les données d'incendie",
       "yourModels": "Zone verte : votre dernier modèle — sélectionnez-le pour ouvrir les résultats",
       "zoomDetail": "La vue par défaut est la Galice ; le fond de carte révèle plus de détails à mesure que vous zoomez."
     },
@@ -1900,6 +1915,23 @@
     "Vedra": "Vedra"
   },
   "configurator": {
+    "blocking": {
+      "modelName": "un nom de modèle",
+      "dateRange": "une date de début et de fin",
+      "and": " et ",
+      "missingFields": "Veuillez ajouter {{missing}} pour continuer.",
+      "staticLoading": "Chargement des dates statiques disponibles.",
+      "staticEmpty": "Aucune date statique n'est actuellement disponible.",
+      "staticSameDate": "Le mode statique exige la même date de début et de fin.",
+      "staticUnavailable": "Sélectionnez une date statique disponible.",
+      "dynamicLoading": "Chargement des dates dynamiques disponibles.",
+      "dynamicEmpty": "Aucune date dynamique n'est actuellement disponible.",
+      "dynamicOrder": "Le mode dynamique exige que la date de début soit antérieure ou égale à la date de fin.",
+      "dynamicRange": "Sélectionnez une plage de dates dynamiques entièrement disponible.",
+      "dtmOutside": "Votre zone est en dehors de la couverture du MNT téléversé. Déplacez-la ou redessinez-la dans l'emprise du MNT affichée sur la carte, ou supprimez le MNT."
+    },
+    "loadingModel": "Chargement du modèle",
+    "loadingModelDesc": "Veuillez patienter pendant le chargement de votre modèle...",
     "registry": {
       "layer1Title": "Initialisation du modèle",
       "layer1Subtitle": "Nom et période de simulation",
@@ -1931,14 +1963,21 @@
       "step": "ÉTAPE"
     },
     "layer1": {
+      "suggestedNamesLabel": "Suggestions",
+      "suggestedName1": "Risque d'incendie estival",
+      "suggestedName2": "Surveillance forestière côtière",
+      "suggestedName3": "Évaluation des versants",
+      "suggestedName4": "Perspective hebdomadaire des incendies",
+      "noDates": "Aucune date disponible.",
+      "staticDateInfoAria": "Comment la date statique est sélectionnée",
       "purpose": "Nommez cette simulation et choisissez la fenêtre de dates à évaluer.",
       "nextStepHint": "Ensuite, vous délimiterez la zone géographique sur la carte.",
       "modelNameLabel": "Nom du modèle",
       "modelNamePlaceholder": "ex. Galice Été 2026 Risque d'incendie",
       "modelNameHint": "Un nom descriptif pour retrouver ce modèle plus tard.",
       "calcModeLabel": "Mode de calcul",
-      "calcModeStatic": "statique",
-      "calcModeDynamic": "dynamique",
+      "calcModeStatic": "Statique",
+      "calcModeDynamic": "Dynamique",
       "calcModeHint": "Statique utilise le flux de travail pour une date. Dynamique conserve le mode sélectionné.",
       "staticHint": "Les exécutions statiques utilisent une date météo disponible, de 16h à 17h.",
       "dynamicHint": "Les exécutions dynamiques conservent la plage sélectionnée (16h à 17h).",
@@ -1956,7 +1995,10 @@
       "calcModeInfoLabel": "Ce que font les modes de calcul",
       "calcModeInfo": "Le mode statique évalue une seule journée — une date météo disponible — avec le flux de risque AOI. Le mode dynamique évalue une plage de jours en conservant la séquence météo quotidienne. Les deux utilisent la fenêtre météo de 16h00 à 17h00.",
       "calcModeHintStatic": "Une journée, choisie parmi les dates météo disponibles.",
-      "calcModeHintDynamic": "Une plage de jours, évaluée jour par jour."
+      "calcModeHintDynamic": "Une plage de jours, évaluée jour par jour.",
+      "modelNameQuestion": "Comment voulez-vous nommer ce modèle ?",
+      "calcModeQuestion": "Comment le risque doit-il être calculé ?",
+      "periodQuestion": "Quelle période doit-il évaluer ?"
     },
     "layer2": {
       "purpose": "Sélectionnez une région administrative complète, dessinez une zone ou importez une limite GeoJSON.",
@@ -2004,7 +2046,8 @@
       "regionNotFound": "Aucune limite administrative n'a été trouvée ici. Cliquez plus à l'intérieur de la région.",
       "regionLookupFailed": "Impossible de charger la limite administrative. Vérifiez votre connexion et réessayez.",
       "regionOutsideCoverage": "Ce point est en dehors de la zone couverte par les données incendie. Cliquez dans la zone ombrée.",
-      "regionOutsideCoverageNamed": "Les données incendie ne sont disponibles que pour {{regions}}. Cliquez dans la zone ombrée."
+      "regionOutsideCoverageNamed": "Les données incendie ne sont disponibles que pour {{regions}}. Cliquez dans la zone ombrée.",
+      "areaModeQuestion": "Comment voulez-vous définir la zone ?"
     },
     "layer3": {
       "purpose": "Ces signaux alimentent le modèle de risque pondéré AHP. Les trois sont activés par défaut et recommandés pour une évaluation précise.",
@@ -2032,7 +2075,8 @@
       "precomputedRange": "Les cartes précalculées couvrent exactement une journée : sélectionnez la même date de début et de fin pour en utiliser une. Sur une plage de dates, le modèle calcule chaque jour pour votre zone et renvoie le jour le plus à risque (~1-2 minutes).",
       "precomputedStaticMode": "Les cartes précalculées n'existent que pour les évaluations dynamiques. Le modèle calculera toutes les étapes pour votre zone.",
       "precomputedUnavailable": "L'analyse nocturne n'a pas encore traité cette date. Le modèle calculera toutes les étapes pour votre zone.",
-      "lockedByPrecomputed": "Incluse dans la carte régionale précalculée. Désactivez le commutateur précalculé ci-dessus pour personnaliser les couches."
+      "lockedByPrecomputed": "Incluse dans la carte régionale précalculée. Désactivez le commutateur précalculé ci-dessus pour personnaliser les couches.",
+      "signalsQuestion": "Quels signaux doivent alimenter le modèle de risque ?"
     },
     "layer4": {
       "purpose": "Validation en temps réel de la configuration. Les bloquants doivent être résolus dans leurs étapes respectives avant de lancer le calcul.",
@@ -2111,6 +2155,10 @@
       "updateFailed": "Le modèle n'a pas pu être enregistré. Veuillez réessayer.",
       "uploadFailed": "Le modèle a été enregistré, mais ses fichiers d'entrée n'ont pas pu être envoyés.",
       "calculationFailed": "Le modèle a été enregistré, mais le calcul n'a pas pu démarrer."
+    },
+    "wizard": {
+      "question": "Question {{index}}",
+      "steps": "Étapes du modèle"
     }
   },
   "apiTokens": {

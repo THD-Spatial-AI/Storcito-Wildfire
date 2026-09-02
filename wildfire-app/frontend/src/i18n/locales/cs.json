@@ -1,5 +1,9 @@
 {
   "common": {
+    "choose": "Vybrat",
+    "aboutItem": "O položce {{label}}",
+    "removeItem": "Odebrat {{label}}",
+    "processing": "Zpracování…",
     "save": "Uložit",
     "cancel": "Zrušit",
     "delete": "Smazat",
@@ -109,7 +113,8 @@
     "appName": "Hodnocení rizika požárů",
     "saved": "Uloženo",
     "copy": "Kopírovat",
-    "copied": "Zkopírováno"
+    "copied": "Zkopírováno",
+    "done": "Hotovo"
   },
   "dashboard": {
     "stats": {
@@ -249,6 +254,7 @@
     }
   },
   "workspace": {
+    "selectorHint": "Vyberte nebo vytvořte pracovní prostor pro organizaci modelů",
     "workspace": "Pracovní prostor",
     "workspaces": "Pracovní prostory",
     "selectWorkspace": "Vybrat pracovní prostor",
@@ -1368,7 +1374,7 @@
     "legend": {
       "title": "Obrysy mapy",
       "baseMap": "Šedé linie: silnice a správní hranice z vybrané podkladové mapy",
-      "availableRegions": "Indigová čárkovaná: dostupné správní regiony",
+      "availableRegions": "Čárkovaná čára: oblast s daty o požárech",
       "yourModels": "Zelená plocha: váš nejnovější model — vyberte jej pro zobrazení výsledků",
       "zoomDetail": "Výchozí pohled je Galicie; při přiblížení ukáže podkladová mapa více detailů."
     },
@@ -1524,6 +1530,15 @@
       }
     },
     "moveModel": {
+      "title": "Přesunout model",
+      "titlePlural": "Přesunout modely",
+      "description": "Přesunout „{{title}}“ do jiného pracovního prostoru",
+      "descriptionPlural": "Přesunout {{count}} vybrané modely do jiného pracovního prostoru",
+      "submitPlural": "Přesunout {{count}} modely",
+      "errorSelect": "Vyberte pracovní prostor",
+      "errorMove": "Model se nepodařilo přesunout. Zkuste to znovu.",
+      "errorMovePlural": "Modely se nepodařilo přesunout. Zkuste to znovu.",
+      "noWorkspaces": "Žádné další pracovní prostory nejsou k dispozici. Nejprve vytvořte nový pracovní prostor.",
       "destination": {
         "title": "Cíl",
         "description": "Vyberte cílový pracovní prostor pro model"
@@ -1900,6 +1915,23 @@
     "Vedra": "Vedra"
   },
   "configurator": {
+    "blocking": {
+      "modelName": "název modelu",
+      "dateRange": "počáteční a koncové datum",
+      "and": " a ",
+      "missingFields": "Pro pokračování přidejte {{missing}}.",
+      "staticLoading": "Načítání dostupných statických dat.",
+      "staticEmpty": "Momentálně nejsou k dispozici žádná statická data.",
+      "staticSameDate": "Statický režim vyžaduje stejné počáteční a koncové datum.",
+      "staticUnavailable": "Vyberte dostupné statické datum.",
+      "dynamicLoading": "Načítání dostupných dynamických dat.",
+      "dynamicEmpty": "Momentálně nejsou k dispozici žádná dynamická data.",
+      "dynamicOrder": "Dynamický režim vyžaduje, aby počáteční datum bylo před nebo rovno koncovému datu.",
+      "dynamicRange": "Vyberte plně dostupný rozsah dynamických dat.",
+      "dtmOutside": "Vaše oblast je mimo pokrytí nahraného DTM. Přesuňte ji nebo překreslete do obrysu DTM zobrazeného na mapě, případně DTM odeberte."
+    },
+    "loadingModel": "Načítání modelu",
+    "loadingModelDesc": "Počkejte prosím, než se model načte...",
     "registry": {
       "layer1Title": "Inicializace Modelu",
       "layer1Subtitle": "Název a doba simulace",
@@ -1931,14 +1963,21 @@
       "step": "KROK"
     },
     "layer1": {
+      "suggestedNamesLabel": "Návrhy",
+      "suggestedName1": "Letní riziko požáru",
+      "suggestedName2": "Sledování pobřežních lesů",
+      "suggestedName3": "Hodnocení svahů",
+      "suggestedName4": "Týdenní výhled požárů",
+      "noDates": "Nejsou k dispozici žádná data.",
+      "staticDateInfoAria": "Jak se vybírá statické datum",
       "purpose": "Pojmenujte tuto simulaci a vyberte časové okno.",
       "nextStepHint": "Následně vyznačíte geografickou oblast na mapě.",
       "modelNameLabel": "Název modelu",
       "modelNamePlaceholder": "např. Galicie Léto 2026 Riziko",
       "modelNameHint": "Popisný název, abyste model později snadno našli.",
       "calcModeLabel": "Režim výpočtu",
-      "calcModeStatic": "statický",
-      "calcModeDynamic": "dynamický",
+      "calcModeStatic": "Statický",
+      "calcModeDynamic": "Dynamický",
       "calcModeHint": "Statický používá workflow pro jedno datum. Dynamický zachová režim pro dynamický workflow.",
       "staticHint": "Statické běhy využívají dostupné datum od 16:00 do 17:00.",
       "dynamicHint": "Dynamické běhy zachovávají vybraný rozsah (okno 16:00 - 17:00).",
@@ -1956,7 +1995,10 @@
       "calcModeInfoLabel": "Co dělají režimy výpočtu",
       "calcModeInfo": "Statický režim vyhodnotí jeden den — jedno dostupné datum s počasím — pomocí postupu rizika AOI. Dynamický režim vyhodnotí rozsah dnů a zachová denní posloupnost počasí. Oba používají okno počasí 16:00–17:00.",
       "calcModeHintStatic": "Jeden den vybraný z dostupných dat s počasím.",
-      "calcModeHintDynamic": "Rozsah dnů vyhodnocený den po dni."
+      "calcModeHintDynamic": "Rozsah dnů vyhodnocený den po dni.",
+      "modelNameQuestion": "Jak chcete tento model pojmenovat?",
+      "calcModeQuestion": "Jak se má riziko počítat?",
+      "periodQuestion": "Jaké období se má vyhodnotit?"
     },
     "layer2": {
       "purpose": "Vyberte celý správní region, nakreslete oblast nebo nahrajte hranici GeoJSON.",
@@ -2004,7 +2046,8 @@
       "regionNotFound": "Zde nebyla nalezena žádná správní hranice. Zkuste kliknout více dovnitř regionu.",
       "regionLookupFailed": "Správní hranici se nepodařilo načíst. Zkontrolujte připojení a zkuste to znovu.",
       "regionOutsideCoverage": "Tento bod je mimo oblast s daty o požárech. Klikněte dovnitř vyšrafované plochy.",
-      "regionOutsideCoverageNamed": "Data o požárech jsou dostupná pouze pro {{regions}}. Klikněte dovnitř vyšrafované plochy."
+      "regionOutsideCoverageNamed": "Data o požárech jsou dostupná pouze pro {{regions}}. Klikněte dovnitř vyšrafované plochy.",
+      "areaModeQuestion": "Jak chcete vymezit oblast?"
     },
     "layer3": {
       "purpose": "Tyto signály napájejí model rizika. Všechny tři jsou ve výchozím nastavení povoleny a doporučují se pro přesné posouzení.",
@@ -2032,7 +2075,8 @@
       "precomputedRange": "Předpočítané mapy pokrývají přesně jeden den — vyberte stejné počáteční i koncové datum, abyste ji použili. U rozsahu dat model spočítá každý den pro vaši oblast a vrátí den s nejvyšším rizikem (~1-2 minuty).",
       "precomputedStaticMode": "Předpočítané mapy existují pouze pro dynamické posouzení. Model spočítá všechny kroky pro vaši oblast.",
       "precomputedUnavailable": "Noční analýza toto datum zatím nezpracovala. Model spočítá všechny kroky pro vaši oblast.",
-      "lockedByPrecomputed": "Zahrnuto v předpočítané regionální mapě. Vypněte přepínač předpočítání výše, chcete-li vrstvy upravit."
+      "lockedByPrecomputed": "Zahrnuto v předpočítané regionální mapě. Vypněte přepínač předpočítání výše, chcete-li vrstvy upravit.",
+      "signalsQuestion": "Které signály mají do modelu rizika vstupovat?"
     },
     "layer4": {
       "purpose": "Ověření konfigurace v reálném čase. Blokátory musí být odstraněny před spuštěním.",
@@ -2111,6 +2155,10 @@
       "updateFailed": "Model se nepodařilo uložit. Zkuste to prosím znovu.",
       "uploadFailed": "Model byl uložen, ale jeho vstupní soubory se nepodařilo nahrát.",
       "calculationFailed": "Model byl uložen, ale výpočet se nepodařilo spustit."
+    },
+    "wizard": {
+      "question": "Otázka {{index}}",
+      "steps": "Kroky modelu"
     }
   },
   "apiTokens": {

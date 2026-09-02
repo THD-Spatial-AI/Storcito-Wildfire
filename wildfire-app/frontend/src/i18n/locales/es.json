@@ -8,6 +8,10 @@
     "resumeDrawing": "Seguir dibujando"
   },
   "common": {
+    "choose": "Elegir",
+    "aboutItem": "Acerca de {{label}}",
+    "removeItem": "Quitar {{label}}",
+    "processing": "Procesando…",
     "save": "Guardar",
     "cancel": "Cancelar",
     "delete": "Eliminar",
@@ -117,7 +121,8 @@
     "appName": "Evaluación del riesgo de incendio forestal",
     "saved": "Guardado",
     "copy": "Copiar",
-    "copied": "Copiado"
+    "copied": "Copiado",
+    "done": "Hecho"
   },
   "forms": {
     "user": {
@@ -234,6 +239,15 @@
       }
     },
     "moveModel": {
+      "title": "Mover modelo",
+      "titlePlural": "Mover modelos",
+      "description": "Mover \"{{title}}\" a otro espacio de trabajo",
+      "descriptionPlural": "Mover {{count}} modelos seleccionados a otro espacio de trabajo",
+      "submitPlural": "Mover {{count}} modelos",
+      "errorSelect": "Selecciona un espacio de trabajo",
+      "errorMove": "No se pudo mover el modelo. Inténtalo de nuevo.",
+      "errorMovePlural": "No se pudieron mover los modelos. Inténtalo de nuevo.",
+      "noWorkspaces": "No hay otros espacios de trabajo disponibles. Crea primero un nuevo espacio de trabajo.",
       "destination": {
         "title": "Destino",
         "description": "Seleccione el espacio de trabajo destino para el modelo"
@@ -406,6 +420,7 @@
     }
   },
   "workspace": {
+    "selectorHint": "Selecciona o crea un espacio de trabajo para organizar tus modelos",
     "workspace": "Espacio de trabajo",
     "workspaces": "Espacios de trabajo",
     "selectWorkspace": "Seleccionar espacio de trabajo",
@@ -1525,7 +1540,7 @@
     "legend": {
       "title": "Contornos del mapa",
       "baseMap": "Líneas grises: carreteras y límites administrativos del mapa base seleccionado",
-      "availableRegions": "Índigo discontinuo: regiones administrativas disponibles",
+      "availableRegions": "Línea discontinua: zona con datos de incendios",
       "yourModels": "Área verde: tu último modelo — selecciónalo para abrir los resultados",
       "zoomDetail": "La vista predeterminada es Galicia; el mapa base muestra más detalle al acercarlo."
     },
@@ -1900,6 +1915,23 @@
     "Vedra": "Vedra"
   },
   "configurator": {
+    "blocking": {
+      "modelName": "un nombre de modelo",
+      "dateRange": "una fecha de inicio y de fin",
+      "and": " y ",
+      "missingFields": "Añade {{missing}} para continuar.",
+      "staticLoading": "Cargando fechas estáticas disponibles.",
+      "staticEmpty": "No hay fechas estáticas disponibles actualmente.",
+      "staticSameDate": "El modo estático requiere la misma fecha de inicio y de fin.",
+      "staticUnavailable": "Selecciona una fecha estática disponible.",
+      "dynamicLoading": "Cargando fechas dinámicas disponibles.",
+      "dynamicEmpty": "No hay fechas dinámicas disponibles actualmente.",
+      "dynamicOrder": "El modo dinámico requiere que la fecha de inicio sea anterior o igual a la de fin.",
+      "dynamicRange": "Selecciona un rango de fechas dinámicas totalmente disponible.",
+      "dtmOutside": "Tu área está fuera de la cobertura del DTM subido. Muévela o dibújala de nuevo dentro de la huella del DTM mostrada en el mapa, o elimina el DTM."
+    },
+    "loadingModel": "Cargando modelo",
+    "loadingModelDesc": "Espera mientras cargamos tu modelo...",
     "registry": {
       "layer1Title": "Inicialización del modelo",
       "layer1Subtitle": "Nombre y período de simulación",
@@ -1931,14 +1963,21 @@
       "step": "PASO"
     },
     "layer1": {
+      "suggestedNamesLabel": "Sugerencias",
+      "suggestedName1": "Riesgo de incendio estival",
+      "suggestedName2": "Vigilancia forestal costera",
+      "suggestedName3": "Evaluación de laderas",
+      "suggestedName4": "Perspectiva semanal de incendios",
+      "noDates": "No hay fechas disponibles.",
+      "staticDateInfoAria": "Cómo se selecciona la fecha estática",
       "purpose": "Nombra esta simulación de incendio y elige la ventana de fechas que quieres evaluar.",
       "nextStepHint": "A continuación, delinearás el área geográfica en el mapa.",
       "modelNameLabel": "Nombre del modelo",
       "modelNamePlaceholder": "ej. Galicia Verano 2026 Riesgo de Incendio",
       "modelNameHint": "Para poder encontrarlo después.",
       "calcModeLabel": "Modo de cálculo",
-      "calcModeStatic": "estático",
-      "calcModeDynamic": "dinámico",
+      "calcModeStatic": "Estático",
+      "calcModeDynamic": "Dinámico",
       "calcModeHint": "Estático usa el flujo de trabajo de riesgo AOI para una fecha. Dinámico mantiene el modo para el flujo de trabajo dinámico.",
       "staticHint": "Las ejecuciones estáticas usan una fecha meteorológica disponible, de 16:00 a 17:00.",
       "dynamicHint": "Las ejecuciones dinámicas mantienen el rango seleccionado (ventana 16:00 a 17:00).",
@@ -1956,7 +1995,10 @@
       "calcModeInfoLabel": "Qué hace cada modo de cálculo",
       "calcModeInfo": "Estático evalúa un solo día —una fecha meteorológica disponible— con el flujo de trabajo de riesgo AOI. Dinámico evalúa un rango de días y mantiene la secuencia meteorológica diaria. Ambos usan la ventana meteorológica de 16:00 a 17:00.",
       "calcModeHintStatic": "Un solo día, elegido entre las fechas meteorológicas disponibles.",
-      "calcModeHintDynamic": "Un rango de días, evaluado día a día."
+      "calcModeHintDynamic": "Un rango de días, evaluado día a día.",
+      "modelNameQuestion": "¿Cómo quieres llamar a este modelo?",
+      "calcModeQuestion": "¿Cómo se debe calcular el riesgo?",
+      "periodQuestion": "¿Qué periodo debe evaluar?"
     },
     "layer2": {
       "purpose": "Selecciona una región administrativa completa, dibuja un área o sube un límite GeoJSON.",
@@ -2004,7 +2046,8 @@
       "regionNotFound": "No se encontró ningún límite administrativo aquí. Prueba a hacer clic más hacia el interior de la región.",
       "regionLookupFailed": "No se pudo cargar el límite administrativo. Comprueba tu conexión e inténtalo de nuevo.",
       "regionOutsideCoverage": "Ese punto está fuera del área con datos de incendios. Haz clic dentro de la zona sombreada.",
-      "regionOutsideCoverageNamed": "Solo hay datos de incendios para {{regions}}. Haz clic dentro de la zona sombreada."
+      "regionOutsideCoverageNamed": "Solo hay datos de incendios para {{regions}}. Haz clic dentro de la zona sombreada.",
+      "areaModeQuestion": "¿Cómo quieres definir el área?"
     },
     "layer3": {
       "purpose": "Estas señales alimentan el modelo de riesgo ponderado por AHP. Las tres están habilitadas por defecto y se recomiendan para una evaluación precisa del riesgo de incendios forestales.",
@@ -2032,7 +2075,8 @@
       "precomputedRange": "Los mapas precalculados cubren exactamente un día: selecciona la misma fecha de inicio y fin para usar uno. Con un rango de fechas, el modelo calcula cada día de tu área y devuelve el día de riesgo máximo (~1-2 minutos).",
       "precomputedStaticMode": "Los mapas precalculados solo existen para evaluaciones dinámicas. El modelo calculará todos los pasos para tu área.",
       "precomputedUnavailable": "El análisis nocturno aún no ha procesado esta fecha. El modelo calculará todos los pasos para tu área.",
-      "lockedByPrecomputed": "Incluida en el mapa regional precalculado. Desactiva el interruptor de precalculado de arriba para personalizar las capas."
+      "lockedByPrecomputed": "Incluida en el mapa regional precalculado. Desactiva el interruptor de precalculado de arriba para personalizar las capas.",
+      "signalsQuestion": "¿Qué señales deben alimentar el modelo de riesgo?"
     },
     "layer4": {
       "purpose": "Validación en tiempo real de la configuración. Los bloqueos deben resolverse en sus respectivos pasos antes de iniciar la ejecución.",
@@ -2111,6 +2155,10 @@
       "updateFailed": "No se pudo guardar el modelo. Inténtalo de nuevo.",
       "uploadFailed": "El modelo se guardó, pero no se pudieron subir sus archivos de entrada.",
       "calculationFailed": "El modelo se guardó, pero no se pudo iniciar el cálculo."
+    },
+    "wizard": {
+      "question": "Pregunta {{index}}",
+      "steps": "Pasos del modelo"
     }
   },
   "apiTokens": {

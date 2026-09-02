@@ -8,6 +8,10 @@
     "resumeDrawing": "Weiter zeichnen"
   },
   "common": {
+    "choose": "Auswählen",
+    "aboutItem": "Über {{label}}",
+    "removeItem": "{{label}} entfernen",
+    "processing": "Verarbeitung…",
     "save": "Speichern",
     "cancel": "Abbrechen",
     "delete": "Löschen",
@@ -117,7 +121,8 @@
     "appName": "Waldbrandrisikobewertung",
     "saved": "Gespeichert",
     "copy": "Kopieren",
-    "copied": "Kopiert"
+    "copied": "Kopiert",
+    "done": "Fertig"
   },
   "forms": {
     "user": {
@@ -234,6 +239,15 @@
       }
     },
     "moveModel": {
+      "title": "Modell verschieben",
+      "titlePlural": "Modelle verschieben",
+      "description": "\"{{title}}\" in einen anderen Arbeitsbereich verschieben",
+      "descriptionPlural": "{{count}} ausgewählte Modelle in einen anderen Arbeitsbereich verschieben",
+      "submitPlural": "{{count}} Modelle verschieben",
+      "errorSelect": "Bitte wählen Sie einen Arbeitsbereich",
+      "errorMove": "Modell konnte nicht verschoben werden. Bitte erneut versuchen.",
+      "errorMovePlural": "Modelle konnten nicht verschoben werden. Bitte erneut versuchen.",
+      "noWorkspaces": "Keine weiteren Arbeitsbereiche verfügbar. Erstellen Sie zuerst einen neuen Arbeitsbereich.",
       "destination": {
         "title": "Ziel",
         "description": "Zielarbeitsbereich für das Modell auswählen"
@@ -406,6 +420,7 @@
     }
   },
   "workspace": {
+    "selectorHint": "Wählen oder erstellen Sie einen Arbeitsbereich, um Ihre Modelle zu organisieren",
     "workspace": "Arbeitsbereich",
     "workspaces": "Arbeitsbereiche",
     "selectWorkspace": "Arbeitsbereich auswählen",
@@ -1525,7 +1540,7 @@
     "legend": {
       "title": "Kartenumrisse",
       "baseMap": "Graue Linien: Straßen und Verwaltungsgrenzen der gewählten Basiskarte",
-      "availableRegions": "Indigo gestrichelt: verfügbare Verwaltungsregionen",
+      "availableRegions": "Gestrichelte Linie: Gebiet mit Waldbranddaten",
       "yourModels": "Grüne Fläche: Ihr neuestes Modell – auswählen, um die Ergebnisse zu öffnen",
       "zoomDetail": "Die Standardansicht ist Galicien; beim Hineinzoomen zeigt die Basiskarte mehr Details."
     },
@@ -1900,6 +1915,23 @@
     "Vedra": "Vedra"
   },
   "configurator": {
+    "blocking": {
+      "modelName": "einen Modellnamen",
+      "dateRange": "ein Start- und Enddatum",
+      "and": " und ",
+      "missingFields": "Bitte fügen Sie {{missing}} hinzu, um fortzufahren.",
+      "staticLoading": "Verfügbare statische Daten werden geladen.",
+      "staticEmpty": "Derzeit sind keine statischen Daten verfügbar.",
+      "staticSameDate": "Der statische Modus erfordert dasselbe Start- und Enddatum.",
+      "staticUnavailable": "Wählen Sie ein verfügbares statisches Datum.",
+      "dynamicLoading": "Verfügbare dynamische Daten werden geladen.",
+      "dynamicEmpty": "Derzeit sind keine dynamischen Daten verfügbar.",
+      "dynamicOrder": "Im dynamischen Modus muss das Startdatum vor oder am Enddatum liegen.",
+      "dynamicRange": "Wählen Sie einen vollständig verfügbaren dynamischen Datumsbereich.",
+      "dtmOutside": "Ihr Gebiet liegt außerhalb der Abdeckung des hochgeladenen DTM. Verschieben Sie es in den auf der Karte angezeigten DTM-Footprint oder entfernen Sie das DTM."
+    },
+    "loadingModel": "Modell wird geladen",
+    "loadingModelDesc": "Bitte warten Sie, während Ihr Modell geladen wird...",
     "registry": {
       "layer1Title": "Modell-Initialisierung",
       "layer1Subtitle": "Name und Simulationszeitraum",
@@ -1931,6 +1963,13 @@
       "step": "SCHRITT"
     },
     "layer1": {
+      "suggestedNamesLabel": "Vorschläge",
+      "suggestedName1": "Sommer-Brandrisiko",
+      "suggestedName2": "Küstenwald-Beobachtung",
+      "suggestedName3": "Hanglagen-Bewertung",
+      "suggestedName4": "Wöchentliche Brandprognose",
+      "noDates": "Keine Daten verfügbar.",
+      "staticDateInfoAria": "Wie das statische Datum ausgewählt wird",
       "purpose": "Benennen Sie diese Waldbrandsimulation und wählen Sie den Zeitraum.",
       "nextStepHint": "Als nächstes zeichnen Sie das geografische Gebiet auf der Karte ein.",
       "modelNameLabel": "Modellname",
@@ -1956,7 +1995,10 @@
       "calcModeInfoLabel": "Was die Berechnungsmodi bewirken",
       "calcModeInfo": "Statisch bewertet einen einzelnen Tag – ein verfügbares Wetterdatum – mit dem AOI-Risiko-Workflow. Dynamisch bewertet einen Zeitraum und behält den täglichen Wetterverlauf bei. Beide nutzen das Wetterfenster von 16:00 bis 17:00 Uhr.",
       "calcModeHintStatic": "Ein Tag, gewählt aus den verfügbaren Wetterdaten.",
-      "calcModeHintDynamic": "Ein Zeitraum, Tag für Tag bewertet."
+      "calcModeHintDynamic": "Ein Zeitraum, Tag für Tag bewertet.",
+      "modelNameQuestion": "Wie soll dieses Modell heißen?",
+      "calcModeQuestion": "Wie soll das Risiko berechnet werden?",
+      "periodQuestion": "Welchen Zeitraum soll es bewerten?"
     },
     "layer2": {
       "purpose": "Wählen Sie eine vollständige Verwaltungsregion aus, zeichnen Sie ein Gebiet oder laden Sie eine GeoJSON-Grenze hoch.",
@@ -2004,7 +2046,8 @@
       "regionNotFound": "Hier wurde keine Verwaltungsgrenze gefunden. Klicken Sie weiter innerhalb der Region.",
       "regionLookupFailed": "Die Verwaltungsgrenze konnte nicht geladen werden. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
       "regionOutsideCoverage": "Dieser Punkt liegt außerhalb des Gebiets mit Waldbranddaten. Klicken Sie in die schattierte Fläche.",
-      "regionOutsideCoverageNamed": "Waldbranddaten gibt es nur für {{regions}}. Klicken Sie in die schattierte Fläche."
+      "regionOutsideCoverageNamed": "Waldbranddaten gibt es nur für {{regions}}. Klicken Sie in die schattierte Fläche.",
+      "areaModeQuestion": "Wie möchten Sie das Gebiet festlegen?"
     },
     "layer3": {
       "purpose": "Diese Signale speisen das AHP-gewichtete Risikomodell. Alle drei sind standardmäßig aktiviert und für eine genaue Waldbrandrisikobewertung empfohlen.",
@@ -2032,7 +2075,8 @@
       "precomputedRange": "Vorberechnete Karten decken genau einen Tag ab – wählen Sie dasselbe Start- und Enddatum, um eine zu nutzen. Bei einem Zeitraum berechnet das Modell jeden Tag für Ihr Gebiet und liefert den Tag mit dem höchsten Risiko (~1–2 Minuten).",
       "precomputedStaticMode": "Vorberechnete Karten gibt es nur für dynamische Bewertungen. Das Modell berechnet alle Schritte für Ihr Gebiet.",
       "precomputedUnavailable": "Die nächtliche Analyse hat dieses Datum noch nicht verarbeitet. Das Modell berechnet alle Schritte für Ihr Gebiet.",
-      "lockedByPrecomputed": "In der vorberechneten Regionalkarte enthalten. Schalten Sie oben die Vorberechnung aus, um Ebenen anzupassen."
+      "lockedByPrecomputed": "In der vorberechneten Regionalkarte enthalten. Schalten Sie oben die Vorberechnung aus, um Ebenen anzupassen.",
+      "signalsQuestion": "Welche Signale sollen in das Risikomodell einfließen?"
     },
     "layer4": {
       "purpose": "Echtzeit-Validierung der Modellkonfiguration. Blocker müssen in ihren jeweiligen Schritten behoben werden, bevor der Lauf gestartet werden kann.",
@@ -2111,6 +2155,10 @@
       "updateFailed": "Das Modell konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
       "uploadFailed": "Das Modell wurde gespeichert, seine Eingabedateien konnten aber nicht hochgeladen werden.",
       "calculationFailed": "Das Modell wurde gespeichert, die Berechnung konnte aber nicht gestartet werden."
+    },
+    "wizard": {
+      "question": "Frage {{index}}",
+      "steps": "Modellschritte"
     }
   },
   "apiTokens": {

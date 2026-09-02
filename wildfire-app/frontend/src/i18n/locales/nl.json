@@ -1,5 +1,9 @@
 {
   "common": {
+    "choose": "Kiezen",
+    "aboutItem": "Over {{label}}",
+    "removeItem": "{{label}} verwijderen",
+    "processing": "Verwerken…",
     "save": "Opslaan",
     "cancel": "Annuleren",
     "delete": "Verwijderen",
@@ -109,7 +113,8 @@
     "appName": "Beoordeling van bosbrandrisico",
     "saved": "Opgeslagen",
     "copy": "Kopiëren",
-    "copied": "Gekopieerd"
+    "copied": "Gekopieerd",
+    "done": "Klaar"
   },
   "dashboard": {
     "stats": {
@@ -249,6 +254,7 @@
     }
   },
   "workspace": {
+    "selectorHint": "Selecteer of maak een werkruimte om uw modellen te organiseren",
     "workspace": "Werkruimte",
     "workspaces": "Werkruimtes",
     "selectWorkspace": "Werkruimte selecteren",
@@ -1368,7 +1374,7 @@
     "legend": {
       "title": "Kaartcontouren",
       "baseMap": "Grijze lijnen: wegen en bestuurlijke grenzen van de gekozen achtergrondkaart",
-      "availableRegions": "Indigo streepjes: beschikbare bestuurlijke regio's",
+      "availableRegions": "Gestippelde lijn: gebied met bosbrandgegevens",
       "yourModels": "Groen gebied: uw nieuwste model — selecteer het om de resultaten te openen",
       "zoomDetail": "De standaardweergave is Galicië; bij inzoomen toont de achtergrondkaart meer detail."
     },
@@ -1524,6 +1530,15 @@
       }
     },
     "moveModel": {
+      "title": "Model verplaatsen",
+      "titlePlural": "Modellen verplaatsen",
+      "description": "\"{{title}}\" naar een andere werkruimte verplaatsen",
+      "descriptionPlural": "{{count}} geselecteerde modellen naar een andere werkruimte verplaatsen",
+      "submitPlural": "{{count}} modellen verplaatsen",
+      "errorSelect": "Selecteer een werkruimte",
+      "errorMove": "Model verplaatsen mislukt. Probeer het opnieuw.",
+      "errorMovePlural": "Modellen verplaatsen mislukt. Probeer het opnieuw.",
+      "noWorkspaces": "Geen andere werkruimtes beschikbaar. Maak eerst een nieuwe werkruimte aan.",
       "destination": {
         "title": "Bestemming",
         "description": "Selecteer de doelwerkruimte voor het model"
@@ -1900,6 +1915,23 @@
     "Vedra": "Vedra"
   },
   "configurator": {
+    "blocking": {
+      "modelName": "een modelnaam",
+      "dateRange": "een begin- en einddatum",
+      "and": " en ",
+      "missingFields": "Voeg {{missing}} toe om door te gaan.",
+      "staticLoading": "Beschikbare statische datums laden.",
+      "staticEmpty": "Er zijn momenteel geen statische datums beschikbaar.",
+      "staticSameDate": "De statische modus vereist dezelfde begin- en einddatum.",
+      "staticUnavailable": "Selecteer een beschikbare statische datum.",
+      "dynamicLoading": "Beschikbare dynamische datums laden.",
+      "dynamicEmpty": "Er zijn momenteel geen dynamische datums beschikbaar.",
+      "dynamicOrder": "De dynamische modus vereist dat de begindatum voor of op de einddatum ligt.",
+      "dynamicRange": "Selecteer een volledig beschikbaar dynamisch datumbereik.",
+      "dtmOutside": "Uw gebied ligt buiten de dekking van het geüploade DTM. Verplaats of herteken het binnen de DTM-footprint op de kaart, of verwijder het DTM."
+    },
+    "loadingModel": "Model laden",
+    "loadingModelDesc": "Even geduld terwijl we uw model laden...",
     "registry": {
       "layer1Title": "Model Initialisatie",
       "layer1Subtitle": "Naam en simulatieperiode",
@@ -1931,14 +1963,21 @@
       "step": "STAP"
     },
     "layer1": {
+      "suggestedNamesLabel": "Suggesties",
+      "suggestedName1": "Zomerbrandrisico",
+      "suggestedName2": "Kustbosbewaking",
+      "suggestedName3": "Hellingsbeoordeling",
+      "suggestedName4": "Wekelijkse brandverwachting",
+      "noDates": "Geen datums beschikbaar.",
+      "staticDateInfoAria": "Hoe de statische datum wordt geselecteerd",
       "purpose": "Geef deze simulatie een naam en kies de gewenste datumvenster.",
       "nextStepHint": "Hierna tekent u het geografische gebied op de kaart.",
       "modelNameLabel": "Modelnaam",
       "modelNamePlaceholder": "bijv. Galicië Zomer 2026 Risico",
       "modelNameHint": "Een beschrijvende naam zodat u dit model later kunt terugvinden.",
       "calcModeLabel": "Berekeningsmodus",
-      "calcModeStatic": "statisch",
-      "calcModeDynamic": "dynamisch",
+      "calcModeStatic": "Statisch",
+      "calcModeDynamic": "Dynamisch",
       "calcModeHint": "Statisch gebruikt de workflow voor één datum. Dynamisch behoudt de modus voor de dynamische workflow.",
       "staticHint": "Statische runs gebruiken één beschikbare weerdatum, van 16:00 tot 17:00.",
       "dynamicHint": "Dynamische runs behouden het geselecteerde bereik (venster 16:00 - 17:00).",
@@ -1956,7 +1995,10 @@
       "calcModeInfoLabel": "Wat de rekenmodi doen",
       "calcModeInfo": "Statisch beoordeelt één dag — één beschikbare weerdatum — met de AOI-risicoworkflow. Dynamisch beoordeelt een reeks dagen en behoudt de dagelijkse weerreeks. Beide gebruiken het weervenster van 16:00 tot 17:00 uur.",
       "calcModeHintStatic": "Eén dag, gekozen uit de beschikbare weerdata.",
-      "calcModeHintDynamic": "Een reeks dagen, dag voor dag beoordeeld."
+      "calcModeHintDynamic": "Een reeks dagen, dag voor dag beoordeeld.",
+      "modelNameQuestion": "Hoe wilt u dit model noemen?",
+      "calcModeQuestion": "Hoe moet het risico worden berekend?",
+      "periodQuestion": "Welke periode moet worden beoordeeld?"
     },
     "layer2": {
       "purpose": "Selecteer een volledige administratieve regio, teken een gebied of upload een GeoJSON-grens.",
@@ -2004,7 +2046,8 @@
       "regionNotFound": "Hier is geen bestuurlijke grens gevonden. Klik verder binnen de regio.",
       "regionLookupFailed": "De bestuurlijke grens kan niet worden geladen. Controleer uw verbinding en probeer het opnieuw.",
       "regionOutsideCoverage": "Dit punt ligt buiten het gebied met brandgegevens. Klik in het gearceerde gebied.",
-      "regionOutsideCoverageNamed": "Brandgegevens zijn alleen beschikbaar voor {{regions}}. Klik in het gearceerde gebied."
+      "regionOutsideCoverageNamed": "Brandgegevens zijn alleen beschikbaar voor {{regions}}. Klik in het gearceerde gebied.",
+      "areaModeQuestion": "Hoe wilt u het gebied bepalen?"
     },
     "layer3": {
       "purpose": "Deze signalen voeden het AHP-gewogen risicomodel. Alle drie zijn standaard ingeschakeld en aanbevolen voor een nauwkeurige beoordeling.",
@@ -2032,7 +2075,8 @@
       "precomputedRange": "Voorberekende kaarten beslaan precies één dag — kies dezelfde begin- en einddatum om er een te gebruiken. Bij een reeks dagen berekent het model elke dag voor uw gebied en geeft het de dag met het hoogste risico terug (~1-2 minuten).",
       "precomputedStaticMode": "Voorberekende kaarten bestaan alleen voor dynamische beoordelingen. Het model berekent alle stappen voor uw gebied.",
       "precomputedUnavailable": "De nachtelijke analyse heeft deze datum nog niet verwerkt. Het model berekent alle stappen voor uw gebied.",
-      "lockedByPrecomputed": "Zit in de voorberekende regiokaart. Zet de schakelaar hierboven uit om lagen aan te passen."
+      "lockedByPrecomputed": "Zit in de voorberekende regiokaart. Zet de schakelaar hierboven uit om lagen aan te passen.",
+      "signalsQuestion": "Welke signalen moeten het risicomodel voeden?"
     },
     "layer4": {
       "purpose": "Realtime validatie van de modelconfiguratie. Blokkades moeten worden opgelost voordat de berekening start.",
@@ -2111,6 +2155,10 @@
       "updateFailed": "Het model kon niet worden opgeslagen. Probeer het opnieuw.",
       "uploadFailed": "Het model is opgeslagen, maar de invoerbestanden konden niet worden geüpload.",
       "calculationFailed": "Het model is opgeslagen, maar de berekening kon niet worden gestart."
+    },
+    "wizard": {
+      "question": "Vraag {{index}}",
+      "steps": "Modelstappen"
     }
   },
   "apiTokens": {

@@ -8,6 +8,10 @@
     "resumeDrawing": "Resume drawing"
   },
   "common": {
+    "choose": "Choose",
+    "aboutItem": "About {{label}}",
+    "removeItem": "Remove {{label}}",
+    "processing": "Processing…",
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
@@ -117,7 +121,8 @@
     "appName": "Wildfire Risk Assessment",
     "saved": "Saved",
     "copy": "Copy",
-    "copied": "Copied"
+    "copied": "Copied",
+    "done": "Done"
   },
   "forms": {
     "user": {
@@ -234,6 +239,15 @@
       }
     },
     "moveModel": {
+      "title": "Move Model",
+      "titlePlural": "Move Models",
+      "description": "Move \"{{title}}\" to a different workspace",
+      "descriptionPlural": "Move {{count}} selected models to a different workspace",
+      "submitPlural": "Move {{count}} Models",
+      "errorSelect": "Please select a workspace",
+      "errorMove": "Failed to move model. Please try again.",
+      "errorMovePlural": "Failed to move models. Please try again.",
+      "noWorkspaces": "No other workspaces available. Create a new workspace first.",
       "destination": {
         "title": "Destination",
         "description": "Select the target workspace for the model"
@@ -406,6 +420,7 @@
     }
   },
   "workspace": {
+    "selectorHint": "Select or create a workspace to organize your models",
     "workspace": "Workspace",
     "workspaces": "Workspaces",
     "selectWorkspace": "Select Workspace",
@@ -1525,7 +1540,7 @@
     "legend": {
       "title": "Map outlines",
       "baseMap": "Gray lines: roads and administrative boundaries from the selected base map",
-      "availableRegions": "Dashed indigo: available administrative regions",
+      "availableRegions": "Dashed line: area covered by wildfire data",
       "yourModels": "Green area: your latest model — select it to open the results",
       "zoomDetail": "The default view is Galicia; the base map reveals more detail as you zoom in."
     },
@@ -1900,6 +1915,23 @@
     "Vedra": "Vedra"
   },
   "configurator": {
+    "blocking": {
+      "modelName": "a model name",
+      "dateRange": "a start and end date",
+      "and": " and ",
+      "missingFields": "Please add {{missing}} to continue.",
+      "staticLoading": "Loading available static dates.",
+      "staticEmpty": "No static dates are currently available.",
+      "staticSameDate": "Static mode requires the same start and end date.",
+      "staticUnavailable": "Select an available static date.",
+      "dynamicLoading": "Loading available dynamic dates.",
+      "dynamicEmpty": "No dynamic dates are currently available.",
+      "dynamicOrder": "Dynamic mode requires the start date to be before or equal to the end date.",
+      "dynamicRange": "Select a fully available dynamic date range.",
+      "dtmOutside": "Your area is outside the uploaded DTM coverage. Move/redraw it within the DTM footprint shown on the map, or remove the DTM."
+    },
+    "loadingModel": "Loading model",
+    "loadingModelDesc": "Please wait while we load your model...",
     "registry": {
       "layer1Title": "Model Initialization",
       "layer1Subtitle": "Name and simulation timeframe",
@@ -1931,14 +1963,21 @@
       "step": "STEP"
     },
     "layer1": {
+      "suggestedNamesLabel": "Quick picks",
+      "suggestedName1": "Summer Fire Risk",
+      "suggestedName2": "Coastal Forest Watch",
+      "suggestedName3": "Mountain Ridge Assessment",
+      "suggestedName4": "Weekly Fire Outlook",
+      "noDates": "No dates available.",
+      "staticDateInfoAria": "How the static date is selected",
       "purpose": "Name this wildfire simulation and choose the date window you want to assess.",
       "nextStepHint": "Next you'll outline the geographic area on the map.",
       "modelNameLabel": "Model name",
       "modelNamePlaceholder": "e.g. Galicia Summer 2026 Wildfire Risk",
       "modelNameHint": "So you can find it later.",
       "calcModeLabel": "Calculation mode",
-      "calcModeStatic": "static",
-      "calcModeDynamic": "dynamic",
+      "calcModeStatic": "Static",
+      "calcModeDynamic": "Dynamic",
       "calcModeHint": "Static uses the AOI risk workflow for one date. Dynamic keeps the selected mode in the model payload for the dynamic workflow.",
       "staticHint": "Static runs use one available weather date, from 16:00 to 17:00.",
       "dynamicHint": "Dynamic runs keep the selected date range and use the 16:00 to 17:00 window.",
@@ -1956,7 +1995,10 @@
       "calcModeInfoLabel": "What the calculation modes do",
       "calcModeInfo": "Static assesses a single day — one available weather date — using the AOI risk workflow. Dynamic assesses a range of days, keeping the daily weather sequence. Both use the 16:00–17:00 weather window.",
       "calcModeHintStatic": "One day, chosen from the available weather dates.",
-      "calcModeHintDynamic": "A range of days, assessed day by day."
+      "calcModeHintDynamic": "A range of days, assessed day by day.",
+      "modelNameQuestion": "What do you want to call this model?",
+      "calcModeQuestion": "How should the risk be calculated?",
+      "periodQuestion": "Which period should it assess?"
     },
     "layer2": {
       "purpose": "Select a complete administrative region, draw an area, or upload a GeoJSON boundary.",
@@ -1998,7 +2040,8 @@
       "regionNotFound": "No administrative region boundary was found here. Try clicking farther inside the region.",
       "regionLookupFailed": "Could not load the administrative boundary. Check your connection and try again.",
       "regionOutsideCoverage": "That point is outside the area wildfire data covers. Click inside the shaded area.",
-      "regionOutsideCoverageNamed": "Wildfire data is only available for {{regions}}. Click inside the shaded area."
+      "regionOutsideCoverageNamed": "Wildfire data is only available for {{regions}}. Click inside the shaded area.",
+      "areaModeQuestion": "How do you want to define the area?"
     },
     "layer3": {
       "purpose": "These signals feed the AHP-weighted risk model. All three are enabled by default and recommended for an accurate forest-fire risk assessment.",
@@ -2026,7 +2069,8 @@
       "precomputedRange": "Precomputed maps cover exactly one day - select the same start and end date to use one. For a date range the model computes every day for your area and returns the peak-risk day (~1-2 minutes).",
       "precomputedStaticMode": "Precomputed maps exist only for dynamic assessments. The model will compute all steps for your area.",
       "precomputedUnavailable": "The nightly analysis has not processed this date yet. The model will compute all steps for your area.",
-      "lockedByPrecomputed": "Included in the precomputed regional map. Disable the precomputed switch above to customise layers."
+      "lockedByPrecomputed": "Included in the precomputed regional map. Disable the precomputed switch above to customise layers.",
+      "signalsQuestion": "Which signals should feed the risk model?"
     },
     "layer4": {
       "purpose": "Real-time validation of the model configuration. Blockers must be cleared in their respective steps before the run can start.",
@@ -2105,6 +2149,10 @@
       "updateFailed": "The model could not be saved. Please try again.",
       "uploadFailed": "The model was saved, but its input files could not be uploaded.",
       "calculationFailed": "The model was saved, but the calculation could not be started."
+    },
+    "wizard": {
+      "question": "Question {{index}}",
+      "steps": "Model steps"
     }
   },
   "apiTokens": {
