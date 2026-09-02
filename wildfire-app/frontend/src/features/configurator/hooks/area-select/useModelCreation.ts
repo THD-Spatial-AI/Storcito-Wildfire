@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { modelService } from "@/features/model-dashboard/services/modelService";
+import { modelService } from "@/features/model-dashboard";
 import {
   useCreateModelMutation,
   useUpdateModelMutation2,
-} from "@/features/model-dashboard/hooks/useModelsQuery";
+} from "@/features/model-dashboard";
 import { useWorkspaceStore } from "@/components/workspace";
 import { clampBuffer } from "@/features/configurator/constants/buffer-distance";
 import { dateRangeHasOnlyAvailableDates } from "@/features/configurator/utils/dateAvailability";
@@ -187,7 +187,7 @@ export const useModelCreation = ({
     }
   }, [editMode, loadedCoordinates, setAllPolygons]);
 
-  // ── Save / cancel ─────────────────────────────────────────────────
+  // Save / cancel.────────────────
   const handleCancel = useCallback((): void => {
     if (onCancel) {
       onCancel();
@@ -255,7 +255,7 @@ export const useModelCreation = ({
               ...(originalParameters ?? {}),
               calculation_mode: areaData.calculationMode,
               optional_layers: optionalLayers,
-              // off (or date not precomputed) = compute all steps fresh
+              // Off: compute fresh.
               force_compute: !(
                 areaData.usePrecomputed &&
                 areaData.calculationMode === "dynamic" &&
@@ -283,7 +283,7 @@ export const useModelCreation = ({
           savedModelId = created?.data?.id;
         }
 
-        // Upload optional input files (station data + DTM) before any calculation.
+        // Upload optional inputs.
         if (savedModelId && (stationDataFile || dtmFile)) {
           try {
             await modelService.uploadModelInputs(savedModelId, {
@@ -317,7 +317,7 @@ export const useModelCreation = ({
 
         navigate(DASHBOARD_ROUTE, { state: { workspaceId: currentWorkspace?.id } });
       } catch (error) {
-        // #68: a failed save used to leave the wizard sitting there silently.
+        // Surface save errors.
         onError?.(
           describeError(
             error,

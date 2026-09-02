@@ -1,10 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
-import { settingsService } from "@/features/settings/services/settings";
+import { settingsService } from "@/features/settings";
 import {
   DEFAULT_BUFFER_DISTANCE,
   clampBuffer,
 } from "@/features/configurator/constants/buffer-distance";
-import { webservicesService } from "@/features/admin-dashboard/services/webservices";
+import {
+  DUMMY_DYNAMIC_DATES,
+  DUMMY_PRECOMPUTED_DATES,
+  DUMMY_STATIC_DATES,
+  dummyDatesEnabled,
+} from "@/features/configurator/utils/dummyDates";
+import { webservicesService } from "@/features/admin-dashboard";
 import type {
   AreaInputMode,
   CalculationMode,
@@ -172,16 +178,28 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
           webservicesService.getAvailablePrecomputedDates().catch(() => []),
         ]);
         if (!cancelled) {
-          setAvailableStaticDates([...new Set(staticDates)].sort());
-          setAvailableDynamicDates([...new Set(dynamicDates)].sort());
-          setAvailablePrecomputedDates([...new Set(precomputedDates)].sort());
+          const useDummy = dummyDatesEnabled();
+          const withFallback = (dates: string[], fallback: () => string[]) =>
+            dates.length === 0 && useDummy ? fallback() : dates;
+
+          setAvailableStaticDates([...new Set(withFallback(staticDates, DUMMY_STATIC_DATES))].sort());
+          setAvailableDynamicDates([...new Set(withFallback(dynamicDates, DUMMY_DYNAMIC_DATES))].sort());
+          setAvailablePrecomputedDates(
+            [...new Set(withFallback(precomputedDates, DUMMY_PRECOMPUTED_DATES))].sort(),
+          );
         }
       } catch {
         if (!cancelled) {
-          setAvailableStaticDates([]);
-          setAvailableDynamicDates([]);
-          setStaticDatesError("Unable to load available static dates.");
-          setDynamicDatesError("Unable to load available dynamic dates.");
+          if (dummyDatesEnabled()) {
+            setAvailableStaticDates(DUMMY_STATIC_DATES());
+            setAvailableDynamicDates(DUMMY_DYNAMIC_DATES());
+            setAvailablePrecomputedDates(DUMMY_PRECOMPUTED_DATES());
+          } else {
+            setAvailableStaticDates([]);
+            setAvailableDynamicDates([]);
+            setStaticDatesError("Unable to load available static dates.");
+            setDynamicDatesError("Unable to load available dynamic dates.");
+          }
         }
       } finally {
         if (!cancelled) {
@@ -194,6 +212,25 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
       cancelled = true;
     };
   }, []);
+
+  // Preselect dummy date.
+  useEffect(() => {
+    if (editMode || !dummyDatesEnabled() || fromDate || toDate) return;
+    if (calculationMode === "static") {
+      const latest = availableStaticDates.at(-1);
+      if (latest) {
+        setFromDate(latest);
+        setToDate(latest);
+      }
+      return;
+    }
+    const start = availableDynamicDates.at(-3) ?? availableDynamicDates[0];
+    const end = availableDynamicDates.at(-1);
+    if (start && end) {
+      setFromDate(start);
+      setToDate(end);
+    }
+  }, [availableDynamicDates, availableStaticDates, calculationMode, editMode, fromDate, toDate]);
 
   useEffect(() => {
     if (editMode) return;
@@ -261,7 +298,7 @@ export const useAreaSelectState = ({ editMode }: UseAreaSelectStateOptions) => {
     setUploadedGeoJsonName,
     geoJsonUploadError,
     setGeoJsonUploadError,
-    // optional layers (forwarded to STORCITO as parameters.optional_layers)
+    // Optional layers.
     optionalLayers,
     setOptionalLayers,
     toggleOptionalLayer,

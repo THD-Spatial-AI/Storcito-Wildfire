@@ -6,8 +6,8 @@ import { toLonLat } from "ol/proj";
 import {
   geocodingService,
   type AdministrativeRegionResult,
-} from "@/features/interactive-map/services/geocoding";
-import { removeSearchBoundaryLayer } from "@/features/interactive-map/utils/searchBoundaryLayer";
+} from "@/features/interactive-map";
+import { removeSearchBoundaryLayer } from "@/features/interactive-map";
 
 interface AdministrativeRegionSelectionOptions {
   map: Map | null;

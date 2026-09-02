@@ -1,6 +1,6 @@
-import { useMapStore } from '@/features/interactive-map/store/map-store';
+import { useMapStore } from '@/features/interactive-map';
 import { useMapProvider } from '@/providers/map-context';
-import { useNotification } from '@/features/notifications/hooks/useNotification';
+import { useNotification } from '@/features/notifications';
 import { useTranslation } from '@/i18n';
 import type {
     AreaSelectState,

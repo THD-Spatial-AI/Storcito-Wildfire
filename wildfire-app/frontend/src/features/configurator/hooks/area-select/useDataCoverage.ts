@@ -6,12 +6,12 @@ import type { Coordinate } from "ol/coordinate";
 import {
   webservicesService,
   type StorcitoCoverageFeatureCollection,
-} from "@/features/admin-dashboard/services/webservices";
+} from "@/features/admin-dashboard";
 
 // Fetched once, shared.
 let coveragePromise: Promise<StorcitoCoverageFeatureCollection | null> | null = null;
 
-const loadCoverage = () => {
+export const loadDataCoverage = () => {
   coveragePromise ??= webservicesService.getAvailableDataCoverage().catch(() => null);
   return coveragePromise;
 };
@@ -37,7 +37,7 @@ export const useDataCoverage = (): DataCoverage => {
 
   useEffect(() => {
     let cancelled = false;
-    loadCoverage().then((data) => {
+    loadDataCoverage().then((data) => {
       if (!cancelled) setCoverage(data);
     });
     return () => {
