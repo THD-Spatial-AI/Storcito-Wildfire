@@ -1743,6 +1743,12 @@
       "subtitle": "Área analizada por clase de risco para cada día da execución. Faga clic nun día para mostralo no mapa.",
       "loading": "Calculando distribucións diarias… a primeira carga pode tardar un minuto.",
       "empty": "Non hai mapas de risco diarios nesta execución."
+    },
+    "terrain": {
+      "failedTitle": "Non se puido iniciar o terreo 3D",
+      "noWebgl": "Este navegador ou controlador gráfico non admite WebGL, necesario para o terreo 3D. O mapa 2D mostra os mesmos resultados.",
+      "failedBody": "Non se puido crear a vista 3D. O mapa 2D mostra os mesmos resultados.",
+      "backToMap": "Volver ao mapa"
     }
   },
   "landing": {

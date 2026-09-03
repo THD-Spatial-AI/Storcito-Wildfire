@@ -1743,6 +1743,12 @@
       "subtitle": "Analysierte Fläche je Risikoklasse für jeden Tag des Laufs. Klicken Sie auf einen Tag, um ihn auf der Karte anzuzeigen.",
       "loading": "Tagesverteilungen werden berechnet … der erste Ladevorgang kann eine Minute dauern.",
       "empty": "Keine täglichen Risikokarten in diesem Lauf."
+    },
+    "terrain": {
+      "failedTitle": "3D-Gelände konnte nicht starten",
+      "noWebgl": "Dieser Browser oder Grafiktreiber unterstützt kein WebGL, das für 3D-Gelände nötig ist. Die 2D-Karte zeigt dieselben Ergebnisse.",
+      "failedBody": "Die 3D-Ansicht konnte nicht erstellt werden. Die 2D-Karte zeigt dieselben Ergebnisse.",
+      "backToMap": "Zurück zur Karte"
     }
   },
   "landing": {

@@ -278,6 +278,8 @@ jobs:
             --build-arg VITE_WORKSHOP_TOKEN="${{ secrets.WORKSHOP_TOKEN }}" \
             --build-arg VITE_WORKSHOP_TAG="${{ vars.VITE_WORKSHOP_TAG || 'workshop-2026-uvigo' }}" \
             --build-arg VITE_CARTO_BASEMAP_API_KEY="${{ secrets.VITE_CARTO_BASEMAP_API_KEY }}" \
+            --build-arg VITE_CESIUM_TERRAIN_URL="${{ vars.VITE_CESIUM_TERRAIN_URL }}" \
+            --build-arg VITE_CESIUM_SATELLITE_URL="${{ vars.VITE_CESIUM_SATELLITE_URL }}" \
             -t "wildfire-app:latest" -f Dockerfile.ci .
           docker image prune -f
           echo '=== [PROD] Build complete ==='

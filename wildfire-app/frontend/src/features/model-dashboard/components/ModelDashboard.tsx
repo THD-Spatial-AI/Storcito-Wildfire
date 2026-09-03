@@ -18,7 +18,7 @@ import { useFavoriteModelsStore } from "@/features/model-dashboard/store/favorit
 import { isModelDisabled as checkModelDisabled, isModelCompleted } from "@/features/model-dashboard/utils/statusHelpers";
 import { useWebservices } from "@/features/admin-dashboard";
 import { processModelTimingUpdates, type TimingUpdate } from "@/features/model-dashboard/utils/modelTimingUtils";
-import { typicalRuntimeSeconds } from "@/features/model-dashboard/utils/runtimeEstimate";
+import { typicalRuntimeFromSamples, collectRuntimeSamples } from "@/features/model-dashboard/utils/runtimeEstimate";
 import { organizeModelsHierarchically } from "@/features/model-dashboard/utils/dashboardHelpers";
 import { useTranslation } from "@/i18n";
 import { useNotification } from "@/features/notifications";
@@ -164,7 +164,11 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 
 	// Page slice only.
 	const models = useMemo(() => modelsResponse?.data || [], [modelsResponse?.data]);
-	const typicalRuntime = useMemo(() => typicalRuntimeSeconds(models), [models]);
+	// History-based estimate.
+	const typicalRuntime = useMemo(
+		() => typicalRuntimeFromSamples(collectRuntimeSamples(models, calculationCompletionInfo)),
+		[models, calculationCompletionInfo],
+	);
 	const totalItems = modelsResponse?.total || 0;
 	const isLoading = isLoadingModels;
 

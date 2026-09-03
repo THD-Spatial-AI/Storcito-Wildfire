@@ -3,6 +3,8 @@ import TileLayer from "ol/layer/Tile";
 import XYZ from "ol/source/XYZ";
 import type Map from "ol/Map";
 
+import { MAP_ZOOM } from "@/features/interactive-map/utils/mapUtils";
+
 import {
   ESRI_ATTRIBUTION,
   ESRI_PLACES_REFERENCE_URL,
@@ -31,7 +33,8 @@ export const useReferenceLayers = (
         url: ESRI_TRANSPORTATION_REFERENCE_URL,
         attributions: ESRI_ATTRIBUTION,
         crossOrigin: "anonymous",
-        maxZoom: 19,
+        // Must reach MAP_ZOOM.MAX or roads vanish at full zoom.
+        maxZoom: MAP_ZOOM.MAX,
       }),
       opacity: roadsOpacity,
       className: "ol-layer ol-visible-in-maplibre",
@@ -41,7 +44,7 @@ export const useReferenceLayers = (
         url: ESRI_PLACES_REFERENCE_URL,
         attributions: ESRI_ATTRIBUTION,
         crossOrigin: "anonymous",
-        maxZoom: 20,
+        maxZoom: MAP_ZOOM.MAX,
       }),
       opacity: labelsOpacity,
       className: "ol-layer ol-visible-in-maplibre",

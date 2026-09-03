@@ -1743,6 +1743,12 @@
       "subtitle": "Analizowany obszar według klasy ryzyka dla każdego dnia uruchomienia. Kliknij dzień, aby pokazać go na mapie.",
       "loading": "Obliczanie dziennych rozkładów… pierwsze ładowanie może potrwać minutę.",
       "empty": "Brak dziennych map ryzyka w tym uruchomieniu."
+    },
+    "terrain": {
+      "failedTitle": "Nie udało się uruchomić terenu 3D",
+      "noWebgl": "Ta przeglądarka lub sterownik graficzny nie obsługuje WebGL, wymaganego przez teren 3D. Mapa 2D pokazuje te same wyniki.",
+      "failedBody": "Nie udało się utworzyć widoku 3D. Mapa 2D pokazuje te same wyniki.",
+      "backToMap": "Powrót do mapy"
     }
   },
   "landing": {

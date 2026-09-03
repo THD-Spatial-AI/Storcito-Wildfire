@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import * as Cesium from "cesium";
 import "cesium/Build/Cesium/Widgets/widgets.css";
 import { Plus, Minus } from "lucide-react";
+import { useTranslation } from "@/i18n";
 import { withCartoBasemapKey } from "@/utils/carto-basemap";
 
 interface CesiumWildfire3DViewProps {
@@ -13,7 +14,23 @@ interface CesiumWildfire3DViewProps {
   visibleRiskLevels?: Record<number, boolean>;
   roadsVisible?: boolean;
   labelsVisible?: boolean;
+  /** Return to the 2D map when 3D cannot start. */
+  onExit?: () => void;
 }
+
+/** WebGL availability, the usual reason 3D will not start. */
+const hasWebGL = (): boolean => {
+  try {
+    const canvas = document.createElement("canvas");
+    return Boolean(
+      canvas.getContext("webgl2") ||
+        canvas.getContext("webgl") ||
+        canvas.getContext("experimental-webgl"),
+    );
+  } catch {
+    return false;
+  }
+};
 
 // Transparent-background Esri reference overlays, kept above the risk drape.
 const ESRI_TRANSPORTATION_URL =
@@ -77,12 +94,15 @@ export const CesiumWildfire3DView = ({
   visibleRiskLevels,
   roadsVisible = true,
   labelsVisible = false,
+  onExit,
 }: CesiumWildfire3DViewProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const viewerRef = useRef<Cesium.Viewer | null>(null);
   const riskLayersRef = useRef<{ level: number; layer: Cesium.ImageryLayer }[]>([]);
   const removalTimersRef = useRef<number[]>([]);
+  const { t } = useTranslation();
   const [initError, setInitError] = useState<string | null>(null);
+  const [webglMissing, setWebglMissing] = useState(false);
   // Refs mirror the latest props for init(), which may run deferred.
   const drapeRef = useRef({ wmsUrl, layerName });
   drapeRef.current = { wmsUrl, layerName };
@@ -157,6 +177,11 @@ export const CesiumWildfire3DView = ({
 
     const init = () => {
       if (disposed || viewerRef.current) return;
+      if (!hasWebGL()) {
+        console.warn("[Cesium3D] WebGL unavailable; 3D cannot start");
+        setWebglMissing(true);
+        return;
+      }
       try {
         initInner();
         const canvas = container.querySelector("canvas");
@@ -249,7 +274,7 @@ export const CesiumWildfire3DView = ({
       roadsLayerRef.current = viewer.imageryLayers.addImageryProvider(
         new Cesium.UrlTemplateImageryProvider({
           url: ESRI_TRANSPORTATION_URL,
-          maximumLevel: 19,
+          maximumLevel: 20,
           credit: "Esri, HERE, Garmin",
         })
       );
@@ -334,10 +359,34 @@ export const CesiumWildfire3DView = ({
     <div className="absolute inset-0 z-[5]" style={{ background: "#dfe7ee" }}>
       <div ref={containerRef} className="absolute inset-0 h-full w-full" />
 
-      {initError && (
-        <div className="absolute left-1/2 top-1/2 z-[6] w-[420px] max-w-[90%] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-red-200 bg-white/95 p-4 text-center shadow-lg">
-          <p className="text-sm font-semibold text-red-700">3D view failed to start</p>
-          <p className="mt-1 break-words text-xs text-slate-600">{initError}</p>
+      {(initError || webglMissing) && (
+        <div className="absolute left-1/2 top-1/2 z-[6] w-[420px] max-w-[90%] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border bg-card/95 p-4 text-center shadow-lg">
+          <p className="text-sm font-semibold text-foreground">
+            {t("modelResults.terrain.failedTitle", "3D terrain could not start")}
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {webglMissing
+              ? t(
+                  "modelResults.terrain.noWebgl",
+                  "This browser or graphics driver does not support WebGL, which 3D terrain needs. The 2D map has the same results.",
+                )
+              : t(
+                  "modelResults.terrain.failedBody",
+                  "The 3D view could not be created. The 2D map has the same results.",
+                )}
+          </p>
+          {initError && (
+            <p className="mt-1 break-words text-[10px] text-muted-foreground/70">{initError}</p>
+          )}
+          {onExit && (
+            <button
+              type="button"
+              onClick={onExit}
+              className="mt-3 inline-flex h-8 items-center rounded-lg bg-primary px-3 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 cursor-pointer"
+            >
+              {t("modelResults.terrain.backToMap", "Back to the map")}
+            </button>
+          )}
         </div>
       )}
 

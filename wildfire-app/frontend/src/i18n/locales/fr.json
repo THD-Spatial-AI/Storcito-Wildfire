@@ -1743,6 +1743,12 @@
       "subtitle": "Surface analysée par classe de risque pour chaque jour de l'exécution. Cliquez sur un jour pour l'afficher sur la carte.",
       "loading": "Calcul des distributions quotidiennes… le premier chargement peut prendre une minute.",
       "empty": "Aucune carte de risque quotidienne dans cette exécution."
+    },
+    "terrain": {
+      "failedTitle": "Le terrain 3D n'a pas pu démarrer",
+      "noWebgl": "Ce navigateur ou pilote graphique ne prend pas en charge WebGL, nécessaire au terrain 3D. La carte 2D affiche les mêmes résultats.",
+      "failedBody": "La vue 3D n'a pas pu être créée. La carte 2D affiche les mêmes résultats.",
+      "backToMap": "Retour à la carte"
     }
   },
   "landing": {

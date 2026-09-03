@@ -420,6 +420,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
       {show3D && wms3D && (
         <Suspense fallback={null}>
           <CesiumWildfire3DView
+            onExit={() => setShow3D(false)}
             wmsUrl={wms3D.wmsUrl}
             layerName={wms3D.layerName}
             aoi={model?.coordinates}

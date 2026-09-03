@@ -1743,6 +1743,12 @@
       "subtitle": "Analyzovaná plocha podle třídy rizika pro každý den běhu. Kliknutím na den jej zobrazíte na mapě.",
       "loading": "Počítají se denní rozdělení… první načtení může trvat minutu.",
       "empty": "V tomto běhu nejsou žádné denní mapy rizika."
+    },
+    "terrain": {
+      "failedTitle": "3D terén se nepodařilo spustit",
+      "noWebgl": "Tento prohlížeč nebo grafický ovladač nepodporuje WebGL, který je pro 3D terén nutný. Mapa 2D zobrazuje stejné výsledky.",
+      "failedBody": "3D zobrazení se nepodařilo vytvořit. Mapa 2D zobrazuje stejné výsledky.",
+      "backToMap": "Zpět na mapu"
     }
   },
   "landing": {

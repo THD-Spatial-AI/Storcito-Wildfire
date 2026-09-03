@@ -1743,6 +1743,12 @@
       "subtitle": "Area analizzata per classe di rischio per ogni giorno dell'esecuzione. Fai clic su un giorno per mostrarlo sulla mappa.",
       "loading": "Calcolo delle distribuzioni giornaliere… il primo caricamento può richiedere un minuto.",
       "empty": "Nessuna mappa di rischio giornaliera in questa esecuzione."
+    },
+    "terrain": {
+      "failedTitle": "Impossibile avviare il terreno 3D",
+      "noWebgl": "Questo browser o driver grafico non supporta WebGL, necessario per il terreno 3D. La mappa 2D mostra gli stessi risultati.",
+      "failedBody": "Impossibile creare la vista 3D. La mappa 2D mostra gli stessi risultati.",
+      "backToMap": "Torna alla mappa"
     }
   },
   "landing": {

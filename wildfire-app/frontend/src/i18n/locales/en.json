@@ -1743,6 +1743,12 @@
       "subtitle": "Analyzed area per risk class for each day of the run. Click a day to show it on the map.",
       "loading": "Computing daily distributions… the first load can take a minute.",
       "empty": "No daily risk maps in this run."
+    },
+    "terrain": {
+      "failedTitle": "3D terrain could not start",
+      "noWebgl": "This browser or graphics driver does not support WebGL, which 3D terrain needs. The 2D map has the same results.",
+      "failedBody": "The 3D view could not be created. The 2D map has the same results.",
+      "backToMap": "Back to the map"
     }
   },
   "landing": {

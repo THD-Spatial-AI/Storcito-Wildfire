@@ -1743,6 +1743,12 @@
       "subtitle": "Geanalyseerd gebied per risicoklasse voor elke dag van de run. Klik op een dag om deze op de kaart te tonen.",
       "loading": "Dagelijkse verdelingen worden berekend… de eerste keer laden kan een minuut duren.",
       "empty": "Geen dagelijkse risicokaarten in deze run."
+    },
+    "terrain": {
+      "failedTitle": "3D-terrein kon niet starten",
+      "noWebgl": "Deze browser of grafische driver ondersteunt geen WebGL, dat nodig is voor 3D-terrein. De 2D-kaart toont dezelfde resultaten.",
+      "failedBody": "De 3D-weergave kon niet worden gemaakt. De 2D-kaart toont dezelfde resultaten.",
+      "backToMap": "Terug naar de kaart"
     }
   },
   "landing": {
