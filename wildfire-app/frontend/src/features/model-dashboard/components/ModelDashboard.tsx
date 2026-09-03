@@ -18,6 +18,7 @@ import { useFavoriteModelsStore } from "@/features/model-dashboard/store/favorit
 import { isModelDisabled as checkModelDisabled, isModelCompleted } from "@/features/model-dashboard/utils/statusHelpers";
 import { useWebservices } from "@/features/admin-dashboard";
 import { processModelTimingUpdates, type TimingUpdate } from "@/features/model-dashboard/utils/modelTimingUtils";
+import { typicalRuntimeSeconds } from "@/features/model-dashboard/utils/runtimeEstimate";
 import { organizeModelsHierarchically } from "@/features/model-dashboard/utils/dashboardHelpers";
 import { useTranslation } from "@/i18n";
 import { useNotification } from "@/features/notifications";
@@ -163,6 +164,7 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 
 	// Page slice only.
 	const models = useMemo(() => modelsResponse?.data || [], [modelsResponse?.data]);
+	const typicalRuntime = useMemo(() => typicalRuntimeSeconds(models), [models]);
 	const totalItems = modelsResponse?.total || 0;
 	const isLoading = isLoadingModels;
 
@@ -452,6 +454,7 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 		editingModel,
 		editTitle,
 		calculationStartTimes,
+		typicalRuntimeSeconds: typicalRuntime,
 		calculationCompletionInfo,
 		canUserDeleteModel,
 		hasAvailableWebservice,
@@ -478,7 +481,7 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 		statsModelLimit: stats.model_limit,
 	}), [
 		selectedModels, handleSelectAll, handleSort, orderBy, order, user, isSelected, editingModel, editTitle,
-		calculationStartTimes, calculationCompletionInfo, canUserDeleteModel, hasAvailableWebservice, handleSelectModel,
+		calculationStartTimes, typicalRuntime, calculationCompletionInfo, canUserDeleteModel, hasAvailableWebservice, handleSelectModel,
 		startTitleEdit, setEditTitle, updateTitle, cancelTitleEdit, handleView, handleEdit, handleDownload, handleCopy,
 		handleCalculateSingle, handleSingleDelete, handleShare, handleMoveToWorkspace, currentPage, itemsPerPage,
 		handlePageChange, handleItemsPerPageChange, handleNewModel, isModelLimitReached, stats.total, stats.model_limit,

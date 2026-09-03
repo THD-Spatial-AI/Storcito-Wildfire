@@ -265,6 +265,14 @@ export const Layer2AreaSelect: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                     </SummaryRow>
                     <SummaryRow label={t("configurator.layer2.area", "Area")}>{areaStats?.area ?? "—"}</SummaryRow>
                     <SummaryRow label={t("configurator.layer2.perimeter", "Perimeter")}>{areaStats?.perimeter ?? "—"}</SummaryRow>
+                    {(areaStats?.regions ?? 0) > 1 && (
+                        <SummaryRow label={t("configurator.layer2.areaCount", "Areas")}>
+                            {t("configurator.layer2.areaCountValue", {
+                                count: areaStats?.regions ?? 0,
+                                defaultValue: "{{count}} separate areas",
+                            })}
+                        </SummaryRow>
+                    )}
                 </div>
             </div>
         </LayerShell>

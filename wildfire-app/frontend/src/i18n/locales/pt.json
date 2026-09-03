@@ -771,7 +771,7 @@
       "statusUploadedNoName": "Limite GeoJSON carregado.",
       "statusUploadPrompt": "Carregue um ficheiro GeoJSON com geometria Polygon ou MultiPolygon.",
       "statusDrawn": "Área definida. Pode continuar a ajustá-la ou avançar.",
-      "statusDrawPrompt": "Clique no mapa para desenhar a sua área. Feche o polígono para terminar.",
+      "statusDrawPrompt": "Clique no mapa para desenhar a sua área. Feche o polígono para terminar e desenhe mais se precisar de várias áreas.",
       "statusRegionSelected": "{{name}} selecionada. Clique noutra região para a substituir.",
       "statusRegionPrompt": "Clique dentro de uma região administrativa no mapa para selecionar o seu limite completo.",
       "regionCoverageWarning": "É usado o limite administrativo completo. Os píxeis fora da cobertura sombreada de dados de incêndio poderão não ser calculáveis.",
@@ -791,7 +791,9 @@
       "regionLookupFailed": "Não foi possível carregar o limite administrativo. Verifique a ligação e tente novamente.",
       "regionOutsideCoverage": "Esse ponto está fora da área coberta pelos dados de incêndio. Clique dentro da zona sombreada.",
       "regionOutsideCoverageNamed": "Só há dados de incêndio para {{regions}}. Clique dentro da zona sombreada.",
-      "areaModeQuestion": "Como quer definir a área?"
+      "areaModeQuestion": "Como quer definir a área?",
+      "areaCount": "Áreas",
+      "areaCountValue": "{{count}} áreas separadas"
     },
     "layer3": {
       "purpose": "Estes sinais alimentam o modelo de risco ponderado por AHP. Os três estão ativados por predefinição e são recomendados para uma avaliação rigorosa do risco de incêndio florestal.",
@@ -1034,7 +1036,11 @@
     "revokeAccess": "Revogar",
     "revokeAccessFor": "Revogar acesso",
     "revokingAccess": "A revogar…",
-    "filterPeriod": "Filtrar por período"
+    "filterPeriod": "Filtrar por período",
+    "estimateRemaining": "~{{duration}} restante",
+    "estimateOverdue": "a terminar",
+    "estimateBasis": "Uma execução típica demora {{typical}}",
+    "estimateUnavailable": "Não há execuções anteriores suficientes para estimar o fim"
   },
   "apiTokens": {
     "title": "Tokens de API",

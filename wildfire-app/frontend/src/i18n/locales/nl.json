@@ -377,7 +377,11 @@
     "revokeAccess": "Intrekken",
     "revokeAccessFor": "Toegang intrekken",
     "revokingAccess": "Bezig met intrekken…",
-    "filterPeriod": "Filteren op periode"
+    "filterPeriod": "Filteren op periode",
+    "estimateRemaining": "~{{duration}} resterend",
+    "estimateOverdue": "afrondend",
+    "estimateBasis": "Een typische run duurt {{typical}}",
+    "estimateUnavailable": "Te weinig eerdere runs voor een schatting"
   },
   "polygon": {
     "drawRegion": "Teken je regio",
@@ -2036,7 +2040,7 @@
       "statusUploadedNoName": "GeoJSON boundary loaded.",
       "statusUploadPrompt": "Upload a GeoJSON file with Polygon or MultiPolygon geometry.",
       "statusDrawn": "Area defined. You can keep adjusting it or move on.",
-      "statusDrawPrompt": "Klik op de kaart om uw gebied te tekenen. Sluit de polygoon om te voltooien.",
+      "statusDrawPrompt": "Klik op de kaart om uw gebied te tekenen. Sluit de polygoon om te voltooien en teken er meer als u meerdere gebieden nodig hebt.",
       "areaSummary": "Gebiedsamenvatting",
       "regions": "{{count}} regio's",
       "status": "Status",
@@ -2066,7 +2070,9 @@
       "regionLookupFailed": "De bestuurlijke grens kan niet worden geladen. Controleer uw verbinding en probeer het opnieuw.",
       "regionOutsideCoverage": "Dit punt ligt buiten het gebied met brandgegevens. Klik in het gearceerde gebied.",
       "regionOutsideCoverageNamed": "Brandgegevens zijn alleen beschikbaar voor {{regions}}. Klik in het gearceerde gebied.",
-      "areaModeQuestion": "Hoe wilt u het gebied bepalen?"
+      "areaModeQuestion": "Hoe wilt u het gebied bepalen?",
+      "areaCount": "Gebieden",
+      "areaCountValue": "{{count}} afzonderlijke gebieden"
     },
     "layer3": {
       "purpose": "Deze signalen voeden het AHP-gewogen risicomodel. Alle drie zijn standaard ingeschakeld en aanbevolen voor een nauwkeurige beoordeling.",

@@ -377,7 +377,11 @@
     "revokeAccess": "Revoca",
     "revokeAccessFor": "Revoca l'accesso",
     "revokingAccess": "Revoca in corso…",
-    "filterPeriod": "Filtra per periodo"
+    "filterPeriod": "Filtra per periodo",
+    "estimateRemaining": "~{{duration}} rimanenti",
+    "estimateOverdue": "in chiusura",
+    "estimateBasis": "Un'esecuzione tipica richiede {{typical}}",
+    "estimateUnavailable": "Esecuzioni precedenti insufficienti per una stima"
   },
   "polygon": {
     "drawRegion": "Disegna la tua regione",
@@ -2036,7 +2040,7 @@
       "statusUploadedNoName": "GeoJSON boundary loaded.",
       "statusUploadPrompt": "Upload a GeoJSON file with Polygon or MultiPolygon geometry.",
       "statusDrawn": "Area defined. You can keep adjusting it or move on.",
-      "statusDrawPrompt": "Clicca sulla mappa per disegnare la tua area. Chiudi il poligono per finire.",
+      "statusDrawPrompt": "Fai clic sulla mappa per disegnare la tua area. Chiudi il poligono per terminare e disegnane altri se ti servono più aree.",
       "areaSummary": "Riepilogo dell'area",
       "regions": "{{count}} regioni",
       "status": "Stato",
@@ -2066,7 +2070,9 @@
       "regionLookupFailed": "Impossibile caricare il confine amministrativo. Controlla la connessione e riprova.",
       "regionOutsideCoverage": "Questo punto è fuori dall'area coperta dai dati sugli incendi. Fai clic dentro l'area ombreggiata.",
       "regionOutsideCoverageNamed": "I dati sugli incendi sono disponibili solo per {{regions}}. Fai clic dentro l'area ombreggiata.",
-      "areaModeQuestion": "Come vuoi definire l'area?"
+      "areaModeQuestion": "Come vuoi definire l'area?",
+      "areaCount": "Aree",
+      "areaCountValue": "{{count}} aree separate"
     },
     "layer3": {
       "purpose": "Questi segnali alimentano il modello di rischio ponderato AHP. Tutti e tre sono abilitati di default e consigliati per un'accurata valutazione.",

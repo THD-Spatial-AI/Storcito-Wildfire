@@ -3,6 +3,7 @@ import { Copy, PencilLine, Users, Clock, Star } from "lucide-react";
 import { Model } from "@/features/model-dashboard/services/modelService";
 import StatusBadge from "@/components/ui/StatusBadge";
 import ElapsedTimer from "@/components/ui/ElapsedTimer";
+import { remainingSeconds } from "@/features/model-dashboard/utils/runtimeEstimate";
 import { SimulationProgress } from "@/components/ui/SimulationProgress";
 import CompletedTimer from "@/components/ui/CompletedTimer";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@spatialhub/ui";
@@ -25,6 +26,17 @@ const getErrorMessage = (error: unknown): string => {
 		return JSON.stringify(error);
 	}
 	return String(error);
+};
+
+
+/** Compact duration. */
+const formatDuration = (seconds: number): string => {
+	const mins = Math.round(seconds / 60);
+	if (mins < 1) return "<1 min";
+	if (mins < 60) return `${mins} min`;
+	const hours = Math.floor(mins / 60);
+	const rest = mins % 60;
+	return rest === 0 ? `${hours} h` : `${hours} h ${rest} min`;
 };
 
 interface ModelTableRowProps {
@@ -152,6 +164,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
 		user,
 		isSelected: isModelSelected,
 		calculationStartTimes,
+		typicalRuntimeSeconds,
 		calculationCompletionInfo,
 		canUserDeleteModel,
 		hasAvailableWebservice,
@@ -165,6 +178,20 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
 		handleShare,
 		handleMoveToWorkspace,
 	} = useModelDashboardActions();
+
+	const remaining =
+		model.status === "running"
+			? remainingSeconds(typicalRuntimeSeconds, calculationStartTimes[model.id])
+			: null;
+	const remainingLabel =
+		remaining === null
+			? null
+			: remaining <= 0
+				? t("model.estimateOverdue", "finishing")
+				: t("model.estimateRemaining", {
+						duration: formatDuration(remaining),
+						defaultValue: "~{{duration}} left",
+					});
 	const toggleFavorite = useFavoriteModelsStore((s) => s.toggleFavorite);
 	const isFavorite = useFavoriteModelsStore((s) => s.isFavorite);
 	const favorited = isFavorite(model.id);
@@ -239,14 +266,29 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
 					)}
 
 					{model.status === "running" && calculationStartTimes[model.id] && (
-						<div className="flex items-center gap-1 px-2 py-1 bg-muted rounded-md">
-							<ElapsedTimer
-								startTime={calculationStartTimes[model.id]}
-								isRunning={true}
-								className="text-xs font-medium text-foreground"
-								showBlinkingIcon={true}
-							/>
-						</div>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<div className="flex items-center gap-1 px-2 py-1 bg-muted rounded-md">
+									<ElapsedTimer
+										startTime={calculationStartTimes[model.id]}
+										isRunning={true}
+										className="text-xs font-medium text-foreground"
+										showBlinkingIcon={true}
+									/>
+									{remainingLabel && (
+										<span className="text-xs text-muted-foreground">· {remainingLabel}</span>
+									)}
+								</div>
+							</TooltipTrigger>
+							<TooltipContent>
+								{typicalRuntimeSeconds === null
+									? t("model.estimateUnavailable", "Not enough past runs to estimate a finish time")
+									: t("model.estimateBasis", {
+											typical: formatDuration(typicalRuntimeSeconds),
+											defaultValue: "Typical run takes {{typical}}",
+										})}
+							</TooltipContent>
+						</Tooltip>
 					)}
 
 					{model.status === "queue" && (

@@ -543,7 +543,11 @@
     "revokeAccess": "Revoke",
     "revokeAccessFor": "Revoke access",
     "revokingAccess": "Revoking…",
-    "filterPeriod": "Filter by period"
+    "filterPeriod": "Filter by period",
+    "estimateRemaining": "~{{duration}} left",
+    "estimateOverdue": "finishing",
+    "estimateBasis": "Typical run takes {{typical}}",
+    "estimateUnavailable": "Not enough past runs to estimate a finish time"
   },
   "polygon": {
     "drawRegion": "Draw Your Region",
@@ -2040,7 +2044,7 @@
       "statusUploadedNoName": "GeoJSON boundary loaded.",
       "statusUploadPrompt": "Upload a GeoJSON file with Polygon or MultiPolygon geometry.",
       "statusDrawn": "Area defined. You can keep adjusting it or move on.",
-      "statusDrawPrompt": "Click on the map to draw your area. Close the polygon to finish.",
+      "statusDrawPrompt": "Click on the map to draw your area. Close the polygon to finish, then draw more if you need several areas.",
       "statusRegionSelected": "{{name}} selected. Click another region to replace it.",
       "statusRegionPrompt": "Click inside an administrative region on the map to select its complete boundary.",
       "regionCoverageWarning": "The complete administrative boundary is used. Any pixels outside the shaded wildfire-data footprint may not be calculable.",
@@ -2060,7 +2064,9 @@
       "regionLookupFailed": "Could not load the administrative boundary. Check your connection and try again.",
       "regionOutsideCoverage": "That point is outside the area wildfire data covers. Click inside the shaded area.",
       "regionOutsideCoverageNamed": "Wildfire data is only available for {{regions}}. Click inside the shaded area.",
-      "areaModeQuestion": "How do you want to define the area?"
+      "areaModeQuestion": "How do you want to define the area?",
+      "areaCount": "Areas",
+      "areaCountValue": "{{count}} separate areas"
     },
     "layer3": {
       "purpose": "These signals feed the AHP-weighted risk model. All three are enabled by default and recommended for an accurate forest-fire risk assessment.",

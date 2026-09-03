@@ -366,11 +366,11 @@ export const AreaSelect: FC<AreaSelectProps> = ({
         onDrawingChange={actions.setIsDrawing}
         onPointCountChange={setCurrentPointCount}
         onClearAll={actions.handleClearAllPolygons}
-        allowMultiple={false}
+        allowMultiple={true}
         clearTrigger={state.clearTrigger}
         initialPolygons={state.loadedCoordinates}
         bufferDistanceMeters={state.bufferDistance}
-        disableAfterDraw={true}
+        disableAfterDraw={false}
         drawingEnabled={polygonDrawingEnabled}
         enableEditing={true}
         onEditRequest={isMapSidebar ? () => wizard.jumpTo(2) : undefined}

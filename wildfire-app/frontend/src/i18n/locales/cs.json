@@ -377,7 +377,11 @@
     "revokeAccess": "Odvolat",
     "revokeAccessFor": "Odebrat přístup",
     "revokingAccess": "Odebírání přístupu…",
-    "filterPeriod": "Filtrovat podle období"
+    "filterPeriod": "Filtrovat podle období",
+    "estimateRemaining": "zbývá ~{{duration}}",
+    "estimateOverdue": "dokončuje se",
+    "estimateBasis": "Typický běh trvá {{typical}}",
+    "estimateUnavailable": "Nedostatek předchozích běhů pro odhad"
   },
   "polygon": {
     "drawRegion": "Nakreslete svůj region",
@@ -2036,7 +2040,7 @@
       "statusUploadedNoName": "GeoJSON boundary loaded.",
       "statusUploadPrompt": "Upload a GeoJSON file with Polygon or MultiPolygon geometry.",
       "statusDrawn": "Area defined. You can keep adjusting it or move on.",
-      "statusDrawPrompt": "Kliknutím na mapu nakreslete svou oblast. Uzavřete polygon pro dokončení.",
+      "statusDrawPrompt": "Kliknutím do mapy nakreslete oblast. Uzavřením polygonu dokončíte a můžete nakreslit další, pokud potřebujete více oblastí.",
       "areaSummary": "Shrnutí oblasti",
       "regions": "{{count}} regionů",
       "status": "Stav",
@@ -2066,7 +2070,9 @@
       "regionLookupFailed": "Správní hranici se nepodařilo načíst. Zkontrolujte připojení a zkuste to znovu.",
       "regionOutsideCoverage": "Tento bod je mimo oblast s daty o požárech. Klikněte dovnitř vyšrafované plochy.",
       "regionOutsideCoverageNamed": "Data o požárech jsou dostupná pouze pro {{regions}}. Klikněte dovnitř vyšrafované plochy.",
-      "areaModeQuestion": "Jak chcete vymezit oblast?"
+      "areaModeQuestion": "Jak chcete vymezit oblast?",
+      "areaCount": "Oblasti",
+      "areaCountValue": "{{count}} samostatných oblastí"
     },
     "layer3": {
       "purpose": "Tyto signály napájejí model rizika. Všechny tři jsou ve výchozím nastavení povoleny a doporučují se pro přesné posouzení.",

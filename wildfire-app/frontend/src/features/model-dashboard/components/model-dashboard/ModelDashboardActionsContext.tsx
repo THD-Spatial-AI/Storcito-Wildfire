@@ -13,6 +13,8 @@ export interface ModelDashboardActionsContextValue {
 	editingModel: Model | null;
 	editTitle: string;
 	calculationStartTimes: Record<number, string>;
+	/** Median past runtime. */
+	typicalRuntimeSeconds: number | null;
 	calculationCompletionInfo: Record<number, CompletionInfo>;
 	canUserDeleteModel: (model: Model) => boolean;
 	hasAvailableWebservice: boolean;

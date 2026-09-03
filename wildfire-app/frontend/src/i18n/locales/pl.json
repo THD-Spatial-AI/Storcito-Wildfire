@@ -377,7 +377,11 @@
     "revokeAccess": "Unieważnij",
     "revokeAccessFor": "Odbierz dostęp",
     "revokingAccess": "Odbieranie dostępu…",
-    "filterPeriod": "Filtruj według okresu"
+    "filterPeriod": "Filtruj według okresu",
+    "estimateRemaining": "~{{duration}} pozostało",
+    "estimateOverdue": "kończenie",
+    "estimateBasis": "Typowe uruchomienie trwa {{typical}}",
+    "estimateUnavailable": "Za mało poprzednich uruchomień, aby oszacować koniec"
   },
   "polygon": {
     "drawRegion": "Narysuj swój region",
@@ -2036,7 +2040,7 @@
       "statusUploadedNoName": "GeoJSON boundary loaded.",
       "statusUploadPrompt": "Upload a GeoJSON file with Polygon or MultiPolygon geometry.",
       "statusDrawn": "Area defined. You can keep adjusting it or move on.",
-      "statusDrawPrompt": "Kliknij na mapie, aby narysować obszar. Zamknij wielokąt, aby zakończyć.",
+      "statusDrawPrompt": "Kliknij mapę, aby narysować obszar. Zamknij wielokąt, aby zakończyć, i narysuj kolejne, jeśli potrzebujesz kilku obszarów.",
       "areaSummary": "Podsumowanie obszaru",
       "regions": "{{count}} regionów",
       "status": "Status",
@@ -2066,7 +2070,9 @@
       "regionLookupFailed": "Nie udało się wczytać granicy administracyjnej. Sprawdź połączenie i spróbuj ponownie.",
       "regionOutsideCoverage": "Ten punkt leży poza obszarem objętym danymi o pożarach. Kliknij wewnątrz zacienionego obszaru.",
       "regionOutsideCoverageNamed": "Dane o pożarach są dostępne tylko dla: {{regions}}. Kliknij wewnątrz zacienionego obszaru.",
-      "areaModeQuestion": "Jak chcesz wyznaczyć obszar?"
+      "areaModeQuestion": "Jak chcesz wyznaczyć obszar?",
+      "areaCount": "Obszary",
+      "areaCountValue": "{{count}} oddzielnych obszarów"
     },
     "layer3": {
       "purpose": "Te sygnały zasilają model ryzyka. Wszystkie trzy są domyślnie włączone i zalecane do dokładnej oceny.",

@@ -778,7 +778,11 @@
     "revokeAccess": "Ανάκληση",
     "revokeAccessFor": "Ανάκληση πρόσβασης",
     "revokingAccess": "Ανάκληση…",
-    "filterPeriod": "Φιλτράρισμα κατά περίοδο"
+    "filterPeriod": "Φιλτράρισμα κατά περίοδο",
+    "estimateRemaining": "~{{duration}} απομένουν",
+    "estimateOverdue": "ολοκληρώνεται",
+    "estimateBasis": "Μια τυπική εκτέλεση διαρκεί {{typical}}",
+    "estimateUnavailable": "Δεν υπάρχουν αρκετές προηγούμενες εκτελέσεις για εκτίμηση"
   },
   "modelsManagement": {
     "title": "Όλα τα μοντέλα αξιολόγησης προσομοίωσης",
@@ -2036,7 +2040,7 @@
       "statusUploadedNoName": "GeoJSON boundary loaded.",
       "statusUploadPrompt": "Upload a GeoJSON file with Polygon or MultiPolygon geometry.",
       "statusDrawn": "Area defined. You can keep adjusting it or move on.",
-      "statusDrawPrompt": "Κάντε κλικ στον χάρτη για να σχεδιάσετε την περιοχή σας. Κλείστε το πολύγωνο για να ολοκληρώσετε.",
+      "statusDrawPrompt": "Κάντε κλικ στον χάρτη για να σχεδιάσετε την περιοχή σας. Κλείστε το πολύγωνο για ολοκλήρωση και σχεδιάστε κι άλλες αν χρειάζεστε πολλές περιοχές.",
       "areaSummary": "Σύνοψη περιοχής",
       "regions": "{{count}} περιοχές",
       "status": "Κατάσταση",
@@ -2066,7 +2070,9 @@
       "regionLookupFailed": "Δεν ήταν δυνατή η φόρτωση του διοικητικού ορίου. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.",
       "regionOutsideCoverage": "Το σημείο αυτό είναι εκτός της περιοχής με δεδομένα πυρκαγιών. Κάντε κλικ μέσα στη σκιασμένη περιοχή.",
       "regionOutsideCoverageNamed": "Δεδομένα πυρκαγιών υπάρχουν μόνο για {{regions}}. Κάντε κλικ μέσα στη σκιασμένη περιοχή.",
-      "areaModeQuestion": "Πώς θέλετε να ορίσετε την περιοχή;"
+      "areaModeQuestion": "Πώς θέλετε να ορίσετε την περιοχή;",
+      "areaCount": "Περιοχές",
+      "areaCountValue": "{{count}} ξεχωριστές περιοχές"
     },
     "layer3": {
       "purpose": "Αυτά τα σήματα τροφοδοτούν το μοντέλο κινδύνου. Και τα τρία είναι ενεργοποιημένα από προεπιλογή και συνιστώνται για ακριβή αξιολόγηση.",

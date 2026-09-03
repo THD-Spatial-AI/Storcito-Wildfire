@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { DateRangePicker, Dialog, Group as FieldGroup, Popover, Button as Trigger } from "react-aria-components";
 import { parseDate, type DateValue } from "@internationalized/date";
-import { AlertCircle, BarChart3, CalendarRange, Copy, Edit, GitCompareArrows, Plus, RefreshCw, Search, Settings, Share2, Trash2, X } from "lucide-react";
+import { AlertCircle, BarChart3, Copy, Edit, Filter, GitCompareArrows, Plus, RefreshCw, Search, Settings, Share2, Trash2, X } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@spatialhub/ui";
 import Chip from "@/components/ui/Chip";
 import { WorkspaceSelector } from "@/components/workspace";
@@ -162,30 +162,39 @@ export function ModelDashboardFilters({
 						aria-label={t('model.filterPeriod', 'Filter by period')}
 					>
 						<FieldGroup className="flex items-center gap-1.5">
-							<Trigger
-								className={`flex h-9 items-center gap-1.5 rounded-lg border px-2.5 text-sm transition-colors duration-150 cursor-pointer ${
-									hasDateFilter
-										? "border-primary/40 bg-primary/5 text-foreground ring-1 ring-primary/20"
-										: "border-input bg-background text-muted-foreground hover:border-muted-foreground/40 hover:text-foreground"
-								}`}
-							>
-								<CalendarRange className="h-4 w-4 shrink-0" />
-								<span className="hidden sm:inline">
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<Trigger
+										aria-label={t('model.filterPeriod', 'Filter by period')}
+										className={`inline-flex h-9 w-9 items-center justify-center rounded-lg border transition-colors duration-150 cursor-pointer ${
+											hasDateFilter
+												? "border-primary/40 bg-primary/5 text-primary ring-1 ring-primary/20"
+												: "border-border bg-card text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+										}`}
+									>
+										<Filter className="h-4 w-4" />
+									</Trigger>
+								</TooltipTrigger>
+								<TooltipContent>
 									{hasDateFilter
 										? `${filterFromDate || "…"} – ${filterToDate || "…"}`
 										: t('model.filterPeriod', 'Filter by period')}
-								</span>
-							</Trigger>
+								</TooltipContent>
+							</Tooltip>
 							{hasDateFilter && (
-								<button
-									type="button"
-									onClick={() => onDateRangeChange("", "")}
-									aria-label={t('model.clearDateFilter', 'Clear date filter')}
-									title={t('model.clearDateFilter', 'Clear date filter')}
-									className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-								>
-									<X className="h-3.5 w-3.5" />
-								</button>
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<button
+											type="button"
+											onClick={() => onDateRangeChange("", "")}
+											aria-label={t('model.clearDateFilter', 'Clear date filter')}
+											className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+										>
+											<X className="h-3.5 w-3.5" />
+										</button>
+									</TooltipTrigger>
+									<TooltipContent>{t('model.clearDateFilter', 'Clear date filter')}</TooltipContent>
+								</Tooltip>
 							)}
 						</FieldGroup>
 						<Popover

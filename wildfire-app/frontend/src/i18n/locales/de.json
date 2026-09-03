@@ -543,7 +543,11 @@
     "revokeAccess": "Widerrufen",
     "revokeAccessFor": "Zugriff widerrufen",
     "revokingAccess": "Wird widerrufen …",
-    "filterPeriod": "Nach Zeitraum filtern"
+    "filterPeriod": "Nach Zeitraum filtern",
+    "estimateRemaining": "noch ~{{duration}}",
+    "estimateOverdue": "wird beendet",
+    "estimateBasis": "Ein typischer Lauf dauert {{typical}}",
+    "estimateUnavailable": "Zu wenige frühere Läufe für eine Schätzung"
   },
   "polygon": {
     "drawRegion": "Zeichnen Sie Ihre Region",
@@ -2036,7 +2040,7 @@
       "statusUploadedNoName": "GeoJSON boundary loaded.",
       "statusUploadPrompt": "Upload a GeoJSON file with Polygon or MultiPolygon geometry.",
       "statusDrawn": "Area defined. You can keep adjusting it or move on.",
-      "statusDrawPrompt": "Klicken Sie auf die Karte, um Ihr Gebiet zu zeichnen. Schließen Sie das Polygon, um abzuschließen.",
+      "statusDrawPrompt": "Klicken Sie auf die Karte, um Ihr Gebiet zu zeichnen. Schließen Sie das Polygon und zeichnen Sie weitere, wenn Sie mehrere Gebiete brauchen.",
       "areaSummary": "Gebietszusammenfassung",
       "regions": "{{count}} Regionen",
       "status": "Status",
@@ -2066,7 +2070,9 @@
       "regionLookupFailed": "Die Verwaltungsgrenze konnte nicht geladen werden. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
       "regionOutsideCoverage": "Dieser Punkt liegt außerhalb des Gebiets mit Waldbranddaten. Klicken Sie in die schattierte Fläche.",
       "regionOutsideCoverageNamed": "Waldbranddaten gibt es nur für {{regions}}. Klicken Sie in die schattierte Fläche.",
-      "areaModeQuestion": "Wie möchten Sie das Gebiet festlegen?"
+      "areaModeQuestion": "Wie möchten Sie das Gebiet festlegen?",
+      "areaCount": "Gebiete",
+      "areaCountValue": "{{count}} getrennte Gebiete"
     },
     "layer3": {
       "purpose": "Diese Signale speisen das AHP-gewichtete Risikomodell. Alle drei sind standardmäßig aktiviert und für eine genaue Waldbrandrisikobewertung empfohlen.",

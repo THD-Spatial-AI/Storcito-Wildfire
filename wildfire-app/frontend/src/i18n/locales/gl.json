@@ -543,7 +543,11 @@
     "revokeAccess": "Revogar",
     "revokeAccessFor": "Revogar acceso",
     "revokingAccess": "Revogando…",
-    "filterPeriod": "Filtrar por período"
+    "filterPeriod": "Filtrar por período",
+    "estimateRemaining": "~{{duration}} restante",
+    "estimateOverdue": "rematando",
+    "estimateBasis": "Unha execución típica tarda {{typical}}",
+    "estimateUnavailable": "Non hai execucións previas abondas para estimar o final"
   },
   "polygon": {
     "drawRegion": "Debuxa a túa rexión",
@@ -2040,7 +2044,7 @@
       "statusUploadedNoName": "Límite GeoJSON cargado.",
       "statusUploadPrompt": "Sobe un arquivo GeoJSON con xeometría Polygon ou MultiPolygon.",
       "statusDrawn": "Área definida. Podes seguir axustándoa ou continuar.",
-      "statusDrawPrompt": "Fai clic no mapa para debuxar a túa área. Pecha o polígono para terminar.",
+      "statusDrawPrompt": "Fai clic no mapa para debuxar a túa área. Pecha o polígono para rematar e debuxa máis se precisas varias áreas.",
       "statusRegionSelected": "{{name}} seleccionada. Fai clic noutra rexión para substituíla.",
       "statusRegionPrompt": "Fai clic dentro dunha rexión administrativa do mapa para seleccionar o seu límite completo.",
       "regionCoverageWarning": "Utilízase o límite administrativo completo. Os píxeles situados fóra da cobertura sombreada de datos de incendios poden non ser calculables.",
@@ -2060,7 +2064,9 @@
       "regionLookupFailed": "Non se puido cargar o límite administrativo. Comproba a túa conexión e téntao de novo.",
       "regionOutsideCoverage": "Ese punto está fóra da área con datos de incendios. Fai clic dentro da zona sombreada.",
       "regionOutsideCoverageNamed": "Só hai datos de incendios para {{regions}}. Fai clic dentro da zona sombreada.",
-      "areaModeQuestion": "Como queres definir a área?"
+      "areaModeQuestion": "Como queres definir a área?",
+      "areaCount": "Áreas",
+      "areaCountValue": "{{count}} áreas separadas"
     },
     "layer3": {
       "purpose": "Estes sinais alimentan o modelo de risco ponderado por AHP. Os tres están activados por defecto e recoméndanse para unha avaliación precisa do risco de incendios forestais.",

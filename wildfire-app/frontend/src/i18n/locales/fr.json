@@ -543,7 +543,11 @@
     "revokeAccess": "Révoquer",
     "revokeAccessFor": "Révoquer l'accès",
     "revokingAccess": "Révocation…",
-    "filterPeriod": "Filtrer par période"
+    "filterPeriod": "Filtrer par période",
+    "estimateRemaining": "~{{duration}} restant",
+    "estimateOverdue": "en cours d'achèvement",
+    "estimateBasis": "Une exécution type dure {{typical}}",
+    "estimateUnavailable": "Pas assez d'exécutions passées pour estimer la fin"
   },
   "polygon": {
     "drawRegion": "Dessinez votre région",
@@ -2036,7 +2040,7 @@
       "statusUploadedNoName": "GeoJSON boundary loaded.",
       "statusUploadPrompt": "Upload a GeoJSON file with Polygon or MultiPolygon geometry.",
       "statusDrawn": "Area defined. You can keep adjusting it or move on.",
-      "statusDrawPrompt": "Cliquez sur la carte pour dessiner votre zone. Fermez le polygone pour terminer.",
+      "statusDrawPrompt": "Cliquez sur la carte pour dessiner votre zone. Fermez le polygone pour terminer, puis dessinez-en d'autres si nécessaire.",
       "areaSummary": "Résumé de la zone",
       "regions": "{{count}} régions",
       "status": "Statut",
@@ -2066,7 +2070,9 @@
       "regionLookupFailed": "Impossible de charger la limite administrative. Vérifiez votre connexion et réessayez.",
       "regionOutsideCoverage": "Ce point est en dehors de la zone couverte par les données incendie. Cliquez dans la zone ombrée.",
       "regionOutsideCoverageNamed": "Les données incendie ne sont disponibles que pour {{regions}}. Cliquez dans la zone ombrée.",
-      "areaModeQuestion": "Comment voulez-vous définir la zone ?"
+      "areaModeQuestion": "Comment voulez-vous définir la zone ?",
+      "areaCount": "Zones",
+      "areaCountValue": "{{count}} zones distinctes"
     },
     "layer3": {
       "purpose": "Ces signaux alimentent le modèle de risque pondéré AHP. Les trois sont activés par défaut et recommandés pour une évaluation précise.",
