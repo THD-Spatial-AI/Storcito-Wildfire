@@ -283,6 +283,9 @@
     "removeGroup": "Rimuovi gruppo"
   },
   "model": {
+    "filterFrom": "Data inizio",
+    "filterTo": "Data fine",
+    "clearDateFilter": "Cancella filtro date",
     "title": "Modello",
     "models": "Modelli",
     "newModel": "Nuovo modello",

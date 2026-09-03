@@ -449,6 +449,9 @@
     "removeGroup": "Remove group"
   },
   "model": {
+    "filterFrom": "From date",
+    "filterTo": "To date",
+    "clearDateFilter": "Clear date filter",
     "title": "Model",
     "models": "Models",
     "newModel": "New Model",

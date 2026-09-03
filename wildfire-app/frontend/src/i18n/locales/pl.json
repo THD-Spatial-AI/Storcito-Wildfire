@@ -283,6 +283,9 @@
     "removeGroup": "Usuń grupę"
   },
   "model": {
+    "filterFrom": "Data od",
+    "filterTo": "Data do",
+    "clearDateFilter": "Wyczyść filtr dat",
     "title": "Model",
     "models": "Modele",
     "newModel": "Nowy model",

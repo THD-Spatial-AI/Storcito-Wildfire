@@ -213,6 +213,8 @@ class ModelService {
     sort_by?: string;
     sort_order?: string;
     mine?: boolean;
+    from_date?: string;
+    to_date?: string;
   }): Promise<ModelListResponse> {
     const response = await axios.get(this.baseURL, { params });
     return response.data;

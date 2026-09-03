@@ -449,6 +449,9 @@
     "removeGroup": "Eliminar grupo"
   },
   "model": {
+    "filterFrom": "Data desde",
+    "filterTo": "Data ata",
+    "clearDateFilter": "Borrar filtro de datas",
     "title": "Modelo",
     "models": "Modelos",
     "newModel": "Novo modelo",

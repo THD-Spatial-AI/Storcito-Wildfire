@@ -5,7 +5,7 @@ import { isActiveStatus } from "@/features/model-dashboard/utils/statusHelpers";
 const modelKeys = {
 	all: ["models"] as const,
 	lists: () => [...modelKeys.all, "list"] as const,
-	list: (params?: { limit?: number; offset?: number; search?: string; workspace_id?: number; sort_by?: string; sort_order?: string }) =>
+	list: (params?: { limit?: number; offset?: number; search?: string; workspace_id?: number; sort_by?: string; sort_order?: string; from_date?: string; to_date?: string }) =>
 		[...modelKeys.lists(), params] as const,
 	stats: () => [...modelKeys.all, "stats"] as const,
 	detail: (id: number) => [...modelKeys.all, "detail", id] as const,
@@ -18,6 +18,8 @@ export const useModelsQuery = (params?: {
 	workspace_id?: number;
 	sort_by?: string;
 	sort_order?: string;
+	from_date?: string;
+	to_date?: string;
 }, options?: { requireWorkspace?: boolean }) => {
 	const requireWorkspace = options?.requireWorkspace ?? true;
 	return useQuery({

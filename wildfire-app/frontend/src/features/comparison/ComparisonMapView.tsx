@@ -423,9 +423,9 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
           <button
             type="button"
             onClick={() => setSynced((s) => !s)}
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-xs font-medium transition-colors ${
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-medium transition-colors ${
               synced
-                ? "bg-primary/10 border-primary/30 text-primary"
+                ? "border-primary/40 bg-primary/5 text-foreground"
                 : "bg-card border-border text-muted-foreground hover:bg-muted"
             }`}
           >
@@ -437,7 +437,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
           <button
             type="button"
             onClick={toggleFullscreen}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border bg-card border-border text-xs font-medium text-muted-foreground transition-colors hover:bg-muted"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border bg-card border-border text-xs font-medium text-muted-foreground transition-colors hover:bg-muted"
           >
             {isFullscreen ? (
               <Minimize2 className="w-3.5 h-3.5" />
@@ -470,7 +470,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
         </div>
 
         {frameCount >= 2 && (
-          <div className="absolute bottom-4 left-1/2 z-[1500] -translate-x-1/2 overflow-hidden rounded-2xl border border-border bg-white/95 shadow-lg backdrop-blur">
+          <div className="absolute bottom-4 left-1/2 z-[1500] -translate-x-1/2 overflow-hidden rounded-xl border border-border/60 bg-card/95 shadow-lg backdrop-blur-md">
             <div className="flex items-center gap-4 px-3 py-2">
               <PlayPauseButton
                 playing={playing}
@@ -509,14 +509,17 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
         )}
       </div>
 
-      <div className="mt-3 bg-card border border-border rounded-xl px-4 py-2.5 flex flex-wrap items-center gap-x-5 gap-y-2">
+      <div className="mt-3 bg-card border border-border/60 rounded-xl px-4 py-2.5 flex flex-wrap items-center gap-x-5 gap-y-2 shadow-sm">
         <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
           {t("modelResults.risk.distribution", "Risk Level")}
         </span>
         {LEGEND.map((l) => (
           <div key={l.label} className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: l.color }} />
-            <span className="text-xs text-foreground">{l.label}</span>
+            <span
+              className="h-2.5 w-2.5 rounded-full ring-1 ring-inset ring-black/10"
+              style={{ backgroundColor: l.color }}
+            />
+            <span className="text-xs font-medium text-foreground">{l.label}</span>
           </div>
         ))}
       </div>
@@ -538,18 +541,18 @@ const MapPane: FC<MapPaneProps> = ({ model, accentColor, state, mapRef, frameDat
     accentColor === "blue"
       ? {
           dot: "bg-blue-500",
-          tagBg: "bg-blue-100 dark:bg-blue-900/30",
+          tagBg: "bg-blue-500/10 ring-1 ring-blue-500/20",
           tagText: "text-blue-700 dark:text-blue-300",
         }
       : {
           dot: "bg-violet-500",
-          tagBg: "bg-violet-100 dark:bg-violet-900/30",
+          tagBg: "bg-violet-500/10 ring-1 ring-violet-500/20",
           tagText: "text-violet-700 dark:text-violet-300",
         };
 
   return (
-    <div className="relative flex flex-col rounded-xl overflow-hidden border border-border bg-card shadow-sm">
-      <div className="flex items-center justify-between gap-3 px-3 py-2 border-b border-border bg-card/80 backdrop-blur">
+    <div className="relative flex flex-col rounded-xl overflow-hidden border border-border/60 bg-card shadow-sm">
+      <div className="flex items-center justify-between gap-3 px-3 py-2 border-b border-border/60 bg-muted/30">
         <div className="flex items-center gap-2 min-w-0">
           <span className={`w-2 h-2 rounded-full flex-shrink-0 ${accent.dot}`} />
           <div className="min-w-0">
@@ -563,7 +566,7 @@ const MapPane: FC<MapPaneProps> = ({ model, accentColor, state, mapRef, frameDat
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
           {frameDate && (
-            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-slate-800 text-white tabular-nums">
+            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-primary text-primary-foreground tabular-nums">
               {frameDate}
             </span>
           )}
@@ -590,7 +593,7 @@ const MapPane: FC<MapPaneProps> = ({ model, accentColor, state, mapRef, frameDat
         )}
 
         {state.error && !state.loading && (
-          <div className="absolute top-2 left-2 right-2 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2 flex items-start gap-2 shadow-sm">
+          <div className="absolute top-2 left-2 right-2 rounded-lg bg-red-500/10 px-3 py-2 flex items-start gap-2 ring-1 ring-red-500/20 shadow-sm backdrop-blur-sm">
             <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
             <p className="text-xs text-red-700 dark:text-red-300">{state.error}</p>
           </div>

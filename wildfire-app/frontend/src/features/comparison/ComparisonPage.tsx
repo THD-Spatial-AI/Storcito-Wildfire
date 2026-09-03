@@ -167,8 +167,6 @@ export const ComparisonPage: FC<ComparisonPageProps> = ({ modelId: propModelId }
   return (
     <div className="h-full bg-background flex flex-col overflow-hidden">
       <header className="md-rise bg-card border-b border-border flex-shrink-0">
-        <div className="h-[3px] bg-muted" />
-
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -198,7 +196,7 @@ export const ComparisonPage: FC<ComparisonPageProps> = ({ modelId: propModelId }
 
         <div className="px-6 pb-3">
           <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-2 items-center">
-            <div className="bg-card border border-border rounded-lg px-3 py-2">
+            <div className="bg-card border border-border/60 rounded-xl px-3 py-2 shadow-sm">
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground shrink-0">
                   {t('simulationComparison.baseline')}
@@ -240,7 +238,7 @@ export const ComparisonPage: FC<ComparisonPageProps> = ({ modelId: propModelId }
               </div>
             </div>
 
-            <div className="bg-card border border-border rounded-lg px-3 py-2">
+            <div className="bg-card border border-border/60 rounded-xl px-3 py-2 shadow-sm">
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground shrink-0">
                   {t('simulationComparison.comparison')}
@@ -296,14 +294,11 @@ export const ComparisonPage: FC<ComparisonPageProps> = ({ modelId: propModelId }
           if (isLoading) {
             return (
               <div className="flex items-center justify-center py-20">
-                <div className="text-center">
-                  <div className="relative mx-auto mb-6 w-16 h-16">
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 to-violet-500/20 animate-pulse" />
-                    <div className="absolute inset-2 rounded-full bg-card flex items-center justify-center">
-                      <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                    </div>
+                <div className="flex flex-col items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full border border-border/60 bg-card shadow-sm">
+                    <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
                   </div>
-                  <p className="text-muted-foreground font-medium">
+                  <p className="text-sm text-muted-foreground font-medium">
                     {t('simulationComparison.loading')}
                   </p>
                 </div>
@@ -324,14 +319,14 @@ export const ComparisonPage: FC<ComparisonPageProps> = ({ modelId: propModelId }
                   {t('simulationComparison.selectModelsDescription')}
                 </p>
                 {!selectedModelId1 && (
-                  <div className="mt-5 px-4 py-2 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+                  <div className="mt-5 px-4 py-2 rounded-lg bg-blue-500/10 ring-1 ring-blue-500/20">
                     <p className="text-sm text-blue-700 dark:text-blue-300">
                       {t('simulationComparison.startBySelectingBaseline')}
                     </p>
                   </div>
                 )}
                 {selectedModelId1 && !selectedModelId2 && (
-                  <div className="mt-5 px-4 py-2 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg">
+                  <div className="mt-5 px-4 py-2 rounded-lg bg-amber-500/10 ring-1 ring-amber-500/20">
                     <p className="text-sm text-amber-700 dark:text-amber-300">
                       {t('simulationComparison.nowSelectComparison')}
                     </p>

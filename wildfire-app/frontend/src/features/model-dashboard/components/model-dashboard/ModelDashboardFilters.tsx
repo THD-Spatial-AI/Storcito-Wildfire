@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { AlertCircle, BarChart3, Copy, Edit, GitCompareArrows, Plus, RefreshCw, Search, Settings, Share2, Trash2 } from "lucide-react";
+import { AlertCircle, BarChart3, CalendarRange, Copy, Edit, GitCompareArrows, Plus, RefreshCw, Search, Settings, Share2, Trash2, X } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@spatialhub/ui";
 import Chip from "@/components/ui/Chip";
 import { WorkspaceSelector } from "@/components/workspace";
@@ -15,6 +15,9 @@ interface ModelDashboardFiltersProps {
 	setSelectedGroup: (group: Group | null) => void;
 	filterText: string;
 	setFilterText: (value: string) => void;
+	filterFromDate: string;
+	filterToDate: string;
+	onDateRangeChange: (from: string, to: string) => void;
 	isLoadingWorkspace: boolean;
 	handleWorkspaceChange: (workspace: Workspace | null) => void;
 	setIsCreateWsOpen: (open: boolean) => void;
@@ -47,7 +50,7 @@ const TOOLBAR_ICON_BUTTON_CLASS =
 	"inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors duration-150 hover:bg-muted/60 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50";
 
 export function ModelDashboardFilters({
-	groups, selectedGroup, setSelectedGroup, filterText, setFilterText, isLoadingWorkspace, handleWorkspaceChange, setIsCreateWsOpen, wsReloadKey, normalizedWorkspaceId, preferredWorkspaceId, currentWorkspace, handleRefresh, isRefreshing, isLoading, handleCompareSelected, canCompareSelected, canUseComparison, canManageWorkspace, setIsShareWsOpen, setIsCopyWsOpen, setIsRenameWsOpen, handleDeleteWorkspace, bulkActions, stats, statsLoaded = false, handleNewModel, isModelLimitReached, table,
+	groups, selectedGroup, setSelectedGroup, filterText, setFilterText, filterFromDate, filterToDate, onDateRangeChange, isLoadingWorkspace, handleWorkspaceChange, setIsCreateWsOpen, wsReloadKey, normalizedWorkspaceId, preferredWorkspaceId, currentWorkspace, handleRefresh, isRefreshing, isLoading, handleCompareSelected, canCompareSelected, canUseComparison, canManageWorkspace, setIsShareWsOpen, setIsCopyWsOpen, setIsRenameWsOpen, handleDeleteWorkspace, bulkActions, stats, statsLoaded = false, handleNewModel, isModelLimitReached, table,
 }: ModelDashboardFiltersProps) {
 	const { t } = useTranslation();
 
@@ -135,6 +138,49 @@ export function ModelDashboardFilters({
 							onChange={(e) => setFilterText(e.target.value)}
 							className="h-9 w-full rounded-lg border border-input bg-background pl-9 pr-3 text-sm text-foreground transition-colors duration-150 placeholder:text-muted-foreground hover:border-muted-foreground/40"
 						/>
+					</div>
+
+					{/* Date-range filter */}
+					<div className="flex items-center gap-1.5">
+						<div
+							className={`flex h-9 items-center gap-1.5 rounded-lg border bg-background px-2 text-sm transition-colors duration-150 ${
+								filterFromDate || filterToDate
+									? "border-primary/40 ring-1 ring-primary/20"
+									: "border-input hover:border-muted-foreground/40"
+							}`}
+						>
+							<CalendarRange className="h-4 w-4 shrink-0 text-muted-foreground" />
+							<input
+								type="date"
+								value={filterFromDate}
+								max={filterToDate || undefined}
+								onChange={(e) => onDateRangeChange(e.target.value, filterToDate)}
+								aria-label={t('model.filterFrom', 'From date')}
+								title={t('model.filterFrom', 'From date')}
+								className="w-[8.5rem] bg-transparent text-sm text-foreground outline-none [color-scheme:light] dark:[color-scheme:dark]"
+							/>
+							<span className="text-muted-foreground" aria-hidden="true">–</span>
+							<input
+								type="date"
+								value={filterToDate}
+								min={filterFromDate || undefined}
+								onChange={(e) => onDateRangeChange(filterFromDate, e.target.value)}
+								aria-label={t('model.filterTo', 'To date')}
+								title={t('model.filterTo', 'To date')}
+								className="w-[8.5rem] bg-transparent text-sm text-foreground outline-none [color-scheme:light] dark:[color-scheme:dark]"
+							/>
+							{(filterFromDate || filterToDate) && (
+								<button
+									type="button"
+									onClick={() => onDateRangeChange("", "")}
+									aria-label={t('model.clearDateFilter', 'Clear date filter')}
+									title={t('model.clearDateFilter', 'Clear date filter')}
+									className="ml-0.5 flex h-5 w-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+								>
+									<X className="h-3.5 w-3.5" />
+								</button>
+							)}
+						</div>
 					</div>
 
 					{/* Workspace Controls */}

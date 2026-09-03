@@ -940,6 +940,9 @@
     "removeGroup": "Remover grupo"
   },
   "model": {
+    "filterFrom": "Data inicial",
+    "filterTo": "Data final",
+    "clearDateFilter": "Limpar filtro de datas",
     "title": "Modelo",
     "models": "Modelos",
     "newModel": "Novo modelo",

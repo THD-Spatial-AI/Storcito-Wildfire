@@ -20,7 +20,7 @@ import MapSearchBar from "@/features/interactive-map/MapSearchBar";
 import { modelService, Model } from "@/features/model-dashboard";
 import { CreateWorkspaceModal } from "@/components/workspace";
 
-import { useRiskMetrics } from "./hooks/useRiskMetrics";
+import { scoreToRiskLevel, toPercentages, useRiskMetrics } from "./hooks/useRiskMetrics";
 import { useRiskLayers } from "./hooks/useRiskLayers";
 import { useFrameWeather } from "./hooks/useFrameWeather";
 import { useReferenceLayers } from "./hooks/useReferenceLayers";
@@ -260,7 +260,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   }, [dailyFrames.length]);
   const dailySeries = useDailyRiskDistribution(
     resolvedModelId,
-    dailyFrames.length >= 2 && (showTimeline || prefetchReady)
+    dailyFrames.length >= 2 && (showTimeline || prefetchReady || playingFrameDate !== null)
   );
 
   const showFrameByDate = useCallback(
@@ -281,19 +281,57 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     return `${from} – ${to}`;
   }, [model]);
 
-  const riskDistribution = legendMetrics.riskDistribution;
+  const modelDistribution = legendMetrics.riskDistribution;
+  const riskDistribution = useMemo(() => {
+    if (!playingFrameDate) return modelDistribution;
+    const day = dailySeries.data?.days.find((d) => d.date === playingFrameDate);
+    if (!day) return modelDistribution;
+    return toPercentages(day.distribution, day.valid_samples);
+  }, [playingFrameDate, dailySeries.data, modelDistribution]);
+
+  // The player bar reads the same frame, so its figures cannot contradict the legend.
+  const frameMetrics = useMemo(() => {
+    if (!playingFrameDate) return legendMetrics;
+    const day = dailySeries.data?.days.find((d) => d.date === playingFrameDate);
+    if (!day || day.valid_samples <= 0) return legendMetrics;
+
+    const { very_low, low, moderate, high, very_high } = day.distribution;
+    const affected = day.area_km2.high + day.area_km2.very_high;
+    const totalArea =
+      day.area_km2.very_low +
+      day.area_km2.low +
+      day.area_km2.moderate +
+      day.area_km2.high +
+      day.area_km2.very_high;
+    const meanScore =
+      (very_low + 2 * low + 3 * moderate + 4 * high + 5 * very_high) / day.valid_samples;
+
+    return {
+      ...legendMetrics,
+      overallRiskLevel: scoreToRiskLevel(meanScore),
+      overallRiskScore: meanScore,
+      affectedAreaKm2: affected,
+      affectedAreaHectares: affected * 100,
+      totalAreaKm2: totalArea,
+      affectedFraction: (high + very_high) / day.valid_samples,
+      sampleCount: day.valid_samples,
+      riskDistribution,
+    };
+  }, [playingFrameDate, dailySeries.data, legendMetrics, riskDistribution]);
+
+  // Availability stays whole-model so the checkboxes hold still during playback.
   const riskLevelAvailability = useMemo<VisibleRiskLevels>(() => {
-    if (!riskDistribution) {
+    if (!modelDistribution) {
       return { 1: true, 2: true, 3: true, 4: true, 5: true };
     }
     return {
-      1: riskDistribution.veryLow > 0,
-      2: riskDistribution.low > 0,
-      3: riskDistribution.moderate > 0,
-      4: riskDistribution.high > 0,
-      5: riskDistribution.veryHigh > 0,
+      1: modelDistribution.veryLow > 0,
+      2: modelDistribution.low > 0,
+      3: modelDistribution.moderate > 0,
+      4: modelDistribution.high > 0,
+      5: modelDistribution.veryHigh > 0,
     };
-  }, [riskDistribution]);
+  }, [modelDistribution]);
 
   const hasRiskLayers = Boolean(activeResult && attachedResultId === activeResult.id);
 
@@ -374,7 +412,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
             showFrameByDate(day.date, pausePlayback);
             setRiskRankIndex((i) => (i + 1) % (rankedRiskDays?.length ?? 1));
           }}
-          legendMetrics={legendMetrics}
+          legendMetrics={frameMetrics}
         />
       )}
 

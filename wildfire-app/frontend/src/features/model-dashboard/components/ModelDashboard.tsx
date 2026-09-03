@@ -139,6 +139,8 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 	const [orderBy, setOrderBy] = useState<string>("created_at");
 	const [order, setOrder] = useState<"asc" | "desc">("desc");
 	const [filterText, setFilterText] = useState<string>("");
+	const [filterFromDate, setFilterFromDate] = useState<string>("");
+	const [filterToDate, setFilterToDate] = useState<string>("");
 	const [currentPage, setCurrentPage] = useState<number>(0);
 	const [itemsPerPage, setItemsPerPage] = useState<number>(12);
 	const [currentWorkspaceId, setCurrentWorkspaceId] = useState<number | undefined>(undefined);
@@ -150,6 +152,8 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 		workspace_id: currentWorkspaceId,
 		sort_by: orderBy,
 		sort_order: order,
+		from_date: filterFromDate || undefined,
+		to_date: filterToDate || undefined,
 	});
 
 	const { data: statsResponse, isSuccess: statsLoaded } = useModelStatsQuery();
@@ -270,6 +274,13 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 
 	const handlePageChange = useCallback((page: number) => {
 		setCurrentPage(page);
+	}, []);
+
+	// Date-range filter.
+	const handleDateRangeChange = useCallback((from: string, to: string) => {
+		setFilterFromDate(from);
+		setFilterToDate(to);
+		setCurrentPage(0);
 	}, []);
 
 	const handleItemsPerPageChange = useCallback((newItemsPerPage: number) => {
@@ -483,6 +494,9 @@ return (
 						setSelectedGroup={setSelectedGroup}
 						filterText={filterText}
 						setFilterText={setFilterText}
+						filterFromDate={filterFromDate}
+						filterToDate={filterToDate}
+						onDateRangeChange={handleDateRangeChange}
 						isLoadingWorkspace={isLoadingWorkspace}
 						handleWorkspaceChange={handleWorkspaceChange}
 						setIsCreateWsOpen={setIsCreateWsOpen}

@@ -283,6 +283,9 @@
     "removeGroup": "Groep verwijderen"
   },
   "model": {
+    "filterFrom": "Vanaf datum",
+    "filterTo": "Tot datum",
+    "clearDateFilter": "Datumfilter wissen",
     "title": "Model",
     "models": "Modellen",
     "newModel": "Nieuw model",

@@ -66,7 +66,16 @@ const mapTrend = (trend: BackendMetrics['trend']): RiskTrend | null => {
 const mapLevel = (level: BackendMetrics['level']): RiskLevel | null =>
   level === 'unknown' ? null : level;
 
-const toPercentages = (
+/** Mean 1..5 score to its band. */
+export const scoreToRiskLevel = (score: number): RiskLevel => {
+  if (score < 1.5) return "very_low";
+  if (score < 2.5) return "low";
+  if (score < 3.5) return "moderate";
+  if (score < 4.5) return "high";
+  return "very_high";
+};
+
+export const toPercentages = (
   dist: BackendDistribution,
   sampleCount: number,
 ): RiskDistribution => {

@@ -283,6 +283,9 @@
     "removeGroup": "Odstranit skupinu"
   },
   "model": {
+    "filterFrom": "Datum od",
+    "filterTo": "Datum do",
+    "clearDateFilter": "Vymazat filtr dat",
     "title": "Model",
     "models": "Modely",
     "newModel": "Nový model",

@@ -32,7 +32,7 @@ const levelIndex = (level: RiskMapSample["level"]): number =>
 
 const CELLS_KEY = "simulationComparison.cells";
 const BASELINE_COLOR = "#2563eb";
-const COMPARISON_COLOR = "#db2777";
+const COMPARISON_COLOR = "#8b5cf6";
 const DENSITY_BINS = 32;
 
 // Continuous-score bins map to classes by rounding, so class k covers [k-0.5, k+0.5).
@@ -451,7 +451,7 @@ export const ComparisonInsightCharts: FC<ComparisonInsightChartsProps> = ({
 
   return (
     <section
-      className="md-rise bg-card border border-border rounded-xl p-5 shadow-sm"
+      className="md-rise bg-card border border-border/60 rounded-xl p-5 shadow-sm"
       style={{ animationDelay: "180ms" }}
     >
       <header className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">

@@ -93,8 +93,8 @@ const DeltaPill: FC<DeltaPillProps> = ({ delta, suffix = '', invert = false, dig
   const isUp = delta > 0;
   const isBad = invert ? isUp : !isUp;
   const classes = isBad
-    ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
-    : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300';
+    ? 'bg-red-500/10 text-red-700 ring-1 ring-red-500/20 dark:text-red-300'
+    : 'bg-emerald-500/10 text-emerald-700 ring-1 ring-emerald-500/20 dark:text-emerald-300';
   return (
     <span
       className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[11px] font-medium ${classes}`}
@@ -212,10 +212,10 @@ export const ComparisonMetrics: FC<ComparisonMetricsProps> = ({ model1, model2 }
     summaryTone === 'worse' ? TrendingUp : summaryTone === 'better' ? TrendingDown : ShieldCheck;
   const summaryToneClasses =
     summaryTone === 'worse'
-      ? 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-300 dark:border-red-900'
+      ? 'bg-red-500/10 text-red-700 ring-1 ring-red-500/20 dark:text-red-300'
       : summaryTone === 'better'
-        ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-300 dark:border-emerald-900'
-        : 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-900/40 dark:text-slate-300 dark:border-slate-700';
+        ? 'bg-emerald-500/10 text-emerald-700 ring-1 ring-emerald-500/20 dark:text-emerald-300'
+        : 'bg-muted text-muted-foreground ring-1 ring-border';
   const summaryTitle =
     summaryTone === 'worse'
       ? t('simulationComparison.summaryWorse', 'Risk increased')
@@ -232,11 +232,11 @@ export const ComparisonMetrics: FC<ComparisonMetricsProps> = ({ model1, model2 }
       )}
 
       {bothReady && deltas && (
-        <section className="md-rise bg-card border border-border rounded-xl p-5 shadow-sm" style={{ animationDelay: "120ms" }}>
+        <section className="md-rise bg-card border border-border/60 rounded-xl p-5 shadow-sm" style={{ animationDelay: "120ms" }}>
           <header className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between mb-4">
             <div className="flex items-start gap-3 min-w-0">
               <span
-                className={`inline-flex items-center justify-center w-9 h-9 rounded-lg border ${summaryToneClasses}`}
+                className={`inline-flex items-center justify-center w-9 h-9 rounded-lg ${summaryToneClasses}`}
               >
                 <SummaryIcon className="w-4 h-4" />
               </span>
@@ -252,7 +252,7 @@ export const ComparisonMetrics: FC<ComparisonMetricsProps> = ({ model1, model2 }
                 </p>
               </div>
             </div>
-            <div className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold ${summaryToneClasses}`}>
+            <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${summaryToneClasses}`}>
               <SummaryIcon className="w-3.5 h-3.5" />
               {summaryTitle}
             </div>
@@ -391,9 +391,9 @@ export const ComparisonMetrics: FC<ComparisonMetricsProps> = ({ model1, model2 }
       )}
 
       {bothReady && a.metrics.riskDistribution && b.metrics.riskDistribution && (
-        <section className="md-rise bg-card border border-border rounded-xl p-5 shadow-sm" style={{ animationDelay: "240ms" }}>
+        <section className="md-rise bg-card border border-border/60 rounded-xl p-5 shadow-sm" style={{ animationDelay: "240ms" }}>
           <header className="flex items-center gap-2 mb-4">
-            <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300">
+            <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-muted text-muted-foreground ring-1 ring-border">
               <BarChart3 className="w-4 h-4" />
             </span>
             <div>

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	modelservice "spatialhub_backend/internal/model/service"
 
@@ -15,7 +16,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func parseGetModelsParams(c *gin.Context) (limit, offset int, search, workspaceIDStr, sortBy, sortOrder string) {
+func parseGetModelsParams(c *gin.Context) (limit, offset int, search, workspaceIDStr, sortBy, sortOrder, fromDate, toDate string) {
 	limit = 100
 	offset = 0
 	sortBy = "created_at"
@@ -36,6 +37,8 @@ func parseGetModelsParams(c *gin.Context) (limit, offset int, search, workspaceI
 
 	search = c.Query("search")
 	workspaceIDStr = c.Query("workspace_id")
+	fromDate = c.Query("from_date")
+	toDate = c.Query("to_date")
 
 	if sb := c.Query("sort_by"); sb != "" {
 		switch sb {
@@ -264,10 +267,18 @@ func (h *ModelHandler) respondWithEmptyList(c *gin.Context, limit, offset int) {
 	})
 }
 
-func (h *ModelHandler) applySearchFilter(query *gorm.DB, search string) *gorm.DB {
+func (h *ModelHandler) applySearchFilter(query *gorm.DB, search, fromDate, toDate string) *gorm.DB {
 	query = query.Where("deleted_at IS NULL")
 	if search != "" {
 		query = query.Where("title ILIKE ?", "%"+search+"%")
+	}
+	// Period overlap: model covers any part of [fromDate, toDate].
+	if from, err := time.Parse("2006-01-02", fromDate); err == nil {
+		query = query.Where("to_date >= ?", from)
+	}
+	if to, err := time.Parse("2006-01-02", toDate); err == nil {
+		// Inclusive end day.
+		query = query.Where("from_date < ?", to.Add(24*time.Hour))
 	}
 	return query
 }
