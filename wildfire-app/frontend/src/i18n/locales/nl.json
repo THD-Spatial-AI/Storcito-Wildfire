@@ -380,7 +380,9 @@
     "filterPeriod": "Filteren op periode",
     "estimateRemaining": "~{{duration}} resterend",
     "estimateOverdue": "duurt langer dan gebruikelijk",
-    "estimateBasis": "Vergelijkbare geslaagde runs duren doorgaans {{typical}}",
+    "estimateBasis_one": "Op basis van 1 vergelijkbare run, die {{typical}} duurde",
+    "estimateBasis_other": "Op basis van {{count}} vergelijkbare runs, die meestal {{typical}} duren",
+    "estimateApproximate": "Die runs dateren van voor de wachtrijregistratie, dus de echte wachttijd is langer.",
     "estimateUnavailable": "Te weinig vergelijkbare geslaagde runs voor een schatting"
   },
   "polygon": {

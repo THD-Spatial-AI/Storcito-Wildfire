@@ -546,7 +546,9 @@
     "filterPeriod": "Filtrar por período",
     "estimateRemaining": "~{{duration}} restante",
     "estimateOverdue": "tardando máis do habitual",
-    "estimateBasis": "As execucións similares completadas adoitan tardar {{typical}}",
+    "estimateBasis_one": "Baseado en 1 execución comparable, que tardou {{typical}}",
+    "estimateBasis_other": "Baseado en {{count}} execucións comparables, que adoitan tardar {{typical}}",
+    "estimateApproximate": "Esas execucións son anteriores ao rexistro de cola, así que a espera real será maior.",
     "estimateUnavailable": "Non hai suficientes execucións similares completadas para estimar o final"
   },
   "polygon": {

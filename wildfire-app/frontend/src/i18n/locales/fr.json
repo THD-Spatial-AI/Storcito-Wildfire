@@ -546,7 +546,9 @@
     "filterPeriod": "Filtrer par période",
     "estimateRemaining": "~{{duration}} restant",
     "estimateOverdue": "dure plus longtemps que d'habitude",
-    "estimateBasis": "Les exécutions comparables réussies durent généralement {{typical}}",
+    "estimateBasis_one": "D'après 1 exécution comparable, qui a duré {{typical}}",
+    "estimateBasis_other": "D'après {{count}} exécutions comparables, qui durent en général {{typical}}",
+    "estimateApproximate": "Ces exécutions sont antérieures au suivi de la file, l'attente réelle sera plus longue.",
     "estimateUnavailable": "Pas assez d'exécutions comparables réussies pour estimer la fin"
   },
   "polygon": {

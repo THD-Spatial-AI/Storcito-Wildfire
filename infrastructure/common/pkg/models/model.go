@@ -54,6 +54,8 @@ type Model struct {
 	CalculationQueuedAt    *time.Time `json:"calculation_queued_at,omitempty"`
 	CalculationStartedAt   *time.Time `json:"calculation_started_at,omitempty"`
 	CalculationCompletedAt *time.Time `json:"calculation_completed_at,omitempty"`
+	// Backfilled queue time; excludes waiting.
+	CalculationQueuedAtEstimated bool `gorm:"default:false" json:"calculation_queued_at_estimated"`
 
 	// Relationships
 	Shares []ModelShare `gorm:"foreignKey:ModelID" json:"shares,omitempty"`

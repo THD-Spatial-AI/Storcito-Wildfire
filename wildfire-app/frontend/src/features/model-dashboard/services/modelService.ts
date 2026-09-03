@@ -107,6 +107,8 @@ export interface Model {
   calculation_queued_at?: string;
   calculation_started_at?: string;
   calculation_completed_at?: string;
+  /** Backfilled queue time. */
+  calculation_queued_at_estimated?: boolean;
 
   // Sharing
   shares?: ModelShare[];

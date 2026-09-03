@@ -5,21 +5,26 @@ import type { Model } from "@/features/model-dashboard/services/modelService";
 
 const MIN_SAMPLE_SECONDS = 5;
 const MAX_SAMPLE_SECONDS = 6 * 60 * 60;
-const MIN_SAMPLES = 3;
+const MIN_SAMPLES = 1;
 const MAX_SAMPLES = 20;
 const MAX_AREA_RATIO = 2;
+/** Ratio 1 means exact match. */
 const MAX_DAY_RATIO = 1;
 const MAX_BUFFER_RATIO = 1;
 
 export interface RuntimeEstimate {
 	totalSeconds: number;
 	sampleCount: number;
+	/** Runs short. */
+	approximate: boolean;
 }
 
 interface RuntimeSample {
 	completedAt: number;
 	model: Model;
 	seconds: number;
+	/** Backfilled queue time. */
+	estimated: boolean;
 }
 
 interface WorkloadProfile {
@@ -149,6 +154,7 @@ export const estimateRuntimesForModels = (
 			completedAt: Date.parse(model.calculation_completed_at ?? ""),
 			model,
 			seconds: modelRuntimeSeconds(model),
+			estimated: model.calculation_queued_at_estimated === true,
 		}))
 		.filter((sample): sample is RuntimeSample =>
 			sample.seconds !== null &&
@@ -159,14 +165,21 @@ export const estimateRuntimesForModels = (
 	const estimates: Record<number, RuntimeEstimate> = {};
 	for (const target of targets) {
 		const targetProfile = profileFor(target);
-		const samples = successfulSamples
-			.filter((sample) =>
-				sample.model.id !== target.id &&
-				comparableWorkload(targetProfile, profileFor(sample.model)))
-			.slice(0, MAX_SAMPLES);
-		const totalSeconds = typicalRuntimeFromSamples(samples.map((sample) => sample.seconds));
+		const comparable = successfulSamples.filter((sample) =>
+			sample.model.id !== target.id &&
+			comparableWorkload(targetProfile, profileFor(sample.model)));
+
+		// Prefer measured samples.
+		const measured = comparable.filter((sample) => !sample.estimated);
+		const chosen = (measured.length > 0 ? measured : comparable).slice(0, MAX_SAMPLES);
+
+		const totalSeconds = typicalRuntimeFromSamples(chosen.map((sample) => sample.seconds));
 		if (totalSeconds !== null) {
-			estimates[target.id] = { totalSeconds, sampleCount: samples.length };
+			estimates[target.id] = {
+				totalSeconds,
+				sampleCount: chosen.length,
+				approximate: measured.length === 0,
+			};
 		}
 	}
 	return estimates;

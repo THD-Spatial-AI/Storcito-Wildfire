@@ -283,12 +283,29 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
 								</div>
 							</TooltipTrigger>
 							<TooltipContent>
-								{runtimeEstimate === null
-									? t("model.estimateUnavailable", "Not enough comparable successful runs to estimate a finish time")
-									: t("model.estimateBasis", {
-											typical: formatDuration(runtimeEstimate.totalSeconds),
-											defaultValue: "Comparable successful runs typically take {{typical}}",
-										})}
+								{runtimeEstimate === null ? (
+									t("model.estimateUnavailable", "Not enough comparable successful runs to estimate a finish time")
+								) : (
+									<>
+										<span>
+											{t("model.estimateBasis", {
+												typical: formatDuration(runtimeEstimate.totalSeconds),
+												count: runtimeEstimate.sampleCount,
+												defaultValue_one: "Based on 1 comparable run, which took {{typical}}",
+												defaultValue_other:
+													"Based on {{count}} comparable runs, which typically take {{typical}}",
+											})}
+										</span>
+										{runtimeEstimate.approximate && (
+											<span className="mt-1 block text-muted-foreground">
+												{t(
+													"model.estimateApproximate",
+													"Those runs predate queue tracking, so the real wait is likely longer.",
+												)}
+											</span>
+										)}
+									</>
+								)}
 							</TooltipContent>
 						</Tooltip>
 					)}

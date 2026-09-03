@@ -546,7 +546,9 @@
     "filterPeriod": "Filter by period",
     "estimateRemaining": "~{{duration}} left",
     "estimateOverdue": "taking longer than usual",
-    "estimateBasis": "Comparable successful runs typically take {{typical}}",
+    "estimateBasis_one": "Based on 1 comparable run, which took {{typical}}",
+    "estimateBasis_other": "Based on {{count}} comparable runs, which typically take {{typical}}",
+    "estimateApproximate": "Those runs predate queue tracking, so the real wait is likely longer.",
     "estimateUnavailable": "Not enough comparable successful runs to estimate a finish time"
   },
   "polygon": {

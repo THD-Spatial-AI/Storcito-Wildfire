@@ -380,7 +380,9 @@
     "filterPeriod": "Filtra per periodo",
     "estimateRemaining": "~{{duration}} rimanenti",
     "estimateOverdue": "sta richiedendo più tempo del solito",
-    "estimateBasis": "Le esecuzioni comparabili completate richiedono in genere {{typical}}",
+    "estimateBasis_one": "In base a 1 esecuzione comparabile, durata {{typical}}",
+    "estimateBasis_other": "In base a {{count}} esecuzioni comparabili, che durano in genere {{typical}}",
+    "estimateApproximate": "Quelle esecuzioni precedono il tracciamento della coda, quindi l'attesa reale sarà maggiore.",
     "estimateUnavailable": "Esecuzioni comparabili completate insufficienti per una stima"
   },
   "polygon": {

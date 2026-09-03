@@ -380,7 +380,9 @@
     "filterPeriod": "Filtrovat podle období",
     "estimateRemaining": "zbývá ~{{duration}}",
     "estimateOverdue": "trvá déle než obvykle",
-    "estimateBasis": "Srovnatelné úspěšné běhy obvykle trvají {{typical}}",
+    "estimateBasis_one": "Na základě 1 srovnatelného běhu, který trval {{typical}}",
+    "estimateBasis_other": "Na základě {{count}} srovnatelných běhů, které obvykle trvají {{typical}}",
+    "estimateApproximate": "Tyto běhy předcházejí sledování fronty, skutečné čekání bude delší.",
     "estimateUnavailable": "Nedostatek srovnatelných úspěšných běhů pro odhad"
   },
   "polygon": {

@@ -7,6 +7,13 @@ ALTER TABLE models
 COMMENT ON COLUMN models.calculation_queued_at IS
     'Time the calculation was requested; start of the user-visible wait';
 
+-- Marks a backfilled approximation.
+ALTER TABLE models
+    ADD COLUMN IF NOT EXISTS calculation_queued_at_estimated BOOLEAN NOT NULL DEFAULT FALSE;
+
+COMMENT ON COLUMN models.calculation_queued_at_estimated IS
+    'True when calculation_queued_at was backfilled and excludes queue wait';
+
 -- Backfill from ready notifications.
 WITH ready_times AS (
     SELECT model_id, MAX(created_at) AS ready_at
@@ -18,6 +25,7 @@ WITH ready_times AS (
 )
 UPDATE models AS model
 SET calculation_queued_at = model.calculation_started_at,
+    calculation_queued_at_estimated = TRUE,
     calculation_completed_at = ready_times.ready_at
 FROM ready_times
 WHERE model.id = ready_times.model_id

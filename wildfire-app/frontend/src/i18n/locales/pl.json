@@ -380,7 +380,9 @@
     "filterPeriod": "Filtruj według okresu",
     "estimateRemaining": "~{{duration}} pozostało",
     "estimateOverdue": "trwa dłużej niż zwykle",
-    "estimateBasis": "Porównywalne udane uruchomienia trwają zwykle {{typical}}",
+    "estimateBasis_one": "Na podstawie 1 porównywalnego uruchomienia, które trwało {{typical}}",
+    "estimateBasis_other": "Na podstawie {{count}} porównywalnych uruchomień, które zwykle trwają {{typical}}",
+    "estimateApproximate": "Te uruchomienia są sprzed śledzenia kolejki, więc rzeczywiste oczekiwanie będzie dłuższe.",
     "estimateUnavailable": "Za mało porównywalnych udanych uruchomień, aby oszacować koniec"
   },
   "polygon": {
