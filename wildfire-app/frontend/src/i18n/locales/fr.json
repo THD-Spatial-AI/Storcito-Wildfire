@@ -542,7 +542,8 @@
     "peopleWithAccessDescription": "Les personnes listées ici peuvent ouvrir ce modèle et ses couches de risque.",
     "revokeAccess": "Révoquer",
     "revokeAccessFor": "Révoquer l'accès",
-    "revokingAccess": "Révocation…"
+    "revokingAccess": "Révocation…",
+    "filterPeriod": "Filtrer par période"
   },
   "polygon": {
     "drawRegion": "Dessinez votre région",

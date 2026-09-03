@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { DateRangePicker, Dialog, Group as FieldGroup, Popover, Button as Trigger } from "react-aria-components";
+import { parseDate, type DateValue } from "@internationalized/date";
 import { AlertCircle, BarChart3, CalendarRange, Copy, Edit, GitCompareArrows, Plus, RefreshCw, Search, Settings, Share2, Trash2, X } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@spatialhub/ui";
 import Chip from "@/components/ui/Chip";
@@ -6,6 +8,7 @@ import { WorkspaceSelector } from "@/components/workspace";
 import type { Workspace } from "@/components/workspace";
 import { useTranslation } from "@/i18n";
 import type { ModelStats } from "@/features/model-dashboard/services/modelService";
+import { RangeCalendar } from "@/components/ui/calendar-rac";
 import { ModelStatsSummary } from "./ModelStatsSummary";
 import type { Group } from "./types";
 
@@ -53,6 +56,18 @@ export function ModelDashboardFilters({
 	groups, selectedGroup, setSelectedGroup, filterText, setFilterText, filterFromDate, filterToDate, onDateRangeChange, isLoadingWorkspace, handleWorkspaceChange, setIsCreateWsOpen, wsReloadKey, normalizedWorkspaceId, preferredWorkspaceId, currentWorkspace, handleRefresh, isRefreshing, isLoading, handleCompareSelected, canCompareSelected, canUseComparison, canManageWorkspace, setIsShareWsOpen, setIsCopyWsOpen, setIsRenameWsOpen, handleDeleteWorkspace, bulkActions, stats, statsLoaded = false, handleNewModel, isModelLimitReached, table,
 }: ModelDashboardFiltersProps) {
 	const { t } = useTranslation();
+
+	const hasDateFilter = Boolean(filterFromDate || filterToDate);
+	const dateRangeValue =
+		filterFromDate && filterToDate
+			? { start: parseDate(filterFromDate), end: parseDate(filterToDate) }
+			: null;
+	const handleRangeChange = (
+		range: { start: DateValue; end: DateValue } | null,
+	) => {
+		if (!range) return;
+		onDateRangeChange(range.start.toString(), range.end.toString());
+	};
 
 	return (
 		<>
@@ -140,48 +155,48 @@ export function ModelDashboardFilters({
 						/>
 					</div>
 
-					{/* Date-range filter */}
-					<div className="flex items-center gap-1.5">
-						<div
-							className={`flex h-9 items-center gap-1.5 rounded-lg border bg-background px-2 text-sm transition-colors duration-150 ${
-								filterFromDate || filterToDate
-									? "border-primary/40 ring-1 ring-primary/20"
-									: "border-input hover:border-muted-foreground/40"
-							}`}
-						>
-							<CalendarRange className="h-4 w-4 shrink-0 text-muted-foreground" />
-							<input
-								type="date"
-								value={filterFromDate}
-								max={filterToDate || undefined}
-								onChange={(e) => onDateRangeChange(e.target.value, filterToDate)}
-								aria-label={t('model.filterFrom', 'From date')}
-								title={t('model.filterFrom', 'From date')}
-								className="w-[8.5rem] bg-transparent text-sm text-foreground outline-none [color-scheme:light] dark:[color-scheme:dark]"
-							/>
-							<span className="text-muted-foreground" aria-hidden="true">–</span>
-							<input
-								type="date"
-								value={filterToDate}
-								min={filterFromDate || undefined}
-								onChange={(e) => onDateRangeChange(filterFromDate, e.target.value)}
-								aria-label={t('model.filterTo', 'To date')}
-								title={t('model.filterTo', 'To date')}
-								className="w-[8.5rem] bg-transparent text-sm text-foreground outline-none [color-scheme:light] dark:[color-scheme:dark]"
-							/>
-							{(filterFromDate || filterToDate) && (
+					{/* Period filter. */}
+					<DateRangePicker
+						value={dateRangeValue}
+						onChange={handleRangeChange}
+						aria-label={t('model.filterPeriod', 'Filter by period')}
+					>
+						<FieldGroup className="flex items-center gap-1.5">
+							<Trigger
+								className={`flex h-9 items-center gap-1.5 rounded-lg border px-2.5 text-sm transition-colors duration-150 cursor-pointer ${
+									hasDateFilter
+										? "border-primary/40 bg-primary/5 text-foreground ring-1 ring-primary/20"
+										: "border-input bg-background text-muted-foreground hover:border-muted-foreground/40 hover:text-foreground"
+								}`}
+							>
+								<CalendarRange className="h-4 w-4 shrink-0" />
+								<span className="hidden sm:inline">
+									{hasDateFilter
+										? `${filterFromDate || "…"} – ${filterToDate || "…"}`
+										: t('model.filterPeriod', 'Filter by period')}
+								</span>
+							</Trigger>
+							{hasDateFilter && (
 								<button
 									type="button"
 									onClick={() => onDateRangeChange("", "")}
 									aria-label={t('model.clearDateFilter', 'Clear date filter')}
 									title={t('model.clearDateFilter', 'Clear date filter')}
-									className="ml-0.5 flex h-5 w-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+									className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
 								>
 									<X className="h-3.5 w-3.5" />
 								</button>
 							)}
-						</div>
-					</div>
+						</FieldGroup>
+						<Popover
+							className="bg-popover z-50 rounded-md border border-border shadow-lg outline-hidden"
+							offset={4}
+						>
+							<Dialog className="max-h-[inherit] overflow-auto p-2">
+								<RangeCalendar onChange={handleRangeChange} />
+							</Dialog>
+						</Popover>
+					</DateRangePicker>
 
 					{/* Workspace Controls */}
 					<div className="flex flex-wrap items-center gap-2">

@@ -376,7 +376,8 @@
     "peopleWithAccessDescription": "Osoby z tej listy mogą otworzyć ten model i jego warstwy ryzyka.",
     "revokeAccess": "Unieważnij",
     "revokeAccessFor": "Odbierz dostęp",
-    "revokingAccess": "Odbieranie dostępu…"
+    "revokingAccess": "Odbieranie dostępu…",
+    "filterPeriod": "Filtruj według okresu"
   },
   "polygon": {
     "drawRegion": "Narysuj swój region",

@@ -376,7 +376,8 @@
     "peopleWithAccessDescription": "De personen in deze lijst kunnen dit model en de bijbehorende risicolagen openen.",
     "revokeAccess": "Intrekken",
     "revokeAccessFor": "Toegang intrekken",
-    "revokingAccess": "Bezig met intrekken…"
+    "revokingAccess": "Bezig met intrekken…",
+    "filterPeriod": "Filteren op periode"
   },
   "polygon": {
     "drawRegion": "Teken je regio",

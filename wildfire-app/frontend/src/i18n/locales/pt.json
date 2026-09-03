@@ -1033,7 +1033,8 @@
     "peopleWithAccessDescription": "As pessoas listadas aqui podem abrir este modelo e as suas camadas de risco.",
     "revokeAccess": "Revogar",
     "revokeAccessFor": "Revogar acesso",
-    "revokingAccess": "A revogar…"
+    "revokingAccess": "A revogar…",
+    "filterPeriod": "Filtrar por período"
   },
   "apiTokens": {
     "title": "Tokens de API",

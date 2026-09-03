@@ -542,7 +542,8 @@
     "peopleWithAccessDescription": "Users listed here can open this model and its risk layers.",
     "revokeAccess": "Revoke",
     "revokeAccessFor": "Revoke access",
-    "revokingAccess": "Revoking…"
+    "revokingAccess": "Revoking…",
+    "filterPeriod": "Filter by period"
   },
   "polygon": {
     "drawRegion": "Draw Your Region",

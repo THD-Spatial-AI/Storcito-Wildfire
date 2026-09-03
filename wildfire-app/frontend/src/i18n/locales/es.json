@@ -542,7 +542,8 @@
     "peopleWithAccessDescription": "Las personas de esta lista pueden abrir este modelo y sus capas de riesgo.",
     "revokeAccess": "Revocar",
     "revokeAccessFor": "Revocar acceso",
-    "revokingAccess": "Revocando…"
+    "revokingAccess": "Revocando…",
+    "filterPeriod": "Filtrar por periodo"
   },
   "polygon": {
     "drawRegion": "Dibuja tu región",

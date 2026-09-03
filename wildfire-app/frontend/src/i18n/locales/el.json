@@ -777,7 +777,8 @@
     "peopleWithAccessDescription": "Τα άτομα της λίστας μπορούν να ανοίξουν αυτό το μοντέλο και τα επίπεδα κινδύνου του.",
     "revokeAccess": "Ανάκληση",
     "revokeAccessFor": "Ανάκληση πρόσβασης",
-    "revokingAccess": "Ανάκληση…"
+    "revokingAccess": "Ανάκληση…",
+    "filterPeriod": "Φιλτράρισμα κατά περίοδο"
   },
   "modelsManagement": {
     "title": "Όλα τα μοντέλα αξιολόγησης προσομοίωσης",

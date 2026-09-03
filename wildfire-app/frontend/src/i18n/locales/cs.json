@@ -376,7 +376,8 @@
     "peopleWithAccessDescription": "Lidé v tomto seznamu mohou otevřít tento model a jeho vrstvy rizika.",
     "revokeAccess": "Odvolat",
     "revokeAccessFor": "Odebrat přístup",
-    "revokingAccess": "Odebírání přístupu…"
+    "revokingAccess": "Odebírání přístupu…",
+    "filterPeriod": "Filtrovat podle období"
   },
   "polygon": {
     "drawRegion": "Nakreslete svůj region",
