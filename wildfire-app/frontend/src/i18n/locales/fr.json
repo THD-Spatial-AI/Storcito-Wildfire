@@ -545,9 +545,9 @@
     "revokingAccess": "Révocation…",
     "filterPeriod": "Filtrer par période",
     "estimateRemaining": "~{{duration}} restant",
-    "estimateOverdue": "en cours d'achèvement",
-    "estimateBasis": "Une exécution type dure {{typical}}",
-    "estimateUnavailable": "Pas assez d'exécutions passées pour estimer la fin"
+    "estimateOverdue": "dure plus longtemps que d'habitude",
+    "estimateBasis": "Les exécutions comparables réussies durent généralement {{typical}}",
+    "estimateUnavailable": "Pas assez d'exécutions comparables réussies pour estimer la fin"
   },
   "polygon": {
     "drawRegion": "Dessinez votre région",

@@ -12,20 +12,26 @@ interface PolygonStyleLabels {
 /** Edit-badge flag. */
 export const EDIT_BADGE_PROPERTY = "showEditBadge";
 
+/** Area source. */
+export type PolygonVariant = "drawn" | "region";
+
 export const usePolygonStyles = (
   labels: PolygonStyleLabels = {},
   editableRef?: { current: boolean },
+  variant: PolygonVariant = "drawn",
 ) => {
   return useMemo(() => {
-    const outlineStyle = new Style({
-      fill: new Fill({
-        color: "transparent",
-      }),
-      stroke: new Stroke({
-        color: "#000000",
-        width: 2.5,
-      }),
-    });
+    // Indigo reads as administrative.
+    const outlineStyle =
+      variant === "region"
+        ? new Style({
+            fill: new Fill({ color: "rgba(99, 102, 241, 0.12)" }),
+            stroke: new Stroke({ color: "#4f46e5", width: 3 }),
+          })
+        : new Style({
+            fill: new Fill({ color: "transparent" }),
+            stroke: new Stroke({ color: "#000000", width: 2.5 }),
+          });
     const editBadgeStyle = new Style({
       text: new Text({
         text: `\u270E ${labels.edit ?? "Edit"}`,
@@ -90,5 +96,5 @@ export const usePolygonStyles = (
     });
 
     return { polygonStyle, bufferStyle, startPointStyle, sketchStyle, modifyStyle };
-  }, [editableRef, labels.clickToClose, labels.edit, labels.start]);
+  }, [editableRef, labels.clickToClose, labels.edit, labels.start, variant]);
 };

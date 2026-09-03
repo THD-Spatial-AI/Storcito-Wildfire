@@ -379,9 +379,9 @@
     "revokingAccess": "Bezig met intrekken…",
     "filterPeriod": "Filteren op periode",
     "estimateRemaining": "~{{duration}} resterend",
-    "estimateOverdue": "afrondend",
-    "estimateBasis": "Een typische run duurt {{typical}}",
-    "estimateUnavailable": "Te weinig eerdere runs voor een schatting"
+    "estimateOverdue": "duurt langer dan gebruikelijk",
+    "estimateBasis": "Vergelijkbare geslaagde runs duren doorgaans {{typical}}",
+    "estimateUnavailable": "Te weinig vergelijkbare geslaagde runs voor een schatting"
   },
   "polygon": {
     "drawRegion": "Teken je regio",

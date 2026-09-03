@@ -379,9 +379,9 @@
     "revokingAccess": "Revoca in corso…",
     "filterPeriod": "Filtra per periodo",
     "estimateRemaining": "~{{duration}} rimanenti",
-    "estimateOverdue": "in chiusura",
-    "estimateBasis": "Un'esecuzione tipica richiede {{typical}}",
-    "estimateUnavailable": "Esecuzioni precedenti insufficienti per una stima"
+    "estimateOverdue": "sta richiedendo più tempo del solito",
+    "estimateBasis": "Le esecuzioni comparabili completate richiedono in genere {{typical}}",
+    "estimateUnavailable": "Esecuzioni comparabili completate insufficienti per una stima"
   },
   "polygon": {
     "drawRegion": "Disegna la tua regione",

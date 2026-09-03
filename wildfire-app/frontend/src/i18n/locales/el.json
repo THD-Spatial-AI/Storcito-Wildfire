@@ -780,9 +780,9 @@
     "revokingAccess": "Ανάκληση…",
     "filterPeriod": "Φιλτράρισμα κατά περίοδο",
     "estimateRemaining": "~{{duration}} απομένουν",
-    "estimateOverdue": "ολοκληρώνεται",
-    "estimateBasis": "Μια τυπική εκτέλεση διαρκεί {{typical}}",
-    "estimateUnavailable": "Δεν υπάρχουν αρκετές προηγούμενες εκτελέσεις για εκτίμηση"
+    "estimateOverdue": "διαρκεί περισσότερο από το συνηθισμένο",
+    "estimateBasis": "Οι συγκρίσιμες επιτυχημένες εκτελέσεις συνήθως διαρκούν {{typical}}",
+    "estimateUnavailable": "Δεν υπάρχουν αρκετές συγκρίσιμες επιτυχημένες εκτελέσεις για εκτίμηση"
   },
   "modelsManagement": {
     "title": "Όλα τα μοντέλα αξιολόγησης προσομοίωσης",

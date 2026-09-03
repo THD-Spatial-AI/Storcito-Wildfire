@@ -1,6 +1,7 @@
 import { useEffect, useRef, type FC } from "react";
 import type Map from "ol/Map";
 import { usePolygonBuffer, usePolygonDrawing, usePolygonStyles } from "./hooks";
+import type { PolygonVariant } from "./hooks/usePolygonStyles";
 
 interface PolygonDrawerProps {
   map: Map | null;
@@ -18,8 +19,10 @@ interface PolygonDrawerProps {
   readOnly?: boolean;
 
   enableEditing?: boolean;
-  /** Sends the user back to edit. */
+  /** Edit request. */
   onEditRequest?: () => void;
+  /** Region styling. */
+  variant?: PolygonVariant;
   /** Translation labels */
   labels?: {
     clickToClose?: string;
@@ -44,6 +47,7 @@ export const PolygonDrawer: FC<PolygonDrawerProps> = ({
   readOnly = false,
   enableEditing = true,
   onEditRequest,
+  variant = "drawn",
   labels = {},
 }) => {
   const canEditNow = !readOnly && ((enableEditing && drawingEnabled) || Boolean(onEditRequest));
@@ -52,7 +56,7 @@ export const PolygonDrawer: FC<PolygonDrawerProps> = ({
     canEditRef.current = canEditNow;
   }, [canEditNow]);
 
-  const styles = usePolygonStyles(labels, canEditRef);
+  const styles = usePolygonStyles(labels, canEditRef, variant);
   const { bufferSourceRef, bufferDistanceRef, recomputeBuffers } =
     usePolygonBuffer(bufferDistanceMeters);
   const { vectorSourceRef } = usePolygonDrawing({
@@ -78,7 +82,7 @@ export const PolygonDrawer: FC<PolygonDrawerProps> = ({
     onEditRequest,
   });
 
-  // Repaint so the badge appears or disappears with the edit state.
+  // Repaint the badge.
   useEffect(() => {
     vectorSourceRef.current?.changed();
   }, [canEditNow, vectorSourceRef]);

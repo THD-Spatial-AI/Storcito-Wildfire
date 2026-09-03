@@ -12,13 +12,13 @@ import type { AxiosResponse } from "axios";
 function extractBaseTitle(title: string): string {
   if (!title) return title;
 
-  // Limit title length to prevent DoS
+  // Cap title length.
   if (title.length > 500) {
     title = title.substring(0, 500);
   }
 
-  // Check if title ends with " v<number>" pattern
-  // Use simple string operations instead of regex
+  // Match version suffix.
+  // Avoid regex.
   const trimmedTitle = title.trim();
   const lastSpaceIndex = trimmedTitle.lastIndexOf(" ");
 
@@ -27,10 +27,10 @@ function extractBaseTitle(title: string): string {
   }
 
   const possibleVersion = trimmedTitle.substring(lastSpaceIndex);
-  // Simple check: starts with " v" followed by digits
+  // Version suffix.
   if (possibleVersion.length >= 3 && possibleVersion.startsWith(" v")) {
     const numberPart = possibleVersion.substring(2);
-    // Check if rest is all digits (safe check without regex)
+    // Digits only.
     if (/^\d{1,5}$/.test(numberPart)) {
       return trimmedTitle.substring(0, lastSpaceIndex);
     }
@@ -104,6 +104,7 @@ export interface Model {
   is_active?: boolean;
 
   // Calculation timing
+  calculation_queued_at?: string;
   calculation_started_at?: string;
   calculation_completed_at?: string;
 
@@ -245,7 +246,7 @@ class ModelService {
     return response.data;
   }
 
-  // Upload optional per-model input files (station data + DTM); no-op when none given.
+  // Upload optional inputs.
   async uploadModelInputs(
     id: number,
     files: { stationData?: File | null; dtm?: File | null }
@@ -296,7 +297,7 @@ class ModelService {
       groupId = groupId || original.id;
     }
 
-    // Use cached models if available, otherwise fetch
+    // Reuse cache.
     let allModels: Model[];
     if (cachedModels) {
       allModels = cachedModels;
@@ -308,10 +309,10 @@ class ModelService {
       allModels = allModelsResponse.data;
     }
 
-    // Extract base title safely without ReDoS vulnerability
+    // ReDoS-safe extraction.
     const baseTitle = extractBaseTitle(original.title);
 
-    // Check if version part matches pattern " v<number>"
+    // Match version suffix.
     const versionRegex = /^ v(\d{1,5})$/;
     const siblings = allModels.filter((model) => {
       if (model.parent_model_id !== parentModelId) return false;
@@ -321,7 +322,7 @@ class ModelService {
       return versionRegex.test(versionPart);
     });
 
-    // Find the maximum version number among siblings
+    // Highest sibling version.
     let maxVersion = 0;
     for (const sibling of siblings) {
       const versionPart = sibling.title.slice(baseTitle.length);

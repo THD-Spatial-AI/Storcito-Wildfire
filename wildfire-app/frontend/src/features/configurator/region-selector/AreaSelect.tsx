@@ -367,6 +367,7 @@ export const AreaSelect: FC<AreaSelectProps> = ({
         onPointCountChange={setCurrentPointCount}
         onClearAll={actions.handleClearAllPolygons}
         allowMultiple={true}
+        variant={state.areaInputMode === "region" ? "region" : "drawn"}
         clearTrigger={state.clearTrigger}
         initialPolygons={state.loadedCoordinates}
         bufferDistanceMeters={state.bufferDistance}

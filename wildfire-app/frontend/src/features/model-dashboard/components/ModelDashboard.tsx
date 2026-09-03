@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 import { Model, ModelStats } from "@/features/model-dashboard/services/modelService";
 import { useConfirm } from "@/hooks/useConfirmDialog";
-import { useModelsQuery, useModelStatsQuery } from "@/features/model-dashboard/hooks/useModelsQuery";
+import { useModelsQuery, useModelStatsQuery, useRuntimeHistoryQuery } from "@/features/model-dashboard/hooks/useModelsQuery";
 import { type Workspace } from "@/components/workspace";
 import { useWorkspaceStore } from "@/components/workspace";
 import { useAuthStore } from "@/store/auth-store";
@@ -18,7 +18,7 @@ import { useFavoriteModelsStore } from "@/features/model-dashboard/store/favorit
 import { isModelDisabled as checkModelDisabled, isModelCompleted } from "@/features/model-dashboard/utils/statusHelpers";
 import { useWebservices } from "@/features/admin-dashboard";
 import { processModelTimingUpdates, type TimingUpdate } from "@/features/model-dashboard/utils/modelTimingUtils";
-import { typicalRuntimeFromSamples, collectRuntimeSamples } from "@/features/model-dashboard/utils/runtimeEstimate";
+import { estimateRuntimesForModels, type RuntimeEstimate } from "@/features/model-dashboard/utils/runtimeEstimate";
 import { organizeModelsHierarchically } from "@/features/model-dashboard/utils/dashboardHelpers";
 import { useTranslation } from "@/i18n";
 import { useNotification } from "@/features/notifications";
@@ -158,16 +158,26 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 	});
 
 	const { data: statsResponse, isSuccess: statsLoaded } = useModelStatsQuery();
+	const { data: runtimeHistoryResponse } = useRuntimeHistoryQuery(currentWorkspaceId);
 
 	const { summary: webserviceSummary } = useWebservices({}, { autoRefresh: true, refreshInterval: 10000 });
 	const hasAvailableWebservice = (webserviceSummary?.available ?? 0) > 0;
 
 	// Page slice only.
 	const models = useMemo(() => modelsResponse?.data || [], [modelsResponse?.data]);
-	// History-based estimate.
-	const typicalRuntime = useMemo(
-		() => typicalRuntimeFromSamples(collectRuntimeSamples(models, calculationCompletionInfo)),
-		[models, calculationCompletionInfo],
+	const runtimeHistory = useMemo(() => {
+		const modelsById = new Map<number, Model>();
+		for (const model of runtimeHistoryResponse?.data ?? []) modelsById.set(model.id, model);
+		// Page data is fresher.
+		for (const model of models) modelsById.set(model.id, model);
+		return [...modelsById.values()];
+	}, [models, runtimeHistoryResponse?.data]);
+	const runtimeEstimates = useMemo<Record<number, RuntimeEstimate>>(
+		() => estimateRuntimesForModels(
+			models.filter((model) => checkModelDisabled(model.status)),
+			runtimeHistory,
+		),
+		[models, runtimeHistory],
 	);
 	const totalItems = modelsResponse?.total || 0;
 	const isLoading = isLoadingModels;
@@ -458,7 +468,7 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 		editingModel,
 		editTitle,
 		calculationStartTimes,
-		typicalRuntimeSeconds: typicalRuntime,
+		runtimeEstimates,
 		calculationCompletionInfo,
 		canUserDeleteModel,
 		hasAvailableWebservice,
@@ -485,7 +495,7 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 		statsModelLimit: stats.model_limit,
 	}), [
 		selectedModels, handleSelectAll, handleSort, orderBy, order, user, isSelected, editingModel, editTitle,
-		calculationStartTimes, typicalRuntime, calculationCompletionInfo, canUserDeleteModel, hasAvailableWebservice, handleSelectModel,
+		calculationStartTimes, runtimeEstimates, calculationCompletionInfo, canUserDeleteModel, hasAvailableWebservice, handleSelectModel,
 		startTitleEdit, setEditTitle, updateTitle, cancelTitleEdit, handleView, handleEdit, handleDownload, handleCopy,
 		handleCalculateSingle, handleSingleDelete, handleShare, handleMoveToWorkspace, currentPage, itemsPerPage,
 		handlePageChange, handleItemsPerPageChange, handleNewModel, isModelLimitReached, stats.total, stats.model_limit,

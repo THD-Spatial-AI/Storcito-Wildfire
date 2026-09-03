@@ -12,6 +12,7 @@ import RiskLevelBadge from "./RiskLevelBadge";
 import { formatDateTime } from "@/utils/dateHelpers";
 import { useTranslation } from "@/i18n";
 import { useFavoriteModelsStore } from "@/features/model-dashboard/store/favorite-models";
+import { isActiveStatus } from "@/features/model-dashboard/utils/statusHelpers";
 import { useModelDashboardActions } from "./model-dashboard/ModelDashboardActionsContext";
 
 const getErrorMessage = (error: unknown): string => {
@@ -164,7 +165,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
 		user,
 		isSelected: isModelSelected,
 		calculationStartTimes,
-		typicalRuntimeSeconds,
+		runtimeEstimates,
 		calculationCompletionInfo,
 		canUserDeleteModel,
 		hasAvailableWebservice,
@@ -179,15 +180,16 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
 		handleMoveToWorkspace,
 	} = useModelDashboardActions();
 
+	const runtimeEstimate = runtimeEstimates[model.id] ?? null;
 	const remaining =
-		model.status === "running"
-			? remainingSeconds(typicalRuntimeSeconds, calculationStartTimes[model.id])
+		isActiveStatus(model.status)
+			? remainingSeconds(runtimeEstimate?.totalSeconds ?? null, calculationStartTimes[model.id])
 			: null;
 	const remainingLabel =
 		remaining === null
 			? null
 			: remaining <= 0
-				? t("model.estimateOverdue", "finishing")
+				? t("model.estimateOverdue", "taking longer than usual")
 				: t("model.estimateRemaining", {
 						duration: formatDuration(remaining),
 						defaultValue: "~{{duration}} left",
@@ -265,7 +267,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
 						<StatusBadge status={model.status} size="small" />
 					)}
 
-					{model.status === "running" && calculationStartTimes[model.id] && (
+					{isActiveStatus(model.status) && calculationStartTimes[model.id] && (
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<div className="flex items-center gap-1 px-2 py-1 bg-muted rounded-md">
@@ -281,11 +283,11 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
 								</div>
 							</TooltipTrigger>
 							<TooltipContent>
-								{typicalRuntimeSeconds === null
-									? t("model.estimateUnavailable", "Not enough past runs to estimate a finish time")
+								{runtimeEstimate === null
+									? t("model.estimateUnavailable", "Not enough comparable successful runs to estimate a finish time")
 									: t("model.estimateBasis", {
-											typical: formatDuration(typicalRuntimeSeconds),
-											defaultValue: "Typical run takes {{typical}}",
+											typical: formatDuration(runtimeEstimate.totalSeconds),
+											defaultValue: "Comparable successful runs typically take {{typical}}",
 										})}
 							</TooltipContent>
 						</Tooltip>

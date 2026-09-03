@@ -1,4 +1,4 @@
-// Package models holds the platform schema shared by all SpatialHub apps; app-specific entities live in each app's backend.
+// Package models: shared schema.
 package models
 
 import (
@@ -45,14 +45,13 @@ type Model struct {
 	ParentModel   *Model `gorm:"foreignKey:ParentModelID" json:"parent_model,omitempty"`
 	IsCopy        bool   `gorm:"default:false" json:"is_copy"`
 
-
 	ChildModelIDs []uint `gorm:"-" json:"child_model_ids,omitempty"`
-
 
 	ParentModelTitle *string `gorm:"-" json:"parent_model_title,omitempty"`
 
 	IsActive bool `gorm:"default:false" json:"is_active"`
 
+	CalculationQueuedAt    *time.Time `json:"calculation_queued_at,omitempty"`
 	CalculationStartedAt   *time.Time `json:"calculation_started_at,omitempty"`
 	CalculationCompletedAt *time.Time `json:"calculation_completed_at,omitempty"`
 
@@ -64,7 +63,7 @@ type Model struct {
 	DeletedAt *gorm.DeletedAt `gorm:"index" json:"deleted_at,omitempty"`
 }
 
-// Model status constants, re-exported from the contracts package.
+// Status constants.
 const (
 	ModelStatusDraft      = contracts.StatusDraft
 	ModelStatusQueue      = contracts.StatusQueue
@@ -125,7 +124,7 @@ func (m *Model) HasFailed() bool {
 	return m.Status == ModelStatusFailed
 }
 
-// IsShared returns true if the model has been shared with other users
+// IsShared reports sharing.
 func (m *Model) IsShared() bool {
 	return len(m.Shares) > 0
 }
@@ -153,8 +152,7 @@ func (ModelShare) TableName() string {
 	return "model_shares"
 }
 
-// ResultLayer represents a single component raster (e.g. NDVI, FWI) that
-// accompanies a simulation result and can be published as a WMS sub-layer.
+// ResultLayer: component raster.
 type ResultLayer struct {
 	Key      string `json:"key"`
 	Title    string `json:"title"`
@@ -189,7 +187,7 @@ type ModelResult struct {
 	Model *Model `gorm:"foreignKey:ModelID" json:"model,omitempty"`
 }
 
-// Result-processing statuses, re-exported from the contracts package.
+// Processing statuses.
 const (
 	ResultExtractionPending    = contracts.ResultExtractionPending
 	ResultExtractionProcessing = contracts.ResultExtractionProcessing

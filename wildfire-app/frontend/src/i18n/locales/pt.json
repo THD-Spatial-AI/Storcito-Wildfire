@@ -1038,9 +1038,9 @@
     "revokingAccess": "A revogar…",
     "filterPeriod": "Filtrar por período",
     "estimateRemaining": "~{{duration}} restante",
-    "estimateOverdue": "a terminar",
-    "estimateBasis": "Uma execução típica demora {{typical}}",
-    "estimateUnavailable": "Não há execuções anteriores suficientes para estimar o fim"
+    "estimateOverdue": "está a demorar mais do que o habitual",
+    "estimateBasis": "As execuções comparáveis concluídas demoram normalmente {{typical}}",
+    "estimateUnavailable": "Não há execuções comparáveis concluídas suficientes para estimar o fim"
   },
   "apiTokens": {
     "title": "Tokens de API",

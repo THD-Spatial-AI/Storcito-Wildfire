@@ -1,5 +1,6 @@
 import { createContext, useContext, type ReactNode } from "react";
 import type { Model } from "@/features/model-dashboard/services/modelService";
+import type { RuntimeEstimate } from "@/features/model-dashboard/utils/runtimeEstimate";
 import type { CompletionInfo } from "./types";
 
 export interface ModelDashboardActionsContextValue {
@@ -13,8 +14,8 @@ export interface ModelDashboardActionsContextValue {
 	editingModel: Model | null;
 	editTitle: string;
 	calculationStartTimes: Record<number, string>;
-	/** Median past runtime. */
-	typicalRuntimeSeconds: number | null;
+	/** Estimates by model. */
+	runtimeEstimates: Record<number, RuntimeEstimate>;
 	calculationCompletionInfo: Record<number, CompletionInfo>;
 	canUserDeleteModel: (model: Model) => boolean;
 	hasAvailableWebservice: boolean;

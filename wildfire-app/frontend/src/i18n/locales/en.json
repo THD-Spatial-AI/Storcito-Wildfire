@@ -545,9 +545,9 @@
     "revokingAccess": "Revoking…",
     "filterPeriod": "Filter by period",
     "estimateRemaining": "~{{duration}} left",
-    "estimateOverdue": "finishing",
-    "estimateBasis": "Typical run takes {{typical}}",
-    "estimateUnavailable": "Not enough past runs to estimate a finish time"
+    "estimateOverdue": "taking longer than usual",
+    "estimateBasis": "Comparable successful runs typically take {{typical}}",
+    "estimateUnavailable": "Not enough comparable successful runs to estimate a finish time"
   },
   "polygon": {
     "drawRegion": "Draw Your Region",

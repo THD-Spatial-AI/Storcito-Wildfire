@@ -45,7 +45,7 @@ func HandleProcessResult(
 ) (retErr error) {
 	log := logger.ForComponent("job:process_result")
 
-	// Recover from panics so we get a proper error log instead of silent crash
+	// Log panics.
 	defer func() {
 		if r := recover(); r != nil {
 			log.Errorf("PANIC in HandleProcessResult: %v", r)
@@ -60,7 +60,7 @@ func HandleProcessResult(
 
 	log.Debugf("Starting background processing for model_id=%d", payload.ModelID)
 
-	// Idempotency Check: Ensure we aren't already processing or finished
+	// Idempotency check.
 	var model commonModels.Model
 	if err := db.First(&model, payload.ModelID).Error; err != nil {
 		log.Errorf("Failed to fetch model %d: %v", payload.ModelID, err)
@@ -85,54 +85,72 @@ func HandleProcessResult(
 			return nil
 		}
 
-		// The completion path already released the webservice and cleared the
-		// id on the model. Releasing the payload id again would decrement a
-		// concurrency slot that another model has since taken.
+		// Already released; skip.
 		if model.WebserviceID != nil {
 			releaseWebservice(ctx, wsClient, model.WebserviceID, payload.ModelID, log)
 		}
 
-		// Resume whatever the first pass left unfinished. An overview batch
-		// that ran out of time still leaves the layer configured, so the
-		// GeoServer status alone cannot tell us this result is done.
+		// Resume unfinished work.
 		prepareAndConfigureResult(ctx, resultSvc, geoClient, &existingResult, payload.ModelID, log)
 		return nil
 	}
 
-	// 2. Mark as 'processing' to prevent concurrent worker interference
-	if err := db.Model(&model).Update("status", commonModels.ModelStatusProcessing).Error; err != nil {
-		log.Errorf("Failed to lock model %d for processing: %v", payload.ModelID, err)
-		return fmt.Errorf("failed to lock model %d for processing: %w", payload.ModelID, err)
+	// Resume same upload.
+	var res *commonModels.ModelResult
+	if model.Status == commonModels.ModelStatusProcessing {
+		var existingResult commonModels.ModelResult
+		resultErr := db.Where("model_id = ? AND zip_path = ?", payload.ModelID, payload.ZipPath).
+			Order("created_at DESC").First(&existingResult).Error
+		if resultErr == nil {
+			res = &existingResult
+			log.Debugf("Resuming result preparation for model_id=%d result_id=%d", payload.ModelID, res.ID)
+		} else if !errors.Is(resultErr, gorm.ErrRecordNotFound) {
+			return fmt.Errorf("failed to resume result for model_id=%d: %w", payload.ModelID, resultErr)
+		}
 	}
 
-	res, err := resultSvc.ProcessModelResult(ctx, payload.ModelID, payload.UserID, payload.ZipPath)
+	if res == nil {
+		// Claim the job.
+		if err := db.Model(&model).Update("status", commonModels.ModelStatusProcessing).Error; err != nil {
+			log.Errorf("Failed to lock model %d for processing: %v", payload.ModelID, err)
+			return fmt.Errorf("failed to lock model %d for processing: %w", payload.ModelID, err)
+		}
 
-	if err != nil {
-		log.Errorf("Failed to process result model_id=%d err=%v", payload.ModelID, err)
+		var err error
+		res, err = resultSvc.ProcessModelResult(ctx, payload.ModelID, payload.UserID, payload.ZipPath)
+		if err != nil {
+			log.Errorf("Failed to process result model_id=%d err=%v", payload.ModelID, err)
 
-		now := time.Now().UTC()
-		_ = db.Model(&commonModels.Model{}).Where("id = ?", payload.ModelID).Updates(map[string]interface{}{
-			"status":                   commonModels.ModelStatusFailed,
-			"calculation_completed_at": now,
-			"updated_at":               now,
-			"results": map[string]interface{}{
-				"error": fmt.Sprintf("Failed to process result: %v", err),
-			},
-		}).Error
+			now := time.Now().UTC()
+			_ = db.Model(&commonModels.Model{}).Where("id = ?", payload.ModelID).Updates(map[string]interface{}{
+				"status":                   commonModels.ModelStatusFailed,
+				"calculation_completed_at": now,
+				"updated_at":               now,
+				"results": map[string]interface{}{
+					"error": fmt.Sprintf("Failed to process result: %v", err),
+				},
+			}).Error
 
-		releaseWebservice(ctx, wsClient, payload.WebserviceID, payload.ModelID, log)
-		return fmt.Errorf("process result failed for model_id=%d: %w", payload.ModelID, err)
+			releaseWebservice(ctx, wsClient, payload.WebserviceID, payload.ModelID, log)
+			return fmt.Errorf("process result failed for model_id=%d: %w", payload.ModelID, err)
+		}
 	}
 
 	if res == nil {
 		return fmt.Errorf("process result returned nil for model_id=%d", payload.ModelID)
 	}
 
-	// 3. Final success update; the model.completed event commits in the same transaction.
+	// Ready means fully prepared.
+	releasedBeforePreparation := detachAndReleaseWebservice(
+		ctx, db, wsClient, payload.WebserviceID, payload.ModelID, log,
+	)
+	prepareAndConfigureResult(ctx, resultSvc, geoClient, res, payload.ModelID, log)
+
+	// Final success update.
 	now := time.Now().UTC()
 	completedEvent, _ := events.NewModelEvent(events.ModelCompleted, payload.ModelID, payload.UserID, nil)
-	err = db.Transaction(func(tx *gorm.DB) error {
-		if uerr := tx.Model(&commonModels.Model{}).Where("id = ?", payload.ModelID).Updates(map[string]interface{}{
+	err := db.Transaction(func(tx *gorm.DB) error {
+		updates := map[string]interface{}{
 			"status": commonModels.ModelStatusCompleted,
 			"results": map[string]interface{}{
 				"file_path":  res.ZipPath,
@@ -141,7 +159,12 @@ func HandleProcessResult(
 			"webservice_id":            nil,
 			"calculation_completed_at": now,
 			"updated_at":               now,
-		}).Error; uerr != nil {
+		}
+		// Fallback for pre-migration runs.
+		if model.CalculationQueuedAt == nil && model.CalculationStartedAt != nil {
+			updates["calculation_queued_at"] = model.CalculationStartedAt
+		}
+		if uerr := tx.Model(&commonModels.Model{}).Where("id = ?", payload.ModelID).Updates(updates).Error; uerr != nil {
 			return uerr
 		}
 		return events.EnqueueTx(tx, completedEvent)
@@ -152,9 +175,9 @@ func HandleProcessResult(
 		return err
 	}
 
-	releaseWebservice(ctx, wsClient, payload.WebserviceID, payload.ModelID, log)
-
-	prepareAndConfigureResult(ctx, resultSvc, geoClient, res, payload.ModelID, log)
+	if !releasedBeforePreparation {
+		releaseWebservice(ctx, wsClient, payload.WebserviceID, payload.ModelID, log)
+	}
 
 	// Send completion notification
 	if notificationService != nil {
@@ -197,6 +220,33 @@ func prepareAndConfigureResult(
 	if geoErr := resultSvc.ConfigureGeoServer(ctx, result.ID); geoErr != nil {
 		log.Warnf("geoserver configuration failed model_id=%d result_id=%d err=%v", modelID, result.ID, geoErr)
 	}
+}
+
+// detachAndReleaseWebservice: retry-safe release.
+func detachAndReleaseWebservice(
+	ctx context.Context,
+	db *gorm.DB,
+	wsClient *webservice.Client,
+	webserviceID *uint,
+	modelID uint,
+	log *logrus.Entry,
+) bool {
+	if wsClient == nil || webserviceID == nil {
+		return true
+	}
+	res := db.Model(&commonModels.Model{}).
+		Where("id = ? AND webservice_id = ?", modelID, *webserviceID).
+		Update("webservice_id", nil)
+	if res.Error != nil {
+		log.Warnf("failed to detach webservice before result preparation model_id=%d webservice_id=%d err=%v",
+			modelID, *webserviceID, res.Error)
+		return false
+	}
+	if res.RowsAffected == 0 {
+		return true
+	}
+	releaseWebservice(ctx, wsClient, webserviceID, modelID, log)
+	return true
 }
 
 func releaseWebservice(ctx context.Context, wsClient *webservice.Client, webserviceID *uint, modelID uint, log *logrus.Entry) {

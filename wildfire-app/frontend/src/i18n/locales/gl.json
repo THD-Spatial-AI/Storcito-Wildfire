@@ -545,9 +545,9 @@
     "revokingAccess": "Revogando…",
     "filterPeriod": "Filtrar por período",
     "estimateRemaining": "~{{duration}} restante",
-    "estimateOverdue": "rematando",
-    "estimateBasis": "Unha execución típica tarda {{typical}}",
-    "estimateUnavailable": "Non hai execucións previas abondas para estimar o final"
+    "estimateOverdue": "tardando máis do habitual",
+    "estimateBasis": "As execucións similares completadas adoitan tardar {{typical}}",
+    "estimateUnavailable": "Non hai suficientes execucións similares completadas para estimar o final"
   },
   "polygon": {
     "drawRegion": "Debuxa a túa rexión",

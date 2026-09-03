@@ -379,9 +379,9 @@
     "revokingAccess": "Odbieranie dostępu…",
     "filterPeriod": "Filtruj według okresu",
     "estimateRemaining": "~{{duration}} pozostało",
-    "estimateOverdue": "kończenie",
-    "estimateBasis": "Typowe uruchomienie trwa {{typical}}",
-    "estimateUnavailable": "Za mało poprzednich uruchomień, aby oszacować koniec"
+    "estimateOverdue": "trwa dłużej niż zwykle",
+    "estimateBasis": "Porównywalne udane uruchomienia trwają zwykle {{typical}}",
+    "estimateUnavailable": "Za mało porównywalnych udanych uruchomień, aby oszacować koniec"
   },
   "polygon": {
     "drawRegion": "Narysuj swój region",

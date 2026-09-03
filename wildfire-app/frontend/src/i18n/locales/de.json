@@ -545,9 +545,9 @@
     "revokingAccess": "Wird widerrufen …",
     "filterPeriod": "Nach Zeitraum filtern",
     "estimateRemaining": "noch ~{{duration}}",
-    "estimateOverdue": "wird beendet",
-    "estimateBasis": "Ein typischer Lauf dauert {{typical}}",
-    "estimateUnavailable": "Zu wenige frühere Läufe für eine Schätzung"
+    "estimateOverdue": "dauert länger als üblich",
+    "estimateBasis": "Vergleichbare erfolgreiche Läufe dauern typischerweise {{typical}}",
+    "estimateUnavailable": "Zu wenige vergleichbare erfolgreiche Läufe für eine Schätzung"
   },
   "polygon": {
     "drawRegion": "Zeichnen Sie Ihre Region",
