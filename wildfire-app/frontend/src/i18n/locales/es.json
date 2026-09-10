@@ -2,9 +2,16 @@
   "drawing": {
     "clickToDraw": "Clic para dibujar",
     "clickToClose": "Clic para cerrar",
-    "start": "Inicio"
+    "start": "Inicio",
+    "edit": "Editar",
+    "moveMap": "Mover el mapa",
+    "resumeDrawing": "Seguir dibujando"
   },
   "common": {
+    "choose": "Elegir",
+    "aboutItem": "Acerca de {{label}}",
+    "removeItem": "Quitar {{label}}",
+    "processing": "Procesando…",
     "save": "Guardar",
     "cancel": "Cancelar",
     "delete": "Eliminar",
@@ -111,8 +118,11 @@
       "previousPage": "Página anterior",
       "nextPage": "Página siguiente"
     },
-    "appName": "Evaluación del riesgo de incendios forestales",
-    "saved": "Guardado"
+    "appName": "Evaluación del riesgo de incendio forestal",
+    "saved": "Guardado",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "done": "Hecho"
   },
   "forms": {
     "user": {
@@ -229,6 +239,15 @@
       }
     },
     "moveModel": {
+      "title": "Mover modelo",
+      "titlePlural": "Mover modelos",
+      "description": "Mover \"{{title}}\" a otro espacio de trabajo",
+      "descriptionPlural": "Mover {{count}} modelos seleccionados a otro espacio de trabajo",
+      "submitPlural": "Mover {{count}} modelos",
+      "errorSelect": "Selecciona un espacio de trabajo",
+      "errorMove": "No se pudo mover el modelo. Inténtalo de nuevo.",
+      "errorMovePlural": "No se pudieron mover los modelos. Inténtalo de nuevo.",
+      "noWorkspaces": "No hay otros espacios de trabajo disponibles. Crea primero un nuevo espacio de trabajo.",
       "destination": {
         "title": "Destino",
         "description": "Seleccione el espacio de trabajo destino para el modelo"
@@ -298,7 +317,7 @@
       "success": "Éxito",
       "error": "Error",
       "warning": "Advertencia",
-      "info": "Info",
+      "info": "Información",
       "maintenance": "Mantenimiento"
     },
     "totalExecutionTime": "Tiempo Total de Ejecución",
@@ -401,6 +420,7 @@
     }
   },
   "workspace": {
+    "selectorHint": "Selecciona o crea un espacio de trabajo para organizar tus modelos",
     "workspace": "Espacio de trabajo",
     "workspaces": "Espacios de trabajo",
     "selectWorkspace": "Seleccionar espacio de trabajo",
@@ -429,6 +449,9 @@
     "removeGroup": "Eliminar grupo"
   },
   "model": {
+    "filterFrom": "Fecha desde",
+    "filterTo": "Fecha hasta",
+    "clearDateFilter": "Borrar filtro de fechas",
     "title": "Modelo",
     "models": "Modelos",
     "newModel": "Nuevo modelo",
@@ -511,7 +534,22 @@
     "bulkCopySubmit": "Crear copias",
     "calculate": "Calcular",
     "cannotCalculate": "No se puede calcular – no hay modelos elegibles seleccionados",
-    "noWebserviceAvailable": "Motor de simulación no disponible"
+    "noWebserviceAvailable": "Motor de simulación no disponible",
+    "canEdit": "Puede editar",
+    "canView": "Puede ver",
+    "noDirectShares": "Este modelo aún no se ha compartido con nadie.",
+    "peopleWithAccess": "Personas con acceso directo",
+    "peopleWithAccessDescription": "Las personas de esta lista pueden abrir este modelo y sus capas de riesgo.",
+    "revokeAccess": "Revocar",
+    "revokeAccessFor": "Revocar acceso",
+    "revokingAccess": "Revocando…",
+    "filterPeriod": "Filtrar por periodo",
+    "estimateRemaining": "~{{duration}} restante",
+    "estimateOverdue": "tardando más de lo habitual",
+    "estimateBasis_one": "Basado en 1 ejecución comparable, que tardó {{typical}}",
+    "estimateBasis_other": "Basado en {{count}} ejecuciones comparables, que suelen tardar {{typical}}",
+    "estimateApproximate": "Esas ejecuciones son anteriores al registro de cola, así que la espera real será mayor.",
+    "estimateUnavailable": "No hay suficientes ejecuciones similares completadas para estimar el final"
   },
   "polygon": {
     "drawRegion": "Dibuja tu región",
@@ -555,7 +593,7 @@
       "simulationEngine": "Motor de Simulación",
       "feedback": "Comentarios",
       "userManagement": "Gestión de Usuarios",
-      "gridEngine": "Compute Engine"
+      "gridEngine": "Motor de cálculo"
     },
     "stats": {
       "accessLevel": "Nivel de Acceso",
@@ -676,7 +714,9 @@
       "bulkMoveToGroup": "Mover al grupo",
       "deselectAll": "Deseleccionar todo",
       "selectAll": "Seleccionar todo",
-      "selected": "{{count}} seleccionados"
+      "selected": "{{count}} seleccionados",
+      "apiTokens": "Tokens de API",
+      "apiTokensActive": "Acceso a la API activado: gestionar tokens"
     },
     "groups": {
       "selectOrCreate": "Seleccionar o crear un grupo",
@@ -1008,7 +1048,7 @@
     },
     "bufferDistance": {
       "decrease": "Disminuir distancia de búfer",
-      "hint": "Rango de 0 a 2000 m en pasos de 100 m. Amplía el área considerada alrededor de su polígono.",
+      "hint": "Distancia fija que se añade por fuera de tu área, siguiendo su forma: de 0 a 2000 m en pasos de 100 m. Si redibujas el área, la distancia se mantiene.",
       "increase": "Aumentar distancia de búfer",
       "label": "Distancia de búfer (metros)"
     },
@@ -1029,8 +1069,6 @@
       "osmHumanitarian": "Estilo humanitario de OpenStreetMap",
       "cartoPositron": "Mapa base claro de CartoDB",
       "cartoVoyager": "Mapa base detallado de CartoDB",
-      "openTopoMap": "Mapa de estilo topográfico",
-      "maplibreDark": "Mapa base vectorial oscuro",
       "maplibreVoyager": "Mapa base vectorial detallado (Voyager)"
     },
     "tooltip": "Mapas Base"
@@ -1284,7 +1322,32 @@
       "veryHigh": "Protección extra necesaria",
       "extreme": "Evitar exposición solar"
     },
-    "dataBy": "Datos meteorológicos de"
+    "dataBy": "Datos meteorológicos de",
+    "conditions": {
+      "clear": "Cielo despejado",
+      "mainlyClear": "Mayormente despejado",
+      "partlyCloudy": "Parcialmente nublado",
+      "overcast": "Cubierto",
+      "fog": "Niebla",
+      "rimeFog": "Niebla helada",
+      "drizzle": "Llovizna",
+      "freezingDrizzle": "Llovizna helada",
+      "rain": "Lluvia",
+      "heavyRain": "Lluvia fuerte",
+      "freezingRain": "Lluvia helada",
+      "snow": "Nieve",
+      "heavySnow": "Nieve intensa",
+      "snowGrains": "Cinarra",
+      "showers": "Chubascos",
+      "heavyShowers": "Chubascos fuertes",
+      "snowShowers": "Chubascos de nieve",
+      "thunderstorm": "Tormenta",
+      "thunderstormHail": "Tormenta con granizo"
+    },
+    "windSpeedTooltip": "Cambia la unidad en Configuración → Visualización de datos.",
+    "title": "Información meteorológica",
+    "settings": "Configuración meteorológica",
+    "uvUnavailable": "Datos UV no disponibles (de noche)"
   },
   "settings": {
     "title": "Configuración",
@@ -1295,7 +1358,8 @@
       "general": "General",
       "display": "Visualización",
       "notifications": "Notificaciones",
-      "advanced": "Avanzado"
+      "advanced": "Avanzado",
+      "privacyTerms": "Privacidad y condiciones"
     },
     "stats": {
       "language": "Idioma",
@@ -1344,7 +1408,19 @@
       "windSpeed": "Velocidad del Viento",
       "knots": "nudos",
       "dataRefresh": "Actualización de Datos",
-      "min": "min"
+      "min": "min",
+      "windUnits": {
+        "kmh": "km/h",
+        "mph": "mph",
+        "ms": "m/s",
+        "knots": "nudos"
+      },
+      "textSize": "Tamaño del texto",
+      "textSizes": {
+        "small": "Pequeño",
+        "normal": "Normal",
+        "large": "Grande"
+      }
     },
     "notifications": {
       "title": "Notificaciones",
@@ -1372,6 +1448,27 @@
       "sendNotification": "Enviar Notificación",
       "sent": "¡Notificación enviada!",
       "failedToSend": "Error al enviar"
+    },
+    "modelCreation": {
+      "title": "Tarjeta de introducción al modelo",
+      "description": "Controla la tarjeta de configuración que se muestra antes de los pasos guiados de creación del modelo.",
+      "checking": "Comprobando la preferencia...",
+      "hidden": "La introducción está oculta",
+      "enabled": "La introducción está activada",
+      "hiddenHint": "Actívala de nuevo cuando los usuarios necesiten el resumen de configuración antes de crear un modelo.",
+      "enabledHint": "El resumen de configuración aparecerá antes de crear un nuevo modelo.",
+      "showAgain": "Mostrar de nuevo",
+      "loadError": "No se ha podido cargar esta preferencia.",
+      "enabledMessage": "La tarjeta de introducción se mostrará la próxima vez que crees un modelo.",
+      "updateError": "No se ha podido actualizar la preferencia de la tarjeta de introducción.",
+      "sectionTitle": "Creación de modelos",
+      "guidancePreferences": "Preferencias de ayuda"
+    },
+    "accessLevels": {
+      "basic": "Básico",
+      "intermediate": "Intermedio",
+      "manager": "Gestor",
+      "expert": "Experto"
     }
   },
   "simulationComparison": {
@@ -1448,7 +1545,31 @@
     "regions": "regiones",
     "myModels": "mis modelos",
     "grids": "cuadrículas",
-    "countries": "países"
+    "countries": "países",
+    "privacyRequired": "Acepta los términos de datos y privacidad para ver el mapa",
+    "legend": {
+      "title": "Contornos del mapa",
+      "baseMap": "Líneas grises: carreteras y límites administrativos del mapa base seleccionado",
+      "availableRegions": "Línea discontinua: zona con datos de incendios",
+      "yourModels": "Área verde: tu último modelo — selecciónalo para abrir los resultados",
+      "zoomDetail": "La vista predeterminada es Galicia; el mapa base muestra más detalle al acercarlo."
+    },
+    "newModelShortcut": "Atajo: N",
+    "latestModel": "último modelo",
+    "latestModelOf": "Tu modelo más reciente, de {{total}} que has creado. Abre Simulaciones para ver el resto.",
+    "bookmarks": {
+      "title": "Marcadores del mapa",
+      "namePlaceholder": "Nombre del marcador...",
+      "saveCurrentView": "Guardar la vista actual",
+      "delete": "Eliminar {{name}}",
+      "none": "Aún no hay marcadores"
+    },
+    "shortcuts": {
+      "title": "Atajos de teclado",
+      "zoom": "Acercar y alejar",
+      "pan": "Mover el mapa",
+      "newModel": "Nuevo modelo"
+    }
   },
   "privacy": {
     "dataAndPrivacy": "Datos y privacidad",
@@ -1520,6 +1641,13 @@
     "summaryFooter": "{{countries}} países · {{regions}} regiones · {{grids}} cuadrículas"
   },
   "modelResults": {
+    "shortcuts": {
+      "title": "Atajos de teclado",
+      "playPause": "Reproducir / pausar la animación diaria",
+      "fullscreen": "Alternar pantalla completa",
+      "terrain": "Alternar terreno 3D",
+      "toggleLayer": "Mostrar / ocultar la capa de riesgo"
+    },
     "details": {
       "awaiting": "Esperando el resultado…",
       "country": "País",
@@ -1558,7 +1686,16 @@
       "view2d": "Mapa 2D",
       "playDaily": "Animar mapas de riesgo diario",
       "fullscreen": "Pantalla completa",
-      "exitFullscreen": "Salir de pantalla completa"
+      "exitFullscreen": "Salir de pantalla completa",
+      "dataset": "Capa",
+      "play": "Reproducir",
+      "pause": "Pausar",
+      "peakDay": "Día de riesgo máximo",
+      "peakDayHint": "Haz clic para mostrar este día y luego pasar al siguiente de mayor riesgo",
+      "peakDayNext": "Haz clic para ver · continúa el día siguiente",
+      "rankDay": "Día de riesgo n.º {{rank}}",
+      "viewMap": "Mapa",
+      "viewTerrain": "Terreno"
     },
     "layers": {
       "labels": "Etiquetas y lugares",
@@ -1608,6 +1745,12 @@
       "subtitle": "Área analizada por clase de riesgo para cada día de la ejecución. Haga clic en un día para mostrarlo en el mapa.",
       "loading": "Calculando distribuciones diarias… la primera carga puede tardar un minuto.",
       "empty": "No hay mapas de riesgo diarios en esta ejecución."
+    },
+    "terrain": {
+      "failedTitle": "No se pudo iniciar el terreno 3D",
+      "noWebgl": "Este navegador o controlador gráfico no admite WebGL, necesario para el terreno 3D. El mapa 2D muestra los mismos resultados.",
+      "failedBody": "No se pudo crear la vista 3D. El mapa 2D muestra los mismos resultados.",
+      "backToMap": "Volver al mapa"
     }
   },
   "landing": {
@@ -1699,7 +1842,7 @@
         },
         "multilingual": {
           "title": "Multilingüe y accesible",
-          "text": "Disponible en 8 idiomas con etiquetas claras y recorridos guiados para cada rol."
+          "text": "Disponible en 10 idiomas con etiquetas claras y recorridos guiados para cada rol."
         },
         "secure": {
           "title": "Seguro y gobernado",
@@ -1801,6 +1944,23 @@
     "Vedra": "Vedra"
   },
   "configurator": {
+    "blocking": {
+      "modelName": "un nombre de modelo",
+      "dateRange": "una fecha de inicio y de fin",
+      "and": " y ",
+      "missingFields": "Añade {{missing}} para continuar.",
+      "staticLoading": "Cargando fechas estáticas disponibles.",
+      "staticEmpty": "No hay fechas estáticas disponibles actualmente.",
+      "staticSameDate": "El modo estático requiere la misma fecha de inicio y de fin.",
+      "staticUnavailable": "Selecciona una fecha estática disponible.",
+      "dynamicLoading": "Cargando fechas dinámicas disponibles.",
+      "dynamicEmpty": "No hay fechas dinámicas disponibles actualmente.",
+      "dynamicOrder": "El modo dinámico requiere que la fecha de inicio sea anterior o igual a la de fin.",
+      "dynamicRange": "Selecciona un rango de fechas dinámicas totalmente disponible.",
+      "dtmOutside": "Tu área está fuera de la cobertura del DTM subido. Muévela o dibújala de nuevo dentro de la huella del DTM mostrada en el mapa, o elimina el DTM."
+    },
+    "loadingModel": "Cargando modelo",
+    "loadingModelDesc": "Espera mientras cargamos tu modelo...",
     "registry": {
       "layer1Title": "Inicialización del modelo",
       "layer1Subtitle": "Nombre y período de simulación",
@@ -1832,14 +1992,21 @@
       "step": "PASO"
     },
     "layer1": {
+      "suggestedNamesLabel": "Sugerencias",
+      "suggestedName1": "Riesgo de incendio estival",
+      "suggestedName2": "Vigilancia forestal costera",
+      "suggestedName3": "Evaluación de laderas",
+      "suggestedName4": "Perspectiva semanal de incendios",
+      "noDates": "No hay fechas disponibles.",
+      "staticDateInfoAria": "Cómo se selecciona la fecha estática",
       "purpose": "Nombra esta simulación de incendio y elige la ventana de fechas que quieres evaluar.",
       "nextStepHint": "A continuación, delinearás el área geográfica en el mapa.",
       "modelNameLabel": "Nombre del modelo",
       "modelNamePlaceholder": "ej. Galicia Verano 2026 Riesgo de Incendio",
-      "modelNameHint": "Un nombre descriptivo para que puedas encontrar este modelo más tarde.",
+      "modelNameHint": "Para poder encontrarlo después.",
       "calcModeLabel": "Modo de cálculo",
-      "calcModeStatic": "estático",
-      "calcModeDynamic": "dinámico",
+      "calcModeStatic": "Estático",
+      "calcModeDynamic": "Dinámico",
       "calcModeHint": "Estático usa el flujo de trabajo de riesgo AOI para una fecha. Dinámico mantiene el modo para el flujo de trabajo dinámico.",
       "staticHint": "Las ejecuciones estáticas usan una fecha meteorológica disponible, de 16:00 a 17:00.",
       "dynamicHint": "Las ejecuciones dinámicas mantienen el rango seleccionado (ventana 16:00 a 17:00).",
@@ -1853,31 +2020,40 @@
       "dynamicSelectedOne": "Rango seleccionado: {{start}} a {{end}} (1 día).",
       "dynamicSelectInside": "Selecciona un rango dentro de las fechas disponibles: {{start}} a {{end}}",
       "dynamicAvailable": "Fechas dinámicas disponibles: {{start}} a {{end}}",
-      "hottest": "Más caluroso"
+      "hottest": "Más caluroso",
+      "calcModeInfoLabel": "Qué hace cada modo de cálculo",
+      "calcModeInfo": "Estático evalúa un solo día —una fecha meteorológica disponible— con el flujo de trabajo de riesgo AOI. Dinámico evalúa un rango de días y mantiene la secuencia meteorológica diaria. Ambos usan la ventana meteorológica de 16:00 a 17:00.",
+      "calcModeHintStatic": "El día más caluroso de cada año disponible.",
+      "calcModeHintDynamic": "Un rango de días, evaluado día a día.",
+      "modelNameQuestion": "¿Cómo quieres llamar a este modelo?",
+      "calcModeQuestion": "¿Cómo se debe calcular el riesgo?",
+      "periodQuestion": "¿Qué periodo debe evaluar?",
+      "calcModeStaticInfo": "La fecha se elige automáticamente: para cada año disponible, el día que registró la temperatura más alta, es decir, la meteorología más desfavorable de ese año. Se evalúa de 16:00 a 17:00.",
+      "calcModeDynamicInfo": "Tú eliges el rango y se evalúa tal cual: cada día se modela con su propia meteorología y la ejecución devuelve el día de riesgo máximo. Cada día usa la ventana de 16:00 a 17:00."
     },
     "layer2": {
       "purpose": "Selecciona una región administrativa completa, dibuja un área o sube un límite GeoJSON.",
       "nextStepHint": "A continuación validaremos el área seleccionada y las entradas del modelo.",
-      "terrainModel": "Terrain model (DTM)",
+      "terrainModel": "Modelo digital del terreno (MDT)",
       "dtmHint": "GeoTIFF opcional (.tif) — su cobertura se muestra en el mapa",
-      "dtmInfo": "A Digital Terrain Model — a GeoTIFF where each pixel is the ground elevation. Upload it first to see its coverage outline on the map, then draw your area inside it. Used to derive slope/aspect and as the spatial reference grid. If omitted, the bundled regional terrain is used.",
-      "readingDtm": "Reading DTM coverage…",
-      "coverageShown": "Coverage shown on the map — draw your area inside the outline.",
-      "drawArea": "Draw area",
-      "uploadGeoJson": "Upload GeoJSON",
+      "dtmInfo": "Un modelo digital del terreno: un GeoTIFF en el que cada píxel es la elevación del suelo. Súbelo primero para ver su cobertura en el mapa y dibuja después tu área dentro de ella. Se usa para derivar la pendiente y la orientación, y como malla de referencia espacial. Si no se indica, se utiliza el terreno regional incluido.",
+      "readingDtm": "Leyendo la cobertura del MDT…",
+      "coverageShown": "Cobertura mostrada en el mapa: dibuja tu área dentro del contorno.",
+      "drawArea": "Dibujar área",
+      "uploadGeoJson": "Subir GeoJSON",
       "notSureFormat": "¿No estás seguro del formato?",
-      "formatDesc": "Polygon or MultiPolygon, WGS84 (EPSG:4326), [lon, lat] order.",
-      "sample": "Sample",
+      "formatDesc": "Polygon o MultiPolygon, WGS84 (EPSG:4326), en orden [lon, lat].",
+      "sample": "Ejemplo",
       "statusUploaded": "Límite GeoJSON cargado de {{fileName}}.",
-      "statusUploadedNoName": "GeoJSON boundary loaded.",
-      "statusUploadPrompt": "Upload a GeoJSON file with Polygon or MultiPolygon geometry.",
-      "statusDrawn": "Area defined. You can keep adjusting it or move on.",
-      "statusDrawPrompt": "Haz clic en el mapa para dibujar tu área. Cierra el polígono para terminar.",
+      "statusUploadedNoName": "Límite GeoJSON cargado.",
+      "statusUploadPrompt": "Sube un archivo GeoJSON con geometría Polygon o MultiPolygon.",
+      "statusDrawn": "Área definida. Puedes seguir ajustándola o continuar.",
+      "statusDrawPrompt": "Haz clic en el mapa para dibujar tu área. Cierra el polígono para terminar y dibuja más si necesitas varias áreas.",
       "areaSummary": "Resumen del área",
       "regions": "{{count}} regiones",
       "status": "Estado",
-      "statusUploadedLabel": "Uploaded",
-      "statusDrawnLabel": "Drawn",
+      "statusUploadedLabel": "Subido",
+      "statusDrawnLabel": "Dibujado",
       "statusNotSet": "No establecido",
       "area": "Área",
       "perimeter": "Perímetro",
@@ -1888,7 +2064,23 @@
       "drawPrompt": "Haz clic en el mapa para dibujar tu área. Cierra el polígono para terminar.",
       "drawToContinue": "Dibuja un área en el mapa para continuar.",
       "blockingUploadGeoJson": "Sube un archivo límite GeoJSON o vuelve a dibujar.",
-      "blockingDrawArea": "Dibuja un área en el mapa para continuar."
+      "blockingDrawArea": "Dibuja un área en el mapa para continuar.",
+      "selectRegion": "Seleccionar región completa",
+      "regionResolving": "Buscando el límite administrativo…",
+      "regionMapSelected": "{{name}} seleccionada · haz clic en otra región para sustituirla",
+      "regionMapPrompt": "Haz clic dentro de una región para seleccionar su límite completo",
+      "statusRegionSelected": "{{name}} seleccionada. Haz clic en otra región para sustituirla.",
+      "statusRegionPrompt": "Haz clic dentro de una región administrativa del mapa para seleccionar su límite completo.",
+      "regionCoverageWarning": "Se utiliza el límite administrativo completo. Los píxeles situados fuera de la cobertura sombreada de datos de incendios pueden no ser calculables.",
+      "statusRegionLabel": "Región seleccionada",
+      "blockingSelectRegion": "Haz clic dentro de una región administrativa del mapa para continuar.",
+      "regionNotFound": "No se encontró ningún límite administrativo aquí. Prueba a hacer clic más hacia el interior de la región.",
+      "regionLookupFailed": "No se pudo cargar el límite administrativo. Comprueba tu conexión e inténtalo de nuevo.",
+      "regionOutsideCoverage": "Ese punto está fuera del área con datos de incendios. Haz clic dentro de la zona sombreada.",
+      "regionOutsideCoverageNamed": "Solo hay datos de incendios para {{regions}}. Haz clic dentro de la zona sombreada.",
+      "areaModeQuestion": "¿Cómo quieres definir el área?",
+      "areaCount": "Áreas",
+      "areaCountValue": "{{count}} áreas separadas"
     },
     "layer3": {
       "purpose": "Estas señales alimentan el modelo de riesgo ponderado por AHP. Las tres están habilitadas por defecto y se recomiendan para una evaluación precisa del riesgo de incendios forestales.",
@@ -1907,7 +2099,21 @@
       "customDataDesc": "Traiga sus propios datos meteorológicos para esta área. Si se deja en blanco, se utilizan los datos regionales incluidos.",
       "weatherStationData": "Datos de estación meteorológica",
       "weatherStationHint": "Exportación de estación en Excel o CSV (.xlsx / .csv)",
-      "weatherStationInfo": "Mediciones meteorológicas horarias de una estación local — temperatura, humedad, viento y precipitación. Se usa para calcular el FWI para esta área. Sube una exportación Excel o CSV; si se omite, se usan los datos meteorológicos regionales."
+      "weatherStationInfo": "Mediciones meteorológicas horarias de una estación local — temperatura, humedad, viento y precipitación. Se usa para calcular el FWI para esta área. Sube una exportación Excel o CSV; si se omite, se usan los datos meteorológicos regionales.",
+      "coreSignalsNote": "La vegetación (NDVI) y las infraestructuras forman parte del modelo siempre y no se pueden desactivar. Al desactivar una señal de arriba se elimina su contribución del cálculo de pesos; la ejecución continúa con las señales restantes.",
+      "precomputedLabel": "Mapa regional precalculado",
+      "precomputedInfo": "Cada noche se analiza toda la región con todas las capas de riesgo activadas. Si tu fecha está cubierta, el resultado de tu área se recorta de ese mapa y llega en segundos. Desactívalo (o cambia las capas de abajo) para calcular cada paso específicamente para tu área (~1-2 minutos).",
+      "precomputedOnHint": "Resultado en segundos, recortado del análisis nocturno de toda la región. Las tres capas de riesgo de abajo se incluyen y por eso están bloqueadas.",
+      "precomputedOffHint": "Cálculo completo para tu área exacta (~1-2 minutos); puedes activar o desactivar capas individuales abajo.",
+      "precomputedRange": "Los mapas precalculados cubren exactamente un día: selecciona la misma fecha de inicio y fin para usar uno. Con un rango de fechas, el modelo calcula cada día de tu área y devuelve el día de riesgo máximo (~1-2 minutos).",
+      "precomputedStaticMode": "Los mapas precalculados solo existen para evaluaciones dinámicas. El modelo calculará todos los pasos para tu área.",
+      "precomputedUnavailable": "El análisis nocturno aún no ha procesado esta fecha. El modelo calculará todos los pasos para tu área.",
+      "lockedByPrecomputed": "Incluida en el mapa regional precalculado. Desactiva el interruptor de precalculado de arriba para personalizar las capas.",
+      "signalsQuestion": "¿Qué señales deben alimentar el modelo de riesgo?",
+      "precomputedInfoLabel": "Sobre el mapa regional precalculado",
+      "fwiInfo": "El Índice Meteorológico de Incendios combina viento, humedad relativa, temperatura y sequía en una única medida de la facilidad con que un fuego se iniciaría y propagaría. Tiene el mayor peso porque la meteorología cambia más rápido y condiciona más el comportamiento del fuego.",
+      "terrainInfo": "La pendiente, la altitud y la orientación determinan cómo se mueve el fuego: se acelera cuesta arriba y las laderas soleadas se secan antes. Se deriva del modelo digital del terreno de tu área.",
+      "historicalInfo": "Donde ya ha habido incendios suele volver a haberlos, porque las causas de fondo —usos del suelo, accesos y fuentes de ignición— persisten. Se basa en los incendios registrados en la zona."
     },
     "layer4": {
       "purpose": "Validación en tiempo real de la configuración. Los bloqueos deben resolverse en sus respectivos pasos antes de iniciar la ejecución.",
@@ -1942,7 +2148,9 @@
         "areaOfInterest": "Área de interés",
         "riskComponents": "Componentes de riesgo",
         "bufferDistance": "Distancia de búfer"
-      }
+      },
+      "noRegionSelected": "No hay ninguna región administrativa seleccionada.",
+      "selectedRegionDetails": "{{name}} · {{area}}"
     },
     "layer5": {
       "purpose": "Revise la configuración del modelo antes de guardar. El cálculo usará las fechas seleccionadas, área y elecciones de fuentes de datos.",
@@ -1960,9 +2168,11 @@
         "buffer": "Búfer",
         "area": "Área",
         "riskComponents": "Componentes de riesgo"
-      }
+      },
+      "dailyRunInfo": "Cada día simulado se evalúa con la meteorología de esta franja horaria: la parte más calurosa y seca de la tarde."
     },
     "coverage": {
+      "legendLine": "Línea discontinua: cobertura de datos disponible",
       "title": "Cobertura de datos de incendios",
       "unavailable": "Cobertura no disponible",
       "exactFootprint": "Huella raster exacta",
@@ -1975,6 +2185,52 @@
       "avoidBlank": "Evite espacios en blanco",
       "blankDesc": "Las áreas en blanco no tienen datos raster fuente válidos para el cálculo.",
       "availableData": "Datos de incendios disponibles"
+    },
+    "stepPurposeShow": "¿Qué es este paso?",
+    "stepPurposeHide": "Ocultar la información del paso",
+    "save": {
+      "createFailed": "No se pudo crear el modelo. Inténtalo de nuevo.",
+      "updateFailed": "No se pudo guardar el modelo. Inténtalo de nuevo.",
+      "uploadFailed": "El modelo se guardó, pero no se pudieron subir sus archivos de entrada.",
+      "calculationFailed": "El modelo se guardó, pero no se pudo iniciar el cálculo."
+    },
+    "wizard": {
+      "question": "Pregunta {{index}}",
+      "steps": "Pasos del modelo"
     }
+  },
+  "apiTokens": {
+    "title": "Tokens de API",
+    "subtitle": "Gestiona los tokens de acceso a la API de",
+    "create": "Crear nuevo token",
+    "createdOnce": "Copia este token ahora: no se volverá a mostrar.",
+    "errors": {
+      "create": "No se pudo crear el token",
+      "load": "No se pudieron cargar los tokens",
+      "revoke": "No se pudo revocar el token"
+    },
+    "existing": "Tokens existentes",
+    "expires": "caduca",
+    "expiry": "Caducidad",
+    "expiry30": "Caduca en 30 días",
+    "expiry90": "Caduca en 90 días",
+    "expiry365": "Caduca en 1 año",
+    "expiryNever": "No caduca nunca",
+    "generate": "Generar token",
+    "lastUsed": "último uso",
+    "namePlaceholder": "Nombre del token (p. ej. script de análisis)",
+    "none": "Aún no hay tokens.",
+    "revoke": "Revocar",
+    "scope": "Alcance",
+    "scopeFull": "Lectura y escritura",
+    "scopeFullShort": "lectura y escritura",
+    "scopeRead": "Solo lectura (recomendado)",
+    "scopeReadShort": "solo lectura",
+    "status": {
+      "active": "Activo",
+      "expired": "Caducado",
+      "revoked": "Revocado"
+    },
+    "usageHint": "Usa el token desde cualquier aplicación: Authorization: Bearer <token>. Los tokens de solo lectura pueden listar modelos y descargar resultados con los permisos de este usuario."
   }
 }

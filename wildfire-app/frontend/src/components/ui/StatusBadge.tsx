@@ -19,7 +19,7 @@ interface StatusBadgeProps {
 	onClick?: () => void;
 }
 
-// Map legacy variants to colors
+// Legacy variant map.
 const variantColorMap: Record<string, ChipColor> = {
 	success: "success",
 	warning: "warning",
@@ -80,7 +80,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
 	const content = (
 		<>
 			{shouldShowSpinner && (
-				<RefreshCw className="w-3 h-3 animate-spin text-gray-600 dark:text-gray-300 mr-1" />
+				<RefreshCw className="w-3 h-3 animate-spin text-current mr-1" />
 			)}
 			{displayIcon && !shouldShowSpinner && (
 				<span className="mr-1 flex items-center">{displayIcon}</span>

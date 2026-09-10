@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { extractPolygonsFromGeoJSON } from './utils';
 import type { AreaSelectStateApi } from './useAreaSelectState';
-import type { AdministrativeRegionResult } from '@/features/interactive-map/services/geocoding';
+import type { AdministrativeRegionResult } from '@/features/interactive-map';
 
 export interface UseMapDrawingOptions {
     state: AreaSelectStateApi;

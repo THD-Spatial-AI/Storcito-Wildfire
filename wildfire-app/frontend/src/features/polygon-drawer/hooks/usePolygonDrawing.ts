@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import Draw, { type DrawEvent } from "ol/interaction/Draw";
+import type MapBrowserEvent from "ol/MapBrowserEvent";
 import Modify from "ol/interaction/Modify";
 import VectorSource from "ol/source/Vector";
 import VectorLayer from "ol/layer/Vector";
@@ -9,6 +10,7 @@ import type Polygon from "ol/geom/Polygon";
 import type Map from "ol/Map";
 import { Feature } from "ol";
 import { Polygon as OLPolygon, Point } from "ol/geom";
+import { EDIT_BADGE_PROPERTY } from "./usePolygonStyles";
 import { platformModifierKeyOnly } from "ol/events/condition";
 import type { StyleLike } from "ol/style/Style";
 
@@ -45,13 +47,14 @@ interface UsePolygonDrawingOptions {
   bufferDistanceRef: RefObject<number>;
   bufferDistanceMeters: number;
   recomputeBuffers: (polygons: [number, number][][], distanceMeters?: number) => void;
+  onEditRequest?: () => void;
 }
 
 const getNearStartState = (
   map: Map,
   startCoord: Coordinate | null,
   coords: Coordinate[],
-  snapDistance: number,
+  snapDistance: number
 ): boolean | null => {
   if (!startCoord || coords.length <= 3) return null;
 
@@ -61,6 +64,29 @@ const getNearStartState = (
   if (!startPixel || !cursorPixel) return null;
 
   return Math.hypot(startPixel[0] - cursorPixel[0], startPixel[1] - cursorPixel[1]) < snapDistance;
+};
+
+/** Badge hit radius. */
+const EDIT_BADGE_HIT_RADIUS = 26;
+
+/** Largest polygon only. */
+const markPrimaryEditFeature = (source: VectorSource) => {
+  let primary: Feature | null = null;
+  let largestArea = -1;
+
+  for (const feature of source.getFeatures()) {
+    feature.unset(EDIT_BADGE_PROPERTY, true);
+    const geometry = feature.getGeometry();
+    if (!(geometry instanceof OLPolygon)) continue;
+    const area = geometry.getArea();
+    if (area > largestArea) {
+      largestArea = area;
+      primary = feature;
+    }
+  }
+
+  primary?.set(EDIT_BADGE_PROPERTY, true, true);
+  source.changed();
 };
 
 const toLonLatPolygon = (coords: Coordinate[]) => {
@@ -99,6 +125,7 @@ export const usePolygonDrawing = ({
   bufferDistanceRef,
   bufferDistanceMeters,
   recomputeBuffers,
+  onEditRequest,
 }: UsePolygonDrawingOptions) => {
   const onPolygonDrawnRef = useRef(onPolygonDrawn);
   const onPolygonModifiedRef = useRef(onPolygonModified);
@@ -109,6 +136,10 @@ export const usePolygonDrawing = ({
   const startPointSourceRef = useRef<VectorSource | null>(null);
   const allPolygonsRef = useRef<[number, number][][]>([]);
   const drawingEnabledRef = useRef<boolean>(drawingEnabled);
+  const onEditRequestRef = useRef(onEditRequest);
+  useEffect(() => {
+    onEditRequestRef.current = onEditRequest;
+  }, [onEditRequest]);
   const drawInteractionRef = useRef<Draw | null>(null);
   const modifyInteractionRef = useRef<Modify | null>(null);
   const modifyDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -133,7 +164,13 @@ export const usePolygonDrawing = ({
       startPointSourceRef.current?.clear();
       allPolygonsRef.current = [];
 
-      if (map && drawInteractionRef.current && drawingEnabledRef.current && disableAfterDraw && !allowMultiple) {
+      if (
+        map &&
+        drawInteractionRef.current &&
+        drawingEnabledRef.current &&
+        disableAfterDraw &&
+        !allowMultiple
+      ) {
         const interactions = map.getInteractions().getArray();
         if (!interactions.includes(drawInteractionRef.current)) {
           map.addInteraction(drawInteractionRef.current);
@@ -159,6 +196,8 @@ export const usePolygonDrawing = ({
       allPolygonsRef.current.push(polygonCoords);
     }
 
+    if (vectorSourceRef.current) markPrimaryEditFeature(vectorSourceRef.current);
+
     if (bufferDistanceRef.current > 0) {
       recomputeBuffers(allPolygonsRef.current, bufferDistanceRef.current);
     }
@@ -183,7 +222,15 @@ export const usePolygonDrawing = ({
     }
 
     return () => clearTimeout(timer);
-  }, [allowMultiple, bufferDistanceRef, disableAfterDraw, initialPolygons, map, recomputeBuffers, sourceReady]);
+  }, [
+    allowMultiple,
+    bufferDistanceRef,
+    disableAfterDraw,
+    initialPolygons,
+    map,
+    recomputeBuffers,
+    sourceReady,
+  ]);
 
   useEffect(() => {
     if (!map) return;
@@ -196,8 +243,56 @@ export const usePolygonDrawing = ({
       source: vectorSource,
       style: styles.polygonStyle,
       zIndex: 2001,
+      // Declutter with labels.
+      declutter: true,
     });
     map.addLayer(vectorLayer);
+
+    // Hit-test by distance.
+    const badgePixel = () => {
+      const feature = vectorSource.getFeatures().find((f) => f.get(EDIT_BADGE_PROPERTY));
+      const geometry = feature?.getGeometry();
+      if (!(geometry instanceof OLPolygon)) return null;
+      const anchor = geometry.getInteriorPoint().getCoordinates().slice(0, 2);
+      return { pixel: map.getPixelFromCoordinate(anchor), geometry };
+    };
+
+    const isOnBadge = (pixel: number[]) => {
+      if (!drawingEnabledRef.current && !onEditRequestRef.current) return null;
+      const badge = badgePixel();
+      if (!badge?.pixel) return null;
+      const distance = Math.hypot(badge.pixel[0] - pixel[0], badge.pixel[1] - pixel[1]);
+      return distance <= EDIT_BADGE_HIT_RADIUS ? badge.geometry : null;
+    };
+
+    // Zoom for editing.
+    const handleBadgeClick = (event: MapBrowserEvent) => {
+      const geometry = isOnBadge(event.pixel);
+      if (!geometry) return;
+      event.stopPropagation();
+      if (!drawingEnabledRef.current) {
+        onEditRequestRef.current?.();
+        return;
+      }
+      map.getView().fit(geometry.getExtent(), {
+        padding: [60, 60, 60, 60],
+        duration: 400,
+        maxZoom: 17,
+      });
+    };
+
+    const handleBadgeHover = (event: MapBrowserEvent) => {
+      if (event.dragging) return;
+      const viewport = map.getViewport();
+      if (isOnBadge(event.pixel)) {
+        viewport.style.cursor = "pointer";
+      } else if (viewport.style.cursor === "pointer") {
+        viewport.style.cursor = "";
+      }
+    };
+
+    map.on("singleclick", handleBadgeClick);
+    map.on("pointermove", handleBadgeHover);
 
     const bufferSource = new VectorSource({ wrapX: false });
     bufferSourceRef.current = bufferSource;
@@ -301,6 +396,7 @@ export const usePolygonDrawing = ({
         }
 
         onDrawingChangeRef.current?.(false);
+        markPrimaryEditFeature(vectorSource);
 
         if (disableAfterDraw && !allowMultiple) {
           map.removeInteraction(draw);
@@ -310,7 +406,8 @@ export const usePolygonDrawing = ({
       if (enableEditing) {
         const modify = new Modify({
           source: vectorSource,
-          deleteCondition: (event) => platformModifierKeyOnly(event) && event.type === "singleclick",
+          deleteCondition: (event) =>
+            platformModifierKeyOnly(event) && event.type === "singleclick",
           style: styles.modifyStyle,
         });
         modifyInteractionRef.current = modify;
@@ -381,7 +478,12 @@ export const usePolygonDrawing = ({
         bufferSourceRef.current?.clear();
         allPolygonsRef.current = [];
 
-        if (drawingEnabledRef.current && disableAfterDraw && !allowMultiple && drawInteractionRef.current) {
+        if (
+          drawingEnabledRef.current &&
+          disableAfterDraw &&
+          !allowMultiple &&
+          drawInteractionRef.current
+        ) {
           const interactions = map.getInteractions().getArray();
           if (!interactions.includes(drawInteractionRef.current)) {
             map.addInteraction(drawInteractionRef.current);
@@ -395,8 +497,11 @@ export const usePolygonDrawing = ({
     }
 
     return () => {
+      map.un("singleclick", handleBadgeClick);
+      map.un("pointermove", handleBadgeHover);
       if (handleKeyDown) document.removeEventListener("keydown", handleKeyDown);
-      if (handleContextMenu) map.getViewport().removeEventListener("contextmenu", handleContextMenu);
+      if (handleContextMenu)
+        map.getViewport().removeEventListener("contextmenu", handleContextMenu);
       if (drawInteractionRef.current) map.removeInteraction(drawInteractionRef.current);
       if (modifyInteractionRef.current) map.removeInteraction(modifyInteractionRef.current);
       if (modifyDebounceRef.current) clearTimeout(modifyDebounceRef.current);
@@ -433,6 +538,13 @@ export const usePolygonDrawing = ({
   }, [bufferDistanceMeters, recomputeBuffers]);
 
   useEffect(() => {
+    if (drawingEnabled && map && drawInteractionRef.current) {
+      const interactions = map.getInteractions().getArray();
+      if (!interactions.includes(drawInteractionRef.current)) {
+        map.addInteraction(drawInteractionRef.current);
+      }
+    }
+
     drawInteractionRef.current?.setActive(drawingEnabled);
     modifyInteractionRef.current?.setActive(drawingEnabled);
 

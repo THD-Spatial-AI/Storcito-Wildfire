@@ -1,6 +1,7 @@
 import { useState, useRef, useMemo } from 'react';
 import { Bell } from 'lucide-react';
 import { useVirtualizer } from '@tanstack/react-virtual';
+import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { TimeAgo } from '@/components/ui/TimeAgo';
 import { Button } from '@spatialhub/ui';
@@ -12,6 +13,7 @@ import {
   useClearAllNotificationsMutation,
   type Notification,
 } from '@/features/notifications/hooks/useNotificationsQuery';
+import { getNotificationResultPath } from '@/features/notifications/notification-navigation';
 import {
   NotificationDetailDialog,
   getNotificationTypeStyles,
@@ -21,6 +23,7 @@ import { useConfirm } from '@/hooks/useConfirmDialog';
 
 const NotificationsPage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const confirm = useConfirm();
@@ -70,6 +73,12 @@ const NotificationsPage = () => {
   const handleNotificationClick = async (notification: Notification) => {
     if (!notification.read) {
       await markAsRead(notification.id);
+    }
+    // Model-completion notifications open the results directly.
+    const resultPath = getNotificationResultPath(notification);
+    if (resultPath) {
+      navigate(resultPath);
+      return;
     }
     setSelectedNotification(notification);
     setDetailDialogOpen(true);

@@ -18,16 +18,11 @@ import {
 	KeyRound
 } from "lucide-react";
 import { useDocumentTitle } from "@/hooks/use-document-title";
-import axios from "@/lib/axios";
+import { getProfile, updateProfile, changePassword, type ProfileData } from "@/services/profileService";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@spatialhub/ui";
 import { useTranslation } from "@/i18n";
 
-interface ProfileData {
-	name: string;
-	email: string;
-	access_level: string;
-}
 
 const ProfilePage: React.FC = () => {
 	const { t } = useTranslation();
@@ -35,7 +30,7 @@ const ProfilePage: React.FC = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	
-	// Check if user came from admin dashboard
+	// Came from admin?
 	const cameFromAdmin = location.state?.from === 'admin' || document.referrer.includes('admin-dashboard');
 	
 	const handleBack = () => {
@@ -58,9 +53,9 @@ const ProfilePage: React.FC = () => {
 
 	const loadProfile = useCallback(async () => {
 		try {
-			const response = await axios.get("/users/profile");
-			if (response.data.data) {
-				setFormData(response.data.data);
+			const profile = await getProfile();
+			if (profile) {
+				setFormData(profile);
 			}
 		} catch (err: unknown) {
 			let message = t('profile.notifications.failedToLoad');
@@ -95,9 +90,9 @@ const ProfilePage: React.FC = () => {
 				name: formData.name,
 			};
 
-			const response = await axios.put("/users/profile", payload);
-			
-			if (response.data.success) {
+			const success = await updateProfile(payload);
+
+			if (success) {
 				setSuccess(true);
 				setTimeout(() => setSuccess(false), 3000);
 			}
@@ -134,7 +129,7 @@ const ProfilePage: React.FC = () => {
 
 	const handlePwChange = (field: keyof typeof pwData, value: string) => {
 		setPwData((prev) => ({ ...prev, [field]: value }));
-		// Clear the field-specific error as the user corrects it; keep entered data.
+		// Clear field error.
 		setPwErrors((prev) => {
 			const next = { ...prev };
 			delete next[field];
@@ -150,7 +145,7 @@ const ProfilePage: React.FC = () => {
 		setPwErrors({});
 		setPwSuccess(false);
 
-		// Client-side validation (server re-validates authoritatively).
+		// Client-side check.
 		const errs: Record<string, string> = {};
 		if (!passwordRequirements.every((r) => r.test(pwData.new_password))) {
 			errs.new_password = t("profile.password.requirementsNotMet", "Password does not meet all requirements");
@@ -165,9 +160,9 @@ const ProfilePage: React.FC = () => {
 
 		setIsChangingPw(true);
 		try {
-			await axios.post("/auth/change-password", pwData);
+			await changePassword(pwData);
 			setPwSuccess(true);
-			// Clear only on success; on error the entered data is preserved.
+			// Clear on success.
 			setPwData({ new_password: "", new_password_confirmation: "" });
 			setTimeout(() => setPwSuccess(false), 3000);
 		} catch (err: unknown) {
@@ -297,7 +292,7 @@ const ProfilePage: React.FC = () => {
 			)}
 
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-				{/* Left Column - Profile Card */}
+				{/* Profile card. */}
 				<div className="lg:col-span-1">
 					<div className="md-rise bg-card text-card-foreground rounded-2xl border border-border overflow-hidden shadow-sm transition-shadow duration-300 hover:shadow-md" style={{ animationDelay: "60ms" }}>
 						{/* Profile Header */}
@@ -333,7 +328,7 @@ const ProfilePage: React.FC = () => {
 					</div>
 				</div>
 
-				{/* Right Column - Edit Form */}
+				{/* Edit form. */}
 				<div className="lg:col-span-2 space-y-6">
 					<form onSubmit={handleSubmit} className="md-rise bg-card text-card-foreground rounded-2xl border border-border shadow-sm overflow-hidden transition-shadow duration-300 hover:shadow-md" style={{ animationDelay: "120ms" }}>
 						<div className="px-6 py-4 border-b border-border">
@@ -456,7 +451,7 @@ const ProfilePage: React.FC = () => {
 								</div>
 								{pwErrors.new_password && <p className="md-fade-in text-xs text-red-600 dark:text-red-400 mt-1.5">{pwErrors.new_password}</p>}
 
-								{/* Requirements checklist (only while typing) */}
+								{/* Requirements checklist. */}
 								{pwData.new_password.length > 0 && (
 									<div className="md-fade-in mt-2.5 grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1.5 p-3 bg-muted rounded-lg border border-border">
 										{passwordRequirements.map((req, index) => {

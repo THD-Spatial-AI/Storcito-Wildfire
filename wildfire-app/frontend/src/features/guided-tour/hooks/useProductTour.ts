@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useTourStore } from '@/features/guided-tour/store/tour-store';
-import { settingsService } from '@/features/settings/services/settings';
+import { settingsService } from '@/features/settings';
 
 const USER_COOKIE_NAME = 'user_email';
 const SHOW_DELAY_MS = 1500;

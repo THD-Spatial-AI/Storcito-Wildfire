@@ -121,7 +121,6 @@ function Invoke-InstallNpm {
     Write-Cyan 'Installing NPM dependencies...'
 
     $targets = @(
-        @{ Dir = 'libs/i18n';             Build = $true  },
         @{ Dir = 'libs/ui';               Build = $true  },
         @{ Dir = 'libs/forms';            Build = $true  },
         @{ Dir = 'libs/auth';             Build = $true  },

@@ -1,5 +1,36 @@
 import axios from "@/lib/axios";
+import { config } from "@/configuration/app";
+import { getCSRFToken } from "@/utils/csrf";
 import type { FeedbackFormData, MyFeedbackItem } from "./types";
+
+export interface PublicContactPayload {
+	name: string;
+	email: string;
+	category: string;
+	subject: string;
+	message: string;
+}
+
+/** Guest contact form. */
+export const submitPublicFeedback = async (payload: PublicContactPayload): Promise<void> => {
+	const baseUrl = config.api.baseUrl || "/api";
+	const fd = new FormData();
+	fd.append("name", payload.name);
+	fd.append("email", payload.email);
+	fd.append("category", payload.category);
+	fd.append("subject", payload.subject);
+	fd.append("message", payload.message);
+	const res = await fetch(`${baseUrl}/feedback/public`, {
+		method: "POST",
+		credentials: "include",
+		headers: { "X-CSRF-Token": getCSRFToken() || "" },
+		body: fd,
+	});
+	if (!res.ok) {
+		const data = await res.json().catch(() => ({}));
+		throw new Error(data?.error || data?.message || "");
+	}
+};
 
 interface FeedbackSubmitResponse {
   success: boolean;

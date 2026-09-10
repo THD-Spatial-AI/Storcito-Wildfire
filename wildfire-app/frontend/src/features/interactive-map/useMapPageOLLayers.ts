@@ -1,47 +1,43 @@
-/**
- * Hook: Adds OpenLayers VectorLayers for region boundaries and user model polygons
- * on the /map page. Active for OpenLayers base layers.
- *
- * - Region boundaries: indigo fill + label (reuses boundaryStyleFunction)
- * - User models: green fill + label with hover highlight + click-to-navigate
- */
-import { useEffect, useRef, useCallback } from 'react';
-import type OLMap from 'ol/Map';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import GeoJSONFormat from 'ol/format/GeoJSON';
-import { Style, Fill, Stroke, Text } from 'ol/style';
-import { Point } from 'ol/geom';
-import { getCenter } from 'ol/extent';
-import type { Geometry } from 'ol/geom';
-import type Feature from 'ol/Feature';
-import type { FeatureLike } from 'ol/Feature';
-import type MapBrowserEvent from 'ol/MapBrowserEvent';
+/** Map page layers. */
+import { useEffect, useRef, useCallback } from "react";
+import type OLMap from "ol/Map";
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
+import GeoJSONFormat from "ol/format/GeoJSON";
+import { Style, Fill, Stroke, Text } from "ol/style";
+import { Point } from "ol/geom";
+import { getCenter } from "ol/extent";
+import type { Geometry } from "ol/geom";
+import type Feature from "ol/Feature";
+import type { FeatureLike } from "ol/Feature";
+import type MapBrowserEvent from "ol/MapBrowserEvent";
 import {
   boundaryStyleFunction,
   boundaryLabelStyle,
-} from '@/features/interactive-map/utils/mapStyleUtils';
+} from "@/features/interactive-map/utils/mapStyleUtils";
 
-const BOUNDARY_LAYER_NAME = 'map-page-boundaries';
-const MODEL_LAYER_NAME = 'map-page-user-models';
+const BOUNDARY_LAYER_NAME = "map-page-boundaries";
+const MODEL_LAYER_NAME = "map-page-user-models";
 
-// ── User model styles (green theme) ──────────────────────────────────────
+// Model styles.────────────────
 
 function userModelStyleFunction(feature: FeatureLike, resolution: number): Style[] {
-  const isHovered = feature.get('_hovered') === true;
-  const fillAlpha = isHovered ? 0.28 : 0.14;
-  const strokeAlpha = isHovered ? 0.9 : 0.7;
-  const strokeWidth = isHovered ? 2.5 : 1.8;
+  const isHovered = feature.get("_hovered") === true;
+  const fillAlpha = isHovered ? 0.42 : 0.28;
+  const strokeWidth = isHovered ? 3.5 : 2.5;
 
   const styles: Style[] = [
     new Style({
+      stroke: new Stroke({ color: "rgba(255, 255, 255, 0.9)", width: strokeWidth + 3 }),
+    }),
+    new Style({
       fill: new Fill({ color: `rgba(16, 185, 129, ${fillAlpha})` }),
-      stroke: new Stroke({ color: `rgba(5, 150, 105, ${strokeAlpha})`, width: strokeWidth }),
+      stroke: new Stroke({ color: isHovered ? "#047857" : "#059669", width: strokeWidth }),
     }),
   ];
 
   // Label at medium zoom
-  const title = feature.get('title');
+  const title = feature.get("title");
   const geom = (feature as Feature<Geometry>).getGeometry();
   if (title && geom && resolution < 20) {
     const center = getCenter(geom.getExtent());
@@ -52,25 +48,25 @@ function userModelStyleFunction(feature: FeatureLike, resolution: number): Style
         text: new Text({
           text: title,
           font: `600 ${fontSize}px Inter, -apple-system, BlinkMacSystemFont, sans-serif`,
-          fill: new Fill({ color: '#064e3b' }),
-          stroke: new Stroke({ color: 'rgba(255,255,255,0.92)', width: 3 }),
-          backgroundFill: new Fill({ color: 'rgba(209, 250, 229, 0.90)' }),
-          backgroundStroke: new Stroke({ color: 'rgba(16, 185, 129, 0.5)', width: 1 }),
+          fill: new Fill({ color: "#064e3b" }),
+          stroke: new Stroke({ color: "rgba(255,255,255,0.92)", width: 3 }),
+          backgroundFill: new Fill({ color: "rgba(209, 250, 229, 0.90)" }),
+          backgroundStroke: new Stroke({ color: "rgba(16, 185, 129, 0.5)", width: 1 }),
           padding: [4, 8, 4, 8],
           overflow: true,
         }),
-      }),
+      })
     );
   }
 
   return styles;
 }
 
-// ── Boundary style with label ────────────────────────────────────────────
+// Boundary style.─────────────────────
 
 function boundaryWithLabelStyle(feature: FeatureLike, resolution: number): Style[] {
   const styles = boundaryStyleFunction(feature as Feature<Geometry>, resolution);
-  const name = feature.get('name');
+  const name = feature.get("name");
   const geom = (feature as Feature<Geometry>).getGeometry();
   if (name && geom) {
     styles.push(boundaryLabelStyle(name, geom, resolution));
@@ -103,7 +99,7 @@ export function useMapPageOLLayers({
   const removeExistingLayers = useCallback((olMap: OLMap) => {
     const toRemove: VectorLayer<VectorSource>[] = [];
     olMap.getLayers().forEach((layer) => {
-      const name = layer.get('name');
+      const name = layer.get("name");
       if (name === BOUNDARY_LAYER_NAME || name === MODEL_LAYER_NAME) {
         toRemove.push(layer as VectorLayer<VectorSource>);
       }
@@ -113,7 +109,7 @@ export function useMapPageOLLayers({
     modelLayerRef.current = null;
   }, []);
 
-  // Add/remove layers when data or base layer changes
+  // Sync layers.
   useEffect(() => {
     if (!map) return;
 
@@ -129,14 +125,14 @@ export function useMapPageOLLayers({
     // ── Region boundaries ──
     if (availableBoundaryGeoJSON?.features?.length) {
       const features = format.readFeatures(availableBoundaryGeoJSON, {
-        dataProjection: 'EPSG:4326',
-        featureProjection: 'EPSG:3857',
+        dataProjection: "EPSG:4326",
+        featureProjection: "EPSG:3857",
       });
 
       const source = new VectorSource({ features });
       const layer = new VectorLayer({
         source,
-        style: boundaryWithLabelStyle as unknown as import('ol/style/Style').StyleFunction,
+        style: boundaryWithLabelStyle as unknown as import("ol/style/Style").StyleFunction,
         zIndex: 50,
         properties: { name: BOUNDARY_LAYER_NAME },
       });
@@ -144,17 +140,17 @@ export function useMapPageOLLayers({
       boundaryLayerRef.current = layer;
     }
 
-    // ── User model polygons ──
+    // Model polygons.
     if (userModelGeoJSON?.features?.length) {
       const features = format.readFeatures(userModelGeoJSON, {
-        dataProjection: 'EPSG:4326',
-        featureProjection: 'EPSG:3857',
+        dataProjection: "EPSG:4326",
+        featureProjection: "EPSG:3857",
       });
 
       const source = new VectorSource({ features });
       const layer = new VectorLayer({
         source,
-        style: userModelStyleFunction as unknown as import('ol/style/Style').StyleFunction,
+        style: userModelStyleFunction as unknown as import("ol/style/Style").StyleFunction,
         zIndex: 55,
         properties: { name: MODEL_LAYER_NAME },
       });
@@ -168,22 +164,22 @@ export function useMapPageOLLayers({
 
       // Clear previous hover
       if (hoveredFeatureRef.current) {
-        hoveredFeatureRef.current.set('_hovered', false);
+        hoveredFeatureRef.current.set("_hovered", false);
         hoveredFeatureRef.current = null;
       }
 
-      let cursor = '';
+      let cursor = "";
       map.forEachFeatureAtPixel(evt.pixel, (feature, layer) => {
-        const layerName = layer?.get('name');
+        const layerName = layer?.get("name");
         if (layerName === MODEL_LAYER_NAME) {
           const f = feature as Feature<Geometry>;
-          f.set('_hovered', true);
+          f.set("_hovered", true);
           hoveredFeatureRef.current = f;
-          cursor = 'pointer';
+          cursor = "pointer";
           return true; // stop iteration
         }
         if (layerName === BOUNDARY_LAYER_NAME) {
-          cursor = 'pointer';
+          cursor = "pointer";
           return true;
         }
         return false;
@@ -196,11 +192,11 @@ export function useMapPageOLLayers({
     // ── Click interaction ──
     const handleClick = (evt: MapBrowserEvent) => {
       map.forEachFeatureAtPixel(evt.pixel, (feature, layer) => {
-        const layerName = layer?.get('name');
+        const layerName = layer?.get("name");
         if (layerName === MODEL_LAYER_NAME && onModelClick) {
-          const modelId = feature.get('model_id');
-          const status = feature.get('status');
-          if (typeof modelId === 'number') {
+          const modelId = feature.get("model_id");
+          const status = feature.get("status");
+          if (typeof modelId === "number") {
             onModelClick(modelId, status);
             return true;
           }
@@ -209,14 +205,14 @@ export function useMapPageOLLayers({
       });
     };
 
-    map.on('pointermove', handlePointerMove);
-    map.on('click', handleClick);
+    map.on("pointermove", handlePointerMove);
+    map.on("click", handleClick);
 
     cleanupRef.current = () => {
-      map.un('pointermove', handlePointerMove);
-      map.un('click', handleClick);
+      map.un("pointermove", handlePointerMove);
+      map.un("click", handleClick);
       const target = map.getTargetElement();
-      if (target) (target as HTMLElement).style.cursor = '';
+      if (target) (target as HTMLElement).style.cursor = "";
     };
 
     return () => {
@@ -224,5 +220,12 @@ export function useMapPageOLLayers({
       cleanupRef.current = null;
       removeExistingLayers(map);
     };
-  }, [map, isMapLibre, availableBoundaryGeoJSON, userModelGeoJSON, onModelClick, removeExistingLayers]);
+  }, [
+    map,
+    isMapLibre,
+    availableBoundaryGeoJSON,
+    userModelGeoJSON,
+    onModelClick,
+    removeExistingLayers,
+  ]);
 }

@@ -12,6 +12,12 @@ interface MapControlsProps {
 export const MapControls: React.FC<MapControlsProps> = ({ onZoomIn, onZoomOut, onCenterMap }) => {
   const { t } = useTranslation();
   
+  const Kbd: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+    <kbd className="ml-1 rounded border border-current/30 px-1 text-[10px] font-medium opacity-80">
+      {children}
+    </kbd>
+  );
+
   const buttonClass = "flex items-center justify-center rounded-full size-8 cursor-pointer bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm border border-border";
   
   return (
@@ -30,7 +36,7 @@ export const MapControls: React.FC<MapControlsProps> = ({ onZoomIn, onZoomOut, o
             </button>
           </TooltipTrigger>
           <TooltipContent side="left" sideOffset={8}>
-            {t('map.zoomIn')}
+            {t('map.zoomIn')} <Kbd>+</Kbd>
           </TooltipContent>
         </Tooltip>
 
@@ -44,7 +50,7 @@ export const MapControls: React.FC<MapControlsProps> = ({ onZoomIn, onZoomOut, o
             </button>
           </TooltipTrigger>
           <TooltipContent side="left" sideOffset={8}>
-            {t('map.zoomOut')}
+            {t('map.zoomOut')} <Kbd>−</Kbd>
           </TooltipContent>
         </Tooltip>
 

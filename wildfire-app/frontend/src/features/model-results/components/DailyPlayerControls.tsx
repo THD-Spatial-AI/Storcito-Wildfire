@@ -21,7 +21,7 @@ export const PlayPauseButton = ({
     type="button"
     onClick={onToggle}
     aria-label={playing ? pauseLabel : playLabel}
-    className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-slate-800 text-white transition-colors hover:bg-slate-950"
+    className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-all duration-150 hover:bg-primary/90 hover:shadow active:scale-95"
   >
     {playing ? <Pause className="h-4 w-4" /> : <Play className="ml-0.5 h-4 w-4" />}
   </button>

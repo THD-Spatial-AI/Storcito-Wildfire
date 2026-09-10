@@ -2,7 +2,7 @@ import { FC, useMemo } from 'react';
 import ReactECharts from 'echarts-for-react';
 import type { EChartsOption } from 'echarts';
 
-import type { RiskDistribution } from '@/features/model-results/hooks/useRiskMetrics';
+import type { RiskDistribution } from '@/features/model-results';
 
 interface DistributionComparisonChartProps {
   baseline: RiskDistribution;
@@ -49,7 +49,7 @@ export const DistributionComparisonChart: FC<DistributionComparisonChartProps> =
       },
       yAxis: {
         type: 'category',
-        // Categories render bottom-up, so list comparison first to show baseline on top.
+        // Bottom-up order.
         data: [comparisonLabel, baselineLabel],
         axisTick: { show: false },
         axisLine: { show: false },

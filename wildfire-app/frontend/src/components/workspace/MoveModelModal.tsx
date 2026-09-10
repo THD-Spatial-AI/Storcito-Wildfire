@@ -7,23 +7,6 @@ import { UniversalForm } from '@spatialhub/forms';
 import { getMoveModelFormSections } from '@/configuration/formConfigurations';
 import { useTranslation } from '@/i18n';
 
-const MOVE_MODEL_TITLE = 'Move Model';
-const MOVE_MODELS_TITLE = 'Move Models';
-
-function getModalDescription(isBulkMove: boolean, moveCount: number, modelTitle?: string): string {
-    if (isBulkMove) {
-        return `Move ${moveCount} selected model${moveCount > 1 ? 's' : ''} to a different workspace`;
-    }
-    return `Move "${modelTitle}" to a different workspace`;
-}
-
-function getSubmitText(isBulkMove: boolean, moveCount: number): string {
-    if (isBulkMove) {
-        return `Move ${moveCount} Model${moveCount > 1 ? 's' : ''}`;
-    }
-    return MOVE_MODEL_TITLE;
-}
-
 interface MoveModelModalProps {
     isOpen: boolean;
     model: Model | null;
@@ -111,7 +94,7 @@ export const MoveModelModal: React.FC<MoveModelModalProps> = ({
 
     const handleSubmit = async () => {
         if (!formData.workspace_id) {
-            setFormErrors({ workspace_id: 'Please select a workspace' });
+            setFormErrors({ workspace_id: t('forms.moveModel.errorSelect', 'Please select a workspace') });
             return;
         }
 
@@ -126,7 +109,7 @@ export const MoveModelModal: React.FC<MoveModelModalProps> = ({
                 await modelService.moveModel(model!.id, formData.workspace_id);
             }
 
-            // Invalidate all model list caches across all workspaces
+            // Invalidate model caches.
             queryClient.invalidateQueries({ queryKey: ["models", "list"] });
             queryClient.invalidateQueries({ queryKey: ["models", "stats"] });
 
@@ -136,8 +119,8 @@ export const MoveModelModal: React.FC<MoveModelModalProps> = ({
             if (import.meta.env.DEV) console.error('Failed to move model(s):', error);
             setFormErrors({
                 workspace_id: isBulkMove
-                    ? 'Failed to move models. Please try again.'
-                    : 'Failed to move model. Please try again.'
+                    ? t('forms.moveModel.errorMovePlural', 'Failed to move models. Please try again.')
+                    : t('forms.moveModel.errorMove', 'Failed to move model. Please try again.')
             });
         } finally {
             setIsSubmitting(false);
@@ -153,14 +136,14 @@ export const MoveModelModal: React.FC<MoveModelModalProps> = ({
             <UniversalForm
                 isOpen={isOpen}
                 onClose={handleClose}
-                title={isBulkMove ? MOVE_MODELS_TITLE : MOVE_MODEL_TITLE}
-                description="No other workspaces available. Create a new workspace first."
+                title={isBulkMove ? t('forms.moveModel.titlePlural', 'Move Models') : t('forms.moveModel.title', 'Move Model')}
+                description={t('forms.moveModel.noWorkspaces', 'No other workspaces available. Create a new workspace first.')}
                 variant="default"
                 sections={[]}
                 values={{}}
                 onChange={() => {}}
                 onSubmit={handleClose}
-                submitText="Close"
+                submitText={t('common.close', 'Close')}
                 loading={false}
                 errors={{}}
             />
@@ -173,14 +156,18 @@ export const MoveModelModal: React.FC<MoveModelModalProps> = ({
         <UniversalForm
             isOpen={isOpen}
             onClose={handleClose}
-            title={isBulkMove ? 'Move Models' : 'Move Model'}
-            description={getModalDescription(isBulkMove ?? false, moveCount, model?.title)}
+            title={isBulkMove ? t('forms.moveModel.titlePlural', 'Move Models') : t('forms.moveModel.title', 'Move Model')}
+            description={isBulkMove
+                ? t('forms.moveModel.descriptionPlural', { count: moveCount, defaultValue: `Move ${moveCount} selected models to a different workspace` })
+                : t('forms.moveModel.description', { title: model?.title ?? '', defaultValue: `Move "${model?.title ?? ''}" to a different workspace` })}
             variant="default"
             sections={formSections}
             values={formData as unknown as Record<string, FormDataConvertible>}
             onChange={handleFormChange}
             onSubmit={handleSubmit}
-            submitText={getSubmitText(isBulkMove ?? false, moveCount)}
+            submitText={isBulkMove
+                ? t('forms.moveModel.submitPlural', { count: moveCount, defaultValue: `Move ${moveCount} Models` })
+                : t('forms.moveModel.title', 'Move Model')}
             loading={isSubmitting}
             errors={formErrors}
         />

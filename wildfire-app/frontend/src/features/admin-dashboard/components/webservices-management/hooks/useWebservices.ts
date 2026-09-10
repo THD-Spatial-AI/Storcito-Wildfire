@@ -3,7 +3,7 @@ import { validateWebserviceForm } from "@/configuration/formConfigurations";
 import type { FormDataConvertible } from "@/hooks/useForm";
 import { useConfirm } from "@/hooks/useConfirmDialog";
 import { useWebservices as useWebservicesApi } from "@/features/admin-dashboard/hooks/useWebservices";
-import { modelService } from "@/features/model-dashboard/services/modelService";
+import { modelService } from "@/features/model-dashboard";
 import type { WebserviceFilters, WebserviceFormData, WebserviceInstance } from "@/features/admin-dashboard/types";
 import { useTranslation } from "@/i18n";
 

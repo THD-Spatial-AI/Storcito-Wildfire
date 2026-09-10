@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import { AlertCircle, FileCheck2, Info, Loader2, X, type LucideIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@spatialhub/ui";
+import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 interface FileUploadFieldProps {
@@ -25,9 +26,12 @@ export const FileUploadField: FC<FileUploadFieldProps> = ({
     fileName,
     error,
     processing,
-    processingLabel = "Processing…",
+    processingLabel,
     onSelect,
-}) => (
+}) => {
+    const { t } = useTranslation();
+
+    return (
     <div className={cn("rounded-lg border px-3 py-2.5 transition-colors duration-300", error ? "border-red-500/50 bg-red-500/5" : "border-border bg-card")}>
         <div className="flex items-center gap-3">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border bg-background/60 text-muted-foreground">
@@ -38,7 +42,11 @@ export const FileUploadField: FC<FileUploadFieldProps> = ({
                     {label}
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <button type="button" aria-label={`About ${label}`} className="text-muted-foreground transition-all duration-150 hover:text-foreground hover:scale-110 active:scale-95 focus:outline-none">
+                            <button
+                                type="button"
+                                aria-label={t("common.aboutItem", { label, defaultValue: `About ${label}` })}
+                                className="cursor-pointer text-muted-foreground transition-colors duration-150 hover:text-foreground focus:outline-none"
+                            >
                                 <Info className="h-3 w-3" />
                             </button>
                         </TooltipTrigger>
@@ -48,7 +56,7 @@ export const FileUploadField: FC<FileUploadFieldProps> = ({
                 <div className="truncate text-[11px] text-muted-foreground">
                     {processing ? (
                         <span className="inline-flex items-center gap-1 text-foreground">
-                            <Loader2 className="h-3 w-3 animate-spin" /> {processingLabel}
+                            <Loader2 className="h-3 w-3 animate-spin" /> {processingLabel ?? t("common.processing", "Processing…")}
                         </span>
                     ) : fileName ? (
                         <span className="md-fade-in inline-flex items-center gap-1 text-foreground">
@@ -63,14 +71,14 @@ export const FileUploadField: FC<FileUploadFieldProps> = ({
                 <button
                     type="button"
                     onClick={() => onSelect(null)}
-                    aria-label={`Remove ${label}`}
-                    className="shrink-0 rounded p-1 text-muted-foreground transition-all duration-150 hover:bg-muted hover:text-foreground hover:scale-110 active:scale-95"
+                    aria-label={t("common.removeItem", { label, defaultValue: `Remove ${label}` })}
+                    className="shrink-0 rounded p-1 text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground"
                 >
                     <X className="h-3.5 w-3.5" />
                 </button>
             ) : (
-                <label className="shrink-0 cursor-pointer rounded-lg border border-border bg-background px-2.5 py-1.5 text-[11px] font-semibold text-foreground transition-all duration-200 hover:bg-muted hover:shadow-sm active:scale-[0.98]">
-                    Choose
+                <label className="shrink-0 cursor-pointer rounded-lg border border-border bg-background px-2.5 py-1.5 text-[11px] font-semibold text-foreground transition-colors duration-150 hover:bg-muted">
+                    {t("common.choose", "Choose")}
                     <input
                         type="file"
                         accept={accept}
@@ -89,4 +97,5 @@ export const FileUploadField: FC<FileUploadFieldProps> = ({
             </p>
         )}
     </div>
-);
+    );
+};

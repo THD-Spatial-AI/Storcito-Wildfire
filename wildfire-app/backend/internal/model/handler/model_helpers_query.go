@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	modelservice "spatialhub_backend/internal/model/service"
 
@@ -15,7 +16,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func parseGetModelsParams(c *gin.Context) (limit, offset int, search, workspaceIDStr, sortBy, sortOrder string) {
+func parseGetModelsParams(c *gin.Context) (limit, offset int, search, workspaceIDStr, sortBy, sortOrder, fromDate, toDate string) {
 	limit = 100
 	offset = 0
 	sortBy = "created_at"
@@ -36,6 +37,8 @@ func parseGetModelsParams(c *gin.Context) (limit, offset int, search, workspaceI
 
 	search = c.Query("search")
 	workspaceIDStr = c.Query("workspace_id")
+	fromDate = c.Query("from_date")
+	toDate = c.Query("to_date")
 
 	if sb := c.Query("sort_by"); sb != "" {
 		switch sb {
@@ -199,6 +202,10 @@ func (h *ModelHandler) postProcessModelWorkspacesBatch(ctx context.Context, user
 }
 
 func (h *ModelHandler) buildQueryWithWorkspaceFilter(c *gin.Context, userCtx *httputil.UserContext, workspaceIDStr string, limit, offset int) (*gorm.DB, bool) {
+	if isMineOnlyRequest(c) {
+		return h.buildOwnedModelsQuery(userCtx), true
+	}
+
 	// Expert users see all models, skip workspace filtering when no workspace specified
 	if userCtx.AccessLevel == constants.AccessLevelExpert && workspaceIDStr == "" {
 		return h.store.DB(), true
@@ -224,6 +231,24 @@ func (h *ModelHandler) buildQueryWithWorkspaceFilter(c *gin.Context, userCtx *ht
 	return h.buildUserAccessQuery(c, userCtx), true
 }
 
+// isMineOnlyRequest reports whether the caller asked to be limited to models
+// they own, via ?mine=true.
+func isMineOnlyRequest(c *gin.Context) bool {
+	switch c.Query("mine") {
+	case "1", "true", "TRUE", "True":
+		return true
+	}
+	return false
+}
+
+func (h *ModelHandler) buildOwnedModelsQuery(userCtx *httputil.UserContext) *gorm.DB {
+	return h.store.DB().Where(
+		"user_id = ? OR LOWER(user_email) = LOWER(?)",
+		userCtx.UserID,
+		userCtx.Email,
+	)
+}
+
 func parseWorkspaceID(workspaceIDStr string) (uint, error) {
 	var workspaceID int
 	if _, err := fmt.Sscanf(workspaceIDStr, "%d", &workspaceID); err != nil || workspaceID < 0 {
@@ -242,10 +267,18 @@ func (h *ModelHandler) respondWithEmptyList(c *gin.Context, limit, offset int) {
 	})
 }
 
-func (h *ModelHandler) applySearchFilter(query *gorm.DB, search string) *gorm.DB {
+func (h *ModelHandler) applySearchFilter(query *gorm.DB, search, fromDate, toDate string) *gorm.DB {
 	query = query.Where("deleted_at IS NULL")
 	if search != "" {
 		query = query.Where("title ILIKE ?", "%"+search+"%")
+	}
+	// Period overlap: model covers any part of [fromDate, toDate].
+	if from, err := time.Parse("2006-01-02", fromDate); err == nil {
+		query = query.Where("to_date >= ?", from)
+	}
+	if to, err := time.Parse("2006-01-02", toDate); err == nil {
+		// Inclusive end day.
+		query = query.Where("from_date < ?", to.Add(24*time.Hour))
 	}
 	return query
 }

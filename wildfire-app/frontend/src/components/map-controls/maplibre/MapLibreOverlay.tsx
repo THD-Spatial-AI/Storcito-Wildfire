@@ -25,9 +25,9 @@ export const MapLibreOverlay: React.FC<MapLibreOverlayProps> = ({
   onUserModelClick,
   onMapClick,
 }) => {
-  const { containerRef, mapRef } = useMapLibreMap(olMap, visible, isDrawing);
+  const { containerRef, mapRef, map } = useMapLibreMap(olMap, visible, isDrawing);
 
-  useMapLibreLayers(mapRef, {
+  useMapLibreLayers(map, {
     availableBoundaryGeoJSON,
     selectedBoundaryFeature,
     showBoundary,

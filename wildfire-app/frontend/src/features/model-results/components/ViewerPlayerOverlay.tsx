@@ -95,9 +95,9 @@ export const ViewerPlayerOverlay: FC<ViewerPlayerOverlayProps> = ({
 
   return (
     <div
-      className="absolute bottom-4 z-[1500] overflow-hidden rounded-2xl border border-border bg-white/95 shadow-lg backdrop-blur"
+      className="absolute bottom-4 z-[1500] overflow-hidden rounded-xl border border-border/60 bg-card/95 shadow-lg backdrop-blur-md"
       style={{
-        // Center within the visible map area (the sidebar overlays the right edge).
+        // Center over map.
         left: "calc((100% - var(--sidebar-offset, 0rem)) / 2)",
         transform: "translateX(-50%)",
       }}
@@ -181,7 +181,7 @@ export const ViewerPlayerOverlay: FC<ViewerPlayerOverlayProps> = ({
 
       {legendMetrics && (
         <div
-          className={`flex items-center gap-4 px-3 py-2 ${dailyFrames.length >= 2 ? "border-t border-border bg-slate-50/80" : ""}`}
+          className={`flex items-center gap-4 px-3 py-2 ${dailyFrames.length >= 2 ? "border-t border-border/60 bg-muted/30" : ""}`}
         >
           <div className="flex flex-col leading-tight">
             <span className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
@@ -215,7 +215,7 @@ export const ViewerPlayerOverlay: FC<ViewerPlayerOverlayProps> = ({
             >
               {typeof legendMetrics.overallRiskScore === "number" && (
                 <span
-                  className="absolute -top-[3px] h-2.5 w-2.5 -translate-x-1/2 rounded-full border-2 border-white bg-slate-800 shadow"
+                  className="absolute -top-[3px] h-2.5 w-2.5 -translate-x-1/2 rounded-full border-2 border-card bg-foreground shadow"
                   style={{
                     left: `${Math.min(100, Math.max(0, (legendMetrics.overallRiskScore / 5) * 100))}%`,
                   }}

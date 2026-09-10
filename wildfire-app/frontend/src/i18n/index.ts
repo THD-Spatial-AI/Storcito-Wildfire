@@ -7,6 +7,8 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import en from "./locales/en.json";
 import de from "./locales/de.json";
 import es from "./locales/es.json";
+import gl from "./locales/gl.json";
+import pt from "./locales/pt.json";
 import fr from "./locales/fr.json";
 import it from "./locales/it.json";
 import nl from "./locales/nl.json";
@@ -19,6 +21,8 @@ export const languages = [
   { code: "en", name: "English", nativeName: "English", flag: "🇬🇧" },
   { code: "de", name: "German", nativeName: "Deutsch", flag: "🇩🇪" },
   { code: "es", name: "Spanish", nativeName: "Español", flag: "🇪🇸" },
+  { code: "gl", name: "Galician", nativeName: "Galego", flag: "🇪🇸" },
+  { code: "pt", name: "Portuguese", nativeName: "Português", flag: "🇵🇹" },
   { code: "fr", name: "French", nativeName: "Français", flag: "🇫🇷" },
   { code: "it", name: "Italian", nativeName: "Italiano", flag: "🇮🇹" },
   { code: "nl", name: "Dutch", nativeName: "Nederlands", flag: "🇳🇱" },
@@ -41,6 +45,8 @@ const resources = {
   en: { translation: en },
   de: { translation: de },
   es: { translation: es },
+  gl: { translation: gl },
+  pt: { translation: pt },
   fr: { translation: fr },
   it: { translation: it },
   nl: { translation: nl },

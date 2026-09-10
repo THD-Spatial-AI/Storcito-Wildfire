@@ -1,5 +1,9 @@
 {
   "common": {
+    "choose": "Vybrat",
+    "aboutItem": "O položce {{label}}",
+    "removeItem": "Odebrat {{label}}",
+    "processing": "Zpracování…",
     "save": "Uložit",
     "cancel": "Zrušit",
     "delete": "Smazat",
@@ -107,7 +111,10 @@
       "nextPage": "Další stránka"
     },
     "appName": "Hodnocení rizika požárů",
-    "saved": "Uloženo"
+    "saved": "Uloženo",
+    "copy": "Kopírovat",
+    "copied": "Zkopírováno",
+    "done": "Hotovo"
   },
   "dashboard": {
     "stats": {
@@ -247,6 +254,7 @@
     }
   },
   "workspace": {
+    "selectorHint": "Vyberte nebo vytvořte pracovní prostor pro organizaci modelů",
     "workspace": "Pracovní prostor",
     "workspaces": "Pracovní prostory",
     "selectWorkspace": "Vybrat pracovní prostor",
@@ -275,6 +283,9 @@
     "removeGroup": "Odstranit skupinu"
   },
   "model": {
+    "filterFrom": "Datum od",
+    "filterTo": "Datum do",
+    "clearDateFilter": "Vymazat filtr dat",
     "title": "Model",
     "models": "Modely",
     "newModel": "Nový model",
@@ -357,7 +368,22 @@
     "cannotCalculate": "Nelze vypočítat – nejsou vybrány žádné vhodné modely",
     "noWebserviceAvailable": "Simulační engine není k dispozici",
     "cancelled": "Zrušeno",
-    "modified": "Upraveno"
+    "modified": "Upraveno",
+    "canEdit": "Může upravovat",
+    "canView": "Může zobrazit",
+    "noDirectShares": "Tento model zatím nebyl s nikým sdílen.",
+    "peopleWithAccess": "Lidé s přímým přístupem",
+    "peopleWithAccessDescription": "Lidé v tomto seznamu mohou otevřít tento model a jeho vrstvy rizika.",
+    "revokeAccess": "Odvolat",
+    "revokeAccessFor": "Odebrat přístup",
+    "revokingAccess": "Odebírání přístupu…",
+    "filterPeriod": "Filtrovat podle období",
+    "estimateRemaining": "zbývá ~{{duration}}",
+    "estimateOverdue": "trvá déle než obvykle",
+    "estimateBasis_one": "Na základě 1 srovnatelného běhu, který trval {{typical}}",
+    "estimateBasis_other": "Na základě {{count}} srovnatelných běhů, které obvykle trvají {{typical}}",
+    "estimateApproximate": "Tyto běhy předcházejí sledování fronty, skutečné čekání bude delší.",
+    "estimateUnavailable": "Nedostatek srovnatelných úspěšných běhů pro odhad"
   },
   "polygon": {
     "drawRegion": "Nakreslete svůj region",
@@ -522,7 +548,9 @@
       "bulkMoveToGroup": "Přesunout do skupiny",
       "deselectAll": "Zrušit výběr všeho",
       "selectAll": "Vybrat vše",
-      "selected": "{{count}} vybráno"
+      "selected": "{{count}} vybráno",
+      "apiTokens": "API tokeny",
+      "apiTokensActive": "Přístup k API povolen — spravovat tokeny"
     },
     "groups": {
       "selectOrCreate": "Vyberte nebo vytvořte skupinu",
@@ -875,8 +903,6 @@
       "osmHumanitarian": "Humanitární styl OpenStreetMap",
       "cartoPositron": "Světlá základní mapa od CartoDB",
       "cartoVoyager": "Podrobná základní mapa od CartoDB",
-      "openTopoMap": "Topografická stylová mapa",
-      "maplibreDark": "Tmavá vektorová podkladová mapa",
       "maplibreVoyager": "Podrobná vektorová podkladová mapa (Voyager)"
     },
     "tooltip": "Základní Mapy"
@@ -1130,7 +1156,32 @@
       "veryHigh": "Potřeba extra ochrana",
       "extreme": "Vyhněte se slunečnímu záření"
     },
-    "dataBy": "Meteorologická data od"
+    "dataBy": "Meteorologická data od",
+    "conditions": {
+      "clear": "Jasno",
+      "mainlyClear": "Převážně jasno",
+      "partlyCloudy": "Polojasno",
+      "overcast": "Zataženo",
+      "fog": "Mlha",
+      "rimeFog": "Mrznoucí mlha",
+      "drizzle": "Mrholení",
+      "freezingDrizzle": "Mrznoucí mrholení",
+      "rain": "Déšť",
+      "heavyRain": "Silný déšť",
+      "freezingRain": "Mrznoucí déšť",
+      "snow": "Sníh",
+      "heavySnow": "Silné sněžení",
+      "snowGrains": "Sněhová zrna",
+      "showers": "Dešťové přeháňky",
+      "heavyShowers": "Silné dešťové přeháňky",
+      "snowShowers": "Sněhové přeháňky",
+      "thunderstorm": "Bouřka",
+      "thunderstormHail": "Bouřka s krupobitím"
+    },
+    "windSpeedTooltip": "Jednotku změníte v Nastavení → Zobrazení dat.",
+    "title": "Informace o počasí",
+    "settings": "Nastavení počasí",
+    "uvUnavailable": "Data UV nejsou k dispozici (noc)"
   },
   "settings": {
     "title": "Nastavení",
@@ -1141,7 +1192,8 @@
       "general": "Obecné",
       "display": "Zobrazení",
       "notifications": "Oznámení",
-      "advanced": "Pokročilé"
+      "advanced": "Pokročilé",
+      "privacyTerms": "Soukromí a podmínky"
     },
     "stats": {
       "language": "Jazyk",
@@ -1190,7 +1242,19 @@
       "windSpeed": "Rychlost Větru",
       "knots": "uzly",
       "dataRefresh": "Obnovení Dat",
-      "min": "min"
+      "min": "min",
+      "windUnits": {
+        "kmh": "km/h",
+        "mph": "mph",
+        "ms": "m/s",
+        "knots": "uzly"
+      },
+      "textSize": "Velikost textu",
+      "textSizes": {
+        "small": "Malý",
+        "normal": "Normální",
+        "large": "Velký"
+      }
     },
     "notifications": {
       "title": "Oznámení",
@@ -1218,6 +1282,27 @@
       "sendNotification": "Odeslat Oznámení",
       "sent": "Oznámení odesláno!",
       "failedToSend": "Odeslání selhalo"
+    },
+    "modelCreation": {
+      "title": "Úvodní karta modelu",
+      "description": "Určuje, zda se před průvodcem tvorbou modelu zobrazí úvodní karta s nastavením.",
+      "checking": "Kontrola předvolby...",
+      "hidden": "Úvod je skrytý",
+      "enabled": "Úvod je zapnutý",
+      "hiddenHint": "Zapněte jej znovu, když uživatelé potřebují shrnutí před vytvořením modelu.",
+      "enabledHint": "Shrnutí se zobrazí před vytvořením nového modelu.",
+      "showAgain": "Zobrazit znovu",
+      "loadError": "Tuto předvolbu se nepodařilo načíst.",
+      "enabledMessage": "Úvodní karta se zobrazí při příštím vytváření modelu.",
+      "updateError": "Předvolbu úvodní karty se nepodařilo aktualizovat.",
+      "sectionTitle": "Tvorba modelů",
+      "guidancePreferences": "Předvolby nápovědy"
+    },
+    "accessLevels": {
+      "basic": "Základní",
+      "intermediate": "Pokročilý",
+      "manager": "Manažer",
+      "expert": "Expert"
     }
   },
   "simulationComparison": {
@@ -1294,7 +1379,31 @@
     "regions": "regiony",
     "myModels": "moje modely",
     "grids": "mřížky",
-    "countries": "země"
+    "countries": "země",
+    "privacyRequired": "Pro zobrazení mapy přijměte podmínky o datech a soukromí",
+    "legend": {
+      "title": "Obrysy mapy",
+      "baseMap": "Šedé linie: silnice a správní hranice z vybrané podkladové mapy",
+      "availableRegions": "Čárkovaná čára: oblast s daty o požárech",
+      "yourModels": "Zelená plocha: váš nejnovější model — vyberte jej pro zobrazení výsledků",
+      "zoomDetail": "Výchozí pohled je Galicie; při přiblížení ukáže podkladová mapa více detailů."
+    },
+    "newModelShortcut": "Zkratka: N",
+    "latestModel": "nejnovější model",
+    "latestModelOf": "Váš nejnovější model z {{total}} vytvořených. Otevřete Simulace pro zobrazení ostatních.",
+    "bookmarks": {
+      "title": "Záložky mapy",
+      "namePlaceholder": "Název záložky...",
+      "saveCurrentView": "Uložit aktuální pohled",
+      "delete": "Smazat {{name}}",
+      "none": "Zatím žádné záložky"
+    },
+    "shortcuts": {
+      "title": "Klávesové zkratky",
+      "zoom": "Přiblížit a oddálit",
+      "pan": "Posunout mapu",
+      "newModel": "Nový model"
+    }
   },
   "privacy": {
     "dataAndPrivacy": "Data a soukromí",
@@ -1317,7 +1426,10 @@
   "drawing": {
     "clickToDraw": "Klikněte pro kreslení",
     "clickToClose": "Klikněte pro uzavření",
-    "start": "Start"
+    "start": "Start",
+    "edit": "Upravit",
+    "moveMap": "Posunout mapu",
+    "resumeDrawing": "Pokračovat v kreslení"
   },
   "forms": {
     "user": {
@@ -1434,6 +1546,15 @@
       }
     },
     "moveModel": {
+      "title": "Přesunout model",
+      "titlePlural": "Přesunout modely",
+      "description": "Přesunout „{{title}}“ do jiného pracovního prostoru",
+      "descriptionPlural": "Přesunout {{count}} vybrané modely do jiného pracovního prostoru",
+      "submitPlural": "Přesunout {{count}} modely",
+      "errorSelect": "Vyberte pracovní prostor",
+      "errorMove": "Model se nepodařilo přesunout. Zkuste to znovu.",
+      "errorMovePlural": "Modely se nepodařilo přesunout. Zkuste to znovu.",
+      "noWorkspaces": "Žádné další pracovní prostory nejsou k dispozici. Nejprve vytvořte nový pracovní prostor.",
       "destination": {
         "title": "Cíl",
         "description": "Vyberte cílový pracovní prostor pro model"
@@ -1520,6 +1641,13 @@
     "summaryFooter": "{{countries}} zemí · {{regions}} regionů · {{grids}} mřížek"
   },
   "modelResults": {
+    "shortcuts": {
+      "title": "Klávesové zkratky",
+      "playPause": "Přehrát / pozastavit denní animaci",
+      "fullscreen": "Přepnout celou obrazovku",
+      "terrain": "Přepnout 3D terén",
+      "toggleLayer": "Zobrazit / skrýt vrstvu rizika"
+    },
     "details": {
       "awaiting": "Čekání na výsledek…",
       "country": "Země",
@@ -1558,7 +1686,16 @@
       "view2d": "2D Mapa",
       "playDaily": "Animovat denní mapy rizik",
       "fullscreen": "Celá obrazovka",
-      "exitFullscreen": "Ukončit celou obrazovku"
+      "exitFullscreen": "Ukončit celou obrazovku",
+      "dataset": "Vrstva",
+      "play": "Přehrát",
+      "pause": "Pozastavit",
+      "peakDay": "Den s nejvyšším rizikem",
+      "peakDayHint": "Kliknutím zobrazíte tento den, poté přejdete na další nejrizikovější",
+      "peakDayNext": "Klikněte pro zobrazení · následuje další den",
+      "rankDay": "Rizikový den č. {{rank}}",
+      "viewMap": "Mapa",
+      "viewTerrain": "Terén"
     },
     "layers": {
       "labels": "Popisky a místa",
@@ -1608,6 +1745,12 @@
       "subtitle": "Analyzovaná plocha podle třídy rizika pro každý den běhu. Kliknutím na den jej zobrazíte na mapě.",
       "loading": "Počítají se denní rozdělení… první načtení může trvat minutu.",
       "empty": "V tomto běhu nejsou žádné denní mapy rizika."
+    },
+    "terrain": {
+      "failedTitle": "3D terén se nepodařilo spustit",
+      "noWebgl": "Tento prohlížeč nebo grafický ovladač nepodporuje WebGL, který je pro 3D terén nutný. Mapa 2D zobrazuje stejné výsledky.",
+      "failedBody": "3D zobrazení se nepodařilo vytvořit. Mapa 2D zobrazuje stejné výsledky.",
+      "backToMap": "Zpět na mapu"
     }
   },
   "landing": {
@@ -1699,7 +1842,7 @@
         },
         "multilingual": {
           "title": "Vícejazyčné a přístupné",
-          "text": "Dostupné v 8 jazycích s jasnými popisky a průvodci pro každou roli."
+          "text": "Dostupné v 10 jazycích s jasnými popisky a průvodci pro každou roli."
         },
         "secure": {
           "title": "Zabezpečené a řízené",
@@ -1801,6 +1944,23 @@
     "Vedra": "Vedra"
   },
   "configurator": {
+    "blocking": {
+      "modelName": "název modelu",
+      "dateRange": "počáteční a koncové datum",
+      "and": " a ",
+      "missingFields": "Pro pokračování přidejte {{missing}}.",
+      "staticLoading": "Načítání dostupných statických dat.",
+      "staticEmpty": "Momentálně nejsou k dispozici žádná statická data.",
+      "staticSameDate": "Statický režim vyžaduje stejné počáteční a koncové datum.",
+      "staticUnavailable": "Vyberte dostupné statické datum.",
+      "dynamicLoading": "Načítání dostupných dynamických dat.",
+      "dynamicEmpty": "Momentálně nejsou k dispozici žádná dynamická data.",
+      "dynamicOrder": "Dynamický režim vyžaduje, aby počáteční datum bylo před nebo rovno koncovému datu.",
+      "dynamicRange": "Vyberte plně dostupný rozsah dynamických dat.",
+      "dtmOutside": "Vaše oblast je mimo pokrytí nahraného DTM. Přesuňte ji nebo překreslete do obrysu DTM zobrazeného na mapě, případně DTM odeberte."
+    },
+    "loadingModel": "Načítání modelu",
+    "loadingModelDesc": "Počkejte prosím, než se model načte...",
     "registry": {
       "layer1Title": "Inicializace Modelu",
       "layer1Subtitle": "Název a doba simulace",
@@ -1832,14 +1992,21 @@
       "step": "KROK"
     },
     "layer1": {
+      "suggestedNamesLabel": "Návrhy",
+      "suggestedName1": "Letní riziko požáru",
+      "suggestedName2": "Sledování pobřežních lesů",
+      "suggestedName3": "Hodnocení svahů",
+      "suggestedName4": "Týdenní výhled požárů",
+      "noDates": "Nejsou k dispozici žádná data.",
+      "staticDateInfoAria": "Jak se vybírá statické datum",
       "purpose": "Pojmenujte tuto simulaci a vyberte časové okno.",
       "nextStepHint": "Následně vyznačíte geografickou oblast na mapě.",
       "modelNameLabel": "Název modelu",
       "modelNamePlaceholder": "např. Galicie Léto 2026 Riziko",
       "modelNameHint": "Popisný název, abyste model později snadno našli.",
       "calcModeLabel": "Režim výpočtu",
-      "calcModeStatic": "statický",
-      "calcModeDynamic": "dynamický",
+      "calcModeStatic": "Statický",
+      "calcModeDynamic": "Dynamický",
       "calcModeHint": "Statický používá workflow pro jedno datum. Dynamický zachová režim pro dynamický workflow.",
       "staticHint": "Statické běhy využívají dostupné datum od 16:00 do 17:00.",
       "dynamicHint": "Dynamické běhy zachovávají vybraný rozsah (okno 16:00 - 17:00).",
@@ -1853,7 +2020,16 @@
       "dynamicSelectedOne": "Vybraný rozsah: {{start}} až {{end}} (1 den).",
       "dynamicSelectInside": "Vyberte rozsah v rámci dostupných dat: {{start}} až {{end}}",
       "dynamicAvailable": "Dostupná dynamická data: {{start}} až {{end}}",
-      "hottest": "Nejteplejší"
+      "hottest": "Nejteplejší",
+      "calcModeInfoLabel": "Co dělají režimy výpočtu",
+      "calcModeInfo": "Statický režim vyhodnotí jeden den — jedno dostupné datum s počasím — pomocí postupu rizika AOI. Dynamický režim vyhodnotí rozsah dnů a zachová denní posloupnost počasí. Oba používají okno počasí 16:00–17:00.",
+      "calcModeHintStatic": "Nejteplejší den každého dostupného roku.",
+      "calcModeHintDynamic": "Rozsah dnů vyhodnocený den po dni.",
+      "modelNameQuestion": "Jak chcete tento model pojmenovat?",
+      "calcModeQuestion": "Jak se má riziko počítat?",
+      "periodQuestion": "Jaké období se má vyhodnotit?",
+      "calcModeStaticInfo": "Datum se volí automaticky: pro každý dostupný rok den s nejvyšší naměřenou teplotou — nejnepříznivější počasí daného roku. Vyhodnocuje se od 16:00 do 17:00.",
+      "calcModeDynamicInfo": "Rozsah si volíte vy a vyhodnotí se přesně tak, jak jste jej zvolili: každý den se modeluje s vlastním počasím a výpočet vrátí den s nejvyšším rizikem. Každý den používá okno 16:00–17:00."
     },
     "layer2": {
       "purpose": "Vyberte celý správní region, nakreslete oblast nebo nahrajte hranici GeoJSON.",
@@ -1872,7 +2048,7 @@
       "statusUploadedNoName": "GeoJSON boundary loaded.",
       "statusUploadPrompt": "Upload a GeoJSON file with Polygon or MultiPolygon geometry.",
       "statusDrawn": "Area defined. You can keep adjusting it or move on.",
-      "statusDrawPrompt": "Kliknutím na mapu nakreslete svou oblast. Uzavřete polygon pro dokončení.",
+      "statusDrawPrompt": "Kliknutím do mapy nakreslete oblast. Uzavřením polygonu dokončíte a můžete nakreslit další, pokud potřebujete více oblastí.",
       "areaSummary": "Shrnutí oblasti",
       "regions": "{{count}} regionů",
       "status": "Stav",
@@ -1888,7 +2064,23 @@
       "drawPrompt": "Kliknutím na mapu nakreslete svou oblast. Uzavřete polygon pro dokončení.",
       "drawToContinue": "Nakreslete oblast na mapě pro pokračování.",
       "blockingUploadGeoJson": "Nahrajte soubor GeoJSON nebo se vraťte ke kreslení.",
-      "blockingDrawArea": "Nakreslete oblast na mapě pro pokračování."
+      "blockingDrawArea": "Nakreslete oblast na mapě pro pokračování.",
+      "selectRegion": "Vybrat celý region",
+      "regionResolving": "Hledání správní hranice…",
+      "regionMapSelected": "{{name}} vybrán · kliknutím na jiný region jej nahradíte",
+      "regionMapPrompt": "Kliknutím dovnitř regionu vyberete jeho celou hranici",
+      "statusRegionSelected": "{{name}} vybrán. Kliknutím na jiný region jej nahradíte.",
+      "statusRegionPrompt": "Kliknutím dovnitř správního regionu na mapě vyberete jeho celou hranici.",
+      "regionCoverageWarning": "Používá se celá správní hranice. Pixely mimo vyšrafovaný rozsah dat o požárech nemusí být spočitatelné.",
+      "statusRegionLabel": "Region vybrán",
+      "blockingSelectRegion": "Pokračujte kliknutím dovnitř správního regionu na mapě.",
+      "regionNotFound": "Zde nebyla nalezena žádná správní hranice. Zkuste kliknout více dovnitř regionu.",
+      "regionLookupFailed": "Správní hranici se nepodařilo načíst. Zkontrolujte připojení a zkuste to znovu.",
+      "regionOutsideCoverage": "Tento bod je mimo oblast s daty o požárech. Klikněte dovnitř vyšrafované plochy.",
+      "regionOutsideCoverageNamed": "Data o požárech jsou dostupná pouze pro {{regions}}. Klikněte dovnitř vyšrafované plochy.",
+      "areaModeQuestion": "Jak chcete vymezit oblast?",
+      "areaCount": "Oblasti",
+      "areaCountValue": "{{count}} samostatných oblastí"
     },
     "layer3": {
       "purpose": "Tyto signály napájejí model rizika. Všechny tři jsou ve výchozím nastavení povoleny a doporučují se pro přesné posouzení.",
@@ -1907,7 +2099,21 @@
       "customDataDesc": "Přineste si vlastní údaje o počasí. Jinak se použijí přibalená regionální data.",
       "weatherStationData": "Údaje meteorologické stanice",
       "weatherStationHint": "Export Excel nebo CSV (.xlsx / .csv)",
-      "weatherStationInfo": "Hodinová měření ze stanice. Používá se k výpočtu FWI. Jinak se použijí regionální data."
+      "weatherStationInfo": "Hodinová měření ze stanice. Používá se k výpočtu FWI. Jinak se použijí regionální data.",
+      "coreSignalsNote": "Vegetace (NDVI) a infrastruktura jsou vždy součástí modelu a nelze je vypnout. Vypnutím některého signálu výše odeberete jeho podíl na vahách — výpočet pokračuje se zbývajícími signály.",
+      "precomputedLabel": "Předpočítaná regionální mapa",
+      "precomputedInfo": "Každou noc se celý region analyzuje se všemi vrstvami rizika. Pokud je vaše datum pokryté, výsledek pro vaši oblast se z této mapy vyřízne a je k dispozici během několika sekund. Vypněte ji (nebo přepněte jednotlivé vrstvy níže), aby se každý krok spočítal přímo pro vaši oblast (~1-2 minuty).",
+      "precomputedOnHint": "Výsledek během sekund, vyříznutý z noční analýzy celého regionu. Všechny tři vrstvy rizika níže jsou zahrnuté, a proto uzamčené.",
+      "precomputedOffHint": "Úplný výpočet přesně pro vaši oblast (~1-2 minuty); jednotlivé vrstvy můžete přepnout níže.",
+      "precomputedRange": "Předpočítané mapy pokrývají přesně jeden den — vyberte stejné počáteční i koncové datum, abyste ji použili. U rozsahu dat model spočítá každý den pro vaši oblast a vrátí den s nejvyšším rizikem (~1-2 minuty).",
+      "precomputedStaticMode": "Předpočítané mapy existují pouze pro dynamické posouzení. Model spočítá všechny kroky pro vaši oblast.",
+      "precomputedUnavailable": "Noční analýza toto datum zatím nezpracovala. Model spočítá všechny kroky pro vaši oblast.",
+      "lockedByPrecomputed": "Zahrnuto v předpočítané regionální mapě. Vypněte přepínač předpočítání výše, chcete-li vrstvy upravit.",
+      "signalsQuestion": "Které signály mají do modelu rizika vstupovat?",
+      "precomputedInfoLabel": "O předpočítané regionální mapě",
+      "fwiInfo": "Index požárního počasí spojuje vítr, relativní vlhkost, teplotu a sucho do jediné míry toho, jak snadno by požár vznikl a šířil se. Má největší váhu, protože počasí se mění nejrychleji a nejvíce určuje chování ohně.",
+      "terrainInfo": "Sklon, nadmořská výška a orientace svahu určují, jak se oheň pohybuje: do kopce zrychluje a přisluněné svahy vysychají rychleji. Odvozeno z digitálního modelu terénu vaší oblasti.",
+      "historicalInfo": "Kde už hořelo, hoří obvykle znovu, protože základní příčiny — využití půdy, přístupnost a zdroje zapálení — přetrvávají. Vychází ze zaznamenaných dřívějších požárů v oblasti."
     },
     "layer4": {
       "purpose": "Ověření konfigurace v reálném čase. Blokátory musí být odstraněny před spuštěním.",
@@ -1942,7 +2148,9 @@
         "areaOfInterest": "Zájmová oblast",
         "riskComponents": "Komponenty rizika",
         "bufferDistance": "Vzdálenost vyrovnávací paměti"
-      }
+      },
+      "noRegionSelected": "Není vybrán žádný správní region.",
+      "selectedRegionDetails": "{{name}} · {{area}}"
     },
     "layer5": {
       "purpose": "Zkontrolujte nastavení modelu před uložením. Výpočet použije vybraná data, oblast a datové vstupy.",
@@ -1960,9 +2168,11 @@
         "buffer": "Vyrovnávací paměť",
         "area": "Oblast",
         "riskComponents": "Komponenty"
-      }
+      },
+      "dailyRunInfo": "Každý simulovaný den se vyhodnocuje počasím z tohoto okna — z nejteplejší a nejsušší části odpoledne."
     },
     "coverage": {
+      "legendLine": "Čárkovaná čára: dostupné pokrytí daty",
       "title": "Pokrytí daty o požárech",
       "unavailable": "Pokrytí nedostupné",
       "exactFootprint": "Přesný rastrový otisk",
@@ -1975,6 +2185,52 @@
       "avoidBlank": "Vyhněte se prázdným místům",
       "blankDesc": "Prázdné oblasti nemají platná zdrojová rastrová data pro výpočet.",
       "availableData": "Dostupná data o požárech"
+    },
+    "stepPurposeShow": "Co je tento krok?",
+    "stepPurposeHide": "Skrýt informace o kroku",
+    "save": {
+      "createFailed": "Model se nepodařilo vytvořit. Zkuste to prosím znovu.",
+      "updateFailed": "Model se nepodařilo uložit. Zkuste to prosím znovu.",
+      "uploadFailed": "Model byl uložen, ale jeho vstupní soubory se nepodařilo nahrát.",
+      "calculationFailed": "Model byl uložen, ale výpočet se nepodařilo spustit."
+    },
+    "wizard": {
+      "question": "Otázka {{index}}",
+      "steps": "Kroky modelu"
     }
+  },
+  "apiTokens": {
+    "title": "API tokeny",
+    "subtitle": "Správa přístupových tokenů k API pro",
+    "create": "Vytvořit nový token",
+    "createdOnce": "Zkopírujte tento token hned — už se znovu nezobrazí.",
+    "errors": {
+      "create": "Token se nepodařilo vytvořit",
+      "load": "Tokeny se nepodařilo načíst",
+      "revoke": "Token se nepodařilo odvolat"
+    },
+    "existing": "Existující tokeny",
+    "expires": "vyprší",
+    "expiry": "Platnost",
+    "expiry30": "Vyprší za 30 dní",
+    "expiry90": "Vyprší za 90 dní",
+    "expiry365": "Vyprší za 1 rok",
+    "expiryNever": "Nikdy nevyprší",
+    "generate": "Vygenerovat token",
+    "lastUsed": "naposledy použit",
+    "namePlaceholder": "Název tokenu (např. analytický skript)",
+    "none": "Zatím žádné tokeny.",
+    "revoke": "Odvolat",
+    "scope": "Rozsah",
+    "scopeFull": "Čtení i zápis",
+    "scopeFullShort": "čtení i zápis",
+    "scopeRead": "Jen pro čtení (doporučeno)",
+    "scopeReadShort": "jen pro čtení",
+    "status": {
+      "active": "Aktivní",
+      "expired": "Vypršel",
+      "revoked": "Odvolán"
+    },
+    "usageHint": "Token použijte z libovolné aplikace: Authorization: Bearer <token>. Tokeny jen pro čtení mohou vypsat modely a stáhnout výsledky s oprávněními tohoto uživatele."
   }
 }

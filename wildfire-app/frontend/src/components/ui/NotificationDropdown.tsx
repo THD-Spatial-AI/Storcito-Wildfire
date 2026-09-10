@@ -9,6 +9,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@spatialhub/ui";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 import { TimeAgo } from "@/components/ui/TimeAgo";
@@ -19,6 +20,7 @@ import {
   useClearAllNotificationsMutation,
   type Notification,
 } from "@/features/notifications/hooks/useNotificationsQuery";
+import { getNotificationResultPath } from "@/features/notifications/notification-navigation";
 import {
   NotificationDetailDialog,
   getNotificationTypeStyles,
@@ -27,6 +29,7 @@ import {
 
 export const NotificationDropdown: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [showPulse, setShowPulse] = useState(false);
@@ -83,6 +86,14 @@ export const NotificationDropdown: React.FC = () => {
   const handleNotificationClick = async (notification: Notification) => {
     // Mark as read
     await markAsRead(notification.id);
+
+    // A notification about a finished model goes straight to its results —
+    // one click, no dialog in between.
+    const resultPath = getNotificationResultPath(notification);
+    if (resultPath) {
+      navigate(resultPath);
+      return;
+    }
 
     // Show notification details
     setSelectedNotification(notification);

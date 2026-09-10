@@ -1,11 +1,14 @@
 import type { ReactNode } from "react";
-import { AlertCircle, BarChart3, Copy, Edit, GitCompareArrows, Plus, RefreshCw, Search, Settings, Share2, Trash2 } from "lucide-react";
+import { DateRangePicker, Dialog, Group as FieldGroup, Popover, Button as Trigger } from "react-aria-components";
+import { parseDate, type DateValue } from "@internationalized/date";
+import { AlertCircle, BarChart3, Copy, Edit, Filter, GitCompareArrows, Plus, RefreshCw, Search, Settings, Share2, Trash2, X } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@spatialhub/ui";
 import Chip from "@/components/ui/Chip";
 import { WorkspaceSelector } from "@/components/workspace";
 import type { Workspace } from "@/components/workspace";
 import { useTranslation } from "@/i18n";
 import type { ModelStats } from "@/features/model-dashboard/services/modelService";
+import { RangeCalendar } from "@/components/ui/calendar-rac";
 import { ModelStatsSummary } from "./ModelStatsSummary";
 import type { Group } from "./types";
 
@@ -15,6 +18,9 @@ interface ModelDashboardFiltersProps {
 	setSelectedGroup: (group: Group | null) => void;
 	filterText: string;
 	setFilterText: (value: string) => void;
+	filterFromDate: string;
+	filterToDate: string;
+	onDateRangeChange: (from: string, to: string) => void;
 	isLoadingWorkspace: boolean;
 	handleWorkspaceChange: (workspace: Workspace | null) => void;
 	setIsCreateWsOpen: (open: boolean) => void;
@@ -27,6 +33,7 @@ interface ModelDashboardFiltersProps {
 	isLoading: boolean;
 	handleCompareSelected: () => void;
 	canCompareSelected: boolean;
+	canUseComparison: boolean;
 	canManageWorkspace: boolean;
 	setIsShareWsOpen: (open: boolean) => void;
 	setIsCopyWsOpen: (open: boolean) => void;
@@ -41,25 +48,76 @@ interface ModelDashboardFiltersProps {
 }
 
 const TOOLBAR_BUTTON_CLASS =
-	"inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-card px-3 text-sm font-medium text-foreground shadow-sm transition-colors duration-150 hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50";
+	"inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-card px-3 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-muted/60 disabled:cursor-not-allowed disabled:opacity-50";
 const TOOLBAR_ICON_BUTTON_CLASS =
-	"inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground shadow-sm transition-colors duration-150 hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50";
+	"inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors duration-150 hover:bg-muted/60 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50";
 
 export function ModelDashboardFilters({
-	groups, selectedGroup, setSelectedGroup, filterText, setFilterText, isLoadingWorkspace, handleWorkspaceChange, setIsCreateWsOpen, wsReloadKey, normalizedWorkspaceId, preferredWorkspaceId, currentWorkspace, handleRefresh, isRefreshing, isLoading, handleCompareSelected, canCompareSelected, canManageWorkspace, setIsShareWsOpen, setIsCopyWsOpen, setIsRenameWsOpen, handleDeleteWorkspace, bulkActions, stats, statsLoaded = false, handleNewModel, isModelLimitReached, table,
+	groups, selectedGroup, setSelectedGroup, filterText, setFilterText, filterFromDate, filterToDate, onDateRangeChange, isLoadingWorkspace, handleWorkspaceChange, setIsCreateWsOpen, wsReloadKey, normalizedWorkspaceId, preferredWorkspaceId, currentWorkspace, handleRefresh, isRefreshing, isLoading, handleCompareSelected, canCompareSelected, canUseComparison, canManageWorkspace, setIsShareWsOpen, setIsCopyWsOpen, setIsRenameWsOpen, handleDeleteWorkspace, bulkActions, stats, statsLoaded = false, handleNewModel, isModelLimitReached, table,
 }: ModelDashboardFiltersProps) {
 	const { t } = useTranslation();
 
+	const hasDateFilter = Boolean(filterFromDate || filterToDate);
+	const dateRangeValue =
+		filterFromDate && filterToDate
+			? { start: parseDate(filterFromDate), end: parseDate(filterToDate) }
+			: null;
+	const handleRangeChange = (
+		range: { start: DateValue; end: DateValue } | null,
+	) => {
+		if (!range) return;
+		onDateRangeChange(range.start.toString(), range.end.toString());
+	};
+
 	return (
 		<>
+			{/* Page header */}
+			<div className="md-rise flex flex-wrap items-end justify-between gap-4">
+				<div className="flex items-center gap-3.5">
+					<div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-muted/50">
+						<BarChart3 className="h-4.5 w-4.5 text-foreground" />
+					</div>
+					<div>
+						<h1 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
+							{t('model.dashboard')}
+						</h1>
+						<p className="mt-0.5 text-sm text-muted-foreground">{t('model.manageConfigurations')}</p>
+					</div>
+				</div>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<span>
+							<button
+								onClick={handleNewModel}
+								disabled={isModelLimitReached}
+								data-tour="new-assessment"
+								className={`inline-flex h-10 items-center gap-2 rounded-lg px-4 text-sm font-medium transition-all duration-200 ${
+									isModelLimitReached
+										? 'cursor-not-allowed bg-muted text-muted-foreground'
+										: 'bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 hover:shadow-md active:scale-[0.98]'
+								}`}
+							>
+								{isModelLimitReached ? <AlertCircle className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+								{t('model.newModel')}
+							</button>
+						</span>
+					</TooltipTrigger>
+					{isModelLimitReached && (
+						<TooltipContent>
+							{t('model.limitReached', { current: stats.total, limit: stats.model_limit })}
+						</TooltipContent>
+					)}
+				</Tooltip>
+			</div>
+
 			{/* Groups Section */}
 			{groups.length > 0 && (
-				<div className="md-rise rounded-xl border border-border bg-card px-4 py-3.5 shadow-sm">
-					<div className="mb-3 flex items-center gap-2">
-						<Settings className="h-4 w-4 text-muted-foreground" />
-						<h3 className="text-sm font-medium text-foreground">{t('model.modelGroups')}</h3>
+				<div className="md-card md-rise px-4 py-3.5">
+					<div className="mb-2.5 flex items-center gap-2">
+						<Settings className="h-3.5 w-3.5 text-muted-foreground" />
+						<h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t('model.modelGroups')}</h3>
 					</div>
-					<div className="flex flex-wrap gap-2">
+					<div className="flex flex-wrap gap-1.5">
 						<Chip
 							label={t('model.allModels')}
 							color={selectedGroup ? "default" : "primary"}
@@ -81,65 +139,78 @@ export function ModelDashboardFilters({
 				</div>
 			)}
 
-			{/* Page header */}
-			<div className="md-rise flex flex-wrap items-center justify-between gap-3">
-				<div className="flex items-center gap-3">
-					<div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card shadow-sm">
-						<BarChart3 className="h-4 w-4 text-muted-foreground" />
-					</div>
-					<div>
-						<h1 className="text-base font-semibold tracking-tight text-foreground sm:text-lg">
-							{t('model.dashboard')}
-						</h1>
-						<p className="mt-0.5 text-xs text-muted-foreground">{t('model.manageConfigurations')}</p>
-					</div>
-				</div>
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<span>
-							<button
-								onClick={handleNewModel}
-								disabled={isModelLimitReached}
-								data-tour="new-assessment"
-								className={`inline-flex h-9 items-center gap-2 rounded-lg px-4 text-sm font-medium shadow-sm transition-all duration-200 ${
-									isModelLimitReached
-										? 'cursor-not-allowed bg-muted text-muted-foreground'
-										: 'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md active:scale-[0.98]'
-								}`}
-							>
-								{isModelLimitReached ? <AlertCircle className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-								{t('model.newModel')}
-							</button>
-						</span>
-					</TooltipTrigger>
-					{isModelLimitReached && (
-						<TooltipContent>
-							{t('model.limitReached', { current: stats.total, limit: stats.model_limit })}
-						</TooltipContent>
-					)}
-				</Tooltip>
-			</div>
-
 			{/* Main Content Card */}
-			<div className="md-rise rounded-xl border border-border bg-card shadow-sm" style={{ animationDelay: "60ms" }}>
+			<div className="md-card md-rise" style={{ animationDelay: "60ms" }}>
 				{/* Filter toolbar */}
 				<div className="flex flex-wrap items-center gap-2 p-4 sm:px-5">
 					{/* Search field */}
-					<div className="relative w-full sm:w-auto sm:min-w-[220px] sm:flex-1 sm:max-w-xs">
+					<div className="relative w-full sm:w-auto sm:min-w-[220px] sm:flex-1 sm:max-w-sm">
 						<Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 						<input
 							type="text"
 							placeholder={t('model.searchModels')}
 							value={filterText}
 							onChange={(e) => setFilterText(e.target.value)}
-							className="h-9 w-full rounded-lg border border-input bg-background pl-9 pr-3 text-sm text-foreground shadow-sm transition-colors duration-150 placeholder:text-muted-foreground hover:border-muted-foreground/40"
+							className="h-9 w-full rounded-lg border border-input bg-background pl-9 pr-3 text-sm text-foreground transition-colors duration-150 placeholder:text-muted-foreground hover:border-muted-foreground/40"
 						/>
 					</div>
+
+					{/* Period filter. */}
+					<DateRangePicker
+						value={dateRangeValue}
+						onChange={handleRangeChange}
+						aria-label={t('model.filterPeriod', 'Filter by period')}
+					>
+						<FieldGroup className="flex items-center gap-1.5">
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<Trigger
+										aria-label={t('model.filterPeriod', 'Filter by period')}
+										className={`inline-flex h-9 w-9 items-center justify-center rounded-lg border transition-colors duration-150 cursor-pointer ${
+											hasDateFilter
+												? "border-primary/40 bg-primary/5 text-primary ring-1 ring-primary/20"
+												: "border-border bg-card text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+										}`}
+									>
+										<Filter className="h-4 w-4" />
+									</Trigger>
+								</TooltipTrigger>
+								<TooltipContent>
+									{hasDateFilter
+										? `${filterFromDate || "…"} – ${filterToDate || "…"}`
+										: t('model.filterPeriod', 'Filter by period')}
+								</TooltipContent>
+							</Tooltip>
+							{hasDateFilter && (
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<button
+											type="button"
+											onClick={() => onDateRangeChange("", "")}
+											aria-label={t('model.clearDateFilter', 'Clear date filter')}
+											className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+										>
+											<X className="h-3.5 w-3.5" />
+										</button>
+									</TooltipTrigger>
+									<TooltipContent>{t('model.clearDateFilter', 'Clear date filter')}</TooltipContent>
+								</Tooltip>
+							)}
+						</FieldGroup>
+						<Popover
+							className="bg-popover z-50 rounded-md border border-border shadow-lg outline-hidden"
+							offset={4}
+						>
+							<Dialog className="max-h-[inherit] overflow-auto p-2">
+								<RangeCalendar onChange={handleRangeChange} />
+							</Dialog>
+						</Popover>
+					</DateRangePicker>
 
 					{/* Workspace Controls */}
 					<div className="flex flex-wrap items-center gap-2">
 						{isLoadingWorkspace ? (
-							<div className="inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-card px-3 text-sm shadow-sm">
+							<div className="inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-card px-3 text-sm">
 								<RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />
 								<span className="font-medium text-muted-foreground">{t('model.loadingWorkspace')}</span>
 							</div>
@@ -180,24 +251,29 @@ export function ModelDashboardFilters({
 							</>
 						)}
 
-						{/* Compare button - always visible */}
-						<Tooltip>
-							<TooltipTrigger asChild>
-								<span>
-									<button
-										onClick={handleCompareSelected}
-										disabled={!canCompareSelected}
-										className={TOOLBAR_BUTTON_CLASS}
-									>
-										<GitCompareArrows className="h-4 w-4 text-muted-foreground" />
-										<span className="hidden sm:inline">{t('model.compare')}</span>
-									</button>
-								</span>
-							</TooltipTrigger>
-							<TooltipContent>
-								<p>{canCompareSelected ? t('model.compare') : t('model.compareRequires2Completed')}</p>
-							</TooltipContent>
-						</Tooltip>
+						{(canUseComparison || currentWorkspace) && (
+							<span className="mx-1 hidden h-5 w-px bg-border sm:block" aria-hidden="true" />
+						)}
+
+						{canUseComparison && (
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<span>
+										<button
+											onClick={handleCompareSelected}
+											disabled={!canCompareSelected}
+											className={TOOLBAR_BUTTON_CLASS}
+										>
+											<GitCompareArrows className="h-4 w-4 text-muted-foreground" />
+											<span className="hidden sm:inline">{t('model.compare')}</span>
+										</button>
+									</span>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>{canCompareSelected ? t('model.compare') : t('model.compareRequires2Completed')}</p>
+								</TooltipContent>
+							</Tooltip>
+						)}
 
 						{currentWorkspace && (
 							<>
@@ -254,7 +330,7 @@ export function ModelDashboardFilters({
 											<TooltipTrigger asChild>
 												<button
 													onClick={handleDeleteWorkspace}
-													className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-destructive/40 bg-card px-3 text-sm font-medium text-destructive shadow-sm transition-colors duration-150 hover:bg-destructive/10"
+													className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-destructive/30 bg-card px-3 text-sm font-medium text-destructive transition-colors duration-150 hover:bg-destructive/10"
 												>
 													<Trash2 className="h-4 w-4" />
 													<span className="hidden sm:inline">{t('model.delete')}</span>
@@ -269,18 +345,18 @@ export function ModelDashboardFilters({
 							</>
 						)}
 
-						{/* Bulk Actions - placed after workspace delete button */}
+						{/* Bulk actions. */}
 						{bulkActions}
 					</div>
 
-					{/* Compact stats summary, just above the table */}
+					{/* Stats summary. */}
 					{statsLoaded && (
 						<ModelStatsSummary stats={stats} className="max-sm:w-full sm:ml-auto" />
 					)}
 				</div>
 
 				{/* Table */}
-				<div className="border-t border-border p-4 sm:px-5 sm:pb-5">
+				<div className="border-t border-border">
 					{table}
 				</div>
 			</div>

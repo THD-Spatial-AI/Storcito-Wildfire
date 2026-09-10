@@ -12,7 +12,9 @@ export function ModelDashboardBulkActions({ selectedCount, actions }: ModelDashb
 	if (selectedCount === 0) return null;
 
 	return (
-		<div className="md-fade-in flex h-9 items-center gap-2 rounded-full border border-border bg-muted/40 pl-1.5 pr-1.5 shadow-sm">
+		<>
+			<span className="mx-1 hidden h-5 w-px bg-border sm:block" aria-hidden="true" />
+			<div className="md-rise flex h-9 items-center gap-2 rounded-full border border-border bg-card pl-1.5 pr-1.5 shadow-sm">
 			<span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-semibold tabular-nums text-primary-foreground">
 				{selectedCount}
 			</span>
@@ -26,5 +28,6 @@ export function ModelDashboardBulkActions({ selectedCount, actions }: ModelDashb
 				size="small"
 			/>
 		</div>
+		</>
 	);
 }

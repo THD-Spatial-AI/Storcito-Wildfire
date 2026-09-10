@@ -61,14 +61,18 @@ func (s *ModelService) StartCalculation(ctx context.Context, userID string, acce
 	now := time.Now().UTC()
 	queuedEvent, _ := events.NewModelEvent(events.ModelQueued, model.ID, userID, nil)
 	if _, err := s.store.TransitionStatusTx(model.ID, nil, models.ModelStatusQueue, map[string]interface{}{
-		"calculation_started_at":   now,
+		"calculation_queued_at":    now,
+		"calculation_started_at":   nil,
 		"calculation_completed_at": nil,
 	}, queuedEvent); err != nil {
 		return nil, fmt.Errorf("failed to update model status: %w", err)
 	}
 	model.Status = models.ModelStatusQueue
+	model.CalculationQueuedAt = &now
+	model.CalculationStartedAt = nil
+	model.CalculationCompletedAt = nil
 
-	// Versioned dispatch payload (shared contract).
+	// Dispatch payload.
 	type taskPayload struct {
 		Version string      `json:"version"`
 		ModelID uint        `json:"model_id"`
@@ -94,7 +98,7 @@ func (s *ModelService) StartCalculation(ctx context.Context, userID string, acce
 	_, err = asynqClient.Enqueue(task,
 		asynq.Queue("spatialAI_public"),
 		asynq.MaxRetry(100),
-		asynq.Timeout(24*time.Hour), // long timeout; stuck-model scheduler is the real safety net
+		asynq.Timeout(24*time.Hour), // scheduler guards stuck models
 		asynq.Retention(24*time.Hour),
 	)
 	if err != nil {

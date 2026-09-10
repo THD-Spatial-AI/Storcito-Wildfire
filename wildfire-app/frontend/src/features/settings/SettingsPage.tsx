@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDocumentTitle } from "@/hooks/use-document-title";
-import WeatherSettings from "@/features/weather/WeatherSettings";
+import { WeatherSettings } from "@/features/weather";
 import MapSettings from "@/features/settings/MapLocationSettings";
 import NotificationSettings from "@/features/settings/NotificationSettings";
 import DataDisplaySettings from "@/features/settings/DataDisplaySettings";
@@ -39,15 +39,15 @@ const SettingsPage: React.FC = () => {
   const isExpert = user?.access_level === "expert";
   const [activeTab, setActiveTab] = useState<TabKey>("general");
 
-  // Tab configuration with dark icons
+  // Tab config.
   const TABS: { key: string; label: string; icon: typeof LayoutGrid; expertOnly?: boolean }[] = [
     { key: "general", label: t("settings.tabs.general"), icon: LayoutGrid },
     { key: "display", label: t("settings.tabs.display"), icon: Monitor },
     { key: "notifications", label: t("settings.tabs.notifications"), icon: Bell },
-    { key: "privacyTerms", label: "Privacy & Terms", icon: Shield },
+    { key: "privacyTerms", label: t("settings.tabs.privacyTerms", "Privacy & Terms"), icon: Shield },
   ];
 
-  // Check if user came from admin dashboard
+  // Came from admin?
   const cameFromAdmin =
     location.state?.from === "admin" || document.referrer.includes("admin-dashboard");
 
@@ -59,20 +59,20 @@ const SettingsPage: React.FC = () => {
     }
   };
 
-  // Filter tabs based on user access level
+  // Filter by access.
   const visibleTabs = TABS.filter((tab) => !tab.expertOnly || isExpert);
 
   // Get current language info
   const currentLanguage = getCurrentLanguage();
 
-  // Get translated access level label
+  // Translated level label.
   const getAccessLevelLabel = (level: string | undefined) => {
     if (!level) return t("settings.stats.user");
     const labels: Record<string, string> = {
-      very_low: "Basic",
-      intermediate: "Intermediate",
-      manager: "Manager",
-      expert: "Expert",
+      very_low: t("settings.accessLevels.basic", "Basic"),
+      intermediate: t("settings.accessLevels.intermediate", "Intermediate"),
+      manager: t("settings.accessLevels.manager", "Manager"),
+      expert: t("settings.accessLevels.expert", "Expert"),
     };
     return labels[level] || t("settings.stats.user");
   };
@@ -104,7 +104,7 @@ const SettingsPage: React.FC = () => {
   return (
     <div className="md-scope min-h-screen bg-background">
       <div className="p-3 md:p-4 lg:p-5 max-w-[1600px] mx-auto space-y-4">
-        {/* Header Section - Dark gradient like admin dashboard */}
+        {/* Header section. */}
         <div className="md-rise relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-800 via-gray-900 to-black p-4 md:p-5 text-white shadow-xl">
           {/* Background decorations */}
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAyNHYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-50"></div>
@@ -173,7 +173,7 @@ const SettingsPage: React.FC = () => {
           ))}
         </div>
 
-        {/* Main Content Card with Tabs */}
+        {/* Tabbed content. */}
         <div
           className="md-rise bg-card rounded-2xl shadow-sm border border-border"
           style={{ animationDelay: "120ms" }}
@@ -297,9 +297,9 @@ const SettingsPage: React.FC = () => {
                       <Sparkles className="w-3.5 h-3.5 text-foreground" />
                     </div>
                     <div>
-                      <h3 className="text-xs font-semibold text-foreground">Model creation</h3>
+                      <h3 className="text-xs font-semibold text-foreground">{t("settings.modelCreation.sectionTitle", "Model creation")}</h3>
                       <p className="text-[9px] text-muted-foreground uppercase tracking-wider">
-                        Guidance preferences
+                        {t("settings.modelCreation.guidancePreferences", "Guidance preferences")}
                       </p>
                     </div>
                   </div>
@@ -328,7 +328,7 @@ const SettingsPage: React.FC = () => {
                   <NotificationSettings />
                 </div>
 
-                {/* Notification Management - Expert only */}
+                {/* Expert only. */}
                 {isExpert && (
                   <div
                     className="md-rise bg-gradient-to-br from-muted/50 to-card rounded-lg p-3 border border-border transition-shadow duration-200 hover:shadow-md"

@@ -3,11 +3,12 @@ import TileLayer from "ol/layer/Tile";
 import XYZ from "ol/source/XYZ";
 import type Map from "ol/Map";
 
+import { MAP_ZOOM } from "@/features/interactive-map/utils/mapUtils";
+
 import {
   ESRI_ATTRIBUTION,
   ESRI_PLACES_REFERENCE_URL,
   ESRI_TRANSPORTATION_REFERENCE_URL,
-  MAP_REFERENCE_DARK_OPACITY,
   MAP_REFERENCE_LIGHT_LABELS_OPACITY,
   MAP_REFERENCE_LIGHT_ROADS_OPACITY,
 } from "../viewer-config";
@@ -15,7 +16,6 @@ import {
 // Transparent ESRI road/label tiles above the risk raster so the map stays readable.
 export const useReferenceLayers = (
   map: Map | null,
-  isDarkBaseLayer: boolean,
   roadsVisible: boolean,
   labelsVisible: boolean,
   scheduleMapRenderRefresh: () => void
@@ -25,19 +25,16 @@ export const useReferenceLayers = (
 
   useEffect(() => {
     if (!map) return;
-    const roadsOpacity = isDarkBaseLayer
-      ? MAP_REFERENCE_DARK_OPACITY
-      : MAP_REFERENCE_LIGHT_ROADS_OPACITY;
-    const labelsOpacity = isDarkBaseLayer
-      ? MAP_REFERENCE_DARK_OPACITY
-      : MAP_REFERENCE_LIGHT_LABELS_OPACITY;
+    const roadsOpacity = MAP_REFERENCE_LIGHT_ROADS_OPACITY;
+    const labelsOpacity = MAP_REFERENCE_LIGHT_LABELS_OPACITY;
 
     const roadsLayer = new TileLayer({
       source: new XYZ({
         url: ESRI_TRANSPORTATION_REFERENCE_URL,
         attributions: ESRI_ATTRIBUTION,
         crossOrigin: "anonymous",
-        maxZoom: 19,
+        // Must reach MAP_ZOOM.MAX or roads vanish at full zoom.
+        maxZoom: MAP_ZOOM.MAX,
       }),
       opacity: roadsOpacity,
       className: "ol-layer ol-visible-in-maplibre",
@@ -47,7 +44,7 @@ export const useReferenceLayers = (
         url: ESRI_PLACES_REFERENCE_URL,
         attributions: ESRI_ATTRIBUTION,
         crossOrigin: "anonymous",
-        maxZoom: 20,
+        maxZoom: MAP_ZOOM.MAX,
       }),
       opacity: labelsOpacity,
       className: "ol-layer ol-visible-in-maplibre",
@@ -69,7 +66,7 @@ export const useReferenceLayers = (
       if (roadsLayerRef.current === roadsLayer) roadsLayerRef.current = null;
       if (labelsLayerRef.current === labelsLayer) labelsLayerRef.current = null;
     };
-  }, [isDarkBaseLayer, map, scheduleMapRenderRefresh]);
+  }, [map, scheduleMapRenderRefresh]);
 
   useEffect(() => {
     roadsLayerRef.current?.setVisible(roadsVisible);

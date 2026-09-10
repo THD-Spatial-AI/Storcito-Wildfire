@@ -1,5 +1,5 @@
 export const MAP_ZOOM = {
-  DEFAULT: 12,
+  DEFAULT: 8,
   MIN: 1,
   MAX: 20,
 } as const;

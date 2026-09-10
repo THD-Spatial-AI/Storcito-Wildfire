@@ -53,13 +53,13 @@ func (h *ModelHandler) GetModels(c *gin.Context) {
 
 	ctx := c.Request.Context()
 	h.syncWorkspaceMembership(ctx, userCtx.UserID, userCtx.Email)
-	limit, offset, search, workspaceIDStr, sortBy, sortOrder := parseGetModelsParams(c)
+	limit, offset, search, workspaceIDStr, sortBy, sortOrder, fromDate, toDate := parseGetModelsParams(c)
 
 	query, ok := h.buildQueryWithWorkspaceFilter(c, userCtx, workspaceIDStr, limit, offset)
 	if !ok {
 		return
 	}
-	query = h.applySearchFilter(query, search)
+	query = h.applySearchFilter(query, search, fromDate, toDate)
 
 	modelsList, total, err := h.fetchModelsWithQuery(query, limit, offset, sortBy, sortOrder)
 	if err != nil {

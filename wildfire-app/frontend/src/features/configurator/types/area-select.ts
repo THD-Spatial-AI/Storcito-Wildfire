@@ -1,4 +1,4 @@
-import type { AdministrativeRegionResult } from '@/features/interactive-map/services/geocoding';
+import type { AdministrativeRegionResult } from '@/features/interactive-map';
 import type { OptionalLayerKey } from '@/features/configurator/region-selector/components/layers/types';
 
 export type AreaInputMode = 'draw' | 'upload' | 'region';
@@ -64,7 +64,7 @@ export interface AreaSelectState {
 	clearTrigger: number;
 	cursorPos: { x: number; y: number } | null;
 	optionalLayers: Record<OptionalLayerKey, boolean>;
-	// Optional per-model uploads (station data + DTM)
+	// Optional uploads.
 	stationDataName?: string;
 	stationDataError?: string;
 	dtmName?: string;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Search, Loader2, Check } from "lucide-react";
-import { geocodingService, GeocodingResult } from "@/features/interactive-map/services/geocoding";
+import { geocodingService, GeocodingResult } from "@/features/interactive-map";
 import { useTranslation } from "@/i18n";
 
 interface LocationSearchProps {

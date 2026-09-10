@@ -26,6 +26,7 @@ type UserNotification struct {
 	ID             uint           `gorm:"primaryKey" json:"id"`
 	UserID         string         `gorm:"type:varchar(255);not null;index" json:"user_id"` // Keycloak user ID
 	NotificationID *uint          `gorm:"index" json:"notification_id"`                    // Reference to system notification (nullable for user-specific)
+	ModelID        *uint          `gorm:"index" json:"model_id,omitempty"`                 // Model the notification is about, so the UI can link to its results
 	Title          string         `gorm:"type:varchar(255);not null" json:"title"`
 	Message        string         `gorm:"type:text;not null" json:"message"`
 	Type           string         `gorm:"type:varchar(50);not null;default:'info'" json:"type"` // info, warning, error, success

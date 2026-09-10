@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { settingsService } from '@/features/settings/services/settings';
+import { settingsService } from '@/features/settings';
 
 export interface MapBookmark {
   id: string;

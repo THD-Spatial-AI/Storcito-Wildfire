@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
-import { ChevronLeft, ChevronRight, ChevronDown, Loader2 } from "lucide-react";
+import React from "react";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@spatialhub/ui";
 import { useTranslation } from "@/i18n";
 
 interface PaginationProps {
@@ -24,31 +25,18 @@ const Pagination: React.FC<PaginationProps> = ({
 	isLoading = false,
 }) => {
 	const { t } = useTranslation();
-	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-	const dropdownRef = useRef<HTMLDivElement>(null);
 
-	// Close dropdown when clicking outside
-	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
-			if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-				setIsDropdownOpen(false);
-			}
-		};
-		document.addEventListener("mousedown", handleClickOutside);
-		return () => document.removeEventListener("mousedown", handleClickOutside);
-	}, []);
-
-	// Ensure totalPages is at least 1 to prevent division issues
+	// Guard zero pages.
 	const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 	
-	// Calculate display items with proper bounds checking
+	// Bounded display range.
 	const startItem = totalItems === 0 ? 0 : currentPage * itemsPerPage + 1;
 	const endItem = Math.min((currentPage + 1) * itemsPerPage, totalItems);
 	
-	// Ensure currentPage is within valid bounds
+	// Clamp current page.
 	const validCurrentPage = Math.min(currentPage, totalPages - 1);
 
-	// Generate page numbers to display
+	// Page numbers.
 	const getPageNumbers = () => {
 		const pages: (number | string)[] = [];
 		const maxVisiblePages = 5;
@@ -82,7 +70,7 @@ const Pagination: React.FC<PaginationProps> = ({
 	};
 	
 	return (
-		<div className={`bg-card px-4 py-3 border-t border-border sm:px-6 ${className}`}>
+		<div className={`bg-muted/20 px-4 py-3 border-t border-border sm:px-6 ${className}`}>
 			<div className="flex flex-col sm:flex-row justify-between items-center gap-3">
 				{/* Results info */}
 				<div className="flex items-center">
@@ -109,40 +97,26 @@ const Pagination: React.FC<PaginationProps> = ({
 				</div>
 
 				<div className="flex items-center gap-4">
-					{/* Modern dropdown for page size */}
-					<div className="relative" ref={dropdownRef}>
-						<button
-							onClick={() => !isLoading && setIsDropdownOpen(!isDropdownOpen)}
-							disabled={isLoading}
-							className="flex items-center gap-2 px-3 py-1.5 text-sm bg-muted border border-border rounded-lg hover:bg-muted/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-						>
-							<span className="text-foreground">{itemsPerPage}</span>
-							<span className="text-muted-foreground">{t("common.pagination.perPage")}</span>
-							<ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} />
-						</button>
-						
-						{isDropdownOpen && (
-							<div className="absolute bottom-full mb-1 right-0 w-32 bg-card border border-border rounded-lg shadow-lg py-1 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
-								{pageSizeOptions.map(size => (
-									<button
-										key={size}
-										onClick={() => {
-											onItemsPerPageChange(size);
-											onPageChange(0);
-											setIsDropdownOpen(false);
-										}}
-										className={`w-full px-3 py-2 text-left text-sm transition-colors duration-150 ${
-											size === itemsPerPage
-												? "bg-muted text-foreground font-medium"
-												: "text-muted-foreground hover:bg-muted"
-										}`}
-									>
-										{size} {t("common.pagination.perPage")}
-									</button>
-								))}
-							</div>
-						)}
-					</div>
+					{/* Page size picker. */}
+					<Select
+						value={String(itemsPerPage)}
+						onValueChange={(v) => {
+							onItemsPerPageChange(Number(v));
+							onPageChange(0);
+						}}
+						disabled={isLoading}
+					>
+						<SelectTrigger className="h-9 w-auto gap-1.5 border-border bg-muted px-3 text-sm hover:bg-muted/80">
+							<SelectValue />
+						</SelectTrigger>
+						<SelectContent>
+							{pageSizeOptions.map(size => (
+								<SelectItem key={size} value={String(size)}>
+									{size} {t("common.pagination.perPage")}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
 					
 					{/* Modern pagination controls */}
 					{totalItems > 0 && (
@@ -169,7 +143,7 @@ const Pagination: React.FC<PaginationProps> = ({
 											key={page}
 											onClick={() => onPageChange(page)}
 											disabled={isLoading}
-											className={`min-w-[32px] h-8 px-2 text-sm rounded-lg transition-all duration-200 ${
+											className={`min-w-[32px] h-8 px-2 text-sm tabular-nums rounded-lg transition-colors duration-150 ${
 												page === validCurrentPage
 													? "bg-primary text-primary-foreground font-medium shadow-sm"
 													: "text-muted-foreground hover:bg-muted hover:text-foreground"

@@ -12,15 +12,15 @@ import {
 import { useParams } from "react-router-dom";
 import { useTranslation } from "@/i18n";
 
-import axios from "@/lib/axios";
+import { getModelResults } from "./services/resultsService";
 import { useDocumentTitle } from "@/hooks/use-document-title";
 import { MapContainer } from "@/components/shared/MapContainer";
-import { isMapLibreDarkLayerId, useMapStore } from "@/features/interactive-map/store/map-store";
+import { useMapStore, useMapKeyboardShortcuts } from "@/features/interactive-map";
 import MapSearchBar from "@/features/interactive-map/MapSearchBar";
-import { modelService, Model } from "@/features/model-dashboard/services/modelService";
+import { modelService, Model } from "@/features/model-dashboard";
 import { CreateWorkspaceModal } from "@/components/workspace";
 
-import { useRiskMetrics } from "./hooks/useRiskMetrics";
+import { scoreToRiskLevel, toPercentages, useRiskMetrics } from "./hooks/useRiskMetrics";
 import { useRiskLayers } from "./hooks/useRiskLayers";
 import { useFrameWeather } from "./hooks/useFrameWeather";
 import { useReferenceLayers } from "./hooks/useReferenceLayers";
@@ -32,6 +32,7 @@ import {
   FIRE_RISK_DEFAULT_OPACITY,
   POLL_INTERVAL_MS,
   RISK_LEVELS,
+  findResultForModel,
   type ModelResult,
   type RiskLevelValue,
   type VisibleRiskLevels,
@@ -42,9 +43,10 @@ import { ViewerPlayerOverlay } from "./components/ViewerPlayerOverlay";
 import { ViewerSidebarRail } from "./components/ViewerSidebarRail";
 import { ViewerStatusBanners } from "./components/ViewerStatusBanners";
 import { OverlaysPanel, RiskLegendPanel } from "./components/ViewerMapPanels";
+import { ViewerShortcutsPanel } from "./components/ViewerShortcutsPanel";
 import { RiskTimelinePanel } from "./components/RiskTimelinePanel";
 
-// Cesium is several MB, so load the 3D view (and Cesium with it) only when opened.
+// Lazy-load Cesium.
 const CesiumWildfire3DView = lazy(() =>
   import("./components/CesiumWildfire3DView").then((m) => ({ default: m.CesiumWildfire3DView }))
 );
@@ -59,10 +61,11 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   useDocumentTitle(t("modelResults.title", "Model Results"));
 
   const resolvedModelId = propModelId ?? (paramId ? Number(paramId) : undefined);
+  const activeModelIdRef = useRef(resolvedModelId);
+  const loadRequestRef = useRef(0);
+  activeModelIdRef.current = resolvedModelId;
 
   const { map } = useMapStore();
-  const selectedBaseLayerId = useMapStore((s) => s.selectedBaseLayerId);
-  const isDarkBaseLayer = isMapLibreDarkLayerId(selectedBaseLayerId);
 
   const [model, setModel] = useState<Model | null>(null);
   const [results, setResults] = useState<ModelResult[]>([]);
@@ -81,7 +84,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   const [roadsVisible, setRoadsVisible] = useState(true);
   const [labelsVisible, setLabelsVisible] = useState(false);
 
-  // Fullscreen the document, not the viewer div: body portals stay visible.
+  // Fullscreen the document.
   const [isFullscreen, setIsFullscreen] = useState(false);
   useEffect(() => {
     const onChange = () => setIsFullscreen(Boolean(document.fullscreenElement));
@@ -99,7 +102,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   const workspaceSelector = useWorkspaceModelSelector(model, resolvedModelId);
   const { metrics: legendMetrics } = useRiskMetrics(resolvedModelId);
 
-  const activeResult = results[0];
+  const activeResult = findResultForModel(results, resolvedModelId);
   const layerReady = activeResult?.geoserver_status === "configured";
   const layerPending = Boolean(activeResult && !layerReady);
   const pollTimerRef = useRef<number | null>(null);
@@ -110,7 +113,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     selectedLayerKeyRef,
     tileErrors,
     wms3D,
-    layerAttached,
+    attachedResultId,
     attachLayer,
     selectLayer,
     applyDailyFrame,
@@ -124,12 +127,15 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     onError: setError,
   });
 
-  useReferenceLayers(map, isDarkBaseLayer, roadsVisible, labelsVisible, scheduleMapRenderRefresh);
+  useReferenceLayers(map, roadsVisible, labelsVisible, scheduleMapRenderRefresh);
 
   // ----- Data loading -----
 
   const loadData = useCallback(async () => {
-    if (!resolvedModelId) {
+    const requestedModelId = resolvedModelId;
+    const requestId = ++loadRequestRef.current;
+
+    if (!requestedModelId) {
       setError(t("modelResults.errors.noId", "No model ID provided"));
       setLoading(false);
       return;
@@ -137,17 +143,22 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     try {
       setError(null);
       setLoading(true);
-      const [modelRes, resultsRes] = await Promise.all([
-        modelService.getModelById(resolvedModelId),
-        axios.get(`/models/${resolvedModelId}/results`),
+      const [modelRes, list] = await Promise.all([
+        modelService.getModelById(requestedModelId),
+        getModelResults<ModelResult>(requestedModelId),
       ]);
 
-      if (modelRes.success && modelRes.data) setModel(modelRes.data);
+      if (requestId !== loadRequestRef.current || activeModelIdRef.current !== requestedModelId) {
+        return;
+      }
 
-      const raw = resultsRes.data?.data;
-      const list: ModelResult[] = Array.isArray(raw) ? raw : [];
+      setModel(modelRes.success && modelRes.data ? modelRes.data : null);
+
       setResults(list);
     } catch (err) {
+      if (requestId !== loadRequestRef.current || activeModelIdRef.current !== requestedModelId) {
+        return;
+      }
       setError(
         extractErrorMessage(
           err,
@@ -155,22 +166,33 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
         )
       );
     } finally {
-      setLoading(false);
+      if (requestId === loadRequestRef.current && activeModelIdRef.current === requestedModelId) {
+        setLoading(false);
+      }
     }
   }, [resolvedModelId, t]);
+
+  useEffect(() => {
+    setModel(null);
+    setResults([]);
+    setError(null);
+    setLoading(true);
+    setPlaying(false);
+    setShow3D(false);
+  }, [resolvedModelId]);
 
   useEffect(() => {
     loadData();
   }, [loadData]);
 
-  // Attach the layer once both the map is ready and the result is configured.
+  // Attach when ready.
   useEffect(() => {
-    if (!map || !activeResult || layerAttached) return;
+    if (!map || !activeResult || attachedResultId === activeResult.id) return;
     if (activeResult.geoserver_status !== "configured") return;
     attachLayer(activeResult);
-  }, [map, activeResult, attachLayer, layerAttached]);
+  }, [map, activeResult, attachLayer, attachedResultId]);
 
-  // Poll for readiness while the layer is still being processed server-side.
+  // Poll for readiness.
   useEffect(() => {
     if (!layerPending) return;
     pollTimerRef.current = window.setInterval(() => {
@@ -192,7 +214,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     [activeResult, selectLayer]
   );
 
-  // ----- Daily risk animation (dynamic runs publish layers/risk_<date>.tif per day) -----
+  // Daily risk animation.
 
   const dailyFrames = useMemo(
     () =>
@@ -201,7 +223,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
         .sort((a, b) => a.key.localeCompare(b.key)),
     [availableLayers]
   );
-  // Daily frames are driven by the player, so keep them out of the dataset switcher.
+  // Player owns frames.
   const switcherLayers = useMemo(
     () => availableLayers.filter((l) => !DAILY_FRAME_KEY_PATTERN.test(l.key)),
     [availableLayers]
@@ -218,7 +240,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
       setPlaying(false);
       return;
     }
-    // Resume from the frame currently shown (or start at the first day).
+    // Resume current frame.
     const current = dailyFrames.findIndex((f) => f.key === selectedLayerKeyRef.current);
     playFrameRef.current = current >= 0 ? current : -1;
     const tick = () => {
@@ -238,7 +260,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   }, [dailyFrames.length]);
   const dailySeries = useDailyRiskDistribution(
     resolvedModelId,
-    dailyFrames.length >= 2 && (showTimeline || prefetchReady)
+    dailyFrames.length >= 2 && (showTimeline || prefetchReady || playingFrameDate !== null)
   );
 
   const showFrameByDate = useCallback(
@@ -250,7 +272,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     [applyDailyFrame, dailyFrames]
   );
 
-  // ----- Derived UI state -----
+  // Derived state.
 
   const dateRange = useMemo(() => {
     if (!model?.from_date || !model?.to_date) return null;
@@ -259,21 +281,67 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     return `${from} – ${to}`;
   }, [model]);
 
-  const riskDistribution = legendMetrics.riskDistribution;
+  const modelDistribution = legendMetrics.riskDistribution;
+  const riskDistribution = useMemo(() => {
+    if (!playingFrameDate) return modelDistribution;
+    const day = dailySeries.data?.days.find((d) => d.date === playingFrameDate);
+    if (!day) return modelDistribution;
+    return toPercentages(day.distribution, day.valid_samples);
+  }, [playingFrameDate, dailySeries.data, modelDistribution]);
+
+  // The player bar reads the same frame, so its figures cannot contradict the legend.
+  const frameMetrics = useMemo(() => {
+    if (!playingFrameDate) return legendMetrics;
+    const day = dailySeries.data?.days.find((d) => d.date === playingFrameDate);
+    if (!day || day.valid_samples <= 0) return legendMetrics;
+
+    const { very_low, low, moderate, high, very_high } = day.distribution;
+    const affected = day.area_km2.high + day.area_km2.very_high;
+    const totalArea =
+      day.area_km2.very_low +
+      day.area_km2.low +
+      day.area_km2.moderate +
+      day.area_km2.high +
+      day.area_km2.very_high;
+    const meanScore =
+      (very_low + 2 * low + 3 * moderate + 4 * high + 5 * very_high) / day.valid_samples;
+
+    return {
+      ...legendMetrics,
+      overallRiskLevel: scoreToRiskLevel(meanScore),
+      overallRiskScore: meanScore,
+      affectedAreaKm2: affected,
+      affectedAreaHectares: affected * 100,
+      totalAreaKm2: totalArea,
+      affectedFraction: (high + very_high) / day.valid_samples,
+      sampleCount: day.valid_samples,
+      riskDistribution,
+    };
+  }, [playingFrameDate, dailySeries.data, legendMetrics, riskDistribution]);
+
+  // Availability stays whole-model so the checkboxes hold still during playback.
   const riskLevelAvailability = useMemo<VisibleRiskLevels>(() => {
-    if (!riskDistribution) {
+    if (!modelDistribution) {
       return { 1: true, 2: true, 3: true, 4: true, 5: true };
     }
     return {
-      1: riskDistribution.veryLow > 0,
-      2: riskDistribution.low > 0,
-      3: riskDistribution.moderate > 0,
-      4: riskDistribution.high > 0,
-      5: riskDistribution.veryHigh > 0,
+      1: modelDistribution.veryLow > 0,
+      2: modelDistribution.low > 0,
+      3: modelDistribution.moderate > 0,
+      4: modelDistribution.high > 0,
+      5: modelDistribution.veryHigh > 0,
     };
-  }, [riskDistribution]);
+  }, [modelDistribution]);
 
-  const hasRiskLayers = layerAttached;
+  const hasRiskLayers = Boolean(activeResult && attachedResultId === activeResult.id);
+
+  // Map keyboard shortcuts.
+  useMapKeyboardShortcuts(map, {
+    onTogglePlay: layerReady && dailyFrames.length >= 2 ? () => setPlaying((v) => !v) : undefined,
+    onToggleFullscreen: toggleFullscreen,
+    onToggle3D: wms3D ? () => setShow3D((v) => !v) : undefined,
+    onToggleLayerVisible: hasRiskLayers ? () => setLayerVisible((v) => !v) : undefined,
+  });
   const allRiskLevelsVisible = RISK_LEVELS.every(
     (level) => !riskLevelAvailability[level.value] || visibleRiskLevels[level.value]
   );
@@ -344,14 +412,15 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
             showFrameByDate(day.date, pausePlayback);
             setRiskRankIndex((i) => (i + 1) % (rankedRiskDays?.length ?? 1));
           }}
-          legendMetrics={legendMetrics}
+          legendMetrics={frameMetrics}
         />
       )}
 
-      {/* 3D terrain sits inside the map container below the shared overlays. */}
+      {/* 3D terrain layer. */}
       {show3D && wms3D && (
         <Suspense fallback={null}>
           <CesiumWildfire3DView
+            onExit={() => setShow3D(false)}
             wmsUrl={wms3D.wmsUrl}
             layerName={wms3D.layerName}
             aoi={model?.coordinates}
@@ -380,16 +449,23 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
         />
       )}
 
-      {hasRiskLayers && (
-        <RiskLegendPanel
-          visibleRiskLevels={visibleRiskLevels}
-          riskLevelAvailability={riskLevelAvailability}
-          riskDistribution={riskDistribution}
-          allRiskLevelsVisible={allRiskLevelsVisible}
-          onToggleAll={setAllRiskLevelsVisible}
-          onToggleLevel={toggleRiskLevel}
+      <div className="absolute bottom-10 left-2 z-10 flex w-44 flex-col gap-2">
+        {hasRiskLayers && (
+          <RiskLegendPanel
+            visibleRiskLevels={visibleRiskLevels}
+            riskLevelAvailability={riskLevelAvailability}
+            riskDistribution={riskDistribution}
+            allRiskLevelsVisible={allRiskLevelsVisible}
+            onToggleAll={setAllRiskLevelsVisible}
+            onToggleLevel={toggleRiskLevel}
+          />
+        )}
+        <ViewerShortcutsPanel
+          canPlay={layerReady && dailyFrames.length >= 2}
+          can3D={Boolean(wms3D)}
+          hasRiskLayers={hasRiskLayers}
         />
-      )}
+      </div>
 
       {showTimeline && dailyFrames.length >= 2 && (
         <RiskTimelinePanel

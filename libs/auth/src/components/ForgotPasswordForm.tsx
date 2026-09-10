@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { ArrowLeft, CheckCircle, Mail } from "lucide-react";
 import { UniversalForm, type FormSection, type FormDataConvertible } from "@spatialhub/forms";
-import { useTranslation } from "@spatialhub/i18n";
+import { useTranslation } from "react-i18next";
 
 export interface ForgotPasswordFormProps {
 	/** Called when setting document title */

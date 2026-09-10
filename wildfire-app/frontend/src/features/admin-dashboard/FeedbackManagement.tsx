@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import type { FormDataConvertible } from "@/hooks/useForm";
 import Notification from "@/components/ui/Notification";
 import { useConfirm } from "@/hooks/useConfirmDialog";
-import { useNotification } from "@/features/notifications/hooks/useNotification";
+import { useNotification } from "@/features/notifications";
 import { useTranslation } from "@/i18n";
 import {
   useFeedbackList,

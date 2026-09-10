@@ -3,10 +3,12 @@ import { Loader2, RotateCcw, Sparkles } from "lucide-react";
 
 import { Button } from "@spatialhub/ui";
 import { settingsService } from "@/features/settings/services/settings";
+import { useTranslation } from "@/i18n";
 
 const isTruthySetting = (value: unknown) => value === true || value === "true" || value === 1 || value === "1";
 
 const ModelCreationPreferences: React.FC = () => {
+    const { t } = useTranslation();
     const [isDismissed, setIsDismissed] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
@@ -22,7 +24,7 @@ const ModelCreationPreferences: React.FC = () => {
                     setIsDismissed(isTruthySetting((settings as Record<string, unknown>).model_intro_card_dismissed));
                 }
             } catch {
-                if (!cancelled) setMessage("Unable to load this preference.");
+                if (!cancelled) setMessage(t("settings.modelCreation.loadError", "Unable to load this preference."));
             } finally {
                 if (!cancelled) setIsLoading(false);
             }
@@ -31,7 +33,7 @@ const ModelCreationPreferences: React.FC = () => {
         return () => {
             cancelled = true;
         };
-    }, []);
+    }, [t]);
 
     const showIntroAgain = async () => {
         setIsSaving(true);
@@ -41,9 +43,9 @@ const ModelCreationPreferences: React.FC = () => {
 
         if (success) {
             setIsDismissed(false);
-            setMessage("The intro card will show the next time you create a new model.");
+            setMessage(t("settings.modelCreation.enabledMessage", "The intro card will show the next time you create a new model."));
         } else {
-            setMessage("Could not update the intro card preference.");
+            setMessage(t("settings.modelCreation.updateError", "Could not update the intro card preference."));
         }
     };
 
@@ -52,9 +54,9 @@ const ModelCreationPreferences: React.FC = () => {
             <div className="md-row-in flex items-start gap-2 rounded-md border border-border bg-background px-2.5 py-2 transition-colors duration-150 hover:bg-muted/40">
                 <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                 <div className="min-w-0 flex-1">
-                    <div className="text-xs font-medium text-foreground">Model intro card</div>
+                    <div className="text-xs font-medium text-foreground">{t("settings.modelCreation.title", "Model intro card")}</div>
                     <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
-                        Controls the setup card shown before the guided model creation steps.
+                        {t("settings.modelCreation.description", "Controls the setup card shown before the guided model creation steps.")}
                     </p>
                 </div>
             </div>
@@ -62,12 +64,16 @@ const ModelCreationPreferences: React.FC = () => {
             <div className="md-row-in flex items-center justify-between gap-3" style={{ animationDelay: "30ms" }}>
                 <div>
                     <div className="text-[11px] font-medium text-foreground">
-                        {isLoading ? "Checking preference..." : isDismissed ? "Intro is hidden" : "Intro is enabled"}
+                        {isLoading
+                            ? t("settings.modelCreation.checking", "Checking preference...")
+                            : isDismissed
+                              ? t("settings.modelCreation.hidden", "Intro is hidden")
+                              : t("settings.modelCreation.enabled", "Intro is enabled")}
                     </div>
                     <p className="mt-0.5 text-[10px] leading-snug text-muted-foreground">
                         {isDismissed
-                            ? "Enable it again when users need the setup summary before creating a model."
-                            : "The setup summary will appear before new model creation."}
+                            ? t("settings.modelCreation.hiddenHint", "Enable it again when users need the setup summary before creating a model.")
+                            : t("settings.modelCreation.enabledHint", "The setup summary will appear before new model creation.")}
                     </p>
                 </div>
 
@@ -79,7 +85,7 @@ const ModelCreationPreferences: React.FC = () => {
                     className="h-8 shrink-0 cursor-pointer text-xs transition-all duration-200 hover:shadow-md active:scale-[0.98]"
                 >
                     {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RotateCcw className="h-3.5 w-3.5" />}
-                    Show again
+                    {t("settings.modelCreation.showAgain", "Show again")}
                 </Button>
             </div>
 

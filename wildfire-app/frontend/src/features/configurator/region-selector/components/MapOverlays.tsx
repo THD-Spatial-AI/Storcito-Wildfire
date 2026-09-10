@@ -51,7 +51,7 @@ export const MapOverlays: FC<MapOverlaysProps> = ({
                     className="absolute pointer-events-none z-20"
                     style={{ left: cursorPos.x, top: cursorPos.y }}
                 >
-                    <div className="md-fade-in bg-background/90 dark:bg-gray-800/90 backdrop-blur-sm border border-border rounded px-2 py-1 shadow-sm text-xs text-foreground opacity-90">
+                    <div className="md-fade-in bg-background/90 backdrop-blur-sm border border-border rounded px-2 py-1 shadow-sm text-xs text-foreground opacity-90">
                         {t("drawing.clickToDraw")}
                     </div>
                 </div>

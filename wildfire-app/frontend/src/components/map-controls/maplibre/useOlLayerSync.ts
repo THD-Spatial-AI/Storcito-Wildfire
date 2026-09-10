@@ -1,18 +1,18 @@
-import { useCallback, useEffect, useRef } from 'react';
-import type { Map as OlMap } from 'ol';
-import type BaseLayer from 'ol/layer/Base';
-import type { CollectionEvent } from 'ol/Collection';
-import Modify from 'ol/interaction/Modify';
-import Draw from 'ol/interaction/Draw';
+import { useCallback, useEffect, useRef } from "react";
+import type { Map as OlMap } from "ol";
+import type BaseLayer from "ol/layer/Base";
+import type { CollectionEvent } from "ol/Collection";
+import Modify from "ol/interaction/Modify";
+import Draw from "ol/interaction/Draw";
 
-const OL_HIDDEN_CLASS = 'ol-maplibre-hidden';
-const OL_VISIBLE_IN_MAPLIBRE_CLASS = 'ol-visible-in-maplibre';
+const OL_HIDDEN_CLASS = "ol-maplibre-hidden";
+const OL_VISIBLE_IN_MAPLIBRE_CLASS = "ol-visible-in-maplibre";
 let styleInjected = false;
 
 function ensureHidingStyle() {
   if (styleInjected) return;
-  const style = document.createElement('style');
-  style.setAttribute('data-ol-maplibre-hide', '');
+  const style = document.createElement("style");
+  style.setAttribute("data-ol-maplibre-hide", "");
   style.textContent = `
     .${OL_HIDDEN_CLASS} canvas,
     .${OL_HIDDEN_CLASS} .ol-overlaycontainer,
@@ -34,26 +34,29 @@ function isVisibleInMapLibreElement(el: Element) {
 }
 
 function hideViewportChildren(viewport: HTMLElement) {
-  viewport.querySelectorAll('canvas, .ol-overlaycontainer, .ol-overlaycontainer-stopevent, .ol-layer').forEach((el) => {
-    if (isVisibleInMapLibreElement(el)) {
-      (el as HTMLElement).style.removeProperty('visibility');
-      return;
-    }
-    (el as HTMLElement).style.setProperty('visibility', 'hidden', 'important');
-  });
+  viewport
+    .querySelectorAll("canvas, .ol-overlaycontainer, .ol-overlaycontainer-stopevent, .ol-layer")
+    .forEach((el) => {
+      if (isVisibleInMapLibreElement(el)) {
+        (el as HTMLElement).style.removeProperty("visibility");
+        return;
+      }
+      (el as HTMLElement).style.setProperty("visibility", "hidden", "important");
+    });
 }
 
 function showViewportChildren(viewport: HTMLElement) {
-  viewport.querySelectorAll('canvas, .ol-overlaycontainer, .ol-overlaycontainer-stopevent, .ol-layer').forEach((el) => {
-    (el as HTMLElement).style.removeProperty('visibility');
-  });
+  viewport
+    .querySelectorAll("canvas, .ol-overlaycontainer, .ol-overlaycontainer-stopevent, .ol-layer")
+    .forEach((el) => {
+      (el as HTMLElement).style.removeProperty("visibility");
+    });
 }
 
 export function useOlLayerSync(olMap: OlMap, visible: boolean, isDrawing: boolean) {
   const observerRef = useRef<MutationObserver | null>(null);
   const activeRef = useRef(false);
   const pendingTimeoutsRef = useRef<number[]>([]);
-  const unmountedRef = useRef(false);
 
   const clearPendingTimeouts = useCallback(() => {
     pendingTimeoutsRef.current.forEach((id) => clearTimeout(id));
@@ -61,7 +64,6 @@ export function useOlLayerSync(olMap: OlMap, visible: boolean, isDrawing: boolea
   }, []);
 
   const rerenderOlSafely = useCallback(() => {
-    if (unmountedRef.current) return;
     if (!olMap.getTargetElement()) return;
 
     olMap.getLayers().forEach((layer: BaseLayer) => {
@@ -71,20 +73,19 @@ export function useOlLayerSync(olMap: OlMap, visible: boolean, isDrawing: boolea
     olMap.renderSync();
   }, [olMap]);
 
-  useEffect(() => { ensureHidingStyle(); }, []);
-  useEffect(() => () => {
-    unmountedRef.current = true;
-    clearPendingTimeouts();
-  }, [clearPendingTimeouts]);
+  useEffect(() => {
+    ensureHidingStyle();
+  }, []);
 
   useEffect(() => {
     if (!visible) return;
+    clearPendingTimeouts();
     const viewport = olMap.getViewport();
     if (!viewport) return;
     const origZ = viewport.style.zIndex;
 
     activeRef.current = true;
-    viewport.style.zIndex = '2';
+    viewport.style.zIndex = "2";
     viewport.classList.add(OL_HIDDEN_CLASS);
     hideViewportChildren(viewport);
 
@@ -97,32 +98,36 @@ export function useOlLayerSync(olMap: OlMap, visible: boolean, isDrawing: boolea
     return () => {
       activeRef.current = false;
       observer.disconnect();
+      observer.takeRecords();
       observerRef.current = null;
       viewport.classList.remove(OL_HIDDEN_CLASS);
-      showViewportChildren(viewport);
       viewport.style.zIndex = origZ;
 
       clearPendingTimeouts();
-      rerenderOlSafely();
-
-      const secondPassId = window.setTimeout(() => {
-        if (unmountedRef.current) return;
+      const restoreRasterViewport = () => {
+        if (viewport.classList.contains(OL_HIDDEN_CLASS)) return;
         showViewportChildren(viewport);
         rerenderOlSafely();
+      };
+
+      restoreRasterViewport();
+
+      const secondPassId = window.setTimeout(() => {
+        restoreRasterViewport();
       }, 200);
       pendingTimeoutsRef.current.push(secondPassId);
 
       const thirdPassId = window.setTimeout(() => {
-        if (unmountedRef.current) return;
-        showViewportChildren(viewport);
-        rerenderOlSafely();
+        restoreRasterViewport();
       }, 600);
       pendingTimeoutsRef.current.push(thirdPassId);
     };
   }, [clearPendingTimeouts, olMap, rerenderOlSafely, visible]);
 
   const visibleRef = useRef(visible);
-  useEffect(() => { visibleRef.current = visible; }, [visible]);
+  useEffect(() => {
+    visibleRef.current = visible;
+  }, [visible]);
 
   useEffect(() => {
     if (!visible || !isDrawing) return;
@@ -157,10 +162,10 @@ export function useOlLayerSync(olMap: OlMap, visible: boolean, isDrawing: boolea
         hiddenLayers.push(layer);
       }
     };
-    olMap.getLayers().on('add', onLayerAdd);
+    olMap.getLayers().on("add", onLayerAdd);
 
     return () => {
-      olMap.getLayers().un('add', onLayerAdd);
+      olMap.getLayers().un("add", onLayerAdd);
       hiddenLayers.forEach((layer) => layer.setVisible(true));
       if (visibleRef.current) {
         viewport.classList.add(OL_HIDDEN_CLASS);

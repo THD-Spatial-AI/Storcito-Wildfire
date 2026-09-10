@@ -1,4 +1,4 @@
-import { geocodingService } from '@/features/interactive-map/services/geocoding';
+import { geocodingService } from '@/features/interactive-map';
 import type { AreaInputMode, CalculationMode } from '@/features/configurator/types/area-select';
 
 const stripClosingPoint = (ring: [number, number][]): [number, number][] => {

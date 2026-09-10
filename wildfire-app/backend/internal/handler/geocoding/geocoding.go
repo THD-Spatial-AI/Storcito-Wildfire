@@ -40,6 +40,7 @@ type nominatimResponse struct {
 	OSMID       int64             `json:"osm_id"`
 	Name        string            `json:"name"`
 	DisplayName string            `json:"display_name"`
+	AddressType string            `json:"addresstype"`
 	GeoJSON     nominatimGeometry `json:"geojson"`
 	Address     nominatimAddress  `json:"address"`
 }
@@ -57,6 +58,7 @@ type administrativeRegionResponse struct {
 	DisplayName string            `json:"displayName"`
 	Country     string            `json:"country"`
 	CountryCode string            `json:"countryCode,omitempty"`
+	AddressType string            `json:"addressType,omitempty"`
 	Source      string            `json:"source"`
 	GeoJSON     nominatimGeometry `json:"geojson"`
 }
@@ -164,6 +166,11 @@ func (h *Handler) GetAdministrativeRegion(c *gin.Context) {
 		return
 	}
 
+	if strings.EqualFold(result.AddressType, "country") {
+		httputil.NotFound(c, "Only regions inside the covered area can be selected, not a whole country")
+		return
+	}
+
 	displayName := strings.TrimSpace(result.DisplayName)
 	if displayName == "" {
 		displayName = name
@@ -180,6 +187,7 @@ func (h *Handler) GetAdministrativeRegion(c *gin.Context) {
 		DisplayName: displayName,
 		Country:     strings.TrimSpace(result.Address.Country),
 		CountryCode: strings.ToUpper(strings.TrimSpace(result.Address.CountryCode)),
+		AddressType: strings.TrimSpace(result.AddressType),
 		Source:      "nominatim",
 		GeoJSON:     result.GeoJSON,
 	})

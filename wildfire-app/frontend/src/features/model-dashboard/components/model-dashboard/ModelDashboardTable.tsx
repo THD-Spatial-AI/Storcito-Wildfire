@@ -34,7 +34,9 @@ function SortHeaderButton({ field, label, orderBy, order, onSort }: SortHeaderBu
 	return (
 		<button
 			onClick={() => onSort(field)}
-			className="group/sort inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground transition-colors duration-150 hover:text-foreground"
+			className={`group/sort inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider transition-colors duration-150 ${
+				isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+			}`}
 		>
 			{label}
 			{isActive ? (
@@ -55,10 +57,10 @@ function SortHeaderButton({ field, label, orderBy, order, onSort }: SortHeaderBu
 function TableSkeleton({ rows = 6 }: { rows?: number }) {
 	return (
 		<div className="overflow-hidden rounded-xl border border-border">
-			<div className="border-b border-border bg-muted/40 px-4 py-3">
+			<div className="border-b border-border bg-muted/30 px-4 py-3">
 				<div className="md-skeleton h-3 w-36 rounded-md bg-muted" />
 			</div>
-			<div className="divide-y divide-border">
+			<div className="divide-y divide-border/60">
 				{Array.from({ length: rows }, (_, i) => (
 					<div key={i} className="flex items-center gap-4 px-4 py-3.5">
 						<div className="md-skeleton h-4 w-4 shrink-0 rounded bg-muted" />
@@ -76,7 +78,7 @@ function TableSkeleton({ rows = 6 }: { rows?: number }) {
 	);
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity -- Extracted table preserves existing conditional rendering verbatim.
+// eslint-disable-next-line sonarjs/cognitive-complexity -- extracted verbatim
 export function ModelDashboardTable({
 	isLoading, isLoadingWorkspace, filteredModels, paginatedModels, modelTitlesByID, childCountByParentID, sortedModels, totalItems, filterText,
 }: ModelDashboardTableProps) {
@@ -102,7 +104,7 @@ export function ModelDashboardTable({
 		<>
 			{/* Table Section */}
 			{(isLoading || isLoadingWorkspace) ? (
-				<div className="space-y-3">
+				<div className="p-4 sm:px-5 sm:pb-5 space-y-3">
 					<div className="flex items-center gap-2 text-sm text-muted-foreground">
 						<RefreshCw className="h-4 w-4 animate-spin" />
 						<span>
@@ -119,12 +121,12 @@ export function ModelDashboardTable({
 			) : (
 				<>
 					{!isLoading && filteredModels.length > 0 ? (
-						<div className="md-fade-in overflow-hidden rounded-xl border border-border">
+						<div className="md-fade-in overflow-hidden">
 							<div className="w-full overflow-auto">
 								<table className="w-full table-auto">
 									<thead>
-										<tr className="border-b border-border bg-muted/40">
-											<th className="w-12 px-4 py-2.5 text-center">
+										<tr className="border-b border-border bg-muted/30">
+											<th className="w-12 px-4 py-3 text-center">
 												<Tooltip>
 													<TooltipTrigger asChild>
 														<input
@@ -141,7 +143,7 @@ export function ModelDashboardTable({
 													</TooltipContent>
 												</Tooltip>
 											</th>
-											<th className="px-4 py-2.5 text-left">
+											<th className="px-4 py-3 text-left">
 												<SortHeaderButton
 													field="title"
 													label={t('model.name')}
@@ -150,7 +152,7 @@ export function ModelDashboardTable({
 													onSort={handleSort}
 												/>
 											</th>
-											<th className="px-4 py-2.5 text-left">
+											<th className="px-4 py-3 text-left">
 												<SortHeaderButton
 													field="status"
 													label={t('model.status')}
@@ -159,7 +161,7 @@ export function ModelDashboardTable({
 													onSort={handleSort}
 												/>
 											</th>
-											<th className="hidden px-4 py-2.5 text-left md:table-cell">
+											<th className="hidden px-4 py-3 text-left md:table-cell">
 												<SortHeaderButton
 													field="created_at"
 													label={t('model.created')}
@@ -168,14 +170,14 @@ export function ModelDashboardTable({
 													onSort={handleSort}
 												/>
 											</th>
-											<th className="px-4 py-2.5 text-left">
+											<th className="px-4 py-3 text-left">
 												<span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
 													{t('model.actions')}
 												</span>
 											</th>
 										</tr>
 									</thead>
-									<tbody className="divide-y divide-border bg-card">
+									<tbody className="divide-y divide-border/60 bg-card">
 										{paginatedModels.map((model) => (
 											<ModelTableRow
 												key={model.id}
@@ -201,8 +203,8 @@ export function ModelDashboardTable({
 							)}
 						</div>
 					) : (
-						<div className="md-fade-in flex flex-col items-center rounded-xl border border-dashed border-border bg-muted/30 px-6 py-14 text-center">
-							<div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-border bg-card shadow-sm">
+						<div className="md-fade-in m-4 sm:m-5 flex flex-col items-center rounded-xl border border-dashed border-border bg-muted/30 px-6 py-16 text-center">
+							<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-border bg-muted/50">
 								<BarChart3 className="h-7 w-7 text-muted-foreground" />
 							</div>
 							<h3 className="text-base font-semibold tracking-tight text-foreground">{t('model.noModelsFound')}</h3>
@@ -217,10 +219,10 @@ export function ModelDashboardTable({
 										<button
 											onClick={handleNewModel}
 											disabled={isModelLimitReached}
-											className={`mt-6 inline-flex h-9 items-center gap-2 rounded-lg px-4 text-sm font-medium shadow-sm transition-all duration-200 ${
+											className={`mt-6 inline-flex h-10 items-center gap-2 rounded-lg px-4 text-sm font-medium transition-all duration-200 ${
 												isModelLimitReached
 													? 'cursor-not-allowed bg-muted text-muted-foreground'
-													: 'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md active:scale-[0.98]'
+													: 'bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 hover:shadow-md active:scale-[0.98]'
 											}`}
 										>
 											{isModelLimitReached ? (

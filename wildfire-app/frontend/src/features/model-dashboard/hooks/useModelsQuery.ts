@@ -5,8 +5,10 @@ import { isActiveStatus } from "@/features/model-dashboard/utils/statusHelpers";
 const modelKeys = {
 	all: ["models"] as const,
 	lists: () => [...modelKeys.all, "list"] as const,
-	list: (params?: { limit?: number; offset?: number; search?: string; workspace_id?: number; sort_by?: string; sort_order?: string }) =>
+	list: (params?: { limit?: number; offset?: number; search?: string; workspace_id?: number; sort_by?: string; sort_order?: string; from_date?: string; to_date?: string }) =>
 		[...modelKeys.lists(), params] as const,
+	runtimeHistory: (workspaceId: number | undefined) =>
+		[...modelKeys.lists(), "runtime-history", workspaceId] as const,
 	stats: () => [...modelKeys.all, "stats"] as const,
 	detail: (id: number) => [...modelKeys.all, "detail", id] as const,
 };
@@ -18,6 +20,8 @@ export const useModelsQuery = (params?: {
 	workspace_id?: number;
 	sort_by?: string;
 	sort_order?: string;
+	from_date?: string;
+	to_date?: string;
 }, options?: { requireWorkspace?: boolean }) => {
 	const requireWorkspace = options?.requireWorkspace ?? true;
 	return useQuery({
@@ -47,6 +51,24 @@ export const useModelsQuery = (params?: {
 	});
 };
 
+/** Samples for estimates. */
+export const useRuntimeHistoryQuery = (workspaceId: number | undefined) => {
+	return useQuery({
+		queryKey: modelKeys.runtimeHistory(workspaceId),
+		queryFn: () => modelService.getModels({
+			limit: 100,
+			offset: 0,
+			workspace_id: workspaceId,
+			sort_by: "updated_at",
+			sort_order: "desc",
+		}),
+		enabled: workspaceId !== undefined,
+		staleTime: 60 * 1000,
+		refetchOnWindowFocus: true,
+		refetchInterval: false,
+	});
+};
+
 export const useModelStatsQuery = () => {
 	return useQuery({
 		queryKey: modelKeys.stats(),
@@ -68,7 +90,7 @@ export const useDuplicateModelMutation = () => {
 
 	return useMutation({
 		mutationFn: (id: number) => {
-			// Pass cached models to avoid a redundant API call
+			// Reuse cached models.
 			const cachedQueries = queryClient.getQueriesData<ModelListResponse>({ queryKey: modelKeys.lists() });
 			const cachedModels = cachedQueries.flatMap(([, data]) => (data && Array.isArray(data.data) ? data.data : []));
 			return modelService.duplicateModel(id, cachedModels.length > 0 ? cachedModels : undefined);
@@ -114,6 +136,7 @@ export const useStartCalculationMutation = () => {
 	return useMutation({
 		mutationFn: (id: number) => modelService.startCalculation(id),
 		onMutate: async (id) => {
+			const queuedAt = new Date().toISOString();
 			await queryClient.cancelQueries({ queryKey: modelKeys.lists() });
 			const previousModels = queryClient.getQueriesData({ queryKey: modelKeys.lists() });
 
@@ -124,7 +147,15 @@ export const useStartCalculationMutation = () => {
 					return {
 						...old,
 						data: old.data.map((model: Model) =>
-							model.id === id ? { ...model, status: "queue" as const } : model
+							model.id === id
+								? {
+									...model,
+									status: "queue" as const,
+									calculation_queued_at: queuedAt,
+									calculation_started_at: undefined,
+									calculation_completed_at: undefined,
+								}
+								: model
 						),
 					} as ModelListResponse;
 				}

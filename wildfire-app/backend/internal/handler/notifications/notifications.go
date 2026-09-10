@@ -79,6 +79,7 @@ type UserNotificationResponse struct {
 	Service        *string `json:"service,omitempty"`
 	ScheduledAt    *string `json:"scheduled_at,omitempty"`
 	NotificationID *uint   `json:"notification_id,omitempty"`
+	ModelID        *uint   `json:"model_id,omitempty"`
 }
 
 // SendNotification schedules a notification (expert only)
@@ -286,6 +287,7 @@ func (h *Handler) GetUserNotifications(c *gin.Context) {
 			Read:           un.Read,
 			CreatedAt:      formatAsUTC(un.CreatedAt),
 			NotificationID: un.NotificationID,
+			ModelID:        un.ModelID,
 		}
 
 		if un.NotificationID != nil {

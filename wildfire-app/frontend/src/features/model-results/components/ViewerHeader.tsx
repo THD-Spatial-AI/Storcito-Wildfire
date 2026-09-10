@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@spatialhub/ui";
 import { WorkspaceSelector, type Workspace } from "@/components/workspace";
-import type { Model } from "@/features/model-dashboard/services/modelService";
+import type { Model } from "@/features/model-dashboard";
 
 interface ViewerHeaderProps {
   model: Model | null;
@@ -34,7 +34,7 @@ interface ViewerHeaderProps {
   onRefresh: () => void;
 }
 
-// Top bar: back button, workspace/model selectors, model context, opacity, refresh.
+// Viewer top bar.
 export const ViewerHeader: FC<ViewerHeaderProps> = ({
   model,
   dateRange,

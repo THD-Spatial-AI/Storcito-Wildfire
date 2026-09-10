@@ -96,7 +96,7 @@ export const RiskTimelinePanel: FC<RiskTimelinePanelProps> = ({
   }, [currentDate, days]);
 
   return (
-    <div className="absolute top-4 right-4 z-[1200] w-[460px] max-w-[calc(100%-2rem)] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-lg rounded-2xl overflow-hidden">
+    <div className="absolute top-4 right-4 z-[1200] w-[460px] max-w-[calc(100%-2rem)] overflow-hidden rounded-xl border border-border/60 bg-card/95 shadow-lg backdrop-blur-md">
       <div className="flex items-start justify-between gap-2 px-3 pt-2.5 pb-1">
         <div>
           <div className="text-xs font-semibold text-foreground">

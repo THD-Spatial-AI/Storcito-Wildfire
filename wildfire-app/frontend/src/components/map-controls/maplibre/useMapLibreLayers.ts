@@ -22,7 +22,7 @@ export interface LayerData {
 }
 
 export function useMapLibreLayers(
-  mapRef: React.RefObject<maplibregl.Map | null>,
+  map: maplibregl.Map | null,
   data: LayerData,
 ) {
   const {
@@ -65,18 +65,20 @@ export function useMapLibreLayers(
   ]);
 
   useEffect(() => {
-    const map = mapRef.current;
     if (!map) return;
 
     if (map.isStyleLoaded()) {
       loadAll(map);
     } else {
-      map.once('load', () => loadAll(map));
+      const handleLoad = () => loadAll(map);
+      map.on('load', handleLoad);
+      return () => {
+        map.off('load', handleLoad);
+      };
     }
-  }, [mapRef, loadAll]);
+  }, [map, loadAll]);
 
   useEffect(() => {
-    const map = mapRef.current;
     if (!map) return;
 
     const setupInteractions = () => {
@@ -106,8 +108,8 @@ export function useMapLibreLayers(
     if (map.isStyleLoaded()) {
       setupInteractions();
     } else {
-      map.on('idle', setupInteractions);
-      return () => { map.off('idle', setupInteractions); };
+      map.on('load', setupInteractions);
+      return () => { map.off('load', setupInteractions); };
     }
 
     return () => {
@@ -116,7 +118,7 @@ export function useMapLibreLayers(
       modelCleanupRef.current?.();
       modelCleanupRef.current = null;
     };
-  }, [mapRef, availableBoundaryGeoJSON, userModelGeoJSON]);
+  }, [map, availableBoundaryGeoJSON, userModelGeoJSON]);
 
   return { loadAll };
 }

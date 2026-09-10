@@ -1,6 +1,7 @@
-import type { FC } from "react";
+import { useEffect, useRef, type FC } from "react";
 import type Map from "ol/Map";
 import { usePolygonBuffer, usePolygonDrawing, usePolygonStyles } from "./hooks";
+import type { PolygonVariant } from "./hooks/usePolygonStyles";
 
 interface PolygonDrawerProps {
   map: Map | null;
@@ -13,18 +14,20 @@ interface PolygonDrawerProps {
   clearTrigger?: number;
   initialPolygons?: [number, number][][];
   bufferDistanceMeters?: number;
-  /** If true, disables drawing after first polygon is created (unless cleared) */
   disableAfterDraw?: boolean;
-  /** If false, keeps existing polygon layers visible but disables draw/modify interactions */
   drawingEnabled?: boolean;
-  /** If true, only displays polygons without allowing editing */
   readOnly?: boolean;
-  /** If true, enables polygon vertex editing (drag vertices, add/remove points) */
+
   enableEditing?: boolean;
+  /** Edit request. */
+  onEditRequest?: () => void;
+  /** Region styling. */
+  variant?: PolygonVariant;
   /** Translation labels */
   labels?: {
     clickToClose?: string;
     start?: string;
+    edit?: string;
   };
 }
 
@@ -43,11 +46,20 @@ export const PolygonDrawer: FC<PolygonDrawerProps> = ({
   drawingEnabled = true,
   readOnly = false,
   enableEditing = true,
+  onEditRequest,
+  variant = "drawn",
   labels = {},
 }) => {
-  const styles = usePolygonStyles(labels);
-  const { bufferSourceRef, bufferDistanceRef, recomputeBuffers } = usePolygonBuffer(bufferDistanceMeters);
-  usePolygonDrawing({
+  const canEditNow = !readOnly && ((enableEditing && drawingEnabled) || Boolean(onEditRequest));
+  const canEditRef = useRef(canEditNow);
+  useEffect(() => {
+    canEditRef.current = canEditNow;
+  }, [canEditNow]);
+
+  const styles = usePolygonStyles(labels, canEditRef, variant);
+  const { bufferSourceRef, bufferDistanceRef, recomputeBuffers } =
+    usePolygonBuffer(bufferDistanceMeters);
+  const { vectorSourceRef } = usePolygonDrawing({
     map,
     onPolygonDrawn,
     onPolygonModified,
@@ -67,7 +79,13 @@ export const PolygonDrawer: FC<PolygonDrawerProps> = ({
     bufferDistanceRef,
     bufferDistanceMeters,
     recomputeBuffers,
+    onEditRequest,
   });
+
+  // Repaint the badge.
+  useEffect(() => {
+    vectorSourceRef.current?.changed();
+  }, [canEditNow, vectorSourceRef]);
 
   return null;
 };

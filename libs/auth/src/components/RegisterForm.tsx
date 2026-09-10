@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { UniversalForm, type FormSection, type FormDataConvertible } from "@spatialhub/forms";
 import { User, Mail, Lock, UserPlus, ArrowRight } from "lucide-react";
-import { useTranslation } from "@spatialhub/i18n";
+import { useTranslation } from "react-i18next";
 
 export interface RegisterFormProps {
 	/** Called when setting document title */

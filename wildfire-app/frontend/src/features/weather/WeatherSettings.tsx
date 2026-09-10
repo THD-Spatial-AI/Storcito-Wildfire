@@ -1,6 +1,6 @@
 import { type FC } from 'react';
 import { useWeatherLocationStore } from '@/features/weather/store/weather-location';
-import { GeocodingResult } from '@/features/interactive-map/services/geocoding';
+import { GeocodingResult } from '@/features/interactive-map';
 import { Loader2 } from 'lucide-react';
 import { LocationSearch } from '../settings/components/LocationSearch';
 import { SavedLocationsList } from '../settings/components/SavedLocationsList';

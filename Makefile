@@ -209,10 +209,6 @@ install: install-npm install-go
 .PHONY: install-npm
 install-npm:
 	@echo "$(CYAN)Installing NPM dependencies...$(NC)"
-	@echo "Installing libs/i18n..."
-	@cd libs/i18n && npm install --force
-	@echo "Building libs/i18n..."
-	@cd libs/i18n && npm run build
 	@echo "Installing libs/ui..."
 	@cd libs/ui && npm install --force
 	@echo "Building libs/ui..."
@@ -301,4 +297,3 @@ setup-complete:
 sonar:
 	@echo "Running SonarQube Analysis..."
 	@./bin/sonar-scanner/bin/sonar-scanner
-
