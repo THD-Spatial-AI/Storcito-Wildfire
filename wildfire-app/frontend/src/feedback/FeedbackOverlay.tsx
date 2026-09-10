@@ -51,6 +51,11 @@ function canvasToBase64(canvas: HTMLCanvasElement): string | null {
   }
 }
 
+// A crop smaller than this (in CSS px) is expanded around its centre so the screenshot always has
+// enough surrounding context to be recognisable — a tight/click selection alone is unidentifiable.
+const MIN_CROP_W = 260;
+const MIN_CROP_H = 180;
+
 function cropRectToBase64(canvas: HTMLCanvasElement, rect: Rect): string | null {
   try {
     // html2canvas renders the whole page from the top-left at a uniform scale. The rect is normalised
@@ -60,14 +65,39 @@ function cropRectToBase64(canvas: HTMLCanvasElement, rect: Rect): string | null 
     const scale = canvas.width / window.innerWidth;
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    const sx = (rect.x1 * vw + window.scrollX) * scale;
-    const sy = (rect.y1 * vh + window.scrollY) * scale;
-    const w = Math.max((rect.x2 - rect.x1) * vw * scale, 40);
-    const h = Math.max((rect.y2 - rect.y1) * vh * scale, 40);
+
+    // Selection in CSS pixels.
+    let left = rect.x1 * vw;
+    let top = rect.y1 * vh;
+    let right = rect.x2 * vw;
+    let bottom = rect.y2 * vh;
+
+    // Grow tiny selections around their centre to a legible minimum, then clamp to the viewport so
+    // we never sample outside the captured area (which would blow up / offset the crop).
+    if (right - left < MIN_CROP_W) {
+      const cx = (left + right) / 2;
+      left = cx - MIN_CROP_W / 2;
+      right = cx + MIN_CROP_W / 2;
+    }
+    if (bottom - top < MIN_CROP_H) {
+      const cy = (top + bottom) / 2;
+      top = cy - MIN_CROP_H / 2;
+      bottom = cy + MIN_CROP_H / 2;
+    }
+    left = Math.max(0, left);
+    top = Math.max(0, top);
+    right = Math.min(vw, right);
+    bottom = Math.min(vh, bottom);
+
+    const sx = (left + window.scrollX) * scale;
+    const sy = (top + window.scrollY) * scale;
+    const sw = (right - left) * scale;
+    const sh = (bottom - top) * scale;
+
     const out = document.createElement("canvas");
-    out.width = Math.round(w);
-    out.height = Math.round(h);
-    out.getContext("2d")!.drawImage(canvas, sx, sy, w, h, 0, 0, out.width, out.height);
+    out.width = Math.round(sw);
+    out.height = Math.round(sh);
+    out.getContext("2d")!.drawImage(canvas, sx, sy, sw, sh, 0, 0, out.width, out.height);
     return out.toDataURL("image/jpeg", 0.9).split(",")[1];
   } catch {
     return null;
