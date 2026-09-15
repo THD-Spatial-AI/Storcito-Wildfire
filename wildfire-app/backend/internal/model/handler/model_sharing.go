@@ -128,13 +128,20 @@ func (h *ModelHandler) ShareModel(c *gin.Context) {
 		return
 	}
 
+	// Registered users only
+	targetUserID := h.newModelService().FindUserIDByEmail(req.Email)
+	if targetUserID == "" {
+		httputil.NotFound(c, "No registered user found with this email address")
+		return
+	}
+
 	if !h.validateModelNotAlreadyAccessible(c, model, req.Email) {
 		return
 	}
 
 	share := models.ModelShare{
 		ModelID:    model.ID,
-		UserID:     h.newModelService().FindUserIDByEmail(req.Email),
+		UserID:     targetUserID,
 		Email:      req.Email,
 		Permission: permission,
 		SharedBy:   userCtx.UserID,

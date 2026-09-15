@@ -32,6 +32,13 @@ func (h *ModelHandler) CreateModel(c *gin.Context) {
 		httputil.BadRequest(c, "Invalid request data: "+err.Error())
 		return
 	}
+	// Fallback copy workspace
+	if req.WorkspaceID != nil && req.IsCopy != nil && *req.IsCopy && !h.hasWorkspaceAccess(c, userCtx, *req.WorkspaceID) {
+		req.WorkspaceID = nil
+		if ws, err := h.newModelService().GetDefaultWorkspace(userCtx.UserID); err == nil {
+			req.WorkspaceID = &ws.ID
+		}
+	}
 	if req.WorkspaceID != nil && !h.ensureWorkspaceAccess(c, userCtx.UserID, *req.WorkspaceID, errAccessDeniedWorkspace) {
 		return
 	}

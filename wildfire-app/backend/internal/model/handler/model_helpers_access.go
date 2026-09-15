@@ -89,6 +89,14 @@ func (h *ModelHandler) getEffectiveModelLimit(accessLevel string) int {
 	return limit.ModelLimit
 }
 
+// Silent access check
+func (h *ModelHandler) hasWorkspaceAccess(c *gin.Context, userCtx *httputil.UserContext, workspaceID uint) bool {
+	if h.authz != nil {
+		return h.authz.CanAccessWorkspace(c.Request.Context(), userCtx, workspaceID) == nil
+	}
+	return h.newModelService().UserHasWorkspaceAccessWithEmail(userCtx.UserID, userCtx.Email, workspaceID)
+}
+
 func (h *ModelHandler) ensureWorkspaceAccess(c *gin.Context, userID string, workspaceID uint, message string) bool {
 	userCtx, ok := httputil.GetUserContext(c)
 	if !ok {

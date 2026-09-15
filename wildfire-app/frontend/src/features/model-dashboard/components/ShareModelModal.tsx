@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Mail, UserMinus } from 'lucide-react';
 import type { FormDataConvertible } from "@/hooks/useForm";
 import {
@@ -8,7 +8,6 @@ import {
 } from '@/features/model-dashboard/services/modelService';
 import { UniversalForm } from '@spatialhub/forms';
 import { getShareModelFormSections, validateShareModelForm } from '@/configuration/formConfigurations';
-import { useWorkspaceStore } from '@/components/workspace';
 import { useTranslation } from '@/i18n';
 
 interface ShareModelModalProps {
@@ -33,7 +32,6 @@ export const ShareModelModal: React.FC<ShareModelModalProps> = ({
   const [shares, setShares] = useState<ModelShare[]>([]);
   const [revokingShareId, setRevokingShareId] = useState<number | null>(null);
   const [revokeError, setRevokeError] = useState('');
-  const currentWorkspace = useWorkspaceStore(state => state.currentWorkspace);
 
   useEffect(() => {
     if (!isOpen || !model) return;
@@ -41,10 +39,6 @@ export const ShareModelModal: React.FC<ShareModelModalProps> = ({
     setRevokeError('');
     setRevokingShareId(null);
   }, [isOpen, model]);
-
-  const workspaceMemberEmails = useMemo(() => {
-    return (currentWorkspace?.members || []).map(m => (m.email || '').toLowerCase());
-  }, [currentWorkspace]);
 
   const handleFormChange = (key: string, value: FormDataConvertible) => {
     setFormData((prev) => ({
@@ -74,15 +68,8 @@ export const ShareModelModal: React.FC<ShareModelModalProps> = ({
     setFormErrors({});
 
     try {
+      // Backend checks access
       const inputEmail = formData.email.trim().toLowerCase();
-
-      // Check workspace access
-      if (shouldSkipWorkspaceMemberShare(model, inputEmail, workspaceMemberEmails)) {
-        setFormErrors({ email: 'This user already has access through the workspace that contains this model.' });
-        setIsSubmitting(false);
-        return;
-      }
-
       const response = await modelService.shareModel(model.id, inputEmail);
 
       setFormData({ email: '' });
@@ -242,14 +229,6 @@ const DirectShareList: React.FC<DirectShareListProps> = ({
 };
 
 // Helper functions
-function shouldSkipWorkspaceMemberShare(
-  model: Model,
-  inputEmail: string,
-  workspaceMemberEmails: string[]
-): boolean {
-  return Boolean(model.workspace_id && workspaceMemberEmails.includes(inputEmail));
-}
-
 function extractShareErrorMessage(error: unknown): string {
   const message = 'Failed to share model. Please try again.';
 
@@ -258,12 +237,14 @@ function extractShareErrorMessage(error: unknown): string {
     const lower = rawMsg.toLowerCase();
 
     if (error.response?.status === 400) {
-      if (lower.includes('already shared')) {
-        return 'This model is already shared with that user.';
-      } else if (lower.includes('workspace already shared')) {
+      // Workspace case first
+      if (lower.includes('workspace already shared')) {
         return 'This user already has access through the workspace that contains this model.';
+      } else if (lower.includes('already shared')) {
+        return 'This model is already shared with that user.';
       }
-    } else if (rawMsg) {
+    }
+    if (rawMsg) {
       return rawMsg;
     }
   } else if (hasMessage(error)) {
