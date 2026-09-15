@@ -818,7 +818,7 @@
       "failedToDuplicate": "Modell konnte nicht dupliziert werden. Bitte versuchen Sie es erneut.",
       "calculationStarted": "Berechnung erfolgreich gestartet",
       "failedToCalculate": "Berechnung konnte nicht gestartet werden. Bitte versuchen Sie es erneut.",
-      "moveComingSoon": "Funktion 'In Arbeitsbereich verschieben' kommt bald für \"{{title}}\"",
+      "moved": "Modell \"{{title}}\" wurde verschoben",
       "shared": "Modell erfolgreich geteilt",
       "deleted": "Modell \"{{title}}\" wurde gelöscht",
       "failedToDelete": "Modell konnte nicht gelöscht werden. Bitte versuchen Sie es erneut."

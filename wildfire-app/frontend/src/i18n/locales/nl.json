@@ -652,7 +652,7 @@
       "failedToDuplicate": "Model dupliceren mislukt. Probeer het opnieuw.",
       "calculationStarted": "Berekening succesvol gestart",
       "failedToCalculate": "Berekening starten mislukt. Probeer het opnieuw.",
-      "moveComingSoon": "Verplaatsen naar werkruimte functie komt binnenkort voor \"{{title}}\"",
+      "moved": "Model \"{{title}}\" is verplaatst",
       "shared": "Model succesvol gedeeld",
       "deleted": "Model \"{{title}}\" is verwijderd",
       "failedToDelete": "Model verwijderen mislukt. Probeer het opnieuw."

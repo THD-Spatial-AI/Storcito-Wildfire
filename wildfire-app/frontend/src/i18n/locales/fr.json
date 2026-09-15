@@ -818,7 +818,7 @@
       "failedToDuplicate": "Échec de la duplication du modèle. Veuillez réessayer.",
       "calculationStarted": "Calcul démarré avec succès",
       "failedToCalculate": "Échec du démarrage du calcul. Veuillez réessayer.",
-      "moveComingSoon": "La fonction de déplacement vers l'espace de travail sera bientôt disponible pour \"{{title}}\"",
+      "moved": "Le modèle \"{{title}}\" a été déplacé",
       "shared": "Modèle partagé avec succès",
       "deleted": "Modèle \"{{title}}\" a été supprimé",
       "failedToDelete": "Échec de la suppression du modèle. Veuillez réessayer."

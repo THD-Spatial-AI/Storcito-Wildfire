@@ -652,7 +652,7 @@
       "failedToDuplicate": "Nie udało się zduplikować modelu. Spróbuj ponownie.",
       "calculationStarted": "Obliczenia uruchomione pomyślnie",
       "failedToCalculate": "Nie udało się uruchomić obliczeń. Spróbuj ponownie.",
-      "moveComingSoon": "Funkcja przenoszenia do obszaru roboczego będzie wkrótce dostępna dla \"{{title}}\"",
+      "moved": "Model \"{{title}}\" został przeniesiony",
       "shared": "Model udostępniony pomyślnie",
       "deleted": "Model \"{{title}}\" został usunięty",
       "failedToDelete": "Nie udało się usunąć modelu. Spróbuj ponownie."

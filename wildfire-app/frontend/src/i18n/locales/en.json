@@ -819,7 +819,7 @@
       "calculationStarted": "Calculation started successfully",
       "failedToDuplicate": "Failed to duplicate model. Please try again.",
       "failedToCalculate": "Failed to start calculation. Please try again.",
-      "moveComingSoon": "Move to workspace feature coming soon for \"{{title}}\"",
+      "moved": "Model \"{{title}}\" has been moved",
       "shared": "Model shared successfully",
       "deleted": "Model \"{{title}}\" has been deleted",
       "failedToDelete": "Failed to delete model. Please try again."

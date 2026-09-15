@@ -652,7 +652,7 @@
       "failedToDuplicate": "Nepodařilo se duplikovat model. Zkuste to prosím znovu.",
       "calculationStarted": "Výpočet úspěšně zahájen",
       "failedToCalculate": "Nepodařilo se zahájit výpočet. Zkuste to prosím znovu.",
-      "moveComingSoon": "Funkce přesunu do pracovního prostoru bude brzy dostupná pro \"{{title}}\"",
+      "moved": "Model \"{{title}}\" byl přesunut",
       "shared": "Model úspěšně sdílen",
       "deleted": "Model \"{{title}}\" byl smazán",
       "failedToDelete": "Nepodařilo se smazat model. Zkuste to prosím znovu."

@@ -20,8 +20,13 @@ func (h *ModelHandler) MoveModel(c *gin.Context) {
 		return
 	}
 
-	model, id, ok := h.getOwnedModelFromParam(c, userCtx.UserID)
+	id := c.Param("id")
+	model, ok := h.fetchModel(c, id)
 	if !ok {
+		return
+	}
+	if !h.canMoveModel(c, userCtx, model) {
+		httputil.Forbidden(c, "Not allowed to move this model")
 		return
 	}
 
@@ -84,10 +89,8 @@ func (h *ModelHandler) BulkMoveModels(c *gin.Context) {
 	successCount := 0
 	failedCount := 0
 
-	isExpert := userCtx.AccessLevel == constants.AccessLevelExpert
-
 	for i := range modelsList {
-		if !modelsList[i].IsOwner(userCtx.UserID) && !isExpert {
+		if !h.canMoveModel(c, userCtx, &modelsList[i]) {
 			failedCount++
 			continue
 		}
@@ -105,6 +108,15 @@ func (h *ModelHandler) BulkMoveModels(c *gin.Context) {
 		FailedCount:  failedCount,
 		Total:        len(modelsList),
 	})
+}
+
+// Owner, expert, group manager
+func (h *ModelHandler) canMoveModel(c *gin.Context, userCtx *httputil.UserContext, model *models.Model) bool {
+	if model.IsOwner(userCtx.UserID) || userCtx.AccessLevel == constants.AccessLevelExpert {
+		return true
+	}
+	return userCtx.AccessLevel == constants.AccessLevelManager && h.authz != nil &&
+		h.authz.CanManageUser(c.Request.Context(), userCtx, model.UserID) == nil
 }
 
 func (h *ModelHandler) ShareModel(c *gin.Context) {

@@ -7,6 +7,7 @@ import ModelActions from "@/components/ui/ModelActions";
 import Pagination from "@/components/ui/Pagination";
 import Notification from "@/components/ui/Notification";
 import { ShareModelModal } from "@/features/model-dashboard/components/ShareModelModal";
+import { MoveModelModal } from "@/components/workspace";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@spatialhub/ui";
 import {
 	useModelsQuery,
@@ -64,6 +65,7 @@ export const ModelsManagement: React.FC<ModelsManagementProps> = ({ onModelActio
 
 	const [shareOpen, setShareOpen] = useState(false);
 	const [selectedModel, setSelectedModel] = useState<Model | null>(null);
+	const [moveModel, setMoveModel] = useState<Model | null>(null);
 
 	const { notification, show: showNotification, hide: hideNotification } = useNotification();
 
@@ -111,7 +113,7 @@ export const ModelsManagement: React.FC<ModelsManagementProps> = ({ onModelActio
 	};
 
 	const handleMoveToWorkspace = (model: Model) => {
-		showNotification(t("modelsManagement.notifications.moveComingSoon", { title: model.title }), "info");
+		setMoveModel(model);
 	};
 
 	const handleDelete = useCallback(async (model: Model) => {
@@ -424,6 +426,19 @@ export const ModelsManagement: React.FC<ModelsManagementProps> = ({ onModelActio
 				onSuccess={() => {
 					setShareOpen(false);
 					showNotification(t("modelsManagement.notifications.shared"), 'success');
+				}}
+			/>
+
+			<MoveModelModal
+				isOpen={moveModel !== null}
+				model={moveModel}
+				currentWorkspaceId={moveModel?.workspace_id ?? null}
+				onClose={() => setMoveModel(null)}
+				onSuccess={() => {
+					if (moveModel) {
+						onModelAction?.("move", moveModel.id);
+						showNotification(t("modelsManagement.notifications.moved", { title: moveModel.title }), "success");
+					}
 				}}
 			/>
 

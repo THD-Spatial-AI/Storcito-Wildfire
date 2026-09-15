@@ -1679,7 +1679,7 @@
       "calculationStarted": "Cálculo iniciado com sucesso",
       "failedToDuplicate": "Não foi possível duplicar o modelo. Tente novamente.",
       "failedToCalculate": "Não foi possível iniciar o cálculo. Tente novamente.",
-      "moveComingSoon": "A funcionalidade de mover para espaço de trabalho estará disponível em breve para \"{{title}}\"",
+      "moved": "O modelo \"{{title}}\" foi movido",
       "shared": "Modelo partilhado com sucesso",
       "deleted": "O modelo \"{{title}}\" foi eliminado",
       "failedToDelete": "Não foi possível eliminar o modelo. Tente novamente."

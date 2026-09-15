@@ -652,7 +652,7 @@
       "failedToDuplicate": "Impossibile duplicare il modello. Riprova.",
       "calculationStarted": "Calcolo avviato con successo",
       "failedToCalculate": "Impossibile avviare il calcolo. Riprova.",
-      "moveComingSoon": "La funzione di spostamento nell'area di lavoro sarà disponibile presto per \"{{title}}\"",
+      "moved": "Il modello \"{{title}}\" è stato spostato",
       "shared": "Modello condiviso con successo",
       "deleted": "Modello \"{{title}}\" è stato eliminato",
       "failedToDelete": "Impossibile eliminare il modello. Riprova."
