@@ -91,7 +91,10 @@ const StaticDateDropdown: FC<StaticDateDropdownProps> = ({
 
     const displayValue = isLoadingStaticDates
         ? t("configurator.layer1.staticLoading", "Loading available static dates...")
-        : selectedDate || t("configurator.layer1.staticEmpty", "Select a static date");
+        : selectedDate ||
+          (availableStaticDates.length === 0
+              ? t("configurator.layer1.staticEmpty", "No static dates available.")
+              : t("configurator.layer1.staticSelect", "Select a date"));
 
     const handleSelect = (date: string) => {
         onSelectDate(date);

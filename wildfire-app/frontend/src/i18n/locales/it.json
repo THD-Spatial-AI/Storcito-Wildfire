@@ -2012,6 +2012,7 @@
       "dynamicHint": "Le esecuzioni dinamiche mantengono l'intervallo selezionato (16 - 17).",
       "staticLoading": "Caricamento date statiche...",
       "staticEmpty": "Nessuna data statica disponibile.",
+      "staticSelect": "Seleziona una data",
       "staticHottest": "Data statica più calda: {{date}}",
       "staticRange": "Date statiche disponibili: {{start}} a {{end}}",
       "dynamicLoading": "Caricamento date dinamiche...",

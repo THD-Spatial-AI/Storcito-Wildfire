@@ -2012,6 +2012,7 @@
       "dynamicHint": "Uruchomienia dynamiczne zachowują zakres (od 16:00 do 17:00).",
       "staticLoading": "Ładowanie dostępnych dat...",
       "staticEmpty": "Brak dostępnych dat.",
+      "staticSelect": "Wybierz datę",
       "staticHottest": "Najgorętsza data statyczna: {{date}}",
       "staticRange": "Dostępne daty: {{start}} do {{end}}",
       "dynamicLoading": "Ładowanie dat dynamicznych...",

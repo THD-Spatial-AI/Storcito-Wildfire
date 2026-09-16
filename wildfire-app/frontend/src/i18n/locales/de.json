@@ -2012,6 +2012,7 @@
       "dynamicHint": "Dynamische Läufe behalten den ausgewählten Zeitraum bei (16:00 - 17:00 Uhr).",
       "staticLoading": "Lade verfügbare statische Daten...",
       "staticEmpty": "Keine statischen Daten verfügbar.",
+      "staticSelect": "Datum auswählen",
       "staticHottest": "Statisches Datum mit höchster Temperatur: {{date}}",
       "staticRange": "Verfügbare statische Daten: {{start}} bis {{end}}",
       "dynamicLoading": "Lade verfügbare dynamische Daten...",

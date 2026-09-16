@@ -731,6 +731,7 @@
       "dynamicHint": "As execuções dinâmicas mantêm o intervalo de datas selecionado e usam a janela das 16:00 às 17:00.",
       "staticLoading": "A carregar as datas estáticas disponíveis...",
       "staticEmpty": "Não há datas estáticas disponíveis.",
+      "staticSelect": "Selecionar uma data",
       "staticHottest": "Data estática com temperatura mais alta: {{date}}",
       "staticRange": "Datas estáticas disponíveis: {{start}} a {{end}}",
       "dynamicLoading": "A carregar as datas dinâmicas disponíveis...",

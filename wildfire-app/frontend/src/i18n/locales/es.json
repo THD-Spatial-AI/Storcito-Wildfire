@@ -2012,6 +2012,7 @@
       "dynamicHint": "Las ejecuciones dinámicas mantienen el rango seleccionado (ventana 16:00 a 17:00).",
       "staticLoading": "Cargando fechas estáticas disponibles...",
       "staticEmpty": "No hay fechas estáticas disponibles.",
+      "staticSelect": "Seleccionar una fecha",
       "staticHottest": "Fecha estática con temperatura más alta: {{date}}",
       "staticRange": "Fechas estáticas disponibles: {{start}} a {{end}}",
       "dynamicLoading": "Cargando fechas dinámicas disponibles...",

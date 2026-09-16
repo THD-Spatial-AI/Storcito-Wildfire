@@ -2012,6 +2012,7 @@
       "dynamicHint": "Dynamische runs behouden het geselecteerde bereik (venster 16:00 - 17:00).",
       "staticLoading": "Laden van statische data...",
       "staticEmpty": "Geen statische data beschikbaar.",
+      "staticSelect": "Kies een datum",
       "staticHottest": "Heetste statische datum: {{date}}",
       "staticRange": "Beschikbare statische data: {{start}} tot {{end}}",
       "dynamicLoading": "Laden van dynamische data...",

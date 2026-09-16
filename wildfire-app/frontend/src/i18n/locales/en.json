@@ -2012,6 +2012,7 @@
       "dynamicHint": "Dynamic runs keep the selected date range and use the 16:00 to 17:00 window.",
       "staticLoading": "Loading available static dates...",
       "staticEmpty": "No static dates available.",
+      "staticSelect": "Select a date",
       "staticHottest": "Highest-temperature static date: {{date}}",
       "staticRange": "Available static dates: {{start}} to {{end}}",
       "dynamicLoading": "Loading available dynamic dates...",

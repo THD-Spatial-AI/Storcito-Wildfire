@@ -2012,6 +2012,7 @@
       "dynamicHint": "Les exécutions dynamiques conservent la plage sélectionnée (16h à 17h).",
       "staticLoading": "Chargement des dates statiques...",
       "staticEmpty": "Aucune date statique disponible.",
+      "staticSelect": "Sélectionner une date",
       "staticHottest": "Date statique la plus chaude: {{date}}",
       "staticRange": "Dates statiques disponibles: {{start}} à {{end}}",
       "dynamicLoading": "Chargement des dates dynamiques...",

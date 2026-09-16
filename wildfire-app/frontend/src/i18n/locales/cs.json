@@ -2012,6 +2012,7 @@
       "dynamicHint": "Dynamické běhy zachovávají vybraný rozsah (okno 16:00 - 17:00).",
       "staticLoading": "Načítání statických dat...",
       "staticEmpty": "Žádná statická data nejsou k dispozici.",
+      "staticSelect": "Vyberte datum",
       "staticHottest": "Nejteplejší statické datum: {{date}}",
       "staticRange": "Dostupná statická data: {{start}} až {{end}}",
       "dynamicLoading": "Načítání dynamických dat...",

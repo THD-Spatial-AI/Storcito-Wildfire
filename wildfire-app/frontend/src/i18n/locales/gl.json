@@ -2012,6 +2012,7 @@
       "dynamicHint": "As execucións dinámicas manteñen o rango seleccionado (xanela 16:00 a 17:00).",
       "staticLoading": "Cargando datas estáticas dispoñibles...",
       "staticEmpty": "Non hai datas estáticas dispoñibles.",
+      "staticSelect": "Selecciona unha data",
       "staticHottest": "Data estática con temperatura máis alta: {{date}}",
       "staticRange": "Datas estáticas dispoñibles: {{start}} a {{end}}",
       "dynamicLoading": "Cargando datas dinámicas dispoñibles...",
