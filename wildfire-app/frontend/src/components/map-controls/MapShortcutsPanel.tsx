@@ -2,12 +2,14 @@ import { FC } from "react";
 import { Keyboard } from "lucide-react";
 import { useTranslation } from "@/i18n";
 
-import { PanelCard } from "./ViewerMapPanels";
+import { PanelCard } from "./PanelCard";
 
-interface ViewerShortcutsPanelProps {
-  canPlay: boolean;
-  can3D: boolean;
-  hasRiskLayers: boolean;
+interface MapShortcutsPanelProps {
+  position?: string;
+  canPlay?: boolean;
+  can3D?: boolean;
+  hasRiskLayers?: boolean;
+  canFullscreen?: boolean;
 }
 
 const KEY_CLASS =
@@ -27,17 +29,20 @@ const ShortcutRow: FC<{ keys: string[]; label: string }> = ({ keys, label }) => 
 );
 
 /** Shortcut cheat-sheet card. */
-export const ViewerShortcutsPanel: FC<ViewerShortcutsPanelProps> = ({
-  canPlay,
-  can3D,
-  hasRiskLayers,
+export const MapShortcutsPanel: FC<MapShortcutsPanelProps> = ({
+  position,
+  canPlay = false,
+  can3D = false,
+  hasRiskLayers = false,
+  canFullscreen = false,
 }) => {
   const { t } = useTranslation();
 
   return (
     <PanelCard
+      position={position}
       icon={<Keyboard className="h-3.5 w-3.5" />}
-      title={t("modelResults.shortcuts.title", "Keyboard shortcuts")}
+      title={t("map.shortcuts.title", "Keyboard shortcuts")}
     >
       <ul className="space-y-1 p-2 text-[10px] leading-snug">
         <ShortcutRow keys={["+", "−"]} label={t("map.shortcuts.zoom", "Zoom in and out")} />
@@ -48,10 +53,12 @@ export const ViewerShortcutsPanel: FC<ViewerShortcutsPanelProps> = ({
             label={t("modelResults.shortcuts.playPause", "Play / pause daily animation")}
           />
         )}
-        <ShortcutRow
-          keys={["F"]}
-          label={t("modelResults.shortcuts.fullscreen", "Toggle fullscreen")}
-        />
+        {canFullscreen && (
+          <ShortcutRow
+            keys={["F"]}
+            label={t("modelResults.shortcuts.fullscreen", "Toggle fullscreen")}
+          />
+        )}
         {can3D && (
           <ShortcutRow
             keys={["T"]}

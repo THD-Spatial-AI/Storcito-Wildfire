@@ -22,6 +22,7 @@ import { useDataCoverage } from "@/features/configurator/hooks/area-select/useDa
 import { useMapKeyboardShortcuts } from "@/features/interactive-map";
 import { PolygonDrawer } from "@/features/polygon-drawer";
 import { PolygonDrawingGuide } from "@/components/map-controls/PolygonDrawingGuide";
+import { MapShortcutsPanel } from "@/components/map-controls/MapShortcutsPanel";
 import { CreateWorkspaceModal } from "@/components/workspace";
 import { useDocumentTitle } from "@/hooks/use-document-title";
 import { useWorkspaceStore } from "@/components/workspace";
@@ -275,6 +276,7 @@ export const AreaSelect: FC<AreaSelectProps> = ({
         mapOverlays={
           <>
             {isDrawingStep && <StorcitoCoverageOverlay map={map} />}
+            {isMapVisible && <MapShortcutsPanel position="bottom-4 left-4" />}
             <DtmFootprintOverlay
               map={map}
               footprint={state.dtmFootprint}

@@ -45,7 +45,7 @@ import { ViewerPlayerOverlay } from "./components/ViewerPlayerOverlay";
 import { ViewerSidebarRail } from "./components/ViewerSidebarRail";
 import { ViewerStatusBanners } from "./components/ViewerStatusBanners";
 import { OverlaysPanel, RiskLegendPanel } from "./components/ViewerMapPanels";
-import { ViewerShortcutsPanel } from "./components/ViewerShortcutsPanel";
+import { MapShortcutsPanel } from "@/components/map-controls/MapShortcutsPanel";
 import { RiskTimelinePanel } from "./components/RiskTimelinePanel";
 
 // Lazy-load Cesium.
@@ -479,10 +479,11 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
             onToggleLevel={toggleRiskLevel}
           />
         )}
-        <ViewerShortcutsPanel
+        <MapShortcutsPanel
           canPlay={layerReady && dailyFrames.length >= 2}
           can3D={Boolean(wms3D)}
           hasRiskLayers={hasRiskLayers}
+          canFullscreen
         />
       </div>
 
