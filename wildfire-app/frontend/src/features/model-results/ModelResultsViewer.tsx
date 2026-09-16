@@ -16,6 +16,8 @@ import { getModelResults } from "./services/resultsService";
 import { useDocumentTitle } from "@/hooks/use-document-title";
 import { MapContainer } from "@/components/shared/MapContainer";
 import { useMapStore, useMapKeyboardShortcuts } from "@/features/interactive-map";
+import type { MapKeyControls } from "@/features/interactive-map/useMapKeyboardShortcuts";
+import type { Terrain3DControls } from "./components/CesiumWildfire3DView";
 import MapSearchBar from "@/features/interactive-map/MapSearchBar";
 import { modelService, Model } from "@/features/model-dashboard";
 import { CreateWorkspaceModal } from "@/components/workspace";
@@ -78,6 +80,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     DEFAULT_VISIBLE_RISK_LEVELS
   );
   const [show3D, setShow3D] = useState(false);
+  const terrainControlsRef = useRef<Terrain3DControls | null>(null);
   const [playing, setPlaying] = useState(false);
   const playFrameRef = useRef(0);
   const [showTimeline, setShowTimeline] = useState(false);
@@ -335,8 +338,22 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
   const hasRiskLayers = Boolean(activeResult && attachedResultId === activeResult.id);
 
+  // 3D camera keys
+  const terrainControls = useMemo<MapKeyControls | null>(
+    () =>
+      show3D
+        ? {
+            zoomIn: () => terrainControlsRef.current?.zoomIn(),
+            zoomOut: () => terrainControlsRef.current?.zoomOut(),
+            pan: (dx, dy) => terrainControlsRef.current?.pan(dx, dy),
+          }
+        : null,
+    [show3D]
+  );
+
   // Map keyboard shortcuts.
   useMapKeyboardShortcuts(map, {
+    controls: terrainControls,
     onTogglePlay: layerReady && dailyFrames.length >= 2 ? () => setPlaying((v) => !v) : undefined,
     onToggleFullscreen: toggleFullscreen,
     onToggle3D: wms3D ? () => setShow3D((v) => !v) : undefined,
@@ -425,8 +442,10 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
             layerName={wms3D.layerName}
             aoi={model?.coordinates}
             visibleRiskLevels={visibleRiskLevels}
+            layerVisible={layerVisible}
             roadsVisible={roadsVisible}
             labelsVisible={labelsVisible}
+            controlsRef={terrainControlsRef}
           />
         </Suspense>
       )}

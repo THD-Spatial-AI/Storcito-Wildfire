@@ -1,9 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import * as Cesium from "cesium";
 import "cesium/Build/Cesium/Widgets/widgets.css";
 import { Plus, Minus } from "lucide-react";
 import { useTranslation } from "@/i18n";
 import { withCartoBasemapKey } from "@/utils/carto-basemap";
+
+/** Keyboard camera controls */
+export interface Terrain3DControls {
+  zoomIn: () => void;
+  zoomOut: () => void;
+  /** Fractional pan */
+  pan: (dx: number, dy: number) => void;
+}
 
 interface CesiumWildfire3DViewProps {
   wmsUrl: string;
@@ -12,8 +20,12 @@ interface CesiumWildfire3DViewProps {
   /** Model AOI as GeoJSON (EPSG:4326). */
   aoi?: unknown;
   visibleRiskLevels?: Record<number, boolean>;
+  /** Risk drape visibility */
+  layerVisible?: boolean;
   roadsVisible?: boolean;
   labelsVisible?: boolean;
+  /** Exposes camera controls */
+  controlsRef?: RefObject<Terrain3DControls | null>;
   /** Return to the 2D map when 3D cannot start. */
   onExit?: () => void;
 }
@@ -39,6 +51,10 @@ const ESRI_PLACES_URL =
   "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}";
 // Drape alpha while roads are shown, so casings stay readable.
 const DRAPE_ALPHA_WITH_ROADS = 0.8;
+// Camera step fractions
+const ZOOM_IN_FACTOR = 0.4;
+const ZOOM_OUT_FACTOR = -0.6;
+const PAN_FRACTION = 0.25;
 
 // Same per-level GeoServer styles as the 2D viewer (legend checkboxes apply).
 const RISK_LEVEL_STYLES: Record<number, string> = {
@@ -92,8 +108,10 @@ export const CesiumWildfire3DView = ({
   layerName,
   aoi,
   visibleRiskLevels,
+  layerVisible = true,
   roadsVisible = true,
   labelsVisible = false,
+  controlsRef,
   onExit,
 }: CesiumWildfire3DViewProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -122,6 +140,8 @@ export const CesiumWildfire3DView = ({
   }
   const visibleLevelsRef = useRef(visibleRiskLevels);
   visibleLevelsRef.current = visibleRiskLevels;
+  const layerVisibleRef = useRef(layerVisible);
+  layerVisibleRef.current = layerVisible;
   const roadsLayerRef = useRef<Cesium.ImageryLayer | null>(null);
   const labelsLayerRef = useRef<Cesium.ImageryLayer | null>(null);
   const roadsVisibleRef = useRef(roadsVisible);
@@ -142,7 +162,7 @@ export const CesiumWildfire3DView = ({
           ...(aoiRectRef.current ? { rectangle: aoiRectRef.current } : {}),
         })
       );
-      layer.show = visibleLevelsRef.current?.[level] ?? true;
+      layer.show = layerVisibleRef.current && (visibleLevelsRef.current?.[level] ?? true);
       layer.alpha = roadsVisibleRef.current ? DRAPE_ALPHA_WITH_ROADS : 1.0;
       return { level, layer };
     });
@@ -335,9 +355,10 @@ export const CesiumWildfire3DView = ({
 
   useEffect(() => {
     riskLayersRef.current.forEach(({ level, layer }) => {
-      layer.show = visibleRiskLevels?.[level] ?? true;
+      layer.show = layerVisible && (visibleRiskLevels?.[level] ?? true);
     });
-  }, [visibleRiskLevels]);
+    viewerRef.current?.scene.requestRender();
+  }, [visibleRiskLevels, layerVisible]);
 
   // Roads/Labels toggles from the shared Overlays panel.
   useEffect(() => {
@@ -350,10 +371,32 @@ export const CesiumWildfire3DView = ({
 
   const zoom = (factor: number) => {
     const v = viewerRef.current;
-    if (!v) return;
+    if (!v || v.isDestroyed()) return;
     const h = v.camera.positionCartographic.height;
     v.camera.zoomIn(h * factor);
   };
+
+  // Height-scaled pan
+  const panBy = (dx: number, dy: number) => {
+    const v = viewerRef.current;
+    if (!v || v.isDestroyed()) return;
+    const step = v.camera.positionCartographic.height * PAN_FRACTION;
+    if (dx !== 0) v.camera.moveRight(step * dx);
+    if (dy !== 0) v.camera.moveUp(step * dy);
+  };
+
+  // Publish camera controls
+  useEffect(() => {
+    if (!controlsRef) return;
+    controlsRef.current = {
+      zoomIn: () => zoom(ZOOM_IN_FACTOR),
+      zoomOut: () => zoom(ZOOM_OUT_FACTOR),
+      pan: panBy,
+    };
+    return () => {
+      controlsRef.current = null;
+    };
+  });
 
   return (
     <div className="absolute inset-0 z-[5]" style={{ background: "#dfe7ee" }}>
@@ -398,7 +441,7 @@ export const CesiumWildfire3DView = ({
         <button
           type="button"
           aria-label="Zoom in"
-          onClick={() => zoom(0.4)}
+          onClick={() => zoom(ZOOM_IN_FACTOR)}
           className="flex h-9 w-9 items-center justify-center text-slate-700 hover:bg-slate-100"
         >
           <Plus className="h-4 w-4" />
@@ -406,7 +449,7 @@ export const CesiumWildfire3DView = ({
         <button
           type="button"
           aria-label="Zoom out"
-          onClick={() => zoom(-0.6)}
+          onClick={() => zoom(ZOOM_OUT_FACTOR)}
           className="flex h-9 w-9 items-center justify-center border-t border-border text-slate-700 hover:bg-slate-100"
         >
           <Minus className="h-4 w-4" />

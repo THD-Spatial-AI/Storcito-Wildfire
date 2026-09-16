@@ -19,6 +19,7 @@ import { useAdministrativeRegionSelection } from "@/features/configurator/hooks/
 import { useWizardSteps } from "@/features/configurator/hooks/area-select/useWizardSteps";
 import { WizardStepBar, sidebarMapWidth } from "./components/wizard";
 import { useDataCoverage } from "@/features/configurator/hooks/area-select/useDataCoverage";
+import { useMapKeyboardShortcuts } from "@/features/interactive-map";
 import { PolygonDrawer } from "@/features/polygon-drawer";
 import { PolygonDrawingGuide } from "@/components/map-controls/PolygonDrawingGuide";
 import { CreateWorkspaceModal } from "@/components/workspace";
@@ -113,6 +114,9 @@ export const AreaSelect: FC<AreaSelectProps> = ({
     editMode,
     existingModelId,
   });
+
+  // Zoom and pan keys
+  useMapKeyboardShortcuts(map);
 
   const regionSelectionEnabled = activeConfiguratorStep === 2 && state.areaInputMode === "region";
   const { containsCoordinate, coverageNames } = useDataCoverage();

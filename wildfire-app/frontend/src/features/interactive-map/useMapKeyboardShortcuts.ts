@@ -1,6 +1,14 @@
 import { useEffect } from 'react';
 import type { Map as OlMap } from 'ol';
 
+/** 3D camera controls */
+export interface MapKeyControls {
+  zoomIn: () => void;
+  zoomOut: () => void;
+  /** Fractional pan */
+  pan: (dx: number, dy: number) => void;
+}
+
 interface Options {
   /** Called for the "new model" shortcut; omitted for signed-out visitors. */
   onNewModel?: () => void;
@@ -12,6 +20,8 @@ interface Options {
   onToggle3D?: () => void;
   /** L: layer visibility. */
   onToggleLayerVisible?: () => void;
+  /** Overrides zoom/pan */
+  controls?: MapKeyControls | null;
 }
 
 const ZOOM_STEP = 1;
@@ -30,10 +40,7 @@ function isActivatableTarget(target: EventTarget | null): boolean {
   return !!el && ['BUTTON', 'A'].includes(el.tagName);
 }
 
-/**
- * Keyboard shortcuts for the map: +/- to zoom, arrows to pan, N for a new
- * model. The results viewer adds Space/F/T/L via the optional callbacks.
- */
+/** Map keyboard shortcuts */
 export function useMapKeyboardShortcuts(
   map: OlMap | null,
   {
@@ -42,45 +49,64 @@ export function useMapKeyboardShortcuts(
     onToggleFullscreen,
     onToggle3D,
     onToggleLayerVisible,
+    controls,
   }: Options = {}
 ) {
   useEffect(() => {
-    if (!map) return;
+    if (!map && !controls) return;
+
+    const zoomBy = (steps: number) => {
+      if (controls) {
+        if (steps > 0) controls.zoomIn();
+        else controls.zoomOut();
+        return;
+      }
+      const view = map?.getView();
+      const zoom = view?.getZoom();
+      if (!view || zoom === undefined) return;
+      view.animate({ zoom: zoom + steps, duration: 200 });
+    };
+
+    const panBy = (dx: number, dy: number) => {
+      if (controls) {
+        controls.pan(dx, dy);
+        return;
+      }
+      const view = map?.getView();
+      const center = view?.getCenter();
+      const resolution = view?.getResolution();
+      const size = map?.getSize();
+      if (!view || !center || resolution === undefined || !size) return;
+      view.animate({
+        center: [center[0] + dx * size[0] * resolution, center[1] + dy * size[1] * resolution],
+        duration: 200,
+      });
+    };
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey) return;
       if (isTypingTarget(event.target)) return;
 
-      const view = map.getView();
-      const zoom = view.getZoom();
-      const center = view.getCenter();
-      const resolution = view.getResolution();
-      if (zoom === undefined || !center || resolution === undefined) return;
-
-      const size = map.getSize();
-      const panX = size ? size[0] * resolution * PAN_FRACTION : 0;
-      const panY = size ? size[1] * resolution * PAN_FRACTION : 0;
-
       switch (event.key) {
         case '+':
         case '=':
-          view.animate({ zoom: zoom + ZOOM_STEP, duration: 200 });
+          zoomBy(ZOOM_STEP);
           break;
         case '-':
         case '_':
-          view.animate({ zoom: zoom - ZOOM_STEP, duration: 200 });
+          zoomBy(-ZOOM_STEP);
           break;
         case 'ArrowLeft':
-          view.animate({ center: [center[0] - panX, center[1]], duration: 200 });
+          panBy(-PAN_FRACTION, 0);
           break;
         case 'ArrowRight':
-          view.animate({ center: [center[0] + panX, center[1]], duration: 200 });
+          panBy(PAN_FRACTION, 0);
           break;
         case 'ArrowUp':
-          view.animate({ center: [center[0], center[1] + panY], duration: 200 });
+          panBy(0, PAN_FRACTION);
           break;
         case 'ArrowDown':
-          view.animate({ center: [center[0], center[1] - panY], duration: 200 });
+          panBy(0, -PAN_FRACTION);
           break;
         case 'n':
         case 'N':
@@ -115,5 +141,5 @@ export function useMapKeyboardShortcuts(
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [map, onNewModel, onTogglePlay, onToggleFullscreen, onToggle3D, onToggleLayerVisible]);
+  }, [map, controls, onNewModel, onTogglePlay, onToggleFullscreen, onToggle3D, onToggleLayerVisible]);
 }
