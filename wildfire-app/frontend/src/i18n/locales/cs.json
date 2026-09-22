@@ -70,6 +70,7 @@
       "feedback": "Zpětná vazba",
       "theme": "Motiv",
       "searchLocation": "Hledat místo",
+      "searchLocationOrCoords": "Hledat místo nebo souřadnice (šířka, délka)",
       "help": "Nápověda"
     },
     "sidebar": {

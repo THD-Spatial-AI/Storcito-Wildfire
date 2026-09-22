@@ -70,6 +70,7 @@
       "feedback": "Feedback",
       "theme": "Tema",
       "searchLocation": "Cerca posizione",
+      "searchLocationOrCoords": "Cerca un luogo o coordinate (lat, lon)",
       "help": "Aiuto"
     },
     "sidebar": {

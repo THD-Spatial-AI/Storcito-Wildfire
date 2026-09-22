@@ -6,6 +6,7 @@ import { fromLonLat } from "ol/proj";
 import { Search, X } from "lucide-react";
 import { useTranslation } from "@/i18n";
 import { loadSearchBoundaryLayer, removeSearchBoundaryLayer, fitToFeatures } from "@/features/interactive-map/utils/searchBoundaryLayer";
+import { parseCoordinateQuery } from "@/features/interactive-map/utils/coordinateParser";
 
 const MapSearchBar: React.FC<{ className?: string }> = ({ className }) => {
   const { t } = useTranslation();
@@ -29,8 +30,12 @@ const MapSearchBar: React.FC<{ className?: string }> = ({ className }) => {
         fitToFeatures(map, features, { padding: 60, duration: 500, maxZoom: 14 });
       }
     } else {
-      // No boundary — just pan to coordinates
-      removeSearchBoundaryLayer(map);
+      // Point result marker
+      const pointGeojson: GeoJSON.Point =
+        r.geojson?.type === 'Point'
+          ? r.geojson
+          : { type: 'Point', coordinates: [r.longitude, r.latitude] };
+      loadSearchBoundaryLayer(map, pointGeojson, r.name);
       const position = fromLonLat([r.longitude, r.latitude]);
       map.getView().animate({
         center: position,
@@ -87,20 +92,35 @@ const MapSearchBar: React.FC<{ className?: string }> = ({ className }) => {
     setSearchLoading(true);
     setSearchError(null);
     const timer = setTimeout(async () => {
+      const coords = parseCoordinateQuery(search);
+      if (coords) {
+        setResults([
+          {
+            id: "coordinates",
+            name: `${coords.latitude.toFixed(5)}, ${coords.longitude.toFixed(5)}`,
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+            source: "coordinates",
+            geojson: { type: "Point", coordinates: [coords.longitude, coords.latitude] },
+          },
+        ]);
+        setSearchLoading(false);
+        return;
+      }
       try {
         const res = await geocodingService.search(search);
         setResults(res || []);
         if (res.length === 0) {
-          setSearchError("No locations found");
+          setSearchError(t("settings.locationSearch.noResults"));
         }
       } catch {
-        setSearchError("Search failed");
+        setSearchError(t("settings.locationSearch.searchFailed"));
       } finally {
         setSearchLoading(false);
       }
     }, 300);
     return () => clearTimeout(timer);
-  }, [search]);
+  }, [search, t]);
 
   const handleExpand = () => {
     setIsExpanded(true);
@@ -122,7 +142,7 @@ const MapSearchBar: React.FC<{ className?: string }> = ({ className }) => {
           <div className="flex items-center gap-2 mb-2">
             <Search className="w-4 h-4 text-muted-foreground flex-shrink-0" />
             <Input
-              placeholder={t("common.tooltips.searchLocation")}
+              placeholder={t("common.tooltips.searchLocationOrCoords")}
               value={search}
               ref={inputRef}
               onChange={(e) => setSearch(e.target.value)}
@@ -146,7 +166,7 @@ const MapSearchBar: React.FC<{ className?: string }> = ({ className }) => {
             </button>
           </div>
 
-          {searchLoading && <p className="text-xs text-muted-foreground px-2 py-1">Searching…</p>}
+          {searchLoading && <p className="text-xs text-muted-foreground px-2 py-1">{t("settings.locationSearch.searching")}</p>}
 
           {searchError && <p className="text-xs text-red-500 px-2 py-1">{searchError}</p>}
 
@@ -177,7 +197,7 @@ const MapSearchBar: React.FC<{ className?: string }> = ({ className }) => {
             </button>
           </TooltipTrigger>
           <TooltipContent side="left" sideOffset={8}>
-            <p>{t("common.tooltips.searchLocation")}</p>
+            <p>{t("common.tooltips.searchLocationOrCoords")}</p>
           </TooltipContent>
         </Tooltip>
       )}

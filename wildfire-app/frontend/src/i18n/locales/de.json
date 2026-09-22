@@ -78,6 +78,7 @@
       "feedback": "Feedback",
       "theme": "Design",
       "searchLocation": "Standort suchen",
+      "searchLocationOrCoords": "Ort oder Koordinaten suchen (Breite, Länge)",
       "help": "Hilfe"
     },
     "sidebar": {

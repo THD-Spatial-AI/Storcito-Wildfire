@@ -2,7 +2,7 @@
  * Map styling utilities for boundary features (generic).
  */
 
-import { Style, Fill, Stroke, Text } from 'ol/style';
+import { Style, Fill, Stroke, Text, Circle as CircleStyle } from 'ol/style';
 import type { Feature } from 'ol';
 import type { Geometry } from 'ol/geom';
 import { Point } from 'ol/geom';
@@ -126,8 +126,27 @@ export function boundaryStyleFunction(_feature: Feature<Geometry>, resolution?: 
  * Style for search result boundary — uses a bold rose/magenta color
  * to clearly stand out from default (indigo), selected (amber), and the green map background.
  */
-export function searchBoundaryStyleFunction(_feature: Feature<Geometry>, resolution?: number): Style[] {
+export function searchBoundaryStyleFunction(feature: Feature<Geometry>, resolution?: number): Style[] {
     const res = resolution || 1;
+    const geometryType = feature.getGeometry()?.getType();
+
+    if (geometryType === 'Point' || geometryType === 'MultiPoint') {
+        return [
+            new Style({
+                image: new CircleStyle({
+                    radius: 10,
+                    fill: new Fill({ color: 'rgba(190, 24, 93, 0.25)' })
+                })
+            }),
+            new Style({
+                image: new CircleStyle({
+                    radius: 6,
+                    fill: new Fill({ color: 'rgba(190, 24, 93, 0.9)' }),
+                    stroke: new Stroke({ color: 'rgba(255, 255, 255, 0.95)', width: 2 })
+                })
+            })
+        ];
+    }
 
     if (res > 20) {
         return [

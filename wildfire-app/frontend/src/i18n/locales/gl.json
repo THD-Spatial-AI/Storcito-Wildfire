@@ -78,6 +78,7 @@
       "feedback": "Comentarios",
       "theme": "Tema",
       "searchLocation": "Buscar localización",
+      "searchLocationOrCoords": "Buscar un lugar ou coordenadas (lat, lon)",
       "help": "Axuda"
     },
     "sidebar": {

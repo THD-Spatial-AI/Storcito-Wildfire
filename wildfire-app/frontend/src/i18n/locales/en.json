@@ -78,6 +78,7 @@
       "feedback": "Feedback",
       "theme": "Theme",
       "searchLocation": "Search for a location",
+      "searchLocationOrCoords": "Search a place or coordinates (lat, lon)",
       "help": "Help"
     },
     "sidebar": {

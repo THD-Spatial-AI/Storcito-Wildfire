@@ -233,6 +233,7 @@
       "feedback": "Σχόλια",
       "theme": "Θέμα",
       "searchLocation": "Αναζήτηση τοποθεσίας",
+      "searchLocationOrCoords": "Αναζήτηση τοποθεσίας ή συντεταγμένων (πλάτος, μήκος)",
       "help": "Βοήθεια"
     },
     "sidebar": {
