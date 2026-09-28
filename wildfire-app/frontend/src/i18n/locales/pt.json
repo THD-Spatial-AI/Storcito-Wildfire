@@ -1041,6 +1041,8 @@
     "filterPeriod": "Filtrar por período",
     "estimateRemaining": "~{{duration}} restante",
     "estimateOverdue": "está a demorar mais do que o habitual",
+    "pin": "Fixar no topo",
+    "unpin": "Desafixar",
     "estimateBasis_one": "Com base em 1 execução comparável, que demorou {{typical}}",
     "estimateBasis_other": "Com base em {{count}} execuções comparáveis, que normalmente demoram {{typical}}",
     "estimateApproximate": "Essas execuções são anteriores ao registo da fila, por isso a espera real será maior.",

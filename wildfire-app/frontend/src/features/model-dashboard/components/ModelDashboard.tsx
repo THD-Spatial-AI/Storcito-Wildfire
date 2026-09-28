@@ -146,6 +146,12 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 	const [itemsPerPage, setItemsPerPage] = useState<number>(12);
 	const [currentWorkspaceId, setCurrentWorkspaceId] = useState<number | undefined>(undefined);
 
+	const favoriteIds = useFavoriteModelsStore(s => s.favoriteIds);
+	const pinnedParam = useMemo(
+		() => (favoriteIds.length > 0 ? [...favoriteIds].sort((a, b) => a - b).join(",") : undefined),
+		[favoriteIds]
+	);
+
 	const { data: modelsResponse, isLoading: isLoadingModels, refetch: refetchModels } = useModelsQuery({
 		limit: itemsPerPage,
 		offset: currentPage * itemsPerPage,
@@ -155,6 +161,7 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 		sort_order: order,
 		from_date: filterFromDate || undefined,
 		to_date: filterToDate || undefined,
+		pinned: pinnedParam,
 	});
 
 	const { data: statsResponse, isSuccess: statsLoaded } = useModelStatsQuery();
@@ -331,11 +338,10 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 
 	const filteredModels = models;
 
-	const favoriteIds = useFavoriteModelsStore(s => s.favoriteIds);
 	const favoriteIdSet = useMemo(() => new Set(favoriteIds), [favoriteIds]);
 
 	const sortedModels = useMemo(() => {
-		// Favorites to top.
+		// Pins first.
 		return [...filteredModels].sort((a, b) => {
 			const aFav = favoriteIdSet.has(a.id) ? 0 : 1;
 			const bFav = favoriteIdSet.has(b.id) ? 0 : 1;
@@ -343,7 +349,10 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 		});
 	}, [filteredModels, favoriteIdSet]);
 
-	const orderedModels = useMemo(() => organizeModelsHierarchically(sortedModels), [sortedModels]);
+	const orderedModels = useMemo(
+		() => organizeModelsHierarchically(sortedModels, favoriteIdSet),
+		[sortedModels, favoriteIdSet]
+	);
 
 	const paginatedModels = orderedModels;
 	const modelTitlesByID = useMemo(() => {

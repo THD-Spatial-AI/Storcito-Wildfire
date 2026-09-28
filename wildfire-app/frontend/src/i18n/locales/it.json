@@ -381,6 +381,8 @@
     "filterPeriod": "Filtra per periodo",
     "estimateRemaining": "~{{duration}} rimanenti",
     "estimateOverdue": "sta richiedendo più tempo del solito",
+    "pin": "Fissa in alto",
+    "unpin": "Rimuovi fissaggio",
     "estimateBasis_one": "In base a 1 esecuzione comparabile, durata {{typical}}",
     "estimateBasis_other": "In base a {{count}} esecuzioni comparabili, che durano in genere {{typical}}",
     "estimateApproximate": "Quelle esecuzioni precedono il tracciamento della coda, quindi l'attesa reale sarà maggiore.",

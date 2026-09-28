@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Copy, PencilLine, Users, Clock, Star } from "lucide-react";
+import { Copy, PencilLine, Users, Clock, Pin } from "lucide-react";
 import { Model } from "@/features/model-dashboard/services/modelService";
 import StatusBadge from "@/components/ui/StatusBadge";
 import ElapsedTimer from "@/components/ui/ElapsedTimer";
@@ -218,19 +218,29 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
             onChange={() => handleSelectModel(model)}
             className="h-4 w-4 cursor-pointer rounded border-input accent-primary focus:ring-ring focus:ring-offset-0"
           />
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleFavorite(model.id);
-            }}
-            className="rounded-md p-1 transition-colors duration-150 hover:bg-muted"
-            aria-label={favorited ? "Remove from favorites" : "Add to favorites"}
-          >
-            <Star
-              className={`h-3.5 w-3.5 transition-colors ${favorited ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"}`}
-            />
-          </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFavorite(model.id);
+                }}
+                className={`rounded-md p-1 transition-all duration-150 hover:bg-muted ${
+                  favorited ? "" : "opacity-40 group-hover:opacity-100 focus-visible:opacity-100"
+                }`}
+                aria-label={favorited ? t("model.unpin", "Unpin") : t("model.pin", "Pin to top")}
+                aria-pressed={favorited}
+              >
+                <Pin
+                  className={`h-3.5 w-3.5 transition-colors ${favorited ? "fill-primary text-primary" : "text-muted-foreground"}`}
+                />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {favorited ? t("model.unpin", "Unpin") : t("model.pin", "Pin to top")}
+            </TooltipContent>
+          </Tooltip>
         </div>
       </td>
 

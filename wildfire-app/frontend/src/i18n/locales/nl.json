@@ -381,6 +381,8 @@
     "filterPeriod": "Filteren op periode",
     "estimateRemaining": "~{{duration}} resterend",
     "estimateOverdue": "duurt langer dan gebruikelijk",
+    "pin": "Bovenaan vastzetten",
+    "unpin": "Losmaken",
     "estimateBasis_one": "Op basis van 1 vergelijkbare run, die {{typical}} duurde",
     "estimateBasis_other": "Op basis van {{count}} vergelijkbare runs, die meestal {{typical}} duren",
     "estimateApproximate": "Die runs dateren van voor de wachtrijregistratie, dus de echte wachttijd is langer.",

@@ -218,6 +218,7 @@ class ModelService {
     mine?: boolean;
     from_date?: string;
     to_date?: string;
+    pinned?: string;
   }): Promise<ModelListResponse> {
     const response = await axios.get(this.baseURL, { params });
     return response.data;

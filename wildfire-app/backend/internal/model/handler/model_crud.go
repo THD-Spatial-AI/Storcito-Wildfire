@@ -68,7 +68,7 @@ func (h *ModelHandler) GetModels(c *gin.Context) {
 	}
 	query = h.applySearchFilter(query, search, fromDate, toDate)
 
-	modelsList, total, err := h.fetchModelsWithQuery(query, limit, offset, sortBy, sortOrder)
+	modelsList, total, err := h.fetchModelsWithQuery(query, limit, offset, sortBy, sortOrder, parsePinnedIDs(c))
 	if err != nil {
 		httputil.InternalError(c, "Failed to fetch models")
 		return

@@ -547,6 +547,8 @@
     "filterPeriod": "Nach Zeitraum filtern",
     "estimateRemaining": "noch ~{{duration}}",
     "estimateOverdue": "dauert länger als üblich",
+    "pin": "Oben anheften",
+    "unpin": "Lösen",
     "estimateBasis_one": "Basierend auf 1 vergleichbaren Lauf, der {{typical}} dauerte",
     "estimateBasis_other": "Basierend auf {{count}} vergleichbaren Läufen, die typischerweise {{typical}} dauern",
     "estimateApproximate": "Diese Läufe stammen aus der Zeit vor der Warteschlangenerfassung; die echte Wartezeit ist länger.",

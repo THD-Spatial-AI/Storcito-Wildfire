@@ -547,6 +547,8 @@
     "filterPeriod": "Filtrar por período",
     "estimateRemaining": "~{{duration}} restante",
     "estimateOverdue": "tardando máis do habitual",
+    "pin": "Fixar arriba",
+    "unpin": "Desfixar",
     "estimateBasis_one": "Baseado en 1 execución comparable, que tardou {{typical}}",
     "estimateBasis_other": "Baseado en {{count}} execucións comparables, que adoitan tardar {{typical}}",
     "estimateApproximate": "Esas execucións son anteriores ao rexistro de cola, así que a espera real será maior.",
