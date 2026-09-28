@@ -14,6 +14,7 @@ import (
 	"spatialhub_backend/internal/apitoken"
 	"spatialhub_backend/internal/cache"
 	"spatialhub_backend/internal/config"
+	emergencyhandler "spatialhub_backend/internal/emergency/handler"
 	"spatialhub_backend/internal/events"
 	geoserverclient "spatialhub_backend/internal/geoserver"
 	feedback "spatialhub_backend/internal/handler/feedback"
@@ -32,6 +33,7 @@ import (
 	"spatialhub_backend/internal/routes"
 	"spatialhub_backend/internal/services"
 	apitokenstore "spatialhub_backend/internal/store/apitoken"
+	emergencystore "spatialhub_backend/internal/store/emergency"
 	feedbackstore "spatialhub_backend/internal/store/feedback"
 	resultStore "spatialhub_backend/internal/store/result"
 	"spatialhub_backend/internal/webservice"
@@ -328,6 +330,7 @@ func buildRouteDeps(cfg *config.Config, deps *AppDependencies) routes.Deps {
 	riskHandler := riskmetricshandler.NewHandler(riskService, resultStore.NewStore(deps.DB))
 	weatherHandler := weather.NewWeatherHandler()
 	geocodingHandler := geocodinghandler.NewHandler()
+	emergencyHandler := emergencyhandler.NewHandler(emergencystore.NewStore(deps.DB), resultStore.NewStore(deps.DB))
 
 	return routes.Deps{
 		AuthServiceURL:             cfg.AuthServiceURL,
@@ -347,6 +350,7 @@ func buildRouteDeps(cfg *config.Config, deps *AppDependencies) routes.Deps {
 		RiskHandler:                riskHandler,
 		WeatherHandler:             weatherHandler,
 		GeocodingHandler:           geocodingHandler,
+		EmergencyHandler:           emergencyHandler,
 		WebserviceClient:           deps.WebserviceClient,
 	}
 }

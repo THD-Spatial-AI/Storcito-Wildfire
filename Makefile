@@ -259,6 +259,13 @@ migrate:
 	@echo "$(GREEN)Migrations complete.$(NC)"
 	@echo ""
 
+.PHONY: import-emergency-services
+import-emergency-services:
+	@echo "$(CYAN)Importing Emergency Services...$(NC)"
+	@cd wildfire-app/backend && go run cmd/import-emergency/main.go
+	@echo "$(GREEN)Emergency services imported.$(NC)"
+	@echo ""
+
 .PHONY: seed
 seed:
 	@echo "$(CYAN)Seeding Database...$(NC)"

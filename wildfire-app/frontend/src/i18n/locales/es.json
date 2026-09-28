@@ -1752,6 +1752,25 @@
       "noWebgl": "Este navegador o controlador gráfico no admite WebGL, necesario para el terreno 3D. El mapa 2D muestra los mismos resultados.",
       "failedBody": "No se pudo crear la vista 3D. El mapa 2D muestra los mismos resultados.",
       "backToMap": "Volver al mapa"
+    },
+    "emergencyServices": {
+      "title": "Servicios de emergencia",
+      "distance": "Distancia",
+      "phone": "Teléfono",
+      "email": "Correo electrónico",
+      "address": "Dirección",
+      "postcode": "Código postal",
+      "city": "Ciudad",
+      "categories": {
+        "bombeiros": "Parque de bomberos",
+        "ges": "Grupo de emergencias (GES)",
+        "policia_nacional": "Policía Nacional",
+        "garda_civil": "Guardia Civil",
+        "policia_local": "Policía local",
+        "smpc": "Protección civil municipal",
+        "avpc": "Voluntarios de protección civil",
+        "upa": "Unidad regional de policía"
+      }
     }
   },
   "landing": {

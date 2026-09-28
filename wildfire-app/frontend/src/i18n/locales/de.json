@@ -1752,6 +1752,25 @@
       "noWebgl": "Dieser Browser oder Grafiktreiber unterstützt kein WebGL, das für 3D-Gelände nötig ist. Die 2D-Karte zeigt dieselben Ergebnisse.",
       "failedBody": "Die 3D-Ansicht konnte nicht erstellt werden. Die 2D-Karte zeigt dieselben Ergebnisse.",
       "backToMap": "Zurück zur Karte"
+    },
+    "emergencyServices": {
+      "title": "Einsatzdienste",
+      "distance": "Entfernung",
+      "phone": "Telefon",
+      "email": "E-Mail",
+      "address": "Adresse",
+      "postcode": "Postleitzahl",
+      "city": "Stadt",
+      "categories": {
+        "bombeiros": "Feuerwache",
+        "ges": "Feuerwehr-/Rettungsgruppe (GES)",
+        "policia_nacional": "Nationale Polizei",
+        "garda_civil": "Guardia Civil",
+        "policia_local": "Gemeindepolizei",
+        "smpc": "Kommunaler Zivilschutz",
+        "avpc": "Zivilschutz-Freiwillige",
+        "upa": "Regionale Polizeieinheit"
+      }
     }
   },
   "landing": {

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Flame, Layers, MapPin, Route } from "lucide-react";
+import { Flame, Layers, MapPin, Route, Siren } from "lucide-react";
 import { useTranslation } from "@/i18n";
 
 import { PanelCard } from "@/components/map-controls/PanelCard";
@@ -47,6 +47,8 @@ interface OverlaysPanelProps {
   labelsVisible: boolean;
   onRoadsChange: (visible: boolean) => void;
   onLabelsChange: (visible: boolean) => void;
+  emergencyVisible?: boolean;
+  onEmergencyVisibleChange?: (visible: boolean) => void;
 }
 
 // Roads / labels toggles.
@@ -55,6 +57,8 @@ export const OverlaysPanel: FC<OverlaysPanelProps> = ({
   labelsVisible,
   onRoadsChange,
   onLabelsChange,
+  emergencyVisible = true,
+  onEmergencyVisibleChange,
 }) => {
   const { t } = useTranslation();
 
@@ -79,6 +83,19 @@ export const OverlaysPanel: FC<OverlaysPanelProps> = ({
             {t("modelResults.layers.labels", "Labels & places")}
           </span>
         </label>
+        {onEmergencyVisibleChange && (
+          <label className={`${rowClass} cursor-pointer`}>
+            <PanelCheckbox
+              checked={emergencyVisible}
+              onChange={onEmergencyVisibleChange}
+              accent="emerald"
+            />
+            <Siren className="h-3.5 w-3.5 text-muted-foreground transition-colors group-hover:text-foreground" />
+            <span className="flex-1 text-[11px] font-medium text-foreground">
+              {t("modelResults.emergencyServices.title", "Emergency services")}
+            </span>
+          </label>
+        )}
       </div>
     </PanelCard>
   );

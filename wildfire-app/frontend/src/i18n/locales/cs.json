@@ -1752,6 +1752,25 @@
       "noWebgl": "Tento prohlížeč nebo grafický ovladač nepodporuje WebGL, který je pro 3D terén nutný. Mapa 2D zobrazuje stejné výsledky.",
       "failedBody": "3D zobrazení se nepodařilo vytvořit. Mapa 2D zobrazuje stejné výsledky.",
       "backToMap": "Zpět na mapu"
+    },
+    "emergencyServices": {
+      "title": "Záchranné služby",
+      "distance": "Vzdálenost",
+      "phone": "Telefon",
+      "email": "E-mail",
+      "address": "Adresa",
+      "postcode": "PSČ",
+      "city": "Město",
+      "categories": {
+        "bombeiros": "Hasičská stanice",
+        "ges": "Zásahová skupina (GES)",
+        "policia_nacional": "Národní policie",
+        "garda_civil": "Civilní garda",
+        "policia_local": "Místní policie",
+        "smpc": "Městská civilní ochrana",
+        "avpc": "Dobrovolníci civilní ochrany",
+        "upa": "Regionální policejní jednotka"
+      }
     }
   },
   "landing": {

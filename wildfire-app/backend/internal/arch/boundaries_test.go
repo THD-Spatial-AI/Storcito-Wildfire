@@ -40,6 +40,7 @@ var storeDomain = map[string]string{
 	"users":          "users",
 	"compute_engine": "compute_engine",
 	"apitoken":       "apitoken",
+	"emergency":      "emergency",
 }
 
 // allowedCrossDomain lists the accepted cross-domain reads with a short reason.

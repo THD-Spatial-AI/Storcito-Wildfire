@@ -1312,6 +1312,25 @@
       "noWebgl": "Este navegador ou controlador gráfico não suporta WebGL, necessário para o terreno 3D. O mapa 2D mostra os mesmos resultados.",
       "failedBody": "Não foi possível criar a vista 3D. O mapa 2D mostra os mesmos resultados.",
       "backToMap": "Voltar ao mapa"
+    },
+    "emergencyServices": {
+      "title": "Serviços de emergência",
+      "distance": "Distância",
+      "phone": "Telefone",
+      "email": "E-mail",
+      "address": "Morada",
+      "postcode": "Código postal",
+      "city": "Cidade",
+      "categories": {
+        "bombeiros": "Quartel de bombeiros",
+        "ges": "Grupo de emergência (GES)",
+        "policia_nacional": "Polícia Nacional",
+        "garda_civil": "Guarda Civil",
+        "policia_local": "Polícia local",
+        "smpc": "Proteção civil municipal",
+        "avpc": "Voluntários de proteção civil",
+        "upa": "Unidade regional de polícia"
+      }
     }
   },
   "notifications": {

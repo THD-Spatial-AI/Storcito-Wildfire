@@ -45,6 +45,10 @@ import { ViewerPlayerOverlay } from "./components/ViewerPlayerOverlay";
 import { ViewerSidebarRail } from "./components/ViewerSidebarRail";
 import { ViewerStatusBanners } from "./components/ViewerStatusBanners";
 import { OverlaysPanel, RiskLegendPanel } from "./components/ViewerMapPanels";
+import {
+  EmergencyServicesOverlay,
+  useEmergencyServices,
+} from "@/features/emergency-services";
 import { MapShortcutsPanel } from "@/components/map-controls/MapShortcutsPanel";
 import { RiskTimelinePanel } from "./components/RiskTimelinePanel";
 
@@ -86,6 +90,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   const [showTimeline, setShowTimeline] = useState(false);
   const [roadsVisible, setRoadsVisible] = useState(true);
   const [labelsVisible, setLabelsVisible] = useState(false);
+  const [emergencyVisible, setEmergencyVisible] = useState(true);
 
   // Fullscreen the document.
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -131,6 +136,15 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   });
 
   useReferenceLayers(map, roadsVisible, labelsVisible, scheduleMapRenderRefresh);
+
+  const emergencyServicesQuery = useEmergencyServices(resolvedModelId, layerReady);
+
+  // Silent in production.
+  useEffect(() => {
+    if (import.meta.env.DEV && emergencyServicesQuery.error) {
+      console.error("Failed to load emergency services", emergencyServicesQuery.error);
+    }
+  }, [emergencyServicesQuery.error]);
 
   // ----- Data loading -----
 
@@ -465,6 +479,16 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
           labelsVisible={labelsVisible}
           onRoadsChange={setRoadsVisible}
           onLabelsChange={setLabelsVisible}
+          emergencyVisible={emergencyVisible}
+          onEmergencyVisibleChange={setEmergencyVisible}
+        />
+      )}
+
+      {layerReady && map && (
+        <EmergencyServicesOverlay
+          map={map}
+          services={emergencyServicesQuery.data}
+          visible={emergencyVisible}
         />
       )}
 

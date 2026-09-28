@@ -1752,6 +1752,25 @@
       "noWebgl": "Deze browser of grafische driver ondersteunt geen WebGL, dat nodig is voor 3D-terrein. De 2D-kaart toont dezelfde resultaten.",
       "failedBody": "De 3D-weergave kon niet worden gemaakt. De 2D-kaart toont dezelfde resultaten.",
       "backToMap": "Terug naar de kaart"
+    },
+    "emergencyServices": {
+      "title": "Hulpdiensten",
+      "distance": "Afstand",
+      "phone": "Telefoon",
+      "email": "E-mail",
+      "address": "Adres",
+      "postcode": "Postcode",
+      "city": "Stad",
+      "categories": {
+        "bombeiros": "Brandweerkazerne",
+        "ges": "Brandweer-/reddingsgroep (GES)",
+        "policia_nacional": "Nationale politie",
+        "garda_civil": "Guardia Civil",
+        "policia_local": "Lokale politie",
+        "smpc": "Gemeentelijke burgerbescherming",
+        "avpc": "Vrijwilligers burgerbescherming",
+        "upa": "Regionale politie-eenheid"
+      }
     }
   },
   "landing": {
