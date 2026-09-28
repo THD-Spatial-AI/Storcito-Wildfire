@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import * as Cesium from "cesium";
 import "cesium/Build/Cesium/Widgets/widgets.css";
-import { Plus, Minus } from "lucide-react";
+import { Plus, Minus, Mountain } from "lucide-react";
 import { useTranslation } from "@/i18n";
 import { withCartoBasemapKey } from "@/utils/carto-basemap";
 
@@ -55,6 +55,14 @@ const DRAPE_ALPHA_WITH_ROADS = 0.8;
 const ZOOM_IN_FACTOR = 0.4;
 const ZOOM_OUT_FACTOR = -0.6;
 const PAN_FRACTION = 0.25;
+// Relief exaggeration options
+const RELIEF_OPTIONS = [1, 2, 3, 5] as const;
+const DEFAULT_RELIEF = 3;
+// North-west hillshade light
+const LIGHT_AZIMUTH_DEG = 315;
+const LIGHT_ELEVATION_DEG = 45;
+// No-AOI fallback
+const FALLBACK_LIGHT_CENTER = Cesium.Cartographic.fromDegrees(-8.0, 42.8);
 
 // Same per-level GeoServer styles as the 2D viewer (legend checkboxes apply).
 const RISK_LEVEL_STYLES: Record<number, string> = {
@@ -102,6 +110,22 @@ function aoiRectangle(aoi: unknown): Cesium.Rectangle | null {
   return Cesium.Rectangle.fromDegrees(minX, minY, maxX, maxY);
 }
 
+/** Hillshade light direction */
+function hillshadeLightDirection(rectangle: Cesium.Rectangle | null): Cesium.Cartesian3 {
+  const center = rectangle ? Cesium.Rectangle.center(rectangle) : FALLBACK_LIGHT_CENTER;
+  const enu = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartographic.toCartesian(center));
+  const azimuth = Cesium.Math.toRadians(LIGHT_AZIMUTH_DEG);
+  const elevation = Cesium.Math.toRadians(LIGHT_ELEVATION_DEG);
+  // Negated sun vector
+  const local = new Cesium.Cartesian3(
+    -Math.cos(elevation) * Math.sin(azimuth),
+    -Math.cos(elevation) * Math.cos(azimuth),
+    -Math.sin(elevation)
+  );
+  const direction = Cesium.Matrix4.multiplyByPointAsVector(enu, local, new Cesium.Cartesian3());
+  return Cesium.Cartesian3.normalize(direction, direction);
+}
+
 /** 3D terrain view rendered inside the map container, under the shared 2D overlays. */
 export const CesiumWildfire3DView = ({
   wmsUrl,
@@ -121,9 +145,14 @@ export const CesiumWildfire3DView = ({
   const { t } = useTranslation();
   const [initError, setInitError] = useState<string | null>(null);
   const [webglMissing, setWebglMissing] = useState(false);
+  const [relief, setRelief] = useState<number>(DEFAULT_RELIEF);
+  const reliefRef = useRef(relief);
+  reliefRef.current = relief;
   // Refs mirror the latest props for init(), which may run deferred.
   const drapeRef = useRef({ wmsUrl, layerName });
   drapeRef.current = { wmsUrl, layerName };
+  const aoiRef = useRef(aoi);
+  aoiRef.current = aoi;
   const aoiRectRef = useRef<Cesium.Rectangle | null>(null);
   {
     const r = aoiRectangle(aoi);
@@ -256,10 +285,10 @@ export const CesiumWildfire3DView = ({
       viewer.scene.globe.depthTestAgainstTerrain = true;
 
       if (TERRAIN_URL) {
-        viewer.scene.verticalExaggeration = 2.5;
+        viewer.scene.verticalExaggeration = reliefRef.current;
         viewer.scene.globe.enableLighting = true;
         viewer.scene.light = new Cesium.DirectionalLight({
-          direction: new Cesium.Cartesian3(0.35, -0.5, -0.8),
+          direction: hillshadeLightDirection(aoiRectangle(aoiRef.current)),
           intensity: 2.0,
         });
       }
@@ -309,12 +338,12 @@ export const CesiumWildfire3DView = ({
       labelsLayerRef.current.show = labelsVisibleRef.current;
 
       // Open centered on the AOI at a tilted angle.
-      const rectangle = aoiRectangle(aoi);
+      const rectangle = aoiRectangle(aoiRef.current);
       if (rectangle) {
         const sphere = Cesium.BoundingSphere.fromRectangle3D(rectangle);
         viewer.camera.viewBoundingSphere(
           sphere,
-          new Cesium.HeadingPitchRange(0, Cesium.Math.toRadians(-40), sphere.radius * 2.6)
+          new Cesium.HeadingPitchRange(0, Cesium.Math.toRadians(-30), sphere.radius * 2.6)
         );
         viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY); // free navigation
       }
@@ -368,6 +397,13 @@ export const CesiumWildfire3DView = ({
       layer.alpha = roadsVisible ? DRAPE_ALPHA_WITH_ROADS : 1.0;
     });
   }, [roadsVisible, labelsVisible]);
+
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    if (!viewer || viewer.isDestroyed() || !TERRAIN_URL) return;
+    viewer.scene.verticalExaggeration = relief;
+    viewer.scene.requestRender();
+  }, [relief]);
 
   const zoom = (factor: number) => {
     const v = viewerRef.current;
@@ -455,6 +491,37 @@ export const CesiumWildfire3DView = ({
           <Minus className="h-4 w-4" />
         </button>
       </div>
+
+      {/* Relief exaggeration control */}
+      {TERRAIN_URL && (
+        <div
+          role="group"
+          aria-label={t("modelResults.terrain.relief", "Relief exaggeration")}
+          title={t("modelResults.terrain.relief", "Relief exaggeration")}
+          className="absolute z-[6] flex flex-col overflow-hidden rounded-lg border border-border bg-white/95 shadow-lg backdrop-blur"
+          style={{ top: "8.5rem", right: "calc(1rem + var(--sidebar-offset, 0rem))" }}
+        >
+          <div className="flex h-8 w-9 items-center justify-center text-slate-500">
+            <Mountain className="h-4 w-4" />
+          </div>
+          {RELIEF_OPTIONS.map((option) => (
+            <button
+              key={option}
+              type="button"
+              aria-pressed={relief === option}
+              aria-label={t("modelResults.terrain.reliefOption", "{{value}}× relief", { value: option })}
+              onClick={() => setRelief(option)}
+              className={`flex h-8 w-9 items-center justify-center border-t border-border text-[11px] font-medium transition-colors ${
+                relief === option
+                  ? "bg-slate-800 text-white"
+                  : "text-slate-700 hover:bg-slate-100"
+              }`}
+            >
+              {option}×
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

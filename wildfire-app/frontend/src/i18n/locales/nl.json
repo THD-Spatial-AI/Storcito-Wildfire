@@ -1751,7 +1751,9 @@
       "failedTitle": "3D-terrein kon niet starten",
       "noWebgl": "Deze browser of grafische driver ondersteunt geen WebGL, dat nodig is voor 3D-terrein. De 2D-kaart toont dezelfde resultaten.",
       "failedBody": "De 3D-weergave kon niet worden gemaakt. De 2D-kaart toont dezelfde resultaten.",
-      "backToMap": "Terug naar de kaart"
+      "backToMap": "Terug naar de kaart",
+      "relief": "Reliëfoverdrijving",
+      "reliefOption": "{{value}}× reliëf"
     }
   },
   "landing": {

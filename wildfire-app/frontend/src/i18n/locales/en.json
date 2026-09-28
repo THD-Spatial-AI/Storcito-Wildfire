@@ -1751,7 +1751,9 @@
       "failedTitle": "3D terrain could not start",
       "noWebgl": "This browser or graphics driver does not support WebGL, which 3D terrain needs. The 2D map has the same results.",
       "failedBody": "The 3D view could not be created. The 2D map has the same results.",
-      "backToMap": "Back to the map"
+      "backToMap": "Back to the map",
+      "relief": "Relief exaggeration",
+      "reliefOption": "{{value}}× relief"
     }
   },
   "landing": {

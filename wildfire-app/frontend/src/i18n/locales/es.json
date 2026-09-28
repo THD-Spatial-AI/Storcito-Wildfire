@@ -1751,7 +1751,9 @@
       "failedTitle": "No se pudo iniciar el terreno 3D",
       "noWebgl": "Este navegador o controlador gráfico no admite WebGL, necesario para el terreno 3D. El mapa 2D muestra los mismos resultados.",
       "failedBody": "No se pudo crear la vista 3D. El mapa 2D muestra los mismos resultados.",
-      "backToMap": "Volver al mapa"
+      "backToMap": "Volver al mapa",
+      "relief": "Exageración del relieve",
+      "reliefOption": "Relieve {{value}}×"
     }
   },
   "landing": {

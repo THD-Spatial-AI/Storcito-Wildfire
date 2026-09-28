@@ -1751,7 +1751,9 @@
       "failedTitle": "3D-Gelände konnte nicht starten",
       "noWebgl": "Dieser Browser oder Grafiktreiber unterstützt kein WebGL, das für 3D-Gelände nötig ist. Die 2D-Karte zeigt dieselben Ergebnisse.",
       "failedBody": "Die 3D-Ansicht konnte nicht erstellt werden. Die 2D-Karte zeigt dieselben Ergebnisse.",
-      "backToMap": "Zurück zur Karte"
+      "backToMap": "Zurück zur Karte",
+      "relief": "Reliefüberhöhung",
+      "reliefOption": "{{value}}× Überhöhung"
     }
   },
   "landing": {
