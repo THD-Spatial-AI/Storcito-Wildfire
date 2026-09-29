@@ -24,6 +24,55 @@ The application is part of the **SpatialHub** ecosystem at TH Deggendorf, runnin
 
 ---
 
+## Visualizations
+
+Figures from the accompanying manuscript, *Coverage-aware wildfire-danger mapping in Galicia, Spain: workflow and structural sensitivity* (in preparation). The example outputs come from a saved run for a 65.5 km² area near Santiago de Compostela on 2 May 2026.
+
+### Wildfire-danger map
+
+<p align="center">
+  <img src=".github/assets/figures/main-map.png" alt="Wildfire-danger classes near Santiago de Compostela on 2 May 2026, with a configured-weight coverage panel and a Galicia locator" width="100%">
+</p>
+
+Danger classes 1–5 on a ≈21.7 m grid (WGS 84 / UTM zone 29N), with a panel showing configured-weight coverage (the share of model inputs available in each cell) and a Galicia locator. Only classes 2–4 occur in this output.
+
+### Processing workflow
+
+<p align="center">
+  <img src=".github/assets/figures/workflow.png" alt="Workflow from data acquisition and dated source selection through harmonisation and AHP scoring to delivery" width="90%">
+</p>
+
+Source acquisition, dated selection, harmonisation onto a common grid, scoring and Analytic Hierarchy Process (AHP) aggregation, and delivery through GeoServer to the web viewer.
+
+### Study domain
+
+<p align="center">
+  <img src=".github/assets/figures/study-domain.png" alt="Galicia with four overlapping processing tiles and the example area near Santiago de Compostela" width="60%">
+</p>
+
+Galicia, the four overlapping processing tiles used for regional runs, and the example area.
+
+### Input factors, danger index and coverage
+
+<p align="center">
+  <img src=".github/assets/figures/factors-and-coverage.png" alt="Four input factor scores, the continuous danger index, the classified map and coverage for 2 May 2026" width="90%">
+</p>
+
+Four representative factor scores (elevation, fuel, infrastructure and FWI), the continuous danger index, the classified map and configured-weight coverage.
+
+### Structural sensitivity
+
+<p align="center">
+  <img src=".github/assets/figures/sensitivity.png" alt="Changes in class area and class agreement under factor removal, weight changes, alternative classification and spatial averaging" width="80%">
+</p>
+
+How the map changes when single factors are removed, topic weights change by ±20%, class boundaries shift or cells are averaged spatially. Shown for the 14 scenarios with the lowest agreement with the baseline map.
+
+> [!NOTE]
+> The example run used an earlier version of the scoring rules than the current engine. The danger index is experimental and has not been validated against observed fires.
+
+---
+
 ## Architecture
 
 The full system architecture is documented on the project's MkDocs documentation site (see `docs/`). Run `mkdocs serve` to browse it locally.
@@ -65,7 +114,7 @@ The full system architecture is documented on the project's MkDocs documentation
 - `libs/` — shared React component libraries (`@spatialhub/ui`, `auth`, `forms`, `i18n`)
 
 **Infrastructure**
-- PostgreSQL 15 + PostGIS for spatial and application data
+- PostgreSQL 17 + PostGIS for spatial and application data
 - Keycloak 26 for OAuth2/OIDC identity management
 - Redis 7 for sessions, caching, pub/sub, and task queue
 - Nginx reverse proxy with SSL termination
@@ -74,112 +123,13 @@ The full system architecture is documented on the project's MkDocs documentation
 
 ---
 
-## Installation & Setup
+## Getting Started
 
-### Prerequisites
-
-- Docker & Docker Compose
-- Go 1.24+
-- Node.js 20+
-
-### Quick Start
+Installation, local development, Makefile targets and environment variables are described in **[INSTALLATION.md](INSTALLATION.md)**. For a full local setup, run:
 
 ```bash
 make setup
 ```
-
-`make setup` runs the full sequence: copies `.env.example` files, installs npm + Go dependencies, pulls Docker images, starts PostgreSQL + Redis, initialises Keycloak, starts platform services, and runs migrations + seed. All components (platform-core, infrastructure, libs) live inside this repository — nothing is cloned from external repos.
-
-### Step-by-step
-
-```bash
-# Copy .env files (edit them before proceeding)
-make env-setup
-
-# Install dependencies
-make install
-
-# Start infrastructure (Postgres, Redis)
-make up-db
-
-# Start Keycloak and configure realm + client secrets
-make up-keycloak
-make init-keycloak
-
-# Start platform services (auth-service, webservice, geoservice)
-make up
-
-# Run DB migrations
-make migrate
-
-# Seed initial data
-make seed
-```
-
-### Running the application locally
-
-```bash
-# Backend
-cd wildfire-app/backend && go run cmd/main.go
-
-# Frontend (new terminal)
-cd wildfire-app/frontend && npm run dev
-```
-
-Open `http://localhost:3000`. Default credentials after seeding:
-
-| Field    | Value               |
-|----------|---------------------|
-| Email    | `admin@storcito.de` |
-| Password | `12345678`          |
-
-### Docker Compose
-
-```bash
-# Start all wildfire-app services (frontend + backend)
-make up-wildfire-app
-
-# Stop
-make down-wildfire-app
-
-# Logs
-make logs-wildfire-app
-```
-
-Services exposed:
-- Frontend: `http://localhost:3000`
-- Backend API: `http://localhost:8000`
-- Keycloak: `http://localhost:8080`
-
----
-
-## Development
-
-### Makefile targets
-
-| Command | Description |
-|---|---|
-| `make up` | Start Platform Core (Postgres, Redis, Keycloak, auth-service, webservice, geoservice) |
-| `make down` | Stop Platform Core |
-| `make up-wildfire-app` | Start Wildfire App (frontend + backend) |
-| `make up-geoserver` | Start GeoServer stack |
-| `make migrate` | Run backend DB migrations |
-| `make seed` | Seed the database |
-| `make install` | Install all npm + Go dependencies |
-
-### Environment variables
-
-Copy `wildfire-app/backend/.env.example` to `wildfire-app/backend/.env` and adjust:
-
-| Variable | Description |
-|---|---|
-| `APP_URL` | Public URL of the backend |
-| `DB_HOST/PORT/DATABASE` | PostgreSQL connection |
-| `REDIS_HOST/PORT` | Redis connection |
-| `KEYCLOAK_URL` / `KEYCLOAK_REALM` | Keycloak OIDC endpoint |
-| `WEBSERVICE_SERVICE_URL` | Simulation dispatcher URL |
-| `GEOSERVER_SERVICE_URL` | Internal geoservice URL |
-| `CALLBACK_SECRET` | Shared secret for simulation engine callbacks |
 
 ---
 

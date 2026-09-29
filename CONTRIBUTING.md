@@ -161,7 +161,7 @@ If you are updating docs:
 
 ## Project-Specific Notes
 
-- **Setup:** follow [Installation & Setup](README.md#installation--setup) in the README; `make setup` runs the full first-time setup and `make install` installs npm and Go dependencies.
+- **Setup:** follow [INSTALLATION.md](INSTALLATION.md); `make setup` runs the full first-time setup and `make install` installs npm and Go dependencies.
 - **Backend tests:** `cd wildfire-app/backend && go test ./...`
 - **Frontend tests and lint:** `cd wildfire-app/frontend && npm test -- --run` and `npm run lint`
 - **Frontend build check:** `cd wildfire-app/frontend && npm run build`
