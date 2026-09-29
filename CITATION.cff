@@ -1,17 +1,29 @@
-# CITATION.cff — Update this file with your project's citation information.
-# See https://citation-file-format.github.io/ for the full specification.
-
 cff-version: 1.2.0
-title: "Project Title"
+title: "STORCITO Wildfire: Wildfire Risk Assessment & Simulation Platform"
 message: "If you use this software, please cite it as below."
 type: software
 authors:
-  - family-names: "Last Name"
-    given-names: "First Name"
-    orcid: "https://orcid.org/0000-0000-0000-0000"
+  - family-names: "Khan"
+    given-names: "Asim"
+    email: "asim.khan@th-deg.de"
     affiliation: "BigGeoData & Spatial AI, Technische Hochschule Deggendorf"
-repository-code: "https://github.com/THD-Spatial-AI/github-template"
-url: "https://THD-Spatial-AI.github.io/github-template"
+  - family-names: "Miranda Castillo"
+    given-names: "Ricardo"
+    affiliation: "BigGeoData & Spatial AI, Technische Hochschule Deggendorf"
+abstract: >-
+  Web platform for daily wildfire-danger mapping in Galicia, Spain. It dispatches
+  requests to the STORCITO wildfire calculation engine and delivers continuous
+  and classified danger surfaces, input-coverage rasters and factor layers
+  through GeoServer to a React/Cesium map viewer. Developed within the STORCITO
+  project, funded by the European Union's Horizon Europe programme under grant
+  agreement No. 101182153.
+keywords:
+  - wildfire danger
+  - Galicia
+  - Fire Weather Index
+  - Analytic Hierarchy Process
+  - Earth observation
+  - web mapping
+repository-code: "https://github.com/THD-Spatial-AI/Storcito-Wildfire"
 license: MIT
 version: "0.1.0"
-date-released: "2026-01-01"

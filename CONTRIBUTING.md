@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for taking the time to contribute to **[PROJECT_NAME]**.
+Thank you for taking the time to contribute to **STORCITO Wildfire**.
 
 This project welcomes contributions such as bug reports, feature requests, documentation improvements, code changes, and general feedback.
 
@@ -34,8 +34,7 @@ Before creating a new issue or pull request, please:
 
 Use the project issue tracker for bug reports, feature requests, and documentation issues.
 
-- **Issue tracker:** [INSERT_ISSUE_TRACKER_URL]
-- **Discussions / Questions (optional):** [INSERT_DISCUSSION_URL_OR_REMOVE]
+- **Issue tracker:** <https://github.com/THD-Spatial-AI/Storcito-Wildfire/issues>
 
 When reporting an issue, please include:
 
@@ -54,25 +53,30 @@ The exact setup steps may differ by project. Please check the `README.md` and pr
 If you do not have direct write access, fork the repository first, then clone your fork:
 
 ```bash
-git clone [REPOSITORY_URL]
-cd [REPOSITORY_DIRECTORY]
+git clone https://github.com/THD-Spatial-AI/Storcito-Wildfire.git
+cd Storcito-Wildfire
 ```
 
 If you have direct write access, clone the main repository instead.
 
 ### 2) Create a branch for your change
 
-Create a dedicated branch for your bugfix, feature, or documentation update:
+Create a dedicated branch for your bugfix, feature, or documentation update. Branch names are checked in CI and must follow `<type>/<description>`:
 
 ```bash
 git checkout -b type/short-description
 ```
 
+- **type:** `feat`, `feature`, `fix`, `bugfix`, `hotfix`, `release`, `chore`, `docs`, `refactor`, `test`, `style` or `perf`
+- **description:** lowercase letters, digits, hyphens and dots, with no leading, trailing or doubled separators
+
 Examples:
 
 - `fix/login-validation`
-- `feat/export-yaml`
+- `feat/export-geotiff`
 - `docs/readme-setup`
+
+`main`, `dev`, `develop` and `staging` are exempt.
 
 ### 3) Make your changes
 
@@ -89,14 +93,14 @@ Before submitting a pull request:
 
 ### 5) Commit your changes
 
-Use clear commit messages that explain what changed.
+Commit messages are checked in CI and must follow [Conventional Commits](https://www.conventionalcommits.org):
 
 ```bash
-git add .
-git commit -m "Short summary of the change"
+git add <files>
+git commit -m "fix(map): keep the legend visible on small screens"
 ```
 
-For larger changes, include a more descriptive commit message when needed.
+For larger changes, add a body that explains why the change was made.
 
 ### 6) Push your branch
 
@@ -127,21 +131,22 @@ Before submitting a pull request, check:
 - [ ] I checked for sensitive information (keys, credentials, private data)
 - [ ] I linked related issues (if applicable)
 
-## Commit Message Guidance (Recommended)
+## Commit Message Rules
 
-Keep commit messages clear and specific.
+Format: `<type>(<scope>): <subject>` or `<type>: <subject>`.
+
+- **Allowed types:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`
+- The subject starts with a lowercase letter, uses the imperative mood and does not end with a period
+- The full subject line is at most 100 characters
+- Merge, revert and initial commits are skipped
 
 Good examples:
 
-- `Fix CSV upload validation for empty headers`
-- `Add YAML export button to model builder`
-- `Update installation steps in README`
+- `fix(upload): reject CSV files with empty headers`
+- `feat(results): add GeoTIFF export for danger classes`
+- `docs: update installation steps in README`
 
-Avoid vague messages such as:
-
-- `fix`
-- `changes`
-- `update stuff`
+Avoid vague messages such as `fix`, `changes` or `update stuff`.
 
 ## Documentation Contributions
 
@@ -154,41 +159,22 @@ If you are updating docs:
 - Check links and commands
 - Match the style used in existing documentation
 
-## Project-Specific Notes (Template Placeholder)
+## Project-Specific Notes
 
-Replace or remove this section in project repositories.
-
-Examples of what may go here:
-
-- Setup links (Windows/Linux/Docker)
-- Testing commands (`npm test`, `pytest`, `go test ./...`)
-- Branching strategy
-- Review/approval rules
-- CI requirements
-- Changelog policy
+- **Setup:** follow [Installation & Setup](README.md#installation--setup) in the README; `make setup` runs the full first-time setup and `make install` installs npm and Go dependencies.
+- **Backend tests:** `cd wildfire-app/backend && go test ./...`
+- **Frontend tests and lint:** `cd wildfire-app/frontend && npm test -- --run` and `npm run lint`
+- **Frontend build check:** `cd wildfire-app/frontend && npm run build`
+- **Data and credentials:** never commit `.env` files, API keys, callback secrets or user data. Data sources used by the platform must be listed with their licence in [ATTRIBUTIONS.md](ATTRIBUTIONS.md).
+- **Wildfire engine:** the STORCITO calculation engine lives in a separate repository; changes to scoring rules, weights or FWI conventions belong there.
 
 ## Licensing of Contributions
 
 By contributing to this project, you confirm that:
 
 - your contribution is your own work (or you have the right to submit it), and
-- you agree that your contribution will be licensed under the same license as this repository.
+- you agree that your contribution will be licensed under the [MIT License](LICENSE) of this repository.
 
 ## Need Help?
 
-If you are unsure where to start, open an issue or discussion and ask. Maintainers can help point you in the right direction.
-
----
-
-## Maintainer Note (Template)
-
-> [!CAUTION]
-> This file is a template. Replace placeholders such as:
-
-- `[PROJECT_NAME]`
-- `[INSERT_ISSUE_TRACKER_URL]`
-- `[INSERT_DISCUSSION_URL_OR_REMOVE]`
-- `[REPOSITORY_URL]`
-- `[REPOSITORY_DIRECTORY]`
-
-Remove sections that do not apply to your project.
+If you are unsure where to start, open an issue and ask. Maintainers can help point you in the right direction.
