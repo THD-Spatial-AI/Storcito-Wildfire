@@ -188,7 +188,7 @@ MIT License — Copyright (c) 2026 BigGeoData & Spatial AI, Technische Hochschul
 
 ## Acknowledgments
 
-Developed by the **BigGeoData & Spatial AI** research group at Technische Hochschule Deggendorf, in collaboration with Universidade de Vigo, which developed the STORCITO wildfire calculation engine.
+Developed by the **BigGeoData & Spatial AI** research group at Technische Hochschule Deggendorf, in collaboration with Universidade de Vigo, which developed the [STORCITO wildfire risk engine](https://github.com/THD-Spatial-AI/storcito-wildfire-risk-engine).
 
 This project is being developed in the context of the research project STORCITO — *Sustainable Transformation Of Rural Communities via Technical, social and Organizational innovations* (<https://cordis.europa.eu/project/id/101182153>). STORCITO is funded by the European Union's Horizon Europe research and innovation programme under grant agreement No. 101182153. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research Executive Agency (REA). Neither the European Union nor the granting authority can be held responsible for them.
 

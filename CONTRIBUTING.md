@@ -166,7 +166,7 @@ If you are updating docs:
 - **Frontend tests and lint:** `cd wildfire-app/frontend && npm test -- --run` and `npm run lint`
 - **Frontend build check:** `cd wildfire-app/frontend && npm run build`
 - **Data and credentials:** never commit `.env` files, API keys, callback secrets or user data. Data sources used by the platform must be listed with their licence in [ATTRIBUTIONS.md](ATTRIBUTIONS.md).
-- **Wildfire engine:** the STORCITO calculation engine lives in a separate repository; changes to scoring rules, weights or FWI conventions belong there.
+- **Wildfire engine:** the STORCITO calculation engine lives in a separate repository, [storcito-wildfire-risk-engine](https://github.com/THD-Spatial-AI/storcito-wildfire-risk-engine); changes to scoring rules, weights or FWI conventions belong there.
 
 ## Licensing of Contributions
 

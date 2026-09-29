@@ -85,6 +85,8 @@ Licences below were read from the installed packages.
 
 ### Wildfire Calculation Engine (separate repository)
 
+Source: [storcito-wildfire-risk-engine](https://github.com/THD-Spatial-AI/storcito-wildfire-risk-engine). Its own [ATTRIBUTIONS.md](https://github.com/THD-Spatial-AI/storcito-wildfire-risk-engine/blob/main/ATTRIBUTIONS.md) lists the full data and software credits.
+
 The STORCITO engine uses [GDAL](https://gdal.org) (MIT; cite as <https://doi.org/10.5281/zenodo.5884351>), [GRASS GIS](https://grass.osgeo.org) (GPL-2.0-or-later), NumPy, Rasterio, GeoPandas and Matplotlib.
 
 ## Research
