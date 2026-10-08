@@ -14,6 +14,11 @@ import { EDIT_BADGE_PROPERTY } from "./usePolygonStyles";
 import { platformModifierKeyOnly } from "ol/events/condition";
 import type { StyleLike } from "ol/style/Style";
 
+const setCursor = (map: Map, cursor: string) => {
+  const viewport = map.getViewport();
+  if (viewport) viewport.style.cursor = cursor;
+};
+
 interface PolygonDrawingLabels {
   clickToClose?: string;
   start?: string;
@@ -284,6 +289,7 @@ export const usePolygonDrawing = ({
     const handleBadgeHover = (event: MapBrowserEvent) => {
       if (event.dragging) return;
       const viewport = map.getViewport();
+      if (!viewport) return;
       if (isOnBadge(event.pixel)) {
         viewport.style.cursor = "pointer";
       } else if (viewport.style.cursor === "pointer") {
@@ -372,10 +378,10 @@ export const usePolygonDrawing = ({
           isNearStartPoint = nearStart;
           const features = startPointSourceRef.current?.getFeatures();
           features?.[0]?.set("isNearStart", isNearStartPoint);
-          map.getViewport().style.cursor = isNearStartPoint ? "pointer" : "crosshair";
+          setCursor(map, isNearStartPoint ? "pointer" : "crosshair");
         });
 
-        map.getViewport().style.cursor = "crosshair";
+        setCursor(map, "crosshair");
         onDrawingChangeRef.current?.(true);
       });
 
@@ -383,7 +389,7 @@ export const usePolygonDrawing = ({
         startPointSourceRef.current?.clear();
         startCoord = null;
         isNearStartPoint = false;
-        map.getViewport().style.cursor = "";
+        setCursor(map, "");
         onPointCountChangeRef.current?.(0);
 
         const polygon = event.feature.getGeometry() as Polygon;
@@ -462,7 +468,7 @@ export const usePolygonDrawing = ({
         currentPointCount = 0;
       });
 
-      map.getViewport().addEventListener("contextmenu", handleContextMenu);
+      map.getViewport()?.addEventListener("contextmenu", handleContextMenu);
 
       handleKeyDown = (e: KeyboardEvent) => {
         if (e.key !== "Escape") return;
@@ -471,7 +477,7 @@ export const usePolygonDrawing = ({
         startPointSourceRef.current?.clear();
         startCoord = null;
         isNearStartPoint = false;
-        map.getViewport().style.cursor = "";
+        setCursor(map, "");
         onPointCountChangeRef.current?.(0);
         onDrawingChangeRef.current?.(false);
         vectorSourceRef.current?.clear();
@@ -501,7 +507,7 @@ export const usePolygonDrawing = ({
       map.un("pointermove", handleBadgeHover);
       if (handleKeyDown) document.removeEventListener("keydown", handleKeyDown);
       if (handleContextMenu)
-        map.getViewport().removeEventListener("contextmenu", handleContextMenu);
+        map.getViewport()?.removeEventListener("contextmenu", handleContextMenu);
       if (drawInteractionRef.current) map.removeInteraction(drawInteractionRef.current);
       if (modifyInteractionRef.current) map.removeInteraction(modifyInteractionRef.current);
       if (modifyDebounceRef.current) clearTimeout(modifyDebounceRef.current);
@@ -552,7 +558,7 @@ export const usePolygonDrawing = ({
       drawInteractionRef.current?.abortDrawing();
       startPointSourceRef.current?.clear();
       if (map) {
-        map.getViewport().style.cursor = "";
+        setCursor(map, "");
       }
       onPointCountChangeRef.current?.(0);
       onDrawingChangeRef.current?.(false);

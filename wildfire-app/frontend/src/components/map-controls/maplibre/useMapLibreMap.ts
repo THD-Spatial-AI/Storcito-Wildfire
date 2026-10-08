@@ -212,7 +212,8 @@ export function useMapLibreMap(olMap: OlMap, visible: boolean, isDrawing: boolea
       createdMap.on('styledata', resizeMaps);
       createdMap.on('load', resizeMaps);
 
-      const olViewport = olMap.getViewport();
+      // Only undefined in workers
+      const olViewport = olMap.getViewport() as HTMLElement;
       const mlCanvas = container.querySelector('canvas') as HTMLCanvasElement | null;
 
       const onWheel = (e: WheelEvent) => {

@@ -63,6 +63,7 @@ export const useAdministrativeRegionSelection = ({
     if (!map || !enabled) return;
 
     const viewport = map.getViewport();
+    if (!viewport) return;
     const previousCursor = viewport.style.cursor;
     let activeController: AbortController | null = null;
     let busy = false;

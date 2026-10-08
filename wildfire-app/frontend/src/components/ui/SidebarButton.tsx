@@ -1,10 +1,9 @@
 import React from "react";
-import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@spatialhub/ui";
 
 interface SidebarButtonProps {
-  icon: LucideIcon;
+  icon: React.ComponentType<{ className?: string }>;
   tooltip: string;
   onClick: () => void;
   isActive?: boolean;

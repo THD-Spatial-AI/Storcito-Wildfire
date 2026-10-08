@@ -1,6 +1,7 @@
 import SidebarButton from "@/components/ui/SidebarButton";
 import { Authorized } from "@/middleware/authorized";
-import { Github, LayoutGrid, type LucideIcon } from "lucide-react";
+import { LayoutGrid, type LucideIcon } from "lucide-react";
+import { GithubIcon } from "@/components/ui/GithubIcon";
 import { ADMIN_PATH, GITHUB_URL } from "./constants";
 import { LayersSheet } from "./LayersSheet";
 import { ProfileMenu } from "./ProfileMenu";
@@ -75,7 +76,7 @@ export const AppLayoutSidebar: React.FC<AppLayoutSidebarProps> = ({
 
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-3 text-center">
         <SidebarButton
-          icon={Github}
+          icon={GithubIcon}
           tooltip="GitHub repository"
           onClick={() => window.open(GITHUB_URL, "_blank", "noopener,noreferrer")}
         />

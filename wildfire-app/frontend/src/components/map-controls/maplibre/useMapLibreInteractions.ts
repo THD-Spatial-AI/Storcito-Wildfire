@@ -31,7 +31,8 @@ export function useMapLibreInteractions(
 
     return () => {
       olMap.un('click', handleClick);
-      olMap.getTargetElement().style.cursor = '';
+      const target = olMap.getTargetElement();
+      if (target) target.style.cursor = '';
     };
   }, [mapRef, olMap, visible]);
 }
