@@ -19,5 +19,6 @@ venv/
 
 # Generated local terrain tiles
 platform-core/terrain/
-docs/
+/docs/
 upload-example/
+research-paper/

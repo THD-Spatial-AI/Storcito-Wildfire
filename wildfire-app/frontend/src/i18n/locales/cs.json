@@ -1763,7 +1763,9 @@
       "challenge": "Výzva",
       "platform": "Platforma",
       "personas": "Pro koho",
-      "contact": "Kontakt"
+      "contact": "Kontakt",
+      "docs": "Dokumentace",
+      "github": "GitHub"
     },
     "openApp": "Otevřít aplikaci Wildfire",
     "languageLabel": "Jazyk",

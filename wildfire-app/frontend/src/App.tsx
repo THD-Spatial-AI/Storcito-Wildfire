@@ -22,6 +22,7 @@ const AreaSelect = lazy(() => import("@/features/configurator/region-selector/Ar
 const ModelResultsViewer = lazy(() => import("@/features/model-results").then(module => ({ default: module.ModelResultsViewer })));
 const ComparisonPage = lazy(() => import("@/features/comparison").then(module => ({ default: module.ComparisonPage })));
 const LegalPage = lazy(() => import("@/pages/legal/LegalPage"));
+const DocsPage = lazy(() => import("@/pages/docs/DocsPage"));
 const LandingPage = lazy(() => import("@/features/landing").then(module => ({ default: module.LandingPage })));
 
 import { ProductTour } from "@/features/guided-tour/ProductTour";
@@ -75,6 +76,7 @@ const App: React.FC<AppProps> = () => {
                   <Route path="/app/feedback" element={<FeedbackComponent />} />
                 </Route>
 
+                <Route path="/docs/:section?" element={<AppLayout><DocsPage /></AppLayout>} />
                 <Route path="/legal" element={<AppLayout><LegalPage /></AppLayout>} />
                 <Route path="/privacy" element={<LegalPage />} />
                 <Route path="/consent" element={<LegalPage />} />

@@ -2075,7 +2075,9 @@
       "challenge": "O desafio",
       "platform": "Plataforma",
       "personas": "Para quem é",
-      "contact": "Contacto"
+      "contact": "Contacto",
+      "docs": "Documentação",
+      "github": "GitHub"
     },
     "openApp": "Abrir a aplicação Wildfire",
     "languageLabel": "Idioma",

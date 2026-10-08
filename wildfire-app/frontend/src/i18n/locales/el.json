@@ -4,7 +4,9 @@
       "challenge": "Η πρόκληση",
       "platform": "Πλατφόρμα",
       "personas": "Για ποιους",
-      "contact": "Επικοινωνία"
+      "contact": "Επικοινωνία",
+      "docs": "Τεκμηρίωση",
+      "github": "GitHub"
     },
     "openApp": "Άνοιγμα της εφαρμογής Wildfire",
     "languageLabel": "Γλώσσα",

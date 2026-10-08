@@ -21,6 +21,8 @@ import {
 import { submitPublicFeedback } from "@/features/user-feedback";
 import { PrivacyConsentDialog, PrivacyBanner } from "@/features/privacy-controls";
 import { useTranslation, languages, changeLanguage, type LanguageCode } from "@/i18n";
+import { GithubIcon } from "@/components/ui/GithubIcon";
+import { GITHUB_URL } from "@/components/app-layout/app-layout/constants";
 
 const IMG = "/images/landing-page";
 
@@ -30,6 +32,9 @@ const NAV = [
   { key: "personas", href: "#personas" },
   { key: "contact", href: "#contact" },
 ] as const;
+
+const NAV_LINK_CLASS =
+  "text-sm font-medium text-[#333333] hover:text-[#1A1A1A] transition-all relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#4A3F6B] after:transition-all hover:after:w-full";
 
 const STEPS = [
   { icon: MapIcon, img: `${IMG}/define-area.jpg`, key: "define" },
@@ -222,11 +227,26 @@ export const LandingPage: React.FC = () => {
               <a
                 key={n.href}
                 href={n.href}
-                className="text-sm font-medium text-[#333333] hover:text-[#1A1A1A] transition-all relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#4A3F6B] after:transition-all hover:after:w-full"
+                className={NAV_LINK_CLASS}
               >
                 {t(`landing.nav.${n.key}`)}
               </a>
             ))}
+            <Link
+              to="/docs"
+              className={NAV_LINK_CLASS}
+            >
+              {t("landing.nav.docs")}
+            </Link>
+            <a
+              href={GITHUB_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`${NAV_LINK_CLASS} inline-flex items-center gap-1.5`}
+            >
+              <GithubIcon className="h-4 w-4" />
+              {t("landing.nav.github")}
+            </a>
           </nav>
           <div className="flex items-center gap-3">
             <LanguageMenu />
@@ -772,6 +792,18 @@ export const LandingPage: React.FC = () => {
             <Link to="/terms-and-conditions" className="text-white/70 hover:text-white transition-colors py-0.5">
               {t("landing.footer.terms")}
             </Link>
+            <Link to="/docs" className="text-white/70 hover:text-white transition-colors py-0.5">
+              {t("landing.nav.docs")}
+            </Link>
+            <a
+              href={GITHUB_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors py-0.5"
+            >
+              <GithubIcon className="h-4 w-4" />
+              {t("landing.nav.github")}
+            </a>
           </div>
           <div className="space-y-4">
             <img
