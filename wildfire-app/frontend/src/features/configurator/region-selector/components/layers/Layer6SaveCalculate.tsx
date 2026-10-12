@@ -76,11 +76,11 @@ export const Layer6SaveCalculate: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) =
                     />
                     <Row
                         index={4}
-                        label={t("configurator.layer5.labels.dailyRun", "Daily run")}
-                        value="16:00-17:00"
+                        label={t("configurator.layer5.labels.dailyRun", "Fire-weather time")}
+                        value={t("configurator.layer5.dailyRunValue", "12:00 standard time")}
                         info={t(
                             "configurator.layer5.dailyRunInfo",
-                            "Every simulated day is assessed with the weather from this window — the hottest, driest part of the afternoon."
+                            "Fire weather (FWI) is calculated for each day at 12:00 local standard time (13:00 in summer), the standard observation hour of the Canadian FWI system."
                         )}
                     />
                     <Row index={5} label={t("configurator.layer5.labels.buffer", "Buffer")} value={`${state.bufferDistance} m`} />

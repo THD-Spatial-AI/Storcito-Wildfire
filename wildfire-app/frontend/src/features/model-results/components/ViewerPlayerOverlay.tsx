@@ -35,7 +35,7 @@ const PeakRiskDayBadge: FC<PeakRiskDayBadgeProps> = ({
       onClick={onSelect}
       title={t(
         "modelResults.layer.peakDayHint",
-        "Click to show this day, then step to the next-riskiest one"
+        "Click to show this day, then step to the next-highest fire-weather day"
       )}
       className={`flex flex-shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 transition-colors ${
         active ? "border-red-500 bg-red-500/10" : "border-border bg-card hover:bg-muted"
@@ -45,8 +45,8 @@ const PeakRiskDayBadge: FC<PeakRiskDayBadgeProps> = ({
       <span className="flex flex-col items-start leading-tight">
         <span className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
           {rank === 0
-            ? t("modelResults.layer.peakDay", "Peak risk day")
-            : t("modelResults.layer.rankDay", "#{{rank}} risk day", { rank: rank + 1 })}
+            ? t("modelResults.layer.peakDay", "Highest fire-weather day")
+            : t("modelResults.layer.rankDay", "#{{rank}} fire-weather day", { rank: rank + 1 })}
           {" · "}
           {rank + 1}/{rankedRiskDays.length}
         </span>

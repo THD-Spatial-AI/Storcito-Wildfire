@@ -13,9 +13,9 @@ The wizard has a short intro card and then guides you step by step. A progress b
 | Mode | What it does |
 |---|---|
 | **Static** | Assesses a **single day**. The date is picked for you: for each available year, the day with the highest temperature, which is the worst-case weather for that year |
-| **Dynamic** | Assesses a **range of days** that you choose. Every day is modelled with its own weather, and the run returns the peak-risk day |
+| **Dynamic** | Assesses a **range of days** that you choose. Every day is modelled with its own weather, and the run highlights the day with the highest Fire Weather Index |
 
-Both modes use the weather from the **16:00–17:00** window, the hottest and driest part of the afternoon.
+In both modes, fire weather (FWI) is calculated at **12:00 local standard time** (13:00 in summer), the standard observation hour of the Canadian FWI system.
 
 **Period.** Only dates for which input data exist can be selected. The available range is shown under the date picker. If a date is unavailable, the step tells you why and **Continue** stays disabled.
 
@@ -41,15 +41,15 @@ The **Area summary** shows the status, number of areas, total area and perimeter
 
 ## Step 3 — Risk components
 
-These signals feed the AHP-weighted risk model. All three are on by default and recommended:
+All three options are on by default and recommended. Fire weather and terrain feed the AHP-weighted risk model; historical fires are only an overlay:
 
-| Signal | Weight | What it adds |
+| Signal | Weight (dynamic / static) | What it adds |
 |---|---|---|
-| **Fire-weather (FWI)** | 30% | Wind, humidity, temperature and drought. The strongest fire driver |
-| **Terrain & slope** | 6% | Elevation, slope and aspect. Fire accelerates uphill, and sun-facing slopes dry faster |
-| **Historical fires** | 4% | How often fires have burned in the area before |
+| **Fire-weather** | 30% / 32% | Wind, humidity, temperature and drought (FWI). In dynamic runs also land-surface temperature |
+| **Terrain & slope** | 9% / 11% | Elevation, slope and aspect, plus a wetness index in dynamic runs. Fire accelerates uphill, and sun-facing slopes dry faster |
+| **Historical fires** | none | Areas burned in past seasons, shown as a separate map overlay. It does not change the risk score |
 
-Vegetation (NDVI) and infrastructure are always included and cannot be switched off. Turning a signal off removes its weight, and the run continues with the remaining signals.
+Vegetation (about 46% in dynamic runs, 38% in static) and human influence (roads and the wildland–urban interface, about 15% / 19%) are always included and cannot be switched off. Turning a signal off removes its weight, and the remaining weights are rescaled.
 
 > Keep **Fire-weather** on unless you specifically need a baseline without weather. Without it the date no longer matters and the risk is strongly underestimated.
 

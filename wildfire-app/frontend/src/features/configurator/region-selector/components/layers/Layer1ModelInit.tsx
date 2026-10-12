@@ -284,7 +284,7 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                 <QuestionSection
                     index={2}
                     title={t("configurator.layer1.calcModeQuestion", "How should the risk be calculated?")}
-                    description={t("configurator.layer1.calcModeInfo", "Static assesses a single day — one available weather date — using the AOI risk workflow. Dynamic assesses a range of days, keeping the daily weather sequence. Both use the 16:00–17:00 weather window.")}
+                    description={t("configurator.layer1.calcModeInfo", "Static assesses a single day — one available weather date — using the AOI risk workflow. Dynamic assesses a range of days, keeping the daily weather sequence. Both calculate fire weather at 12:00 local standard time (13:00 in summer).")}
                 >
                     <div data-tour="calculation-mode">
                         <ChoiceCardGroup columns={2}>
@@ -294,7 +294,7 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                                 description={t("configurator.layer1.calcModeHintStatic", "The hottest day of each available year.")}
                                 info={t(
                                     "configurator.layer1.calcModeStaticInfo",
-                                    "The date is picked for you: for each available year, the day that recorded the highest temperature — the worst-case weather for that year. Assessed from 16:00 to 17:00."
+                                    "The date is picked for you: for each available year, the day that recorded the highest temperature — the worst-case weather for that year. Fire weather is calculated at 12:00 local standard time (13:00 in summer)."
                                 )}
                                 selected={state.calculationMode === "static"}
                                 onSelect={() => actions.setCalculationMode("static")}
@@ -305,7 +305,7 @@ export const Layer1ModelInit: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
                                 description={t("configurator.layer1.calcModeHintDynamic", "A range of days, assessed day by day.")}
                                 info={t(
                                     "configurator.layer1.calcModeDynamicInfo",
-                                    "You choose the range and it is assessed exactly as selected: every day is modelled with its own weather and the run returns the peak-risk day. Each day uses the 16:00–17:00 window."
+                                    "You choose the range and it is assessed exactly as selected: every day is modelled with its own weather, and the run highlights the day with the highest fire-weather index. Fire weather is calculated at 12:00 local standard time (13:00 in summer)."
                                 )}
                                 selected={state.calculationMode === "dynamic"}
                                 onSelect={() => actions.setCalculationMode("dynamic")}

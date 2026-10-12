@@ -33,7 +33,7 @@ The classes describe **relative danger**. They are not a probability that a fire
 
 The **mean risk score** in the results weights each class by severity: Very Low 0.2, Low 0.4, Moderate 0.6, High 0.8 and Very High 1.0. A score near 1 means most of the area is in the severe classes.
 
-The class comes from a continuous danger index that combines several factors with weights from an Analytic Hierarchy Process (AHP): fire weather (FWI), terrain and slope, fire history, vegetation (NDVI) and infrastructure.
+The class comes from a continuous danger index that combines four groups of factors with weights from an Analytic Hierarchy Process (AHP): vegetation (fuel type, NDVI, NDMI), fire weather (FWI and land-surface temperature), human influence (distance to roads and railways, wildland–urban interface) and terrain (elevation, slope, aspect, wetness). Historical fires are shown as an overlay and are not part of the index.
 
 ## Access levels
 

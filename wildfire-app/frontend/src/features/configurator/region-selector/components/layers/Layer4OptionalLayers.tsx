@@ -17,6 +17,10 @@ interface OptionalLayerItem {
   info: string;
 }
 
+// Engine top-level weights
+const weightsFor = (mode: string) =>
+  mode === "dynamic" ? { fwi: 30, terrain: 9 } : { fwi: 32, terrain: 11 };
+
 export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) => {
   const { t } = useTranslation();
   const weatherDisabled = !ctx.optionalLayers.weather_overlay;
@@ -27,6 +31,7 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
     fromDate === toDate &&
     availablePrecomputedDates.includes(fromDate);
   const precomputedOn = usePrecomputed && precomputedAvailable;
+  const weights = weightsFor(calculationMode);
 
   const ITEMS: OptionalLayerItem[] = [
     {
@@ -37,10 +42,10 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
         "Wind, humidity, temperature, drought — the strongest fire driver"
       ),
       icon: CloudRain,
-      weight: t("configurator.layer3.fwiWeight", "30% weight"),
+      weight: t("configurator.layer3.weightPercent", "{{value}}% weight", { value: weights.fwi }),
       info: t(
         "configurator.layer3.fwiInfo",
-        "The Fire Weather Index combines wind, relative humidity, temperature and drought into one measure of how readily a fire would start and spread. It carries the largest weight because weather changes fastest and drives fire behaviour most strongly."
+        "The Fire Weather Index combines wind, relative humidity, temperature and drought into one measure of how readily a fire would start and spread. Weather carries the second-largest weight after vegetation. In dynamic runs it also includes land-surface temperature."
       ),
     },
     {
@@ -48,7 +53,7 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
       label: t("configurator.layer3.terrainLabel", "Terrain & slope"),
       hint: t("configurator.layer3.terrainHint", "Elevation, slope and aspect influence on spread"),
       icon: Mountain,
-      weight: t("configurator.layer3.terrainWeight", "6% weight"),
+      weight: t("configurator.layer3.weightPercent", "{{value}}% weight", { value: weights.terrain }),
       info: t(
         "configurator.layer3.terrainInfo",
         "Slope, elevation and aspect shape how a fire moves: it accelerates uphill, and sun-facing slopes dry out faster. Derived from the digital terrain model for your area."
@@ -59,13 +64,13 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
       label: t("configurator.layer3.historicalLabel", "Historical fires"),
       hint: t(
         "configurator.layer3.historicalHint",
-        "Recurrence based on past fire incidents in the area"
+        "Map overlay only — does not change the risk score"
       ),
       icon: Flame,
-      weight: t("configurator.layer3.historicalWeight", "4% weight"),
+      weight: t("configurator.layer3.historicalWeight", "Overlay only"),
       info: t(
         "configurator.layer3.historicalInfo",
-        "Where fires have burned before they tend to burn again, because the underlying causes — land use, access and ignition sources — persist. Based on recorded past fire incidents in the area."
+        "Areas burned in past seasons, detected from satellite imagery near recorded fire hotspots. Shown as a separate overlay for context; it has no weight in the risk model and does not change the risk classes."
       ),
     },
   ];
@@ -74,7 +79,7 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
     <LayerShell
       purpose={t(
         "configurator.layer3.purpose",
-        "These signals feed the AHP-weighted risk model. All three are enabled by default and recommended for an accurate forest-fire risk assessment."
+        "Fire weather and terrain feed the AHP-weighted risk model; historical fires are shown as a separate overlay. All three are enabled by default and recommended."
       )}
       nextStepHint={t(
         "configurator.layer3.nextStepHint",
@@ -157,7 +162,7 @@ export const Layer4OptionalLayers: FC<{ ctx: ConfiguratorContext }> = ({ ctx }) 
               : fromDate !== toDate
                 ? t(
                     "configurator.layer3.precomputedRange",
-                    "Precomputed maps cover exactly one day - select the same start and end date to use one. For a date range the model computes every day for your area and returns the peak-risk day (~1-2 minutes)."
+                    "Precomputed maps cover exactly one day - select the same start and end date to use one. For a date range the model computes every day for your area and highlights the day with the highest fire-weather index (~1-2 minutes)."
                   )
                 : t(
                     "configurator.layer3.precomputedUnavailable",

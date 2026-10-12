@@ -28,7 +28,7 @@ The **Risk Level** chart shows how the area is distributed across the five class
 A dynamic model produces a risk map for every day in its period.
 
 - **Risk Over Time** shows the area per risk class for each day. Click a day to show it on the map.
-- **Peak risk day** jumps to the most severe day. Click again to step to the next-riskiest day.
+- **Highest fire-weather day** jumps to the day with the highest Fire Weather Index. Click again to step to the next one. Note that this ranks days by fire weather, not by the overall danger index.
 - **Play** animates the daily maps one after another.
 
 The weather of the selected day (temperature, humidity, wind speed and direction) appears in the details panel.
