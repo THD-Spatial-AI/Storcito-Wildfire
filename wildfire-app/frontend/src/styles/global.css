@@ -725,3 +725,9 @@
 .dark .react-joyride__tooltip .border-gray-200 {
   border-color: var(--border) !important;
 }
+
+/* Landing hero reveal. */
+@keyframes hero-clip {
+  from { clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%); }
+  to { clip-path: polygon(25% 0, 100% 0, 100% 100%, 0% 100%); }
+}

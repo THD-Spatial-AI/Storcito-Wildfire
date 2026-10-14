@@ -29,12 +29,30 @@ const IMG = "/images/landing-page";
 const NAV = [
   { key: "challenge", href: "#challenge" },
   { key: "platform", href: "#platform" },
-  { key: "personas", href: "#personas" },
   { key: "contact", href: "#contact" },
 ] as const;
 
-const NAV_LINK_CLASS =
-  "text-sm font-medium text-[#333333] hover:text-[#1A1A1A] transition-all relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#4A3F6B] after:transition-all hover:after:w-full";
+// Type scale.
+const EYEBROW = "block font-bold text-[10px] tracking-[0.4em] uppercase text-[#1A1A1A]/50";
+const H2 = "text-3xl md:text-4xl font-black tracking-tighter uppercase leading-none text-[#1A1A1A]";
+const DOTS = "bg-[radial-gradient(circle,#D4D2D0_1px,transparent_1px)] bg-[size:40px_40px]";
+const BAND = "bg-gradient-to-br from-[#544B78] to-[#38304F] text-white";
+const BUTTON = "inline-flex items-center justify-center gap-2 px-6 py-3 font-black uppercase text-[11px] tracking-widest transition-all";
+const FIELD = "w-full px-4 py-3 bg-white border border-[#D4D2D0] text-[#1A1A1A] text-[13px] placeholder:text-[#B0AAA4] focus:outline-none focus:border-[#1A1A1A] transition-colors";
+const LABEL = "block font-bold text-[10px] uppercase tracking-widest text-[#1A1A1A]/50 mb-2";
+const NAV_LINK = "font-semibold text-[0.875rem] tracking-tight uppercase text-[#1A1A1A]/60 hover:text-[#1A1A1A] transition-colors whitespace-nowrap";
+const FOOTER_LINK = "text-[11px] font-semibold uppercase tracking-widest text-white/60 hover:text-white transition-colors py-0.5";
+
+// Section heading.
+const SectionHead: React.FC<{ eyebrow: string; title: string; description?: string }> = ({ eyebrow, title, description }) => (
+  <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-8">
+    <div className="max-w-2xl">
+      <span className={EYEBROW}>{eyebrow}</span>
+      <h2 className={`${H2} mt-4`}>{title}</h2>
+    </div>
+    {description && <p className="text-sm text-[#333333] max-w-sm leading-relaxed">{description}</p>}
+  </div>
+);
 
 const STEPS = [
   { icon: MapIcon, img: `${IMG}/define-area.jpg`, key: "define" },
@@ -44,19 +62,19 @@ const STEPS = [
 ] as const;
 
 const CAPABILITIES = [
-  { icon: MapIcon, key: "mapping", color: "text-[#4A3F6B] bg-[#4A3F6B]/10 border-[#4A3F6B]/20" },
-  { icon: Flame, key: "engine", color: "text-[#4A3F6B] bg-[#4A3F6B]/10 border-[#4A3F6B]/20" },
-  { icon: Activity, key: "metrics", color: "text-[#4A3F6B] bg-[#4A3F6B]/10 border-[#4A3F6B]/20" },
-  { icon: Layers, key: "fuel", color: "text-[#4A3F6B] bg-[#4A3F6B]/10 border-[#4A3F6B]/20" },
-  { icon: Globe, key: "multilingual", color: "text-[#4A3F6B] bg-[#4A3F6B]/10 border-[#4A3F6B]/20" },
-  { icon: ShieldCheck, key: "secure", color: "text-[#333333] bg-[#B0AAA4]/10 border-[#B0AAA4]/20" },
+  { icon: MapIcon, key: "mapping" },
+  { icon: Flame, key: "engine" },
+  { icon: Activity, key: "metrics" },
+  { icon: Layers, key: "fuel" },
+  { icon: Globe, key: "multilingual" },
+  { icon: ShieldCheck, key: "secure" },
 ] as const;
 
 const PERSONAS = [
-  { icon: ShieldCheck, key: "planners", color: "text-[#4A3F6B] bg-[#4A3F6B]/10 border-[#4A3F6B]/20" },
-  { icon: Activity, key: "analysts", color: "text-[#4A3F6B] bg-[#4A3F6B]/10 border-[#4A3F6B]/20" },
-  { icon: Layers, key: "researchers", color: "text-[#4A3F6B] bg-[#4A3F6B]/10 border-[#4A3F6B]/20" },
-  { icon: Users, key: "leads", color: "text-[#4A3F6B] bg-[#4A3F6B]/10 border-[#4A3F6B]/20" },
+  { icon: ShieldCheck, key: "planners" },
+  { icon: Activity, key: "analysts" },
+  { icon: Layers, key: "researchers" },
+  { icon: Users, key: "leads" },
 ] as const;
 
 const CHALLENGE_CARDS = ["hotter", "vegetation", "cascading", "tooling"] as const;
@@ -94,7 +112,7 @@ const LanguageMenu: React.FC = () => {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-1.5 rounded-lg bg-[#D4D2D0]/50 hover:bg-[#D4D2D0] text-[#1A1A1A] text-sm font-medium px-3 py-2 ring-1 ring-[#B0AAA4]/40 transition-colors"
+        className="inline-flex items-center gap-1.5 bg-white/70 hover:bg-[#D4D2D0] text-[#1A1A1A] text-xs font-semibold px-2.5 py-1.5 ring-1 ring-[#D4D2D0] transition-colors"
         aria-haspopup="listbox"
         aria-expanded={open}
       >
@@ -106,7 +124,7 @@ const LanguageMenu: React.FC = () => {
       {open && (
         <div
           role="listbox"
-          className="absolute right-0 mt-2 w-44 rounded-xl bg-white shadow-2xl ring-1 ring-black/10 overflow-hidden py-1 z-50"
+          className="absolute right-0 mt-2 w-44 bg-white shadow-2xl ring-1 ring-black/10 overflow-hidden py-1 z-50"
         >
           {languages.map((l) => (
             <button
@@ -132,6 +150,7 @@ const LanguageMenu: React.FC = () => {
 
 export const LandingPage: React.FC = () => {
   const { t } = useTranslation();
+  const euAlt = t("landing.footer.euFundedAlt");
 
 
   useEffect(() => {
@@ -215,609 +234,342 @@ export const LandingPage: React.FC = () => {
   };
 
   return (
-    <div ref={rootRef} className="h-screen overflow-y-auto bg-white text-[#1A1A1A] scroll-smooth">
-      {/* Full-width nav bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 border-b border-[#D4D2D0] bg-white/90 backdrop-blur-md">
-        <header className="mx-auto max-w-screen-2xl px-6 md:px-10 h-16 flex items-center justify-between">
-          <a href="#top" className="flex items-center transition-transform hover:scale-[1.02]">
-            <img src={`${IMG}/storcito-logo-dark.webp`} alt="Storcito" className="h-7 w-auto" />
+    <div ref={rootRef} className={`h-screen overflow-y-auto bg-[#EDEAE7] text-[#1A1A1A] scroll-smooth selection:bg-[#1A1A1A] selection:text-[#EDEAE7] ${DOTS}`}>
+      {/* Nav bar. */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#EDEAE7]/95 backdrop-blur-md border-b border-[#1A1A1A]/15">
+        <div className="grid grid-cols-2 md:grid-cols-3 items-center w-full px-6 md:px-8 h-16">
+          <a href="#top" className="flex items-center" aria-label="STORCITO">
+            <img src={`${IMG}/storcito-logo-dark.webp`} alt="STORCITO" className="h-8 w-auto" />
           </a>
-          <nav className="hidden md:flex items-center gap-7">
-            {NAV.map((n) => (
-              <a
-                key={n.href}
-                href={n.href}
-                className={NAV_LINK_CLASS}
-              >
-                {t(`landing.nav.${n.key}`)}
-              </a>
-            ))}
-            <Link
-              to="/docs"
-              className={NAV_LINK_CLASS}
-            >
-              {t("landing.nav.docs")}
-            </Link>
-            <a
-              href={GITHUB_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`${NAV_LINK_CLASS} inline-flex items-center gap-1.5`}
-            >
-              <GithubIcon className="h-4 w-4" />
-              {t("landing.nav.github")}
+
+          <div className="hidden md:flex justify-center">
+            <a href="#top" className="text-2xl lg:text-3xl font-black tracking-tighter uppercase leading-none text-[#1A1A1A] select-none whitespace-nowrap">
+              Wildfire Risk
             </a>
-          </nav>
-          <div className="flex items-center gap-3">
+          </div>
+
+          <div className="flex justify-end items-center gap-6 h-full">
+            <nav className="hidden min-[1800px]:flex items-center gap-6 h-full">
+              {NAV.map((n) => (
+                <a key={n.href} href={n.href} className={NAV_LINK}>
+                  {t(`landing.nav.${n.key}`)}
+                </a>
+              ))}
+              <Link to="/docs" className={NAV_LINK}>
+                {t("landing.nav.docs")}
+              </Link>
+              <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className={NAV_LINK} aria-label={t("landing.nav.github")}>
+                <GithubIcon className="h-4 w-4" />
+              </a>
+            </nav>
             <LanguageMenu />
             <Link
               to="/app/map"
-              className="group inline-flex items-center gap-2 text-sm font-semibold rounded-lg bg-[#1A1A1A] hover:bg-[#333333] text-[#EDEAE7] px-5 py-2 transition-colors"
+              className="font-semibold text-[0.875rem] tracking-tight uppercase text-[#1A1A1A] border-b-2 border-[#1A1A1A] pb-0.5 whitespace-nowrap"
             >
               <span className="hidden sm:inline">{t("landing.openApp")}</span>
               <span className="sm:hidden">{t("landing.nav.platform")}</span>
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
-        </header>
-      </div>
+        </div>
+      </header>
 
-      {/* Hero Section */}
-      <section id="top" className="relative overflow-hidden pt-28 pb-24 md:pt-36 md:pb-32 border-b border-[#D4D2D0] bg-[#EDEAE7]">
-        {/* Background photograph. */}
-        <div className="absolute inset-0 bg-[url('/images/landing-page/hero-fire-bg.jpg')] bg-cover bg-center bg-no-repeat opacity-25" />
-        <div className="absolute inset-0 bg-[#EDEAE7]/40" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#EDEAE7] via-[#EDEAE7]/80 to-[#EDEAE7]/40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#EDEAE7] via-transparent to-[#EDEAE7]/60" />
-
-        <div className="relative mx-auto max-w-7xl px-5">
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            {/* Text column */}
-            <div className="lg:col-span-7 space-y-6">
-              <div className="flex flex-wrap items-center gap-2.5">
-                <span className="inline-flex items-center gap-2 rounded-full bg-[#4A3F6B]/10 text-[#4A3F6B] text-xs font-semibold px-3 py-1.5 ring-1 ring-[#4A3F6B]/20">
-                  <Flame className="h-3.5 w-3.5" /> {t("landing.hero.badge")}
-                </span>
-                <span className="inline-flex items-center gap-2 rounded-full bg-white/5 text-[#333333] text-xs font-semibold px-3 py-1.5 ring-1 ring-[#D4D2D0]">
-                  <Globe className="h-3.5 w-3.5 text-[#4A3F6B]" /> Horizon Europe Project
-                </span>
-              </div>
-              
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] text-[#1A1A1A] max-w-2xl">
+      <main className="pt-16">
+        {/* Hero. */}
+        <section id="top" className="relative flex w-full flex-col md:flex-row min-h-[calc(100vh-4rem)] overflow-hidden bg-[#EDEAE7]">
+          <div className="relative z-10 flex w-full flex-col justify-start p-8 md:w-1/2 md:p-12 lg:w-3/5 lg:px-16 lg:pt-44 lg:pb-[20.5vw]">
+            <div>
+              <h1 className="text-4xl md:text-5xl font-bold leading-tight text-[#1A1A1A] max-w-2xl">
                 {t("landing.hero.title")}
               </h1>
-
-              <p className="text-base md:text-lg text-[#333333] leading-relaxed max-w-xl">
+              <div className="my-6 h-1 w-20 bg-[#4A3F6B]" />
+              <p className="mb-8 max-w-md text-base text-[#333333] leading-relaxed">
                 {t("landing.hero.subtitle")}
               </p>
-              
-              <div className="flex flex-wrap gap-3 pt-1">
-                <Link
-                  to="/app/map"
-                  className="group inline-flex items-center gap-2 rounded-lg bg-[#1A1A1A] hover:bg-[#333333] text-[#EDEAE7] font-semibold px-6 py-3 transition-colors"
-                >
-                  {t("landing.hero.explore")}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+
+              <div className="flex flex-wrap gap-3 lg:mb-24">
+                <Link to="/app/map" className={`${BUTTON} bg-[#1A1A1A] hover:bg-[#333333] text-[#EDEAE7]`}>
+                  <span>{t("landing.hero.explore")}</span>
+                  <ArrowRight className="h-4 w-4" />
                 </Link>
-                <a
-                  href="#challenge"
-                  className="inline-flex items-center gap-2 rounded-lg hover:bg-[#D4D2D0]/40 text-[#1A1A1A] font-semibold px-6 py-3 ring-1 ring-[#D4D2D0] transition-colors"
-                >
+                <a href="#challenge" className={`${BUTTON} border border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-[#EDEAE7]`}>
                   {t("landing.hero.why")}
                 </a>
               </div>
-
-              {/* EU funding credibility cue */}
-              <div className="flex items-center gap-3 pt-6 mt-2 border-t border-[#D4D2D0] max-w-xl">
-                <div className="flex h-9 w-12 shrink-0 items-center justify-center rounded-[3px] bg-[#003399]">
-                  <span className="text-white text-sm leading-none">★</span>
-                </div>
-                <p className="text-xs text-[#B0AAA4] leading-snug">
-                  Funded by the European Union under the Horizon Europe research &amp; innovation programme.
-                </p>
-              </div>
             </div>
 
-            {/* Recent Simulations Panel */}
-            <div className="lg:col-span-5 relative w-full flex items-center justify-center lg:justify-end">
-              <div className="w-full max-w-md rounded-2xl border border-[#D4D2D0] bg-white/80 backdrop-blur-md shadow-2xl shadow-[#4A3F6B]/20 overflow-hidden">
-                {/* Header */}
-                <div className="flex items-center justify-between px-5 py-4 border-b border-[#D4D2D0]">
-                  <div className="flex items-center gap-2.5">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#4A3F6B]/15 text-[#4A3F6B] ring-1 ring-[#4A3F6B]/20">
-                      <Activity className="w-4 h-4" />
-                    </span>
-                    <div className="leading-tight">
-                      <h3 className="text-sm font-semibold text-[#1A1A1A] tracking-tight">Recent Simulations</h3>
-                      <p className="text-[11px] text-[#B0AAA4]">Galicia · last 7 days</p>
-                    </div>
+            {/* Metrics strip. */}
+            <div className="mt-12 lg:mt-auto pt-8 border-t border-[#1A1A1A]/10">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-[#D4D2D0] border border-[#D4D2D0]">
+                {[
+                  { value: "29,574 km²", label: t("landing.stats.affectedArea") },
+                  { value: "313", label: t("landing.stats.municipalities") },
+                  { value: "5 tiers", label: t("landing.stats.riskDistribution") },
+                  { value: "Live", label: t("landing.stats.trendAnalysis") },
+                ].map(({ value, label }) => (
+                  <div key={label} className="bg-white p-5">
+                    <p className="font-black text-xl tracking-tight text-[#1A1A1A]">{value}</p>
+                    <p className="font-bold text-[10px] uppercase tracking-widest text-[#1A1A1A]/50 mt-1">{label}</p>
                   </div>
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#4A3F6B]/10 text-[#4A3F6B] ring-1 ring-[#4A3F6B]/20 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#4A3F6B] animate-pulse" /> Live
-                  </span>
-                </div>
-
-                {/* Map preview */}
-                <div className="px-5 pt-5">
-                  <div className="w-full h-36 rounded-xl overflow-hidden border border-[#D4D2D0] relative group">
-                    <img src="/images/landing-page/live-map-preview.jpg" alt="Live wildfire risk map" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent pointer-events-none" />
-                    <div className="absolute top-2.5 right-2.5 inline-flex items-center gap-1.5 rounded-md bg-black/60 backdrop-blur-sm px-2 py-1 ring-1 ring-[#D4D2D0]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#4A3F6B]" />
-                      <span className="text-[10px] font-semibold text-white">High risk</span>
-                    </div>
-                    <div className="absolute bottom-2.5 left-3 flex items-center gap-1.5 text-white text-[10px] font-semibold tracking-wide uppercase ">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#4A3F6B] animate-pulse" /> Active Risk Zone
-                    </div>
-                  </div>
-                </div>
-
-                {/* Simulation list */}
-                <div className="px-3 py-3 divide-y divide-[#D4D2D0]">
-                  {[
-                    { region: "O Porriño Region", date: "21 May 2026, 16:39", duration: "21s", risk: "High", dot: "bg-[#4A3F6B]", pill: "bg-[#4A3F6B]/15 text-[#4A3F6B]" },
-                    { region: "Vigo Metro East", date: "21 May 2026, 14:46", duration: "20s", risk: "Moderate", dot: "bg-[#4A3F6B]", pill: "bg-[#4A3F6B]/15 text-[#4A3F6B]" },
-                    { region: "Pontevedra South", date: "18 May 2026, 19:11", duration: "9m 20s", risk: "Low", dot: "bg-[#4A3F6B]", pill: "bg-[#4A3F6B]/15 text-[#4A3F6B]" },
-                  ].map((s) => (
-                    <div key={s.region} className="group flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-[#D4D2D0]/40">
-                      <span className={`w-2 h-2 rounded-full shrink-0 ${s.dot}`} />
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-semibold text-[#1A1A1A] truncate">{s.region}</span>
-                          <span className={`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${s.pill}`}>{s.risk}</span>
-                        </div>
-                        <div className="text-[11px] text-[#B0AAA4] mt-0.5">{s.date}</div>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <div className="inline-flex items-center gap-1 text-[#4A3F6B] text-[10px] font-semibold uppercase tracking-wider">
-                          <CheckCircle2 className="w-3 h-3" /> Done
-                        </div>
-                        <div className="text-xs text-[#B0AAA4] font-mono mt-0.5">{s.duration}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                ))}
               </div>
+              <img src={`${IMG}/eu-funded.webp`} alt={euAlt} className="mt-6 h-10 w-auto" />
             </div>
+          </div>
+
+          {/* Fire photo. */}
+          <div className="relative w-full min-h-[300px] md:w-1/2 md:min-h-full lg:w-2/5 bg-[#D4D2D0] md:animate-[hero-clip_1.2s_cubic-bezier(0,0.55,0.45,1)_both] md:[clip-path:polygon(25%_0,100%_0,100%_100%,0%_100%)]">
+            <img
+              src={`${IMG}/aerial-forest-fire.webp`}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full object-cover grayscale opacity-60 mix-blend-multiply pointer-events-none select-none"
+            />
+            {/* Fade into scene. */}
+            <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-b from-[#EDEAE700] via-[#EDEAE7cc] to-[#EDEAE7]" />
+          </div>
+        </section>
+
+        {/* Hero scene. */}
+        <div className="relative h-0 pointer-events-none select-none" aria-hidden="true">
+          <div className="absolute left-0 right-0 top-0 aspect-[12/5] -translate-y-full overflow-hidden opacity-40">
+            <img src={`${IMG}/wildfire-hero.svg`} alt="" className="absolute bottom-0 left-0 w-full aspect-[12/7]" />
           </div>
         </div>
-      </section>
 
-      {/* Stats Ribbon */}
-      <section className="relative z-20 -mt-12 max-w-7xl mx-auto px-5">
-        <div className="rounded-3xl border border-[#D4D2D0] bg-gradient-to-br from-white/90 to-white/90 backdrop-blur-xl p-2 shadow-[0_24px_70px_-20px_rgba(0,0,0,0.7)]">
-          <div className="grid grid-cols-2 lg:grid-cols-4">
-            {[
-              { icon: MapIcon, value: "29,574", unit: "km²", label: t("landing.stats.affectedArea") },
-              { icon: Users, value: "313", unit: "", label: t("landing.stats.municipalities") },
-              { icon: ShieldCheck, value: "5", unit: "tiers", label: t("landing.stats.riskDistribution") },
-              { icon: Activity, value: "Live", unit: "", label: t("landing.stats.trendAnalysis"), live: true },
-            ].map(({ icon: Icon, value, unit, label, live }) => (
-              <div
-                key={label}
-                className="group flex items-center gap-4 p-5 lg:p-6 rounded-2xl transition-colors hover:bg-[#D4D2D0]/40 lg:border-l lg:border-[#D4D2D0] lg:first:border-l-0"
-              >
-                <div className="shrink-0 w-11 h-11 rounded-xl bg-[#4A3F6B]/10 ring-1 ring-[#4A3F6B]/20 flex items-center justify-center text-[#4A3F6B] transition-transform duration-300 group-hover:scale-110">
-                  <Icon className="w-5 h-5" />
-                </div>
-                <div className="text-left min-w-0">
-                  <div className="flex items-baseline gap-1.5">
-                    {live && <span className="w-2 h-2 rounded-full bg-[#4A3F6B] animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.7)]" />}
-                    <span className="text-2xl md:text-3xl font-extrabold text-[#1A1A1A] tracking-tight leading-none">{value}</span>
-                    {unit && <span className="text-sm font-bold text-[#4A3F6B]">{unit}</span>}
-                  </div>
-                  <div className="text-[11px] font-semibold text-[#B0AAA4] uppercase tracking-wider mt-1.5 truncate">{label}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-
-
-      {/* Challenge */}
-      <section id="challenge" className="py-20 md:py-28 bg-white">
-        <div className="mx-auto max-w-7xl px-5 grid md:grid-cols-2 gap-16 items-center">
-          <div>
-            <p className="text-sm font-bold uppercase tracking-wider text-[#4A3F6B]">
-              {t("landing.challenge.eyebrow")}
-            </p>
-            <h2 className="mt-3 text-3xl md:text-4xl font-extrabold text-[#4A3F6B] tracking-tight leading-tight">
-              {t("landing.challenge.title")}
-            </h2>
-            <p className="mt-5 text-[#333333] leading-relaxed font-medium">{t("landing.challenge.p1")}</p>
-            <p className="mt-4 text-[#333333] leading-relaxed font-medium">{t("landing.challenge.p2")}</p>
-            
-            <div className="mt-10 grid sm:grid-cols-2 gap-6">
-              {CHALLENGE_CARDS.map((card, i) => (
-        // Separate transforms.
-                <div key={card} data-reveal style={{ transitionDelay: `${i * 80}ms` }} className="lp-reveal">
-                  <div className="group relative flex h-full flex-col p-6 rounded-3xl bg-white border border-[#D4D2D0]/80 shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-all duration-300 ease-out hover:-translate-y-2 hover:border-[#4A3F6B]/70 hover:shadow-[0_16px_40px_rgba(0,0,0,0.10)]">
-                    {/* Step counter badge */}
-                    <div className="flex items-center gap-3">
-                      <div className="w-7 h-7 rounded-full bg-[#4A3F6B]/10 text-[#4A3F6B] flex items-center justify-center font-bold text-xs shrink-0 transition-colors duration-300 group-hover:bg-[#4A3F6B] group-hover:text-white">
-                        {i + 1}
-                      </div>
-                      <h3 className="font-bold text-[#4A3F6B] tracking-tight text-[17px] leading-snug">
-                        {t(`landing.challenge.cards.${card}.title`)}
-                      </h3>
-                    </div>
-
-                    <p className="mt-3 text-[14px] text-[#B0AAA4] leading-relaxed font-medium">
-                      {t(`landing.challenge.cards.${card}.text`)}
-                    </p>
-                  </div>
-                </div>
-              ))}
+        {/* Workflow. */}
+        <section id="platform" className={`pb-32 pt-24 px-8 ${BAND}`}>
+          <div className="relative z-10 max-w-7xl mx-auto">
+            <div className="text-center mb-20">
+              <span className="block font-bold text-[10px] tracking-[0.4em] uppercase text-white/50">{t("landing.platform.eyebrow")}</span>
+              <h2 className="text-3xl md:text-4xl font-black mt-4 tracking-tighter uppercase leading-none">{t("landing.platform.title")}</h2>
+              <p className="mt-6 text-[0.9375rem] text-white/60 leading-relaxed max-w-2xl mx-auto">{t("landing.platform.subtitle")}</p>
             </div>
-          </div>
-          
-          <div data-reveal className="lp-reveal group relative px-4">
-            {/* Background glowing frame blob */}
-            <div className="absolute -inset-1.5 bg-gradient-to-r from-[#6A5F94] to-[#4A3F6B] rounded-3xl blur opacity-20 group-hover:opacity-35 transition duration-1000 group-hover:duration-200" />
-            
-            <div className="relative overflow-hidden rounded-2xl shadow-2xl border border-[#D4D2D0] bg-white">
-              <img
-                src={`${IMG}/roadside-wildfire.webp`}
-                alt={t("landing.challenge.imgAlt1")}
-                className="w-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-            </div>
-            
-            <div className="lp-float hidden md:block absolute -bottom-8 -left-4 w-48 rounded-2xl shadow-2xl ring-4 ring-white overflow-hidden transition-transform duration-500 hover:scale-105">
-              <img
-                src={`${IMG}/firefighter-hose.webp`}
-                alt={t("landing.challenge.imgAlt2")}
-                className="w-full h-auto object-cover"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Platform / workflow */}
-      <section
-        id="platform"
-        className="py-20 md:py-28 bg-[#4A3F6B] text-white lp-grid-pattern border-t border-b border-white/5 relative"
-      >
-        <div className="absolute inset-0 bg-gradient-to-br from-[#4A3F6B]/95 via-[#544B78]/90 to-[#6A5F94]/85 pointer-events-none" />
-        
-        <div className="relative mx-auto max-w-7xl px-5">
-          <div className="max-w-3xl">
-            <p className="text-sm font-bold uppercase tracking-wider text-[#6A5F94]">
-              {t("landing.platform.eyebrow")}
-            </p>
-            <h2 className="mt-3 text-3xl md:text-4xl font-extrabold tracking-tight leading-tight">{t("landing.platform.title")}</h2>
-            <p className="mt-4 text-white/80 leading-relaxed text-base md:text-lg font-medium">{t("landing.platform.subtitle")}</p>
-          </div>
-
-          {/* Progress Connector Track */}
-          <div className="relative mt-16">
-            <div className="absolute top-[176px] left-[12.5%] right-[12.5%] h-[1px] bg-white/10 hidden lg:block z-0" />
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border border-white/10">
               {STEPS.map((s, i) => (
                 <div
                   key={s.key}
                   data-reveal
                   style={{ transitionDelay: `${i * 90}ms` }}
-                  className="lp-reveal group flex flex-col overflow-hidden rounded-[24px] bg-[#38304F] border border-white/5 transition-all duration-400 hover:bg-[#4A3F6B] hover:-translate-y-1 shadow-2xl relative"
+                  className="lp-reveal group flex flex-col border-white/10 border-b sm:[&:nth-child(odd)]:border-r lg:border-b-0 lg:border-r lg:last:border-r-0"
                 >
-                  {/* Inset screen look. */}
-                  <div className="relative h-44 p-3 pb-0">
-                    <div className="w-full h-full rounded-t-[16px] overflow-hidden relative bg-[#38304F] border border-white/5">
-                      <img
-                        src={s.img}
-                        alt=""
-                        aria-hidden
-                        loading="lazy"
-                        className="absolute inset-0 h-full w-full object-cover opacity-70 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105"
-                      />
-                      {/* Bottom edge blend. */}
-                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#38304F] to-transparent opacity-90 group-hover:from-[#4A3F6B] transition-colors duration-400" />
-                    </div>
+                  <div className="relative h-44 overflow-hidden border-b border-white/10">
+                    <img
+                      src={s.img}
+                      alt=""
+                      aria-hidden
+                      loading="lazy"
+                      className="absolute inset-0 h-full w-full object-cover opacity-70 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105"
+                    />
                   </div>
-                  
-                  {/* Content block */}
-                  <div className="p-6 pt-8 bg-[#38304F] group-hover:bg-[#4A3F6B] transition-colors duration-400 relative flex-1 flex flex-col">
-                    {/* Floating Icon */}
-                    <div className="absolute -top-6 left-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#38304F] border border-white/10 shadow-lg transition-all duration-300 group-hover:border-[#4A3F6B]/40">
-                      <s.icon className="h-5 w-5 text-[#4A3F6B]" />
-                    </div>
+                  <div className="p-8 flex flex-col items-center text-center">
+                    <s.icon className="w-6 h-6 mb-6" strokeWidth={1.5} />
+                    <span className="font-bold uppercase text-[10px] tracking-[0.3em] text-white/50 mb-2">
+                      {t("landing.platform.step")} 0{i + 1}
+                    </span>
+                    <h3 className="font-bold uppercase text-[11px] tracking-[0.3em] mb-3">{t(`landing.platform.steps.${s.key}.title`)}</h3>
+                    <p className="text-[13px] text-white/60 leading-relaxed">{t(`landing.platform.steps.${s.key}.text`)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
 
-                    <div className="mb-4">
-                      <span className="text-[10px] font-extrabold text-[#4A3F6B] tracking-wider uppercase bg-[#4A3F6B] px-2.5 py-1 rounded-full">
-                        {t("landing.platform.step")} 0{i + 1}
-                      </span>
-                    </div>
-                    <h3 className="text-[19px] font-bold text-white tracking-tight leading-snug">{t(`landing.platform.steps.${s.key}.title`)}</h3>
-                    <p className="mt-3 text-[15px] text-white/60 leading-relaxed font-medium">
-                      {t(`landing.platform.steps.${s.key}.text`)}
-                    </p>
+            <div data-reveal className="lp-reveal mt-16 border border-white/10 overflow-hidden">
+              <img
+                src={`${IMG}/firefighting-crew.webp`}
+                alt={t("landing.platform.imgAlt")}
+                className="w-full max-h-[400px] object-cover opacity-90"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Challenge. */}
+        <section id="challenge" className="py-24 px-8 bg-[#E4E1DE] border-y border-[#D4D2D0]">
+          <div className="max-w-7xl mx-auto">
+            <SectionHead eyebrow={t("landing.challenge.eyebrow")} title={t("landing.challenge.title")} />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-16">
+              <div>
+                <p className="text-[0.9375rem] text-[#333333]/80 leading-relaxed mb-6">{t("landing.challenge.p1")}</p>
+                <p className="text-[0.9375rem] text-[#333333]/80 leading-relaxed">{t("landing.challenge.p2")}</p>
+              </div>
+              <div data-reveal className="lp-reveal grid grid-cols-3 gap-px bg-[#D4D2D0] border border-[#D4D2D0] self-start">
+                <img src={`${IMG}/roadside-wildfire.webp`} alt={t("landing.challenge.imgAlt1")} className="col-span-2 h-full w-full object-cover" />
+                <img src={`${IMG}/firefighter-hose.webp`} alt={t("landing.challenge.imgAlt2")} className="h-full w-full object-cover" />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-[#D4D2D0] border border-[#D4D2D0]">
+              {CHALLENGE_CARDS.map((card, i) => (
+                <div key={card} data-reveal style={{ transitionDelay: `${i * 80}ms` }} className="lp-reveal bg-white p-8 flex flex-col gap-4">
+                  <span className="text-[2rem] font-black text-[#1A1A1A]/15 leading-none">0{i + 1}</span>
+                  <div>
+                    <h4 className="font-black text-[0.875rem] uppercase tracking-tight mb-2">{t(`landing.challenge.cards.${card}.title`)}</h4>
+                    <p className="text-[13px] text-[#333333]/80 leading-relaxed">{t(`landing.challenge.cards.${card}.text`)}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
+        </section>
 
-          <div
-            data-reveal
-            className="lp-reveal group mt-16 overflow-hidden rounded-2xl ring-1 ring-white/10 shadow-2xl relative"
-          >
-            <div className="absolute inset-0 bg-gradient-to-t from-[#38304F]/80 via-transparent to-transparent opacity-60 z-10 transition-opacity duration-300 group-hover:opacity-40" />
-            <img
-              src={`${IMG}/firefighting-crew.webp`}
-              alt={t("landing.platform.imgAlt")}
-              className="w-full max-h-[400px] object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-            />
-            {/* Simulation Preview Decoration */}
-            <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-              <div className="w-14 h-14 rounded-full bg-[#4A3F6B]/90 text-white flex items-center justify-center shadow-2xl ring-4 ring-[#4A3F6B]/30 scale-90 group-hover:scale-100 transition-transform duration-300">
-                <Activity className="h-6 w-6 animate-pulse" />
-              </div>
+        {/* Capabilities. */}
+        <section className="py-32 px-8">
+          <div className="max-w-7xl mx-auto">
+            <SectionHead eyebrow={t("landing.capabilities.eyebrow")} title={t("landing.capabilities.title")} />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-[#D4D2D0] border border-[#D4D2D0]">
+              {CAPABILITIES.map((c, i) => (
+                <div key={c.key} data-reveal style={{ transitionDelay: `${(i % 3) * 90}ms` }} className="lp-reveal p-12 bg-white hover:bg-[#F6F4F2] transition-colors">
+                  <c.icon className="w-6 h-6 mb-8 text-[#1A1A1A]" strokeWidth={1.5} />
+                  <h4 className="text-sm font-bold mb-4 uppercase tracking-widest">{t(`landing.capabilities.items.${c.key}.title`)}</h4>
+                  <p className="text-[13px] text-[#333333]/80 leading-relaxed">{t(`landing.capabilities.items.${c.key}.text`)}</p>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Capabilities */}
-      <section className="py-20 md:py-28 bg-white">
-        <div className="mx-auto max-w-7xl px-5">
-          <div className="max-w-3xl">
-            <p className="text-sm font-bold uppercase tracking-wider text-[#4A3F6B]">
-              {t("landing.capabilities.eyebrow")}
-            </p>
-            <h2 className="mt-3 text-3xl md:text-4xl font-extrabold text-[#4A3F6B] tracking-tight leading-tight">
-              {t("landing.capabilities.title")}
-            </h2>
-          </div>
-          
-          <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {CAPABILITIES.map((c, i) => (
-              <div
-                key={c.key}
-                data-reveal
-                style={{ transitionDelay: `${(i % 3) * 90}ms` }}
-                className="lp-reveal group relative p-8 rounded-3xl bg-white border border-[#D4D2D0]/80 shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_16px_40px_rgba(0,0,0,0.08)] flex flex-col"
-              >
-                {/* Custom badge colors */}
-                <div className={`w-14 h-14 rounded-[18px] flex items-center justify-center border transition-transform duration-500 group-hover:scale-105 ${c.color}`}>
-                  <c.icon className="h-6 w-6" />
+        {/* Personas. */}
+        <section id="personas" className="py-32 px-8 bg-white border-y border-[#D4D2D0]">
+          <div className="max-w-7xl mx-auto">
+            <SectionHead eyebrow={t("landing.personas.eyebrow")} title={t("landing.personas.title")} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#D4D2D0] border border-[#D4D2D0]">
+              {PERSONAS.map((p, i) => (
+                <div key={p.key} data-reveal style={{ transitionDelay: `${i * 90}ms` }} className="lp-reveal bg-white p-10">
+                  <p.icon className="w-6 h-6 mb-6 text-[#1A1A1A]" strokeWidth={1.5} />
+                  <p className="font-black text-[0.9375rem] uppercase tracking-tight mb-3">{t(`landing.personas.items.${p.key}.title`)}</p>
+                  <p className="text-[12px] text-[#333333]/80 leading-relaxed">{t(`landing.personas.items.${p.key}.text`)}</p>
                 </div>
-                
-                <h3 className="mt-6 text-[19px] font-bold text-[#4A3F6B] tracking-tight">
-                  {t(`landing.capabilities.items.${c.key}.title`)}
-                </h3>
-                <p className="mt-3 text-[15px] text-[#B0AAA4] leading-relaxed font-medium">
-                  {t(`landing.capabilities.items.${c.key}.text`)}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Personas */}
-      <section id="personas" className="py-20 md:py-28 bg-[#EDEAE7] border-t border-[#D4D2D0]">
-        <div className="mx-auto max-w-7xl px-5">
-          <div className="max-w-3xl">
-            <p className="text-sm font-bold uppercase tracking-wider text-[#4A3F6B]">
-              {t("landing.personas.eyebrow")}
-            </p>
-            <h2 className="mt-3 text-3xl md:text-4xl font-extrabold text-[#4A3F6B] tracking-tight leading-tight">
-              {t("landing.personas.title")}
-            </h2>
-          </div>
-          
-          <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {PERSONAS.map((p, i) => (
-              <div
-                key={p.key}
-                data-reveal
-                style={{ transitionDelay: `${i * 90}ms` }}
-                className="lp-reveal group relative p-8 rounded-3xl bg-white border border-[#D4D2D0]/80 shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_16px_40px_rgba(0,0,0,0.08)] flex flex-col"
-              >
-                {/* Specific persona icon wrapping */}
-                <div className={`w-14 h-14 rounded-[18px] flex items-center justify-center border transition-transform duration-500 group-hover:scale-105 ${p.color}`}>
-                  <p.icon className="h-6 w-6" />
-                </div>
-                
-                <h3 className="mt-6 text-[17px] font-bold text-[#4A3F6B] tracking-tight leading-snug">
-                  {t(`landing.personas.items.${p.key}.title`)}
-                </h3>
-                <p className="mt-3 text-[14px] text-[#B0AAA4] leading-relaxed font-medium">
-                  {t(`landing.personas.items.${p.key}.text`)}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Contact */}
-      <section
-        id="contact"
-        className="py-20 md:py-28 bg-[#EDEAE7] lp-grid-pattern text-[#1A1A1A] border-t border-[#D4D2D0] relative"
-      >
-        <div className="absolute inset-0 bg-gradient-to-br from-[#EDEAE7] to-[#EDEAE7] pointer-events-none" />
-        
-        {/* Glow Spheres */}
-        <div className="absolute bottom-10 left-10 w-80 h-80 bg-[#4A3F6B]/5 rounded-full blur-[100px] pointer-events-none" />
-
-        <div className="relative mx-auto max-w-5xl px-5 grid md:grid-cols-2 gap-16 items-center">
-          <div>
-            <p className="text-sm font-bold uppercase tracking-wider text-[#4A3F6B]">
-              {t("landing.contact.eyebrow")}
-            </p>
-            <h2 className="mt-3 text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-[#1A1A1A]">{t("landing.contact.title")}</h2>
-            <p className="mt-5 text-[#333333] leading-relaxed text-base font-medium">{t("landing.contact.subtitle")}</p>
-            <div className="mt-8 flex items-center gap-3 text-[#333333]">
-              <Mail className="h-5 w-5 text-[#4A3F6B]" />
-              <span className="text-sm">{t("landing.contact.responseTime")}</span>
+              ))}
             </div>
           </div>
+        </section>
 
-          <div className="border border-[#D4D2D0] rounded-2xl bg-white p-6 md:p-8 text-[#1A1A1A] shadow-2xl relative overflow-hidden">
-            <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-[#4A3F6B]/5 rounded-full blur-2xl pointer-events-none" />
-            
-            {status === "success" ? (
-              <div className="flex flex-col items-center text-center py-8">
-                <CheckCircle2 className="h-12 w-12 text-[#4A3F6B] animate-bounce" />
-                <h3 className="mt-4 text-xl font-bold text-[#1A1A1A]">
-                  {t("landing.contact.successTitle")}
-                </h3>
-                <p className="mt-2 text-[#333333]">{t("landing.contact.successText")}</p>
-                <button
-                  onClick={() => setStatus("idle")}
-                  className="mt-6 text-sm font-semibold text-[#4A3F6B] hover:text-[#4A3F6B] transition-colors"
-                >
-                  {t("landing.contact.sendAnother")}
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={onSubmit} className="space-y-4 relative z-10">
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#333333] mb-1.5">
-                      {t("landing.contact.name")}
-                    </label>
-                    <input
-                      value={form.name}
-                      onChange={set("name")}
-                      required
-                      className="w-full rounded-xl border border-[#D4D2D0] bg-[#EDEAE7]/60 px-3 py-2.5 text-sm text-[#1A1A1A] placeholder-[#B0AAA4] focus:outline-none focus:ring-2 focus:ring-[#4A3F6B] focus:bg-white transition-all font-medium"
-                    />
+        {/* Contact. */}
+        <section id="contact" className="py-32 px-8">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-12">
+              <span className={EYEBROW}>{t("landing.contact.eyebrow")}</span>
+              <h2 className="text-3xl md:text-6xl font-black tracking-tighter leading-tight mt-4">{t("landing.contact.title")}</h2>
+              <p className="text-sm text-[#333333]/80 mt-4">{t("landing.contact.subtitle")}</p>
+              <p className="mt-3 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A1A1A]/50">
+                <Mail className="h-3.5 w-3.5" />
+                {t("landing.contact.responseTime")}
+              </p>
+            </div>
+
+            <div className="border border-[#D4D2D0] bg-[#F6F4F2] p-8 md:p-10">
+              {status === "success" ? (
+                <div className="flex flex-col items-center text-center py-8">
+                  <CheckCircle2 className="h-10 w-10 text-[#4A3F6B]" strokeWidth={1.5} />
+                  <h3 className="mt-4 font-black text-[0.9375rem] uppercase tracking-wider">{t("landing.contact.successTitle")}</h3>
+                  <p className="mt-2 text-[13px] text-[#333333]/80">{t("landing.contact.successText")}</p>
+                  <button onClick={() => setStatus("idle")} className={`${BUTTON} mt-6 border border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-[#EDEAE7]`}>
+                    {t("landing.contact.sendAnother")}
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={onSubmit} className="space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label className={LABEL}>{t("landing.contact.name")}</label>
+                      <input value={form.name} onChange={set("name")} required className={FIELD} />
+                    </div>
+                    <div>
+                      <label className={LABEL}>{t("landing.contact.email")}</label>
+                      <input type="email" value={form.email} onChange={set("email")} required className={FIELD} />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label className={LABEL}>{t("landing.contact.category")}</label>
+                      <select value={form.category} onChange={set("category")} className={`${FIELD} cursor-pointer`}>
+                        {CATEGORY_OPTIONS.map((c) => (
+                          <option key={c.value} value={c.value}>
+                            {t(`landing.contact.categories.${c.key}`)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className={LABEL}>{t("landing.contact.subject")}</label>
+                      <input value={form.subject} onChange={set("subject")} required className={FIELD} />
+                    </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#333333] mb-1.5">
-                      {t("landing.contact.email")}
-                    </label>
-                    <input
-                      type="email"
-                      value={form.email}
-                      onChange={set("email")}
-                      required
-                      className="w-full rounded-xl border border-[#D4D2D0] bg-[#EDEAE7]/60 px-3 py-2.5 text-sm text-[#1A1A1A] placeholder-[#B0AAA4] focus:outline-none focus:ring-2 focus:ring-[#4A3F6B] focus:bg-white transition-all font-medium"
-                    />
+                    <label className={LABEL}>{t("landing.contact.message")}</label>
+                    <textarea value={form.message} onChange={set("message")} required rows={4} className={`${FIELD} resize-y`} />
                   </div>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-[#333333] mb-1.5">
-                    {t("landing.contact.category")}
-                  </label>
-                  <select
-                    value={form.category}
-                    onChange={set("category")}
-                    className="w-full rounded-xl border border-[#D4D2D0] bg-white px-3 py-2.5 text-sm text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#4A3F6B] transition-all font-medium cursor-pointer"
-                  >
-                    {CATEGORY_OPTIONS.map((c) => (
-                      <option key={c.value} value={c.value} className="bg-white text-[#1A1A1A]">
-                        {t(`landing.contact.categories.${c.key}`)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-[#333333] mb-1.5">
-                    {t("landing.contact.subject")}
-                  </label>
-                  <input
-                    value={form.subject}
-                    onChange={set("subject")}
-                    required
-                    className="w-full rounded-xl border border-[#D4D2D0] bg-[#EDEAE7]/60 px-3 py-2.5 text-sm text-[#1A1A1A] placeholder-[#B0AAA4] focus:outline-none focus:ring-2 focus:ring-[#4A3F6B] focus:bg-white transition-all font-medium"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-[#333333] mb-1.5">
-                    {t("landing.contact.message")}
-                  </label>
-                  <textarea
-                    value={form.message}
-                    onChange={set("message")}
-                    required
-                    rows={4}
-                    className="w-full rounded-xl border border-[#D4D2D0] bg-[#EDEAE7]/60 px-3 py-2.5 text-sm text-[#1A1A1A] placeholder-[#B0AAA4] focus:outline-none focus:ring-2 focus:ring-[#4A3F6B] focus:bg-white transition-all resize-y font-medium"
-                  />
-                </div>
-                {status === "error" && (
-                  <div className="flex items-start gap-2 rounded-xl bg-red-500/10 border border-red-500/30 px-3 py-2.5 text-sm text-red-300 animate-pulse">
-                    <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <span>{error}</span>
-                  </div>
-                )}
-                <button
-                  type="submit"
-                  disabled={status === "loading"}
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#1A1A1A] hover:bg-[#333333] disabled:opacity-60 text-[#EDEAE7] font-semibold px-5 py-3 transition-all cursor-pointer"
-                >
-                  {status === "loading" ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Mail className="h-4 w-4" />
+                  {status === "error" && (
+                    <div className="flex items-start gap-2.5 p-4 border border-[#B0AAA4] bg-white text-[#1A1A1A] text-[13px]">
+                      <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                      <span>{error}</span>
+                    </div>
                   )}
-                  {status === "loading" ? t("landing.contact.sending") : t("landing.contact.send")}
-                </button>
-                <p className="text-xs text-[#B0AAA4] text-center font-medium">
-                  {t("landing.contact.agree")}{" "}
-                  <Link to="/privacy" className="underline text-[#4A3F6B] hover:text-[#4A3F6B] transition-colors">
-                    {t("landing.contact.privacyPolicy")}
-                  </Link>
-                  .
-                </p>
-              </form>
-            )}
+                  <button type="submit" disabled={status === "loading"} className={`${BUTTON} w-full bg-[#1A1A1A] hover:bg-[#333333] text-[#EDEAE7] py-4 disabled:opacity-50`}>
+                    {status === "loading" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mail className="h-4 w-4" />}
+                    {status === "loading" ? t("landing.contact.sending") : t("landing.contact.send")}
+                  </button>
+                  <p className="text-[11px] text-[#1A1A1A]/50 text-center">
+                    {t("landing.contact.agree")}{" "}
+                    <Link to="/privacy" className="underline text-[#1A1A1A] hover:opacity-70">
+                      {t("landing.contact.privacyPolicy")}
+                    </Link>
+                    .
+                  </p>
+                </form>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
-      {/* Footer */}
-      <footer className="bg-[#4A3F6B] text-white border-t border-white/5 relative z-10">
-        <div className="mx-auto max-w-7xl px-5 py-14 grid md:grid-cols-3 gap-12 items-start">
-          <div className="space-y-4">
-            <img src={`${IMG}/storcito-logo-white.webp`} alt="Storcito" className="h-9 w-auto hover:opacity-95 transition-opacity" />
-            <p className="text-sm text-white/70 max-w-xs leading-relaxed font-medium">{t("landing.footer.tagline")}</p>
+      {/* Footer. */}
+      <footer className={`w-full ${BAND}`}>
+        <div className="max-w-7xl mx-auto px-8 py-16 grid gap-12 sm:grid-cols-2 lg:grid-cols-4 items-start">
+          <div className="flex flex-col gap-4 max-w-xs">
+            <img src={`${IMG}/storcito-logo-white.webp`} alt="STORCITO" className="h-10 w-auto self-start" />
+            <p className="text-[11px] font-medium tracking-wide uppercase leading-relaxed text-white/60">{t("landing.footer.tagline")}</p>
           </div>
-          <div className="flex flex-col gap-3 text-sm">
-            <Link to="/privacy" className="text-white/70 hover:text-white transition-colors py-0.5">
-              {t("landing.footer.privacy")}
-            </Link>
-            <Link to="/legal" className="text-white/70 hover:text-white transition-colors py-0.5">
-              {t("landing.footer.cookies")}
-            </Link>
-            <Link to="/impressum" className="text-white/70 hover:text-white transition-colors py-0.5">
-              {t("landing.footer.impressum")}
-            </Link>
-            <Link to="/terms-and-conditions" className="text-white/70 hover:text-white transition-colors py-0.5">
-              {t("landing.footer.terms")}
-            </Link>
-            <Link to="/docs" className="text-white/70 hover:text-white transition-colors py-0.5">
-              {t("landing.nav.docs")}
-            </Link>
+
+          <div className="flex flex-col gap-4 max-w-xs">
+            <img src={`${IMG}/thd-logo.svg`} alt="Technische Hochschule Deggendorf" className="h-8 w-auto self-start brightness-0 invert" />
+            <p className="text-[11px] font-medium tracking-wide uppercase leading-relaxed text-white/60">Technische Hochschule Deggendorf</p>
+            <p className="text-[11px] leading-relaxed text-white/60">
+              University of Applied Sciences.<br />
+              BigGeoData & Spatial AI Research Group.<br />
+              Deggendorf, Bavaria, Germany.
+            </p>
             <a
-              href={GITHUB_URL}
+              href="https://www.th-deg.de"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors py-0.5"
+              className="self-start inline-flex items-center gap-2 border border-white/30 px-4 py-2 font-black uppercase text-[10px] tracking-widest text-white hover:bg-white/10 transition-all"
             >
-              <GithubIcon className="h-4 w-4" />
+              www.th-deg.de
+              <ArrowRight className="h-3 w-3" />
+            </a>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <Link to="/privacy" className={FOOTER_LINK}>{t("landing.footer.privacy")}</Link>
+            <Link to="/legal" className={FOOTER_LINK}>{t("landing.footer.cookies")}</Link>
+            <Link to="/impressum" className={FOOTER_LINK}>{t("landing.footer.impressum")}</Link>
+            <Link to="/terms-and-conditions" className={FOOTER_LINK}>{t("landing.footer.terms")}</Link>
+            <Link to="/docs" className={FOOTER_LINK}>{t("landing.nav.docs")}</Link>
+            <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className={`${FOOTER_LINK} inline-flex items-center gap-2`}>
+              <GithubIcon className="h-3.5 w-3.5" />
               {t("landing.nav.github")}
             </a>
           </div>
+
           <div className="space-y-4">
-            <img
-              src={`${IMG}/eu-funded.webp`}
-              alt={t("landing.footer.euFundedAlt")}
-              className="h-12 w-auto bg-white rounded p-1 hover:scale-[1.02] transition-transform"
-            />
-            <p className="text-[11px] leading-relaxed text-white/55">
-              {t("landing.footer.euDisclaimer")}
-            </p>
+            <img src={`${IMG}/eu-funded.webp`} alt={euAlt} className="h-12 w-auto bg-white p-1" />
+            <p className="text-[11px] leading-relaxed text-white/50">{t("landing.footer.euDisclaimer")}</p>
           </div>
         </div>
-        <div className="border-t border-white/5 bg-[#4A3F6B]/20">
-          <div className="mx-auto max-w-7xl px-5 py-6 text-xs text-white/50 flex flex-wrap items-center justify-between gap-4 font-medium">
+
+        <div className="border-t border-white/10">
+          <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 px-8 py-6 text-[10px] uppercase tracking-widest text-white/40">
             <span>© {new Date().getFullYear()} {t("landing.footer.copyright")}</span>
             <span>{t("landing.footer.builtOn")}</span>
           </div>
@@ -834,4 +586,3 @@ export const LandingPage: React.FC = () => {
     </div>
   );
 };
-
