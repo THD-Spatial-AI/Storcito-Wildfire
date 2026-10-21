@@ -400,11 +400,13 @@ export const LandingPage: React.FC = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-[#D4D2D0] border border-[#D4D2D0]">
               {CHALLENGE_CARDS.map((card, i) => (
-                <div key={card} data-reveal style={{ transitionDelay: `${i * 80}ms` }} className="lp-reveal bg-white p-8 flex flex-col gap-4">
-                  <span className="text-[2rem] font-black text-[#1A1A1A]/15 leading-none">0{i + 1}</span>
-                  <div>
-                    <h4 className="font-black text-[0.875rem] uppercase tracking-tight mb-2">{t(`landing.challenge.cards.${card}.title`)}</h4>
-                    <p className="text-[13px] text-[#333333]/80 leading-relaxed">{t(`landing.challenge.cards.${card}.text`)}</p>
+                <div key={card} className="bg-white">
+                  <div data-reveal style={{ transitionDelay: `${i * 80}ms` }} className="lp-reveal h-full p-8 flex flex-col gap-4">
+                    <span className="text-[2rem] font-black text-[#1A1A1A]/15 leading-none">0{i + 1}</span>
+                    <div>
+                      <h4 className="font-black text-[0.875rem] uppercase tracking-tight mb-2">{t(`landing.challenge.cards.${card}.title`)}</h4>
+                      <p className="text-[13px] text-[#333333]/80 leading-relaxed">{t(`landing.challenge.cards.${card}.text`)}</p>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -418,10 +420,12 @@ export const LandingPage: React.FC = () => {
             <SectionHead eyebrow={t("landing.capabilities.eyebrow")} title={t("landing.capabilities.title")} />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-[#D4D2D0] border border-[#D4D2D0]">
               {CAPABILITIES.map((c, i) => (
-                <div key={c.key} data-reveal style={{ transitionDelay: `${(i % 3) * 90}ms` }} className="lp-reveal p-12 bg-white hover:bg-[#F6F4F2] transition-colors">
-                  <c.icon className="w-6 h-6 mb-8 text-[#1A1A1A]" strokeWidth={1.5} />
-                  <h4 className="text-sm font-bold mb-4 uppercase tracking-widest">{t(`landing.capabilities.items.${c.key}.title`)}</h4>
-                  <p className="text-[13px] text-[#333333]/80 leading-relaxed">{t(`landing.capabilities.items.${c.key}.text`)}</p>
+                <div key={c.key} className="bg-white hover:bg-[#F6F4F2] transition-colors">
+                  <div data-reveal style={{ transitionDelay: `${(i % 3) * 90}ms` }} className="lp-reveal h-full p-12">
+                    <c.icon className="w-6 h-6 mb-8 text-[#1A1A1A]" strokeWidth={1.5} />
+                    <h4 className="text-sm font-bold mb-4 uppercase tracking-widest">{t(`landing.capabilities.items.${c.key}.title`)}</h4>
+                    <p className="text-[13px] text-[#333333]/80 leading-relaxed">{t(`landing.capabilities.items.${c.key}.text`)}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -434,10 +438,12 @@ export const LandingPage: React.FC = () => {
             <SectionHead eyebrow={t("landing.personas.eyebrow")} title={t("landing.personas.title")} />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#D4D2D0] border border-[#D4D2D0]">
               {PERSONAS.map((p, i) => (
-                <div key={p.key} data-reveal style={{ transitionDelay: `${i * 90}ms` }} className="lp-reveal bg-white p-10">
-                  <p.icon className="w-6 h-6 mb-6 text-[#1A1A1A]" strokeWidth={1.5} />
-                  <p className="font-black text-[0.9375rem] uppercase tracking-tight mb-3">{t(`landing.personas.items.${p.key}.title`)}</p>
-                  <p className="text-[12px] text-[#333333]/80 leading-relaxed">{t(`landing.personas.items.${p.key}.text`)}</p>
+                <div key={p.key} className="bg-white">
+                  <div data-reveal style={{ transitionDelay: `${i * 90}ms` }} className="lp-reveal h-full p-10">
+                    <p.icon className="w-6 h-6 mb-6 text-[#1A1A1A]" strokeWidth={1.5} />
+                    <p className="font-black text-[0.9375rem] uppercase tracking-tight mb-3">{t(`landing.personas.items.${p.key}.title`)}</p>
+                    <p className="text-[12px] text-[#333333]/80 leading-relaxed">{t(`landing.personas.items.${p.key}.text`)}</p>
+                  </div>
                 </div>
               ))}
             </div>
