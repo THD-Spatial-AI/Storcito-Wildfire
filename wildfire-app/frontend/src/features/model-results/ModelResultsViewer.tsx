@@ -47,6 +47,7 @@ import { ViewerStatusBanners } from "./components/ViewerStatusBanners";
 import { OverlaysPanel, RiskLegendPanel } from "./components/ViewerMapPanels";
 import { MapShortcutsPanel } from "@/components/map-controls/MapShortcutsPanel";
 import { RiskTimelinePanel } from "./components/RiskTimelinePanel";
+import { useSeenCompletedModelsStore } from "@/features/model-dashboard/store/seen-completed-models";
 
 // Lazy-load Cesium.
 const CesiumWildfire3DView = lazy(() =>
@@ -174,6 +175,11 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
       }
     }
   }, [resolvedModelId, t]);
+
+  const markCompletedSeen = useSeenCompletedModelsStore((s) => s.markSeen);
+  useEffect(() => {
+    if (model?.status === "completed") markCompletedSeen(model);
+  }, [model, markCompletedSeen]);
 
   useEffect(() => {
     setModel(null);

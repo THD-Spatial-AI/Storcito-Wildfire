@@ -783,6 +783,8 @@
     "revokingAccess": "Ανάκληση…",
     "filterPeriod": "Φιλτράρισμα κατά περίοδο",
     "estimateRemaining": "~{{duration}} απομένουν",
+    "recentlyCompleted": "Νέο",
+    "recentlyCompletedTooltip": "Ολοκληρώθηκε {{time}}. Ανοίξτε το για να δείτε τα αποτελέσματα.",
     "estimateOverdue": "διαρκεί περισσότερο από το συνηθισμένο",
     "pin": "Καρφίτσωμα στην κορυφή",
     "unpin": "Ξεκαρφίτσωμα",

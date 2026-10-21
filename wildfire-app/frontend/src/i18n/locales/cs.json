@@ -380,6 +380,8 @@
     "revokingAccess": "Odebírání přístupu…",
     "filterPeriod": "Filtrovat podle období",
     "estimateRemaining": "zbývá ~{{duration}}",
+    "recentlyCompleted": "Nový",
+    "recentlyCompletedTooltip": "Dokončeno {{time}}. Otevřete jej pro zobrazení výsledků.",
     "estimateOverdue": "trvá déle než obvykle",
     "pin": "Připnout nahoru",
     "unpin": "Odepnout",

@@ -380,6 +380,8 @@
     "revokingAccess": "Odbieranie dostępu…",
     "filterPeriod": "Filtruj według okresu",
     "estimateRemaining": "~{{duration}} pozostało",
+    "recentlyCompleted": "Nowy",
+    "recentlyCompletedTooltip": "Ukończono {{time}}. Otwórz, aby zobaczyć wyniki.",
     "estimateOverdue": "trwa dłużej niż zwykle",
     "pin": "Przypnij na górze",
     "unpin": "Odepnij",

@@ -12,6 +12,10 @@ import RiskLevelBadge from "./RiskLevelBadge";
 import { formatDateTime } from "@/utils/dateHelpers";
 import { useTranslation } from "@/i18n";
 import { useFavoriteModelsStore } from "@/features/model-dashboard/store/favorite-models";
+import {
+  isRecentlyCompleted,
+  useSeenCompletedModelsStore,
+} from "@/features/model-dashboard/store/seen-completed-models";
 import { isActiveStatus } from "@/features/model-dashboard/utils/statusHelpers";
 import { useModelDashboardActions } from "./model-dashboard/ModelDashboardActionsContext";
 
@@ -193,6 +197,8 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
   const toggleFavorite = useFavoriteModelsStore((s) => s.toggleFavorite);
   const isFavorite = useFavoriteModelsStore((s) => s.isFavorite);
   const favorited = isFavorite(model.id);
+  const seenCompleted = useSeenCompletedModelsStore((s) => s.seen);
+  const isNew = isRecentlyCompleted(model, seenCompleted);
   const isParent = !model.is_copy && !model.parent_model_id;
   const level = model.level || 0;
   const indentClass = level > 0 ? "pl-8" : "";
@@ -206,7 +212,13 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
 
   const rowClassName = `group transition-colors duration-150 hover:bg-muted/40 ${
     level > 0 ? "border-l-2 border-border bg-muted/20" : ""
-  } ${isSelected ? "bg-muted/50 shadow-[inset_2px_0_0_0_var(--primary)]" : ""}`;
+  } ${
+    isSelected
+      ? "bg-muted/50 shadow-[inset_2px_0_0_0_var(--primary)]"
+      : isNew
+        ? "bg-emerald-500/[0.06] shadow-[inset_2px_0_0_0_var(--color-emerald-500)]"
+        : ""
+  }`;
 
   return (
     <tr className={rowClassName}>
@@ -276,6 +288,30 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
             </Tooltip>
           ) : (
             <StatusBadge status={model.status} size="small" />
+          )}
+
+          {isNew && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={() => handleView(model)}
+                  className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-500/20 transition-colors hover:bg-emerald-500/20 dark:text-emerald-300"
+                >
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-60" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  </span>
+                  {t("model.recentlyCompleted", "New")}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {t("model.recentlyCompletedTooltip", {
+                  time: formatDateTime(model.calculation_completed_at!),
+                  defaultValue: "Finished {{time}}. Open it to see the results.",
+                })}
+              </TooltipContent>
+            </Tooltip>
           )}
 
           {isActiveStatus(model.status) && calculationStartTimes[model.id] && (
@@ -405,6 +441,7 @@ const modelSnapshotEqual = (
   prev.status === next.status &&
   prev.created_at === next.created_at &&
   prev.updated_at === next.updated_at &&
+  prev.calculation_completed_at === next.calculation_completed_at &&
   prev.user_id === next.user_id &&
   prev.user_email === next.user_email &&
   prev.is_copy === next.is_copy &&

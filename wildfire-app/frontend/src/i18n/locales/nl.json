@@ -380,6 +380,8 @@
     "revokingAccess": "Bezig met intrekken…",
     "filterPeriod": "Filteren op periode",
     "estimateRemaining": "~{{duration}} resterend",
+    "recentlyCompleted": "Nieuw",
+    "recentlyCompletedTooltip": "Voltooid op {{time}}. Open het om de resultaten te bekijken.",
     "estimateOverdue": "duurt langer dan gebruikelijk",
     "pin": "Bovenaan vastzetten",
     "unpin": "Losmaken",

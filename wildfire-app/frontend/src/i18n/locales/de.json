@@ -546,6 +546,8 @@
     "revokingAccess": "Wird widerrufen …",
     "filterPeriod": "Nach Zeitraum filtern",
     "estimateRemaining": "noch ~{{duration}}",
+    "recentlyCompleted": "Neu",
+    "recentlyCompletedTooltip": "Fertig am {{time}}. Öffnen, um die Ergebnisse zu sehen.",
     "estimateOverdue": "dauert länger als üblich",
     "pin": "Oben anheften",
     "unpin": "Lösen",
