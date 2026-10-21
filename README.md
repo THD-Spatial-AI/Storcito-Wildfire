@@ -1,6 +1,8 @@
 # Wildfire App
 ### Wildfire Risk Assessment & Simulation Platform
 
+[![DOI](https://img.shields.io/badge/DOI-10.5194%2Fisprs--archives--XLVIII--M--13--2026--33--2026-blue)](https://doi.org/10.5194/isprs-archives-XLVIII-M-13-2026-33-2026)
+
 **Wildfire App** is a geospatial platform for assessing and simulating wildfire risk over user-defined regions. Users draw a polygon on an interactive map, configure a date range and resolution, and dispatch a simulation run. Results are published as GeoServer raster layers and surfaced as risk metrics, choropleth maps, and model comparisons in the browser.
 
 The application is part of the **SpatialHub** ecosystem at TH Deggendorf, running at `wildfire-app.th-deg.de`.
@@ -173,7 +175,23 @@ Bug reports, feature requests and pull requests are welcome. Please read [CONTRI
 
 ## Citation
 
-If you use this software, please cite it using the metadata in [CITATION.cff](CITATION.cff).
+If you use this software, please cite the accompanying paper:
+
+> Ortega-Hita, R., Khan, A., Gallego-Llopis, M., Valdes, J., Weber, A., Miranda, R., Papanikolaou, I., and Veiga-López, F.: A Modular, Cloud-Based GIS Platform for Automated Wildfire Risk Index Mapping, *Int. Arch. Photogramm. Remote Sens. Spatial Inf. Sci.*, XLVIII-M-13-2026, 33–40, https://doi.org/10.5194/isprs-archives-XLVIII-M-13-2026-33-2026, 2026.
+
+```bibtex
+@article{ortegahita2026wildfire,
+  author  = {Ortega-Hita, Raquel and Khan, Asim and Gallego-Llopis, Mateo and Valdes, Javier and Weber, Andreas and Miranda, Ricardo and Papanikolaou, Ioannis and Veiga-L{\'o}pez, Fernando},
+  title   = {A Modular, Cloud-Based {GIS} Platform for Automated Wildfire Risk Index Mapping},
+  journal = {The International Archives of the Photogrammetry, Remote Sensing and Spatial Information Sciences},
+  volume  = {XLVIII-M-13-2026},
+  pages   = {33--40},
+  year    = {2026},
+  doi     = {10.5194/isprs-archives-XLVIII-M-13-2026-33-2026}
+}
+```
+
+Citation metadata is also available in [CITATION.cff](CITATION.cff).
 
 ---
 

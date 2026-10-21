@@ -27,3 +27,30 @@ keywords:
 repository-code: "https://github.com/THD-Spatial-AI/Storcito-Wildfire"
 license: MIT
 version: "0.1.0"
+preferred-citation:
+  type: article
+  title: "A Modular, Cloud-Based GIS Platform for Automated Wildfire Risk Index Mapping"
+  authors:
+    - family-names: "Ortega-Hita"
+      given-names: "Raquel"
+    - family-names: "Khan"
+      given-names: "Asim"
+    - family-names: "Gallego-Llopis"
+      given-names: "Mateo"
+    - family-names: "Valdes"
+      given-names: "Javier"
+    - family-names: "Weber"
+      given-names: "Andreas"
+    - family-names: "Miranda"
+      given-names: "Ricardo"
+    - family-names: "Papanikolaou"
+      given-names: "Ioannis"
+    - family-names: "Veiga-López"
+      given-names: "Fernando"
+  journal: "The International Archives of the Photogrammetry, Remote Sensing and Spatial Information Sciences"
+  volume: "XLVIII-M-13-2026"
+  start: 33
+  end: 40
+  year: 2026
+  doi: "10.5194/isprs-archives-XLVIII-M-13-2026-33-2026"
+  url: "https://isprs-archives.copernicus.org/articles/XLVIII-M-13-2026/33/2026/"
