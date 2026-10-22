@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Copy, PencilLine, Users, Clock, Pin } from "lucide-react";
+import { ChevronRight, Copy, PencilLine, Users, Clock, Pin } from "lucide-react";
 import { Model } from "@/features/model-dashboard/services/modelService";
 import StatusBadge from "@/components/ui/StatusBadge";
 import ElapsedTimer from "@/components/ui/ElapsedTimer";
@@ -7,9 +7,9 @@ import { remainingSeconds } from "@/features/model-dashboard/utils/runtimeEstima
 import { SimulationProgress } from "@/components/ui/SimulationProgress";
 import CompletedTimer from "@/components/ui/CompletedTimer";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@spatialhub/ui";
-import ModelActions from "@/components/ui/ModelActions";
+import ModelRowActions from "./ModelRowActions";
 import RiskLevelBadge from "./RiskLevelBadge";
-import { formatDateTime } from "@/utils/dateHelpers";
+import { formatDateTime, formatDateRange, formatShortDateTime } from "@/utils/dateHelpers";
 import { useTranslation } from "@/i18n";
 import { useFavoriteModelsStore } from "@/features/model-dashboard/store/favorite-models";
 import {
@@ -44,10 +44,15 @@ const formatDuration = (seconds: number): string => {
 };
 
 interface ModelTableRowProps {
-  model: Model & { level: number };
-  modelTitle: string;
+  model: Model;
+  level?: number;
   parentModelTitle?: string;
-  hasChildren: boolean;
+  /** Family row info. */
+  versionCount?: number;
+  versionsExpanded?: boolean;
+  familyRootId?: number;
+  familyMemberIds?: number[];
+  onToggleVersions?: (rootId: number) => void;
 }
 
 interface ModelNameCellProps {
@@ -56,8 +61,6 @@ interface ModelNameCellProps {
   level: number;
   model: Model;
   isNotModelOwner: boolean | "" | 0 | null | undefined;
-  isParent: boolean;
-  hasChildren: boolean;
 }
 
 const ModelNameCell: React.FC<ModelNameCellProps> = ({
@@ -66,8 +69,6 @@ const ModelNameCell: React.FC<ModelNameCellProps> = ({
   level,
   model,
   isNotModelOwner,
-  isParent,
-  hasChildren,
 }) => {
   const { t } = useTranslation();
   const { editingModel, editTitle, setEditTitle, updateTitle, cancelTitleEdit, startTitleEdit } =
@@ -96,7 +97,7 @@ const ModelNameCell: React.FC<ModelNameCellProps> = ({
       <TooltipTrigger asChild>
         <button
           onClick={() => startTitleEdit(model)}
-          className="flex items-center gap-2 py-1.5 px-2.5 rounded-lg hover:bg-muted transition-colors group/title max-w-[280px]"
+          className="flex min-w-0 max-w-full items-center gap-2 py-1.5 px-2.5 rounded-lg hover:bg-muted transition-colors group/title"
         >
           {level > 0 && (
             <div className="flex items-center mr-0.5">
@@ -104,7 +105,7 @@ const ModelNameCell: React.FC<ModelNameCellProps> = ({
             </div>
           )}
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex shrink-0 items-center gap-1.5">
             {model.is_copy && (
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -129,16 +130,6 @@ const ModelNameCell: React.FC<ModelNameCellProps> = ({
                 </TooltipContent>
               </Tooltip>
             )}
-            {isParent && hasChildren && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="flex items-center justify-center w-5 h-5 bg-muted rounded-md text-xs font-semibold text-foreground">
-                    P
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>{t("model.parentModel")}</TooltipContent>
-              </Tooltip>
-            )}
           </div>
 
           <span className="font-medium text-sm text-foreground truncate">{modelTitle}</span>
@@ -146,16 +137,23 @@ const ModelNameCell: React.FC<ModelNameCellProps> = ({
           <PencilLine className="w-3.5 h-3.5 text-muted-foreground opacity-0 group-hover/title:opacity-100 transition-opacity flex-shrink-0" />
         </button>
       </TooltipTrigger>
-      <TooltipContent>{t("common.tooltips.editName")}</TooltipContent>
+      <TooltipContent className="max-w-sm">
+        <p className="break-words font-medium">{modelTitle}</p>
+        <p className="text-muted-foreground">{t("common.tooltips.editName")}</p>
+      </TooltipContent>
     </Tooltip>
   );
 };
 
 const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
   model,
-  modelTitle,
+  level = 0,
   parentModelTitle,
-  hasChildren,
+  versionCount,
+  versionsExpanded = false,
+  familyRootId,
+  familyMemberIds,
+  onToggleVersions,
 }) => {
   const { t } = useTranslation();
   const {
@@ -194,13 +192,20 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
             duration: formatDuration(remaining),
             defaultValue: "~{{duration}} left",
           });
+  const favoriteIds = useFavoriteModelsStore((s) => s.favoriteIds);
   const toggleFavorite = useFavoriteModelsStore((s) => s.toggleFavorite);
-  const isFavorite = useFavoriteModelsStore((s) => s.isFavorite);
-  const favorited = isFavorite(model.id);
+  const memberIds = familyMemberIds ?? [model.id];
+  const favorited = memberIds.some((id) => favoriteIds.includes(id));
+  const handlePinToggle = () => {
+    const pinned = memberIds.filter((id) => favoriteIds.includes(id));
+    if (pinned.length > 0) {
+      pinned.forEach(toggleFavorite);
+    } else {
+      toggleFavorite(memberIds[0]);
+    }
+  };
   const seenCompleted = useSeenCompletedModelsStore((s) => s.seen);
   const isNew = isRecentlyCompleted(model, seenCompleted);
-  const isParent = !model.is_copy && !model.parent_model_id;
-  const level = model.level || 0;
   const indentClass = level > 0 ? "pl-8" : "";
   const isSelected = isModelSelected(model);
   const canManageModel = canUserDeleteModel(model);
@@ -236,7 +241,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  toggleFavorite(model.id);
+                  handlePinToggle();
                 }}
                 className={`rounded-md p-1 transition-all duration-150 hover:bg-muted ${
                   favorited ? "" : "opacity-40 group-hover:opacity-100 focus-visible:opacity-100"
@@ -256,22 +261,51 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
         </div>
       </td>
 
-      <td className={`pl-2 pr-4 py-2.5 ${indentClass}`}>
-        <div className="flex items-center gap-2">
+      <td className={`w-[40%] max-w-0 pl-2 pr-4 py-2.5 ${indentClass}`}>
+        <div className="flex min-w-0 flex-col gap-0.5">
           <ModelNameCell
-            modelTitle={modelTitle}
+            modelTitle={model.title.trim()}
             parentModelTitle={parentModelTitle}
             level={level}
             model={model}
             isNotModelOwner={isNotModelOwner}
-            isParent={isParent}
-            hasChildren={hasChildren}
           />
-          {model.status === "completed" && <RiskLevelBadge modelId={model.id} />}
+          {versionCount !== undefined && versionCount > 1 && onToggleVersions && familyRootId !== undefined && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleVersions(familyRootId);
+              }}
+              aria-expanded={versionsExpanded}
+              className="ml-2.5 inline-flex w-fit items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <ChevronRight
+                className={`h-3 w-3 transition-transform duration-150 ${versionsExpanded ? "rotate-90" : ""}`}
+              />
+              {t("model.versions", { count: versionCount })}
+            </button>
+          )}
         </div>
       </td>
 
-      <td className="px-4 py-2.5">
+      <td className="w-[12%] max-w-0 px-4 py-2.5">
+        <span className="block truncate text-xs text-muted-foreground">
+          {model.region || model.country || "—"}
+        </span>
+      </td>
+
+      <td className="hidden w-[14%] whitespace-nowrap px-4 py-2.5 md:table-cell">
+        <span className="text-xs tabular-nums text-muted-foreground">
+          {model.from_date && model.to_date ? formatDateRange(model.from_date, model.to_date) : "–"}
+        </span>
+      </td>
+
+      <td className="w-px whitespace-nowrap px-4 py-2.5">
+        {model.status === "completed" && <RiskLevelBadge modelId={model.id} />}
+      </td>
+
+      <td className="whitespace-nowrap px-4 py-2.5">
         <div className="flex items-center gap-2">
           {model.status === "failed" ? (
             <Tooltip>
@@ -392,15 +426,15 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
         </div>
       </td>
 
-      <td className="hidden px-4 py-2.5 md:table-cell">
+      <td className="hidden w-px whitespace-nowrap px-4 py-2.5 md:table-cell">
         <span className="text-xs tabular-nums text-muted-foreground">
-          {formatDateTime(model.created_at)}
+          {formatShortDateTime(model.calculation_completed_at ?? model.updated_at)}
         </span>
       </td>
 
-      <td className="px-4 py-2.5">
+      <td className="w-px whitespace-nowrap px-4 py-2.5">
         <div className="flex items-center gap-1 transition-opacity duration-150 sm:opacity-80 sm:group-hover:opacity-100">
-          <ModelActions
+          <ModelRowActions
             model={model}
             currentUserId={currentUserId}
             userAccessLevel={userAccessLevel}
@@ -423,8 +457,6 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
               canManageModel ? t("common.tooltips.share") : t("model.sharedCannotShare")
             }
             hasAvailableWebservice={hasAvailableWebservice}
-            layout="horizontal"
-            size="small"
           />
         </div>
       </td>
@@ -432,21 +464,20 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
   );
 };
 
-const modelSnapshotEqual = (
-  prev: Model & { level: number },
-  next: Model & { level: number }
-): boolean =>
+const modelSnapshotEqual = (prev: Model, next: Model): boolean =>
   prev.id === next.id &&
   prev.title === next.title &&
   prev.status === next.status &&
-  prev.created_at === next.created_at &&
   prev.updated_at === next.updated_at &&
   prev.calculation_completed_at === next.calculation_completed_at &&
   prev.user_id === next.user_id &&
   prev.user_email === next.user_email &&
   prev.is_copy === next.is_copy &&
   prev.parent_model_id === next.parent_model_id &&
-  prev.level === next.level &&
+  prev.region === next.region &&
+  prev.country === next.country &&
+  prev.from_date === next.from_date &&
+  prev.to_date === next.to_date &&
   modelSharesSnapshot(prev) === modelSharesSnapshot(next) &&
   getErrorMessage(prev.results?.error) === getErrorMessage(next.results?.error);
 
@@ -459,9 +490,12 @@ const modelSharesSnapshot = (model: Model): string =>
 const areRowPropsEqual = (prev: ModelTableRowProps, next: ModelTableRowProps): boolean => {
   if (!modelSnapshotEqual(prev.model, next.model)) return false;
 
-  if (prev.modelTitle !== next.modelTitle) return false;
+  if (prev.level !== next.level) return false;
   if (prev.parentModelTitle !== next.parentModelTitle) return false;
-  if (prev.hasChildren !== next.hasChildren) return false;
+  if (prev.versionCount !== next.versionCount) return false;
+  if (prev.versionsExpanded !== next.versionsExpanded) return false;
+  if (prev.familyRootId !== next.familyRootId) return false;
+  if ((prev.familyMemberIds ?? []).join(",") !== (next.familyMemberIds ?? []).join(",")) return false;
 
   return true;
 };

@@ -545,6 +545,7 @@
     "revokeAccessFor": "Revocar acceso",
     "revokingAccess": "Revocando…",
     "filterPeriod": "Filtrar por periodo",
+    "period": "Periodo",
     "estimateRemaining": "~{{duration}} restante",
     "recentlyCompleted": "Nuevo",
     "recentlyCompletedTooltip": "Finalizado el {{time}}. Ábrelo para ver los resultados.",
@@ -554,7 +555,22 @@
     "estimateBasis_one": "Basado en 1 ejecución comparable, que tardó {{typical}}",
     "estimateBasis_other": "Basado en {{count}} ejecuciones comparables, que suelen tardar {{typical}}",
     "estimateApproximate": "Esas ejecuciones son anteriores al registro de cola, así que la espera real será mayor.",
-    "estimateUnavailable": "No hay suficientes ejecuciones similares completadas para estimar el final"
+    "estimateUnavailable": "No hay suficientes ejecuciones similares completadas para estimar el final",
+    "lastActivity": "Última actividad",
+    "view": "Ver",
+    "run": "Ejecutar",
+    "area": "Área",
+    "risk": "Riesgo",
+    "versions_one": "{{count}} versión",
+    "versions_other": "{{count}} versiones",
+    "tabs": {
+      "all": "Todos",
+      "pinned": "Fijados",
+      "running": "Ejecutando",
+      "completed": "Completados",
+      "drafts": "Borradores",
+      "failed": "Fallidos"
+    }
   },
   "polygon": {
     "drawRegion": "Dibuja tu región",

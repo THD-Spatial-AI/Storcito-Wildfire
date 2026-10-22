@@ -379,6 +379,7 @@
     "revokeAccessFor": "Toegang intrekken",
     "revokingAccess": "Bezig met intrekken…",
     "filterPeriod": "Filteren op periode",
+    "period": "Periode",
     "estimateRemaining": "~{{duration}} resterend",
     "recentlyCompleted": "Nieuw",
     "recentlyCompletedTooltip": "Voltooid op {{time}}. Open het om de resultaten te bekijken.",
@@ -388,7 +389,22 @@
     "estimateBasis_one": "Op basis van 1 vergelijkbare run, die {{typical}} duurde",
     "estimateBasis_other": "Op basis van {{count}} vergelijkbare runs, die meestal {{typical}} duren",
     "estimateApproximate": "Die runs dateren van voor de wachtrijregistratie, dus de echte wachttijd is langer.",
-    "estimateUnavailable": "Te weinig vergelijkbare geslaagde runs voor een schatting"
+    "estimateUnavailable": "Te weinig vergelijkbare geslaagde runs voor een schatting",
+    "lastActivity": "Laatste activiteit",
+    "view": "Bekijken",
+    "run": "Starten",
+    "area": "Gebied",
+    "risk": "Risico",
+    "versions_one": "{{count}} versie",
+    "versions_other": "{{count}} versies",
+    "tabs": {
+      "all": "Alle",
+      "pinned": "Vastgezet",
+      "running": "Actief",
+      "completed": "Voltooid",
+      "drafts": "Concepten",
+      "failed": "Mislukt"
+    }
   },
   "polygon": {
     "drawRegion": "Teken je regio",

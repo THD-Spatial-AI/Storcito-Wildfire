@@ -9,7 +9,6 @@ import type { Workspace } from "@/components/workspace";
 import { useTranslation } from "@/i18n";
 import type { ModelStats } from "@/features/model-dashboard/services/modelService";
 import { RangeCalendar } from "@/components/ui/calendar-rac";
-import { ModelStatsSummary } from "./ModelStatsSummary";
 import type { Group } from "./types";
 
 interface ModelDashboardFiltersProps {
@@ -41,9 +40,9 @@ interface ModelDashboardFiltersProps {
 	handleDeleteWorkspace: () => void | Promise<void>;
 	bulkActions?: ReactNode;
 	stats: ModelStats;
-	statsLoaded?: boolean;
 	handleNewModel: () => void;
 	isModelLimitReached: boolean;
+	tabs?: ReactNode;
 	table: ReactNode;
 }
 
@@ -53,7 +52,7 @@ const TOOLBAR_ICON_BUTTON_CLASS =
 	"inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors duration-150 hover:bg-muted/60 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50";
 
 export function ModelDashboardFilters({
-	groups, selectedGroup, setSelectedGroup, filterText, setFilterText, filterFromDate, filterToDate, onDateRangeChange, isLoadingWorkspace, handleWorkspaceChange, setIsCreateWsOpen, wsReloadKey, normalizedWorkspaceId, preferredWorkspaceId, currentWorkspace, handleRefresh, isRefreshing, isLoading, handleCompareSelected, canCompareSelected, canUseComparison, canManageWorkspace, setIsShareWsOpen, setIsCopyWsOpen, setIsRenameWsOpen, handleDeleteWorkspace, bulkActions, stats, statsLoaded = false, handleNewModel, isModelLimitReached, table,
+	groups, selectedGroup, setSelectedGroup, filterText, setFilterText, filterFromDate, filterToDate, onDateRangeChange, isLoadingWorkspace, handleWorkspaceChange, setIsCreateWsOpen, wsReloadKey, normalizedWorkspaceId, preferredWorkspaceId, currentWorkspace, handleRefresh, isRefreshing, isLoading, handleCompareSelected, canCompareSelected, canUseComparison, canManageWorkspace, setIsShareWsOpen, setIsCopyWsOpen, setIsRenameWsOpen, handleDeleteWorkspace, bulkActions, stats, handleNewModel, isModelLimitReached, tabs, table,
 }: ModelDashboardFiltersProps) {
 	const { t } = useTranslation();
 
@@ -251,17 +250,16 @@ export function ModelDashboardFilters({
 							</>
 						)}
 
-						{(canUseComparison || currentWorkspace) && (
+						{((canUseComparison && canCompareSelected) || currentWorkspace) && (
 							<span className="mx-1 hidden h-5 w-px bg-border sm:block" aria-hidden="true" />
 						)}
 
-						{canUseComparison && (
+						{canUseComparison && canCompareSelected && (
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<span>
 										<button
 											onClick={handleCompareSelected}
-											disabled={!canCompareSelected}
 											className={TOOLBAR_BUTTON_CLASS}
 										>
 											<GitCompareArrows className="h-4 w-4 text-muted-foreground" />
@@ -270,7 +268,7 @@ export function ModelDashboardFilters({
 									</span>
 								</TooltipTrigger>
 								<TooltipContent>
-									<p>{canCompareSelected ? t('model.compare') : t('model.compareRequires2Completed')}</p>
+									<p>{t('model.compare')}</p>
 								</TooltipContent>
 							</Tooltip>
 						)}
@@ -348,15 +346,13 @@ export function ModelDashboardFilters({
 						{/* Bulk actions. */}
 						{bulkActions}
 					</div>
-
-					{/* Stats summary. */}
-					{statsLoaded && (
-						<ModelStatsSummary stats={stats} className="max-sm:w-full sm:ml-auto" />
-					)}
 				</div>
 
+				{/* Status tabs. */}
+				{tabs}
+
 				{/* Table */}
-				<div className="border-t border-border">
+				<div>
 					{table}
 				</div>
 			</div>

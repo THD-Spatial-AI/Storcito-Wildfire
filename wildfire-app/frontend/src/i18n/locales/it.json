@@ -379,6 +379,7 @@
     "revokeAccessFor": "Revoca l'accesso",
     "revokingAccess": "Revoca in corso…",
     "filterPeriod": "Filtra per periodo",
+    "period": "Periodo",
     "estimateRemaining": "~{{duration}} rimanenti",
     "recentlyCompleted": "Nuovo",
     "recentlyCompletedTooltip": "Completato il {{time}}. Aprilo per vedere i risultati.",
@@ -388,7 +389,22 @@
     "estimateBasis_one": "In base a 1 esecuzione comparabile, durata {{typical}}",
     "estimateBasis_other": "In base a {{count}} esecuzioni comparabili, che durano in genere {{typical}}",
     "estimateApproximate": "Quelle esecuzioni precedono il tracciamento della coda, quindi l'attesa reale sarà maggiore.",
-    "estimateUnavailable": "Esecuzioni comparabili completate insufficienti per una stima"
+    "estimateUnavailable": "Esecuzioni comparabili completate insufficienti per una stima",
+    "lastActivity": "Ultima attività",
+    "view": "Vedi",
+    "run": "Esegui",
+    "area": "Area",
+    "risk": "Rischio",
+    "versions_one": "{{count}} versione",
+    "versions_other": "{{count}} versioni",
+    "tabs": {
+      "all": "Tutti",
+      "pinned": "Fissati",
+      "running": "In esecuzione",
+      "completed": "Completati",
+      "drafts": "Bozze",
+      "failed": "Falliti"
+    }
   },
   "polygon": {
     "drawRegion": "Disegna la tua regione",

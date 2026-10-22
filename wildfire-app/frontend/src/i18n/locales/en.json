@@ -545,6 +545,7 @@
     "revokeAccessFor": "Revoke access",
     "revokingAccess": "Revoking…",
     "filterPeriod": "Filter by period",
+    "period": "Period",
     "estimateRemaining": "~{{duration}} left",
     "recentlyCompleted": "New",
     "recentlyCompletedTooltip": "Finished {{time}}. Open it to see the results.",
@@ -554,7 +555,22 @@
     "estimateBasis_one": "Based on 1 comparable run, which took {{typical}}",
     "estimateBasis_other": "Based on {{count}} comparable runs, which typically take {{typical}}",
     "estimateApproximate": "Those runs predate queue tracking, so the real wait is likely longer.",
-    "estimateUnavailable": "Not enough comparable successful runs to estimate a finish time"
+    "estimateUnavailable": "Not enough comparable successful runs to estimate a finish time",
+    "lastActivity": "Last activity",
+    "view": "View",
+    "run": "Run",
+    "area": "Area",
+    "risk": "Risk",
+    "versions_one": "{{count}} version",
+    "versions_other": "{{count}} versions",
+    "tabs": {
+      "all": "All",
+      "pinned": "Pinned",
+      "running": "Running",
+      "completed": "Completed",
+      "drafts": "Drafts",
+      "failed": "Failed"
+    }
   },
   "polygon": {
     "drawRegion": "Draw Your Region",

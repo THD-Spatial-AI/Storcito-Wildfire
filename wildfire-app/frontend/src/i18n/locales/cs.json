@@ -379,6 +379,7 @@
     "revokeAccessFor": "Odebrat přístup",
     "revokingAccess": "Odebírání přístupu…",
     "filterPeriod": "Filtrovat podle období",
+    "period": "Období",
     "estimateRemaining": "zbývá ~{{duration}}",
     "recentlyCompleted": "Nový",
     "recentlyCompletedTooltip": "Dokončeno {{time}}. Otevřete jej pro zobrazení výsledků.",
@@ -388,7 +389,22 @@
     "estimateBasis_one": "Na základě 1 srovnatelného běhu, který trval {{typical}}",
     "estimateBasis_other": "Na základě {{count}} srovnatelných běhů, které obvykle trvají {{typical}}",
     "estimateApproximate": "Tyto běhy předcházejí sledování fronty, skutečné čekání bude delší.",
-    "estimateUnavailable": "Nedostatek srovnatelných úspěšných běhů pro odhad"
+    "estimateUnavailable": "Nedostatek srovnatelných úspěšných běhů pro odhad",
+    "lastActivity": "Poslední aktivita",
+    "view": "Zobrazit",
+    "run": "Spustit",
+    "area": "Oblast",
+    "risk": "Riziko",
+    "versions_one": "{{count}} verze",
+    "versions_other": "{{count}} verzí",
+    "tabs": {
+      "all": "Vše",
+      "pinned": "Připnuté",
+      "running": "Běží",
+      "completed": "Dokončeno",
+      "drafts": "Koncepty",
+      "failed": "Selhalo"
+    }
   },
   "polygon": {
     "drawRegion": "Nakreslete svůj region",

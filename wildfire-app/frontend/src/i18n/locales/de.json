@@ -545,6 +545,7 @@
     "revokeAccessFor": "Zugriff widerrufen",
     "revokingAccess": "Wird widerrufen …",
     "filterPeriod": "Nach Zeitraum filtern",
+    "period": "Zeitraum",
     "estimateRemaining": "noch ~{{duration}}",
     "recentlyCompleted": "Neu",
     "recentlyCompletedTooltip": "Fertig am {{time}}. Öffnen, um die Ergebnisse zu sehen.",
@@ -554,7 +555,22 @@
     "estimateBasis_one": "Basierend auf 1 vergleichbaren Lauf, der {{typical}} dauerte",
     "estimateBasis_other": "Basierend auf {{count}} vergleichbaren Läufen, die typischerweise {{typical}} dauern",
     "estimateApproximate": "Diese Läufe stammen aus der Zeit vor der Warteschlangenerfassung; die echte Wartezeit ist länger.",
-    "estimateUnavailable": "Zu wenige vergleichbare erfolgreiche Läufe für eine Schätzung"
+    "estimateUnavailable": "Zu wenige vergleichbare erfolgreiche Läufe für eine Schätzung",
+    "lastActivity": "Letzte Aktivität",
+    "view": "Anzeigen",
+    "run": "Starten",
+    "area": "Gebiet",
+    "risk": "Risiko",
+    "versions_one": "{{count}} Version",
+    "versions_other": "{{count}} Versionen",
+    "tabs": {
+      "all": "Alle",
+      "pinned": "Angeheftet",
+      "running": "Läuft",
+      "completed": "Abgeschlossen",
+      "drafts": "Entwürfe",
+      "failed": "Fehlgeschlagen"
+    }
   },
   "polygon": {
     "drawRegion": "Zeichnen Sie Ihre Region",

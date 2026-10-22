@@ -1039,6 +1039,7 @@
     "revokeAccessFor": "Revogar acesso",
     "revokingAccess": "A revogar…",
     "filterPeriod": "Filtrar por período",
+    "period": "Período",
     "estimateRemaining": "~{{duration}} restante",
     "recentlyCompleted": "Novo",
     "recentlyCompletedTooltip": "Concluído em {{time}}. Abra-o para ver os resultados.",
@@ -1048,7 +1049,22 @@
     "estimateBasis_one": "Com base em 1 execução comparável, que demorou {{typical}}",
     "estimateBasis_other": "Com base em {{count}} execuções comparáveis, que normalmente demoram {{typical}}",
     "estimateApproximate": "Essas execuções são anteriores ao registo da fila, por isso a espera real será maior.",
-    "estimateUnavailable": "Não há execuções comparáveis concluídas suficientes para estimar o fim"
+    "estimateUnavailable": "Não há execuções comparáveis concluídas suficientes para estimar o fim",
+    "lastActivity": "Última atividade",
+    "view": "Ver",
+    "run": "Executar",
+    "area": "Área",
+    "risk": "Risco",
+    "versions_one": "{{count}} versão",
+    "versions_other": "{{count}} versões",
+    "tabs": {
+      "all": "Todos",
+      "pinned": "Fixados",
+      "running": "Em execução",
+      "completed": "Concluídos",
+      "drafts": "Rascunhos",
+      "failed": "Falhados"
+    }
   },
   "apiTokens": {
     "title": "Tokens de API",

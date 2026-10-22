@@ -379,6 +379,7 @@
     "revokeAccessFor": "Odbierz dostęp",
     "revokingAccess": "Odbieranie dostępu…",
     "filterPeriod": "Filtruj według okresu",
+    "period": "Okres",
     "estimateRemaining": "~{{duration}} pozostało",
     "recentlyCompleted": "Nowy",
     "recentlyCompletedTooltip": "Ukończono {{time}}. Otwórz, aby zobaczyć wyniki.",
@@ -388,7 +389,22 @@
     "estimateBasis_one": "Na podstawie 1 porównywalnego uruchomienia, które trwało {{typical}}",
     "estimateBasis_other": "Na podstawie {{count}} porównywalnych uruchomień, które zwykle trwają {{typical}}",
     "estimateApproximate": "Te uruchomienia są sprzed śledzenia kolejki, więc rzeczywiste oczekiwanie będzie dłuższe.",
-    "estimateUnavailable": "Za mało porównywalnych udanych uruchomień, aby oszacować koniec"
+    "estimateUnavailable": "Za mało porównywalnych udanych uruchomień, aby oszacować koniec",
+    "lastActivity": "Ostatnia aktywność",
+    "view": "Zobacz",
+    "run": "Uruchom",
+    "area": "Obszar",
+    "risk": "Ryzyko",
+    "versions_one": "{{count}} wersja",
+    "versions_other": "{{count}} wersje",
+    "tabs": {
+      "all": "Wszystkie",
+      "pinned": "Przypięte",
+      "running": "W trakcie",
+      "completed": "Zakończone",
+      "drafts": "Szkice",
+      "failed": "Nieudane"
+    }
   },
   "polygon": {
     "drawRegion": "Narysuj swój region",
