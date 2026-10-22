@@ -197,3 +197,58 @@ func TestBuildQueryWithWorkspaceFilter_ExpertDefaultIncludesDirectShares(t *test
 	assert.Contains(t, stmt.SQL.String(), "LOWER(email) = LOWER(")
 	require.NoError(t, mock.ExpectationsWereMet())
 }
+
+func TestParseStatusFilter_KeepsOnlyKnownStatuses(t *testing.T) {
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	c.Request = httptest.NewRequest(http.MethodGet, "/models?status=completed,%20published,bogus,", nil)
+	assert.Equal(t, []string{"completed", "published"}, parseStatusFilter(c))
+}
+
+func TestApplyListFilters_PinnedOnlyWithoutPinsMatchesNothing(t *testing.T) {
+	db, _ := testutil.NewMockDB(t)
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	c.Request = httptest.NewRequest(http.MethodGet, "/models?pinned_only=true", nil)
+	sql := db.ToSQL(func(tx *gorm.DB) *gorm.DB {
+		return applyListFilters(c, tx.Model(&commonmodels.Model{}), nil).Find(&[]commonmodels.Model{})
+	})
+	assert.Contains(t, sql, "1 = 0")
+}
+
+func TestParseGetModelsParams_LastActivitySort(t *testing.T) {
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	c.Request = httptest.NewRequest(http.MethodGet, "/models?sort_by=last_activity", nil)
+	_, _, _, _, sortBy, _, _, _ := parseGetModelsParams(c)
+	assert.Equal(t, "last_activity", sortBy)
+}
+
+func TestApplyFamilyListFilters_MatchesVersions(t *testing.T) {
+	db, _ := testutil.NewMockDB(t)
+	h := &ModelHandler{}
+	sql := db.ToSQL(func(tx *gorm.DB) *gorm.DB {
+		return h.applyFamilyListFilters(tx.Model(&commonmodels.Model{}), "forest", "", "", []string{"failed"}).Find(&[]commonmodels.Model{})
+	})
+	assert.Contains(t, sql, "SELECT parent_model_id FROM models")
+	assert.Contains(t, sql, "status IN")
+}
+
+func TestListOrderClause_GroupedLastActivityUsesFamilyMax(t *testing.T) {
+	clause := listOrderClause("last_activity", "desc", true)
+	assert.Contains(t, clause, "MAX(COALESCE(")
+	assert.Contains(t, clause, "parent_model_id")
+}
+
+func TestListOrderClause_LastActivityActiveFirst(t *testing.T) {
+	clause := listOrderClause("last_activity", "desc", false)
+	assert.Contains(t, clause, "CASE WHEN status IN ('queue','calculating','running','processing') THEN 0 ELSE 1 END")
+	assert.True(t, strings.HasSuffix(clause, "COALESCE(calculation_completed_at, updated_at) desc"))
+}
+
+func TestListOrderClause_PlainColumn(t *testing.T) {
+	assert.Equal(t, "title asc", listOrderClause("title", "asc", false))
+}
+
+func TestPinnedFamilyOrderClause_LiftsVersionPins(t *testing.T) {
+	clause := pinnedFamilyOrderClause([]uint{7})
+	assert.Contains(t, clause, "id IN (7)")
+	assert.Contains(t, clause, "parent_model_id")
+}

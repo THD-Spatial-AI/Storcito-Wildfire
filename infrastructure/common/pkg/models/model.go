@@ -47,6 +47,9 @@ type Model struct {
 
 	ChildModelIDs []uint `gorm:"-" json:"child_model_ids,omitempty"`
 
+	// Family versions, grouped only.
+	Versions []Model `gorm:"-" json:"versions,omitempty"`
+
 	ParentModelTitle *string `gorm:"-" json:"parent_model_title,omitempty"`
 
 	IsActive bool `gorm:"default:false" json:"is_active"`

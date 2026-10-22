@@ -43,7 +43,7 @@ func parseGetModelsParams(c *gin.Context) (limit, offset int, search, workspaceI
 
 	if sb := c.Query("sort_by"); sb != "" {
 		switch sb {
-		case "title", "status", "created_at", "updated_at":
+		case "title", "status", "created_at", "updated_at", "last_activity":
 			sortBy = sb
 		}
 	}
@@ -82,13 +82,77 @@ func parsePinnedIDs(c *gin.Context) []uint {
 	return ids
 }
 
+var listableStatuses = map[string]bool{
+	"draft": true, "queue": true, "calculating": true, "running": true, "processing": true,
+	"completed": true, "published": true, "failed": true, "cancelled": true, "modified": true,
+}
+
+func parseStatusFilter(c *gin.Context) []string {
+	statuses := []string{}
+	for _, part := range strings.Split(c.Query("status"), ",") {
+		if s := strings.TrimSpace(part); listableStatuses[s] {
+			statuses = append(statuses, s)
+		}
+	}
+	return statuses
+}
+
+func applyListFilters(c *gin.Context, query *gorm.DB, pinnedIDs []uint) *gorm.DB {
+	if statuses := parseStatusFilter(c); len(statuses) > 0 {
+		query = query.Where("status IN ?", statuses)
+	}
+	if c.Query("pinned_only") == "true" {
+		if len(pinnedIDs) == 0 {
+			return query.Where("1 = 0")
+		}
+		query = query.Where("id IN ?", pinnedIDs)
+	}
+	return query
+}
+
 // Pins first.
 func pinnedOrderClause(ids []uint) string {
+	return "CASE WHEN id IN (" + joinIDList(ids) + ") THEN 0 ELSE 1 END"
+}
+
+// Root or version pinned.
+func pinnedFamilyCondition(ids []uint) string {
+	list := joinIDList(ids)
+	return "id IN (" + list + ") OR id IN (SELECT parent_model_id FROM models pinned_versions WHERE pinned_versions.id IN (" + list + "))"
+}
+
+// Pinned families first.
+func pinnedFamilyOrderClause(ids []uint) string {
+	return "CASE WHEN " + pinnedFamilyCondition(ids) + " THEN 0 ELSE 1 END"
+}
+
+func joinIDList(ids []uint) string {
 	parts := make([]string, len(ids))
 	for i, id := range ids {
 		parts[i] = strconv.FormatUint(uint64(id), 10)
 	}
-	return "CASE WHEN id IN (" + strings.Join(parts, ",") + ") THEN 0 ELSE 1 END"
+	return strings.Join(parts, ",")
+}
+
+func isGroupedRequest(c *gin.Context) bool {
+	return c.Query("grouped") == "true"
+}
+
+const activeStatusList = "'queue','calculating','running','processing'"
+
+// Active first, then latest.
+func listOrderClause(sortBy, sortOrder string, grouped bool) string {
+	if sortBy != "last_activity" {
+		return sortBy + " " + sortOrder
+	}
+	if grouped {
+		return "CASE WHEN EXISTS (SELECT 1 FROM models active_versions WHERE active_versions.deleted_at IS NULL " +
+			"AND (active_versions.id = models.id OR active_versions.parent_model_id = models.id) " +
+			"AND active_versions.status IN (" + activeStatusList + ")) THEN 0 ELSE 1 END, " +
+			"(SELECT MAX(COALESCE(latest_versions.calculation_completed_at, latest_versions.updated_at)) FROM models latest_versions " +
+			"WHERE latest_versions.deleted_at IS NULL AND (latest_versions.id = models.id OR latest_versions.parent_model_id = models.id)) " + sortOrder
+	}
+	return "CASE WHEN status IN (" + activeStatusList + ") THEN 0 ELSE 1 END, COALESCE(calculation_completed_at, updated_at) " + sortOrder
 }
 
 func (h *ModelHandler) buildWorkspaceFilteredQuery(c *gin.Context, userCtx *httputil.UserContext, workspaceID uint) (*gorm.DB, bool) {
@@ -317,12 +381,38 @@ func (h *ModelHandler) applySearchFilter(query *gorm.DB, search, fromDate, toDat
 	return query
 }
 
-func (h *ModelHandler) fetchModelsWithQuery(query *gorm.DB, limit, offset int, sortBy, sortOrder string, pinnedIDs []uint) ([]models.Model, int64, error) {
+// Root or version matches.
+func (h *ModelHandler) applyFamilyListFilters(query *gorm.DB, search, fromDate, toDate string, statuses []string) *gorm.DB {
+	query = query.Where("deleted_at IS NULL")
+	const versionMatch = "id IN (SELECT parent_model_id FROM models matching_versions WHERE matching_versions.deleted_at IS NULL AND "
+	if search != "" {
+		pattern := "%" + search + "%"
+		query = query.Where("title ILIKE ? OR "+versionMatch+"matching_versions.title ILIKE ?)", pattern, pattern)
+	}
+	if len(statuses) > 0 {
+		query = query.Where("status IN ? OR "+versionMatch+"matching_versions.status IN ?)", statuses, statuses)
+	}
+	if from, err := time.Parse("2006-01-02", fromDate); err == nil {
+		query = query.Where("to_date >= ? OR "+versionMatch+"matching_versions.to_date >= ?)", from, from)
+	}
+	if to, err := time.Parse("2006-01-02", toDate); err == nil {
+		// Inclusive end day.
+		end := to.Add(24 * time.Hour)
+		query = query.Where("from_date < ? OR "+versionMatch+"matching_versions.from_date < ?)", end, end)
+	}
+	return query
+}
+
+func (h *ModelHandler) fetchModelsWithQuery(query *gorm.DB, limit, offset int, sortBy, sortOrder string, pinnedIDs []uint, grouped bool) ([]models.Model, int64, error) {
 	var total int64
 	query.Model(&models.Model{}).Count(&total)
 
 	if len(pinnedIDs) > 0 {
-		query = query.Order(pinnedOrderClause(pinnedIDs))
+		if grouped {
+			query = query.Order(pinnedFamilyOrderClause(pinnedIDs))
+		} else {
+			query = query.Order(pinnedOrderClause(pinnedIDs))
+		}
 	}
 
 	var modelsList []models.Model
@@ -330,12 +420,47 @@ func (h *ModelHandler) fetchModelsWithQuery(query *gorm.DB, limit, offset int, s
 		Preload(preloadWorkspaceMembers).
 		Preload(preloadWorkspaceGroups).
 		Preload("Shares").
-		Order(sortBy + " " + sortOrder).
+		Order(listOrderClause(sortBy, sortOrder, grouped)).
 		Limit(limit).
 		Offset(offset).
 		Find(&modelsList).Error
 
 	return modelsList, total, err
+}
+
+// Versions, oldest first.
+func (h *ModelHandler) attachVersions(userCtx httputil.UserContext, modelsList []models.Model) []models.Model {
+	if len(modelsList) == 0 {
+		return modelsList
+	}
+	rootIDs := make([]uint, len(modelsList))
+	for i := range modelsList {
+		rootIDs[i] = modelsList[i].ID
+	}
+
+	var versions []models.Model
+	if err := h.store.DB().
+		Preload(preloadWorkspaceMembers).
+		Preload(preloadWorkspaceGroups).
+		Preload("Shares").
+		Where("parent_model_id IN ? AND deleted_at IS NULL", rootIDs).
+		Order("id asc").
+		Find(&versions).Error; err != nil {
+		return modelsList
+	}
+
+	versions = h.applyPrivacyFilters(userCtx, versions)
+	byParent := make(map[uint][]models.Model, len(versions))
+	for _, version := range versions {
+		if version.ParentModelID == nil {
+			continue
+		}
+		byParent[*version.ParentModelID] = append(byParent[*version.ParentModelID], version)
+	}
+	for i := range modelsList {
+		modelsList[i].Versions = byParent[modelsList[i].ID]
+	}
+	return modelsList
 }
 
 func (h *ModelHandler) includeParentModels(modelsList []models.Model) []models.Model {

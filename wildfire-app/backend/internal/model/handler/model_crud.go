@@ -66,17 +66,38 @@ func (h *ModelHandler) GetModels(c *gin.Context) {
 	if !ok {
 		return
 	}
-	query = h.applySearchFilter(query, search, fromDate, toDate)
+	pinnedIDs := parsePinnedIDs(c)
+	grouped := isGroupedRequest(c)
+	if grouped {
+		// One row per family.
+		query = query.Where("parent_model_id IS NULL")
+		query = h.applyFamilyListFilters(query, search, fromDate, toDate, parseStatusFilter(c))
+		if c.Query("pinned_only") == "true" {
+			if len(pinnedIDs) == 0 {
+				query = query.Where("1 = 0")
+			} else {
+				query = query.Where(pinnedFamilyCondition(pinnedIDs))
+			}
+		}
+	} else {
+		query = h.applySearchFilter(query, search, fromDate, toDate)
+		query = applyListFilters(c, query, pinnedIDs)
+	}
 
-	modelsList, total, err := h.fetchModelsWithQuery(query, limit, offset, sortBy, sortOrder, parsePinnedIDs(c))
+	modelsList, total, err := h.fetchModelsWithQuery(query, limit, offset, sortBy, sortOrder, pinnedIDs, grouped)
 	if err != nil {
 		httputil.InternalError(c, "Failed to fetch models")
 		return
 	}
 
-	modelsList = h.includeParentModels(modelsList)
+	if !grouped {
+		modelsList = h.includeParentModels(modelsList)
+	}
 	modelsList = h.postProcessModelWorkspacesBatch(ctx, userCtx, modelsList)
 	modelsList = h.applyPrivacyFilters(*userCtx, modelsList)
+	if grouped {
+		modelsList = h.attachVersions(*userCtx, modelsList)
+	}
 	h.populateChildModelIDs(modelsList)
 	h.populateParentModelTitles(modelsList)
 
