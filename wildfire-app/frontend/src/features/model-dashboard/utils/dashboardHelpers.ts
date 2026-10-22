@@ -1,38 +1,39 @@
 import { Model } from "@/features/model-dashboard/services/modelService";
 
-type LeveledModel = Model & { level: number };
+export interface ModelFamily {
+	root: Model;
+	/** Latest version shown. */
+	display: Model;
+	/** Remaining members, oldest first. */
+	otherVersions: Model[];
+	versionCount: number;
+	memberIds: number[];
+}
 
-export const organizeModelsHierarchically = (
-	models: Model[],
-	pinnedIds: ReadonlySet<number> = new Set()
-): LeveledModel[] => {
-	// Pins stay top-level.
-	const isRoot = (model: Model) => !model.parent_model_id || pinnedIds.has(model.id);
-	const childrenByParent = new Map<number, Model[]>();
+const createdAt = (model: Model): number => new Date(model.created_at).getTime() || 0;
 
-	for (const model of models) {
-		if (isRoot(model)) continue;
-		const siblings = childrenByParent.get(model.parent_model_id!) ?? [];
-		siblings.push(model);
-		childrenByParent.set(model.parent_model_id!, siblings);
-	}
+// Newest, id tiebreak.
+const pickLatest = (members: Model[]): Model =>
+	members.reduce((latest, member) =>
+		createdAt(member) > createdAt(latest) ||
+		(createdAt(member) === createdAt(latest) && member.id > latest.id)
+			? member
+			: latest
+	);
 
-	const organized: LeveledModel[] = [];
-	const addedIds = new Set<number>();
+export const buildModelFamilies = (roots: Model[]): ModelFamily[] =>
+	roots.map((root) => {
+		const versions = root.versions ?? [];
+		const members = [root, ...versions];
+		const display = pickLatest(members);
+		return {
+			root,
+			display,
+			otherVersions: members.filter((member) => member.id !== display.id),
+			versionCount: members.length,
+			memberIds: members.map((member) => member.id),
+		};
+	});
 
-	for (const model of models.filter(isRoot)) {
-		organized.push({ ...model, level: 0 });
-		addedIds.add(model.id);
-		for (const child of childrenByParent.get(model.id) ?? []) {
-			organized.push({ ...child, level: 1 });
-			addedIds.add(child.id);
-		}
-	}
-
-	// Orphans last.
-	for (const model of models) {
-		if (!addedIds.has(model.id)) organized.push({ ...model, level: 0 });
-	}
-
-	return organized;
-};
+export const flattenFamilies = (families: ModelFamily[]): Model[] =>
+	families.flatMap((family) => [family.root, ...(family.root.versions ?? [])]);

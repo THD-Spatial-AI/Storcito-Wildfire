@@ -23,6 +23,34 @@ export const formatDateTime = (date: string | Date): string => {
 	});
 };
 
+/** Short date, optional year. */
+export const formatShortDateTime = (date: string | Date): string => {
+	const dateObj = parseDate(date);
+	const sameYear = dateObj.getFullYear() === new Date().getFullYear();
+	return dateObj.toLocaleString("en-GB", {
+		day: "numeric",
+		month: "short",
+		...(sameYear ? {} : { year: "numeric" as const }),
+		hour: "2-digit",
+		minute: "2-digit",
+		hour12: false,
+	});
+};
+
+export const formatDateRange = (from: string | Date, to: string | Date): string => {
+	const start = parseDate(from);
+	const end = parseDate(to);
+	if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return "";
+	const fmt = (d: Date, opts: Intl.DateTimeFormatOptions) => d.toLocaleDateString("en-GB", opts);
+	const full = { day: "numeric", month: "short", year: "numeric" } as const;
+	if (start.toDateString() === end.toDateString()) return fmt(end, full);
+	if (start.getFullYear() !== end.getFullYear()) return `${fmt(start, full)} – ${fmt(end, full)}`;
+	if (start.getMonth() !== end.getMonth()) {
+		return `${fmt(start, { day: "numeric", month: "short" })} – ${fmt(end, full)}`;
+	}
+	return `${start.getDate()}–${fmt(end, full)}`;
+};
+
 /**
  * Format date with full details (used in notifications, feedback, etc.)
  * Format: "09 Jan 2025, 14:30"

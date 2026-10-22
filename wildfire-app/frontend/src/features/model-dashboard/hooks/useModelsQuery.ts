@@ -5,7 +5,7 @@ import { isActiveStatus } from "@/features/model-dashboard/utils/statusHelpers";
 const modelKeys = {
 	all: ["models"] as const,
 	lists: () => [...modelKeys.all, "list"] as const,
-	list: (params?: { limit?: number; offset?: number; search?: string; workspace_id?: number; sort_by?: string; sort_order?: string; from_date?: string; to_date?: string; pinned?: string }) =>
+	list: (params?: { limit?: number; offset?: number; search?: string; workspace_id?: number; sort_by?: string; sort_order?: string; from_date?: string; to_date?: string; pinned?: string; pinned_only?: string; status?: string; grouped?: boolean }) =>
 		[...modelKeys.lists(), params] as const,
 	runtimeHistory: (workspaceId: number | undefined) =>
 		[...modelKeys.lists(), "runtime-history", workspaceId] as const,
@@ -23,6 +23,9 @@ export const useModelsQuery = (params?: {
 	from_date?: string;
 	to_date?: string;
 	pinned?: string;
+	pinned_only?: string;
+	status?: string;
+	grouped?: boolean;
 }, options?: { requireWorkspace?: boolean }) => {
 	const requireWorkspace = options?.requireWorkspace ?? true;
 	return useQuery({
@@ -36,7 +39,7 @@ export const useModelsQuery = (params?: {
 			if (!res) return 5000;
 
 			const models = Array.isArray(res.data) ? res.data : [];
-			const hasActive = models.some((m) => isActiveStatus(m.status));
+			const hasActive = models.some((m) => hasActiveVersion(m));
 
 			return hasActive ? 3000 : 30000;
 		},
@@ -45,12 +48,16 @@ export const useModelsQuery = (params?: {
 			if (!res) return 0;
 
 			const models = Array.isArray(res.data) ? res.data : [];
-			const hasActive = models.some((m) => isActiveStatus(m.status));
+			const hasActive = models.some((m) => hasActiveVersion(m));
 
 			return hasActive ? 0 : 15000;
 		},
 	});
 };
+
+// Includes nested versions.
+const hasActiveVersion = (model: Model): boolean =>
+	isActiveStatus(model.status) || (model.versions ?? []).some((v) => isActiveStatus(v.status));
 
 /** Samples for estimates. */
 export const useRuntimeHistoryQuery = (workspaceId: number | undefined) => {

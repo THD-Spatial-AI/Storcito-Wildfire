@@ -42,6 +42,20 @@ export const isActiveStatus = (status: ModelStatus): boolean => {
 	return status === "queue" || status === "running" || status === "calculating" || status === "processing";
 };
 
+export type StatusTab = "all" | "pinned" | "running" | "completed" | "drafts" | "failed";
+
+export const STATUS_TAB_ORDER: StatusTab[] = ["all", "pinned", "running", "completed", "drafts", "failed"];
+
+export const STATUS_TAB_STATUSES: Record<Exclude<StatusTab, "all" | "pinned">, ModelStatus[]> = {
+	running: ["queue", "calculating", "running", "processing"],
+	completed: ["completed", "published"],
+	drafts: ["draft", "modified"],
+	failed: ["failed", "cancelled"],
+};
+
+export const statusTabParam = (tab: StatusTab): string | undefined =>
+	tab === "all" || tab === "pinned" ? undefined : STATUS_TAB_STATUSES[tab].join(",");
+
 /**
  * Check if a model is in a processing state and should be disabled
  */

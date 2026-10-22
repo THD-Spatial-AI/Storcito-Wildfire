@@ -99,6 +99,8 @@ export interface Model {
   parent_model_title?: string;
   child_model_ids?: number[];
   is_copy?: boolean;
+  /** Family versions, grouped only. */
+  versions?: Model[];
 
   // Activation
   is_active?: boolean;
@@ -219,6 +221,9 @@ class ModelService {
     from_date?: string;
     to_date?: string;
     pinned?: string;
+    pinned_only?: string;
+    status?: string;
+    grouped?: boolean;
   }): Promise<ModelListResponse> {
     const response = await axios.get(this.baseURL, { params });
     return response.data;
