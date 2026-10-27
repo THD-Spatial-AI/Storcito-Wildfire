@@ -4,12 +4,32 @@ import { settingsService } from '@/features/settings';
 
 const USER_COOKIE_NAME = 'user_email';
 const SHOW_DELAY_MS = 1500;
+const WHATS_NEW_SEEN_KEY = 'tour-dashboard-whats-new-seen';
+
+const hasSeenWhatsNew = (): boolean => {
+  try {
+    return localStorage.getItem(WHATS_NEW_SEEN_KEY) === '1';
+  } catch {
+    return false;
+  }
+};
+
+const markWhatsNewSeen = () => {
+  try {
+    localStorage.setItem(WHATS_NEW_SEEN_KEY, '1');
+  } catch {
+    /* storage unavailable */
+  }
+};
 
 export const useProductTour = () => {
   const showTour = useTourStore((s) => s.showTour);
   const tourStep = useTourStore((s) => s.tourStep);
+  const tourMode = useTourStore((s) => s.tourMode);
   const setTourStep = useTourStore((s) => s.setTourStep);
   const setShowTour = useTourStore((s) => s.setShowTour);
+  const startTourStore = useTourStore((s) => s.startTour);
+  const startWhatsNewTour = useTourStore((s) => s.startWhatsNewTour);
 
   const readCookie = (name: string): string | null => {
     if (typeof document === 'undefined') return null;
@@ -43,6 +63,14 @@ export const useProductTour = () => {
         }
 
         if (data.product_tour_completed) {
+          // Show what's-new once.
+          if (!hasSeenWhatsNew() && !cancelled) {
+            timer = setTimeout(() => {
+              if (!cancelled) {
+                startWhatsNewTour();
+              }
+            }, SHOW_DELAY_MS);
+          }
           return;
         }
 
@@ -78,18 +106,25 @@ export const useProductTour = () => {
       globalThis.removeEventListener('privacy-accepted', handlePrivacyAccepted);
       globalThis.removeEventListener('onboarding-completed', handleOnboardingCompleted);
     };
-  }, [setShowTour]);
+  }, [setShowTour, startWhatsNewTour]);
 
   const completeTour = async () => {
-    await settingsService.markProductTourCompleted();
+    if (tourMode === 'full') {
+      await settingsService.markProductTourCompleted();
+    }
+    markWhatsNewSeen();
 
     setShowTour(false);
     setTourStep(0);
+    useTourStore.getState().setTourMode('full');
   };
 
   const startTour = () => {
-    setTourStep(0);
-    setShowTour(true);
+    startTourStore();
+  };
+
+  const startDashboardTour = () => {
+    useTourStore.getState().startDashboardTour();
   };
 
   const skipTour = () => completeTour();
@@ -101,9 +136,11 @@ export const useProductTour = () => {
   return {
     showTour,
     tourStep,
+    tourMode,
     setTourStep,
     completeTour,
     startTour,
+    startDashboardTour,
     skipTour,
     restartAreaSelectTour,
   };

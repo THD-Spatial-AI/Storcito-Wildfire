@@ -1,0 +1,73 @@
+/* Guided tour polish. */
+
+@keyframes tour-card-in {
+	from {
+		opacity: 0;
+		transform: scale(0.97) translateY(4px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+.tour-step-body {
+	animation: tour-card-in 0.18s ease-out;
+}
+
+@keyframes tour-dash {
+	to {
+		stroke-dashoffset: -10;
+	}
+}
+
+.tour-connector-path {
+	animation: tour-dash 1s linear infinite;
+}
+
+@keyframes tour-spotlight-pulse {
+	0%,
+	100% {
+		box-shadow: 0 0 0 2px rgb(99 102 241 / 0.45);
+	}
+	50% {
+		box-shadow: 0 0 0 8px rgb(99 102 241 / 0.12);
+	}
+}
+
+.react-joyride__spotlight {
+	border-radius: 10px !important;
+	animation: tour-spotlight-pulse 2.2s ease-in-out infinite;
+}
+
+.react-joyride__overlay {
+	backdrop-filter: blur(2px);
+}
+
+/* Mobile bottom sheet. */
+@media (max-width: 639px) {
+	[id^="react-joyride-step-"] .__floater {
+		position: fixed !important;
+		top: auto !important;
+		right: 0 !important;
+		bottom: 0 !important;
+		left: 0 !important;
+		width: 100% !important;
+		max-width: none !important;
+		padding: 0 !important;
+		transform: none !important;
+	}
+
+	[id^="react-joyride-step-"] .tour-tooltip-card {
+		width: 100% !important;
+		border-radius: 16px 16px 0 0 !important;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.tour-step-body,
+	.react-joyride__spotlight,
+	.tour-connector-path {
+		animation: none !important;
+	}
+}

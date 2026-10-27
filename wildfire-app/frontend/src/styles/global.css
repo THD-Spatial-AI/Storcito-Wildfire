@@ -695,37 +695,6 @@
   -webkit-text-fill-color: transparent;
 }
 
-/* Joyride dark mode. */
-.dark .react-joyride__tooltip {
-  background-color: var(--background) !important;
-  color: var(--foreground) !important;
-}
-
-.dark .react-joyride__tooltip h3,
-.dark .react-joyride__tooltip p,
-.dark .react-joyride__tooltip span {
-  color: var(--foreground) !important;
-}
-
-.dark .react-joyride__tooltip .text-gray-900 {
-  color: var(--foreground) !important;
-}
-
-.dark .react-joyride__tooltip .text-gray-600,
-.dark .react-joyride__tooltip .text-gray-500,
-.dark .react-joyride__tooltip .text-gray-700 {
-  color: var(--muted-foreground) !important;
-}
-
-.dark .react-joyride__tooltip .bg-gray-50,
-.dark .react-joyride__tooltip .bg-gray-100 {
-  background-color: var(--muted) !important;
-}
-
-.dark .react-joyride__tooltip .border-gray-200 {
-  border-color: var(--border) !important;
-}
-
 /* Landing hero reveal. */
 @keyframes hero-clip {
   from { clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%); }
