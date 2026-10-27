@@ -940,13 +940,93 @@
         "description": "Klaar om te beginnen? Klik op deze knop om uw eerste Wildfire-simulatie te maken. Dit opent de wizard voor gebiedsselectie.",
         "tip": "Wanneer u hierop klikt, start een speciale rondleiding voor het selecteren van een gebied!"
       },
+      "dashboard": {
+        "tabsOverview": {
+          "title": "Filteren op status",
+          "description": "Deze tabbladen filteren uw modellen op status, met live tellingen voor elke groep."
+        },
+        "tabAll": {
+          "title": "Alle modellen",
+          "description": "Elke modelfamilie in deze werkruimte, met vastgepinde families bovenaan."
+        },
+        "tabPinned": {
+          "title": "Vastgepind",
+          "description": "Modellen die u heeft vastgepind. Eén versie pinnen houdt de hele familie bovenaan."
+        },
+        "tabRunning": {
+          "title": "Actief",
+          "description": "Modellen in de wachtrij, in berekening, actief of in verwerking. De lijst wordt live bijgewerkt terwijl ze lopen."
+        },
+        "tabCompleted": {
+          "title": "Voltooid",
+          "description": "Voltooide en gepubliceerde modellen, klaar om te openen en te verkennen."
+        },
+        "tabDrafts": {
+          "title": "Concepten",
+          "description": "Concepten en gewijzigde modellen die nog uitgevoerd moeten worden."
+        },
+        "tabFailed": {
+          "title": "Mislukt",
+          "description": "Mislukte of geannuleerde runs. Bekijk de foutmelding en voer opnieuw uit wanneer u klaar bent."
+        },
+        "search": {
+          "title": "Zoeken & periode",
+          "description": "Zoek in modeltitels en filter op simulatieperiode. Resultaten omvatten ook oudere versies van een familie."
+        },
+        "familyRow": {
+          "title": "Eén rij per model",
+          "description": "Elke rij is een modelfamilie met de nieuwste versie. De versiebadge klapt de volledige geschiedenis uit."
+        },
+        "columns": {
+          "title": "Kolommen",
+          "description": "Laatste activiteit toont eerst actieve modellen, daarna de meest recent afgeronde. Periode, gebied en risico in één oogopslag."
+        },
+        "pin": {
+          "title": "Modellen pinnen",
+          "description": "Pin een model om zijn familie bovenaan elk tabblad te houden."
+        },
+        "primaryAction": {
+          "title": "Primaire actie",
+          "description": "Open voltooide modellen of voer concepten direct vanuit de rij uit."
+        },
+        "moreMenu": {
+          "title": "Meer acties",
+          "description": "Bewerken, kopiëren, downloaden, delen, verplaatsen naar een werkruimte of verwijderen via dit menu."
+        },
+        "newBadge": {
+          "title": "Nieuwe resultaten",
+          "description": "Recent voltooide modellen die u nog niet heeft geopend, worden als nieuw gemarkeerd."
+        },
+        "refresh": {
+          "title": "Vernieuwen, delen en kopiëren",
+          "description": "Vernieuwen laadt de modellenlijst opnieuw (lopende modellen worden ook vanzelf bijgewerkt). Delen geeft je team toegang tot deze werkruimte en Kopiëren dupliceert hem met zijn modellen."
+        }
+      },
+      "ui": {
+        "stepOf": "Stap {{current}} van {{total}}",
+        "skipTour": "Rondleiding overslaan",
+        "finish": "Afronden",
+        "whatsNew": "Nieuw",
+        "sections": {
+          "welcome": "Welkom",
+          "navigation": "Navigatie",
+          "dashboard": "Dashboard",
+          "tabs": "Tabbladen",
+          "rows": "Rijen",
+          "finish": "Afronden",
+          "tools": "Hulpmiddelen"
+        },
+        "chips": {
+          "filters": "Filters"
+        }
+      },
       "profile": {
         "title": "Profiel & Instellingen",
         "description": "Toegang tot uw profiel, accountinstellingen en gebruikersvoorkeuren. Beheer uw account en extra opties."
       },
       "navigation": {
-        "title": "Dashboard Navigatie",
-        "description": "Toegang tot uw hoofddashboard om uw projecten, recente beoordelingen en algemene statistieken te bekijken. Dit is uw thuisbasis."
+        "title": "Beheerdashboard",
+        "description": "Beheer werkruimtes, gebruikers en alle modellen op het platform. Alleen zichtbaar voor beheerders."
       },
       "simulations": {
         "title": "Wildfire-simulaties",
@@ -986,9 +1066,46 @@
         "title": "Alles klaar!",
         "description": "U heeft de rondleiding voltooid! U bent nu klaar om Wildfire-simulaties te maken.",
         "nextSteps": "Volgende Stappen",
-        "nextStepsDescription": "Probeer uw eerste Wildfire-simulatie te maken of verken de interactieve kaart.",
+        "nextStepsDescription": "Filter modellen met de statustabbladen, pin belangrijke families en klap een rij uit om de versies te bekijken.",
         "restartTour": "Rondleiding Herstarten",
         "restartTourDescription": "U kunt deze rondleiding op elk moment herstarten vanuit de zijbalk."
+      },
+      "help": {
+        "title": "Help",
+        "description": "Alles op één plek: open de documentatie, start deze rondleiding op elk moment opnieuw of stuur ons feedback."
+      },
+      "restartTour": {
+        "title": "Rondleiding herstarten",
+        "description": "Speel deze rondleiding op elk moment opnieuw af via het Help-menu."
+      },
+      "github": {
+        "title": "GitHub",
+        "description": "Bekijk de open-sourcecode en meld problemen op GitHub."
+      },
+      "weather": {
+        "title": "Weer",
+        "description": "Bekijk het actuele weer voor je locatie. Het wordt automatisch bijgewerkt."
+      },
+      "notifications": {
+        "title": "Meldingen",
+        "description": "Hier zie je voltooide berekeningen, gedeelde items en systeemmeldingen."
+      },
+      "version": {
+        "title": "Wat is er nieuw",
+        "description": "Klik op het versienummer om de nieuwste functies en verbeteringen te zien."
+      },
+      "language": {
+        "title": "Taal",
+        "description": "Wijzig de taal van de interface. Je keuze wordt in deze browser opgeslagen."
+      },
+      "demo": {
+        "title": "Zomers brandrisico – Galicië",
+        "example": "Voorbeeld",
+        "justNow": "Zojuist"
+      },
+      "workspace": {
+        "title": "Werkruimte",
+        "description": "Modellen horen bij een werkruimte. Wissel hier van werkruimte of maak een nieuwe om projecten te ordenen en met je team te delen."
       }
     },
     "areaSelect": {
@@ -1072,6 +1189,15 @@
       "saveSummary": {
         "description": "Dit eindoverzicht toont de waarden die met het model worden opgeslagen en naar de berekeningsworkflow worden gestuurd.",
         "title": "Opslagoverzicht"
+      },
+      "ui": {
+        "sections": {
+          "intro": "Intro",
+          "setup": "Instellen",
+          "map": "Kaart",
+          "layers": "Lagen",
+          "review": "Controleren"
+        }
       }
     },
     "buttons": {
@@ -2258,5 +2384,77 @@
       "revoked": "Ingetrokken"
     },
     "usageHint": "Gebruik het token vanuit elke app: Authorization: Bearer <token>. Tokens met alleen-lezen rechten kunnen modellen opvragen en resultaten downloaden met de rechten van deze gebruiker."
+  },
+  "whatsNew": {
+    "open": "Wat is er nieuw in deze versie",
+    "title": "Wat is er nieuw",
+    "version": "Versie {{version}}",
+    "released": "Uitgebracht op {{date}}",
+    "intro": "Een overzicht van de nieuwste functies, verbeteringen en oplossingen in deze release.",
+    "where": "Waar",
+    "viewAll": "Alle wijzigingen op GitHub",
+    "close": "Begrepen",
+    "groups": {
+      "new": "Nieuw",
+      "improved": "Verbeterd",
+      "fixed": "Opgelost"
+    },
+    "items": {
+      "families": {
+        "title": "Modelversies gegroepeerd",
+        "description": "Elk model verschijnt één keer, met al zijn versies in dezelfde rij. De nieuwste versie staat eerst en het versielabel klapt de volledige geschiedenis uit.",
+        "where": "Modeldashboard → modellenlijst"
+      },
+      "tabs": {
+        "title": "Statustabbladen",
+        "description": "Schakel tussen Alle, Vastgezet, Bezig, Voltooid, Concepten en Mislukt. Zoeken en het periodefilter werken in elk tabblad.",
+        "where": "Modeldashboard → boven de lijst"
+      },
+      "pinning": {
+        "title": "Modellen vastzetten",
+        "description": "Een vastgezet model blijft bovenaan de lijst. Een versie vastzetten houdt de hele familie bovenaan, en het tabblad Vastgezet verzamelt ze op één plek.",
+        "where": "Modelrij → punaise-icoon"
+      },
+      "newBadge": {
+        "title": "Badge voor nieuwe resultaten",
+        "description": "Recent voltooide modellen krijgen een Nieuw-badge. Beweeg erover om te zien wanneer de berekening klaar was.",
+        "where": "Modelrij → naast de titel"
+      },
+      "coordinates": {
+        "title": "Zoeken op coördinaten",
+        "description": "Typ een breedte- en lengtegraad in de kaartzoekbalk om direct naar een locatie te gaan, naast zoeken op plaatsnaam.",
+        "where": "Kaart → zoekbalk"
+      },
+      "tour": {
+        "title": "Vernieuwde rondleiding",
+        "description": "De rondleiding loopt stap voor stap door dashboard, kaart en hulpmiddelen, met sectiepunten en navigatie met pijltjestoetsen.",
+        "where": "Help-menu → Rondleiding herstarten"
+      },
+      "docs": {
+        "title": "Documentatie in de app",
+        "description": "Handleidingen en naslag openen in de app, zodat je je plek niet kwijtraakt.",
+        "where": "Help-menu → Documentatie"
+      },
+      "shortcuts": {
+        "title": "Sneltoetsen",
+        "description": "Zoom, verplaats de kaart en bedien het 3D-terrein met het toetsenbord. Het sneltoetsenpaneel op de kaart toont alle toetsen.",
+        "where": "Kaart → sneltoetsenpaneel"
+      },
+      "fireWeather": {
+        "title": "Brandweerlabels gecorrigeerd",
+        "description": "De configurator toont nu het juiste brandweeruur, de factorgewichten en de labels voor de piekdag.",
+        "where": "Nieuwe simulatie → configurator"
+      },
+      "sharing": {
+        "title": "Kopiëren en delen tussen werkruimtes",
+        "description": "Modellen kunnen nu tussen werkruimtes worden gekopieerd en gedeeld zonder toegang te verliezen.",
+        "where": "Modelrij → …-menu"
+      },
+      "dateField": {
+        "title": "Beschikbaarheid in het datumveld",
+        "description": "Het datumveld meldt niet langer dat er geen datums zijn wanneer er geldige datums beschikbaar zijn.",
+        "where": "Nieuwe simulatie → datumbereik"
+      }
+    }
   }
 }

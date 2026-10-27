@@ -940,13 +940,93 @@
         "description": "Gotowy do rozpoczęcia? Kliknij ten przycisk, aby utworzyć swoją pierwszą symulację Wildfire. Otworzy się kreator wyboru obszaru.",
         "tip": "Po kliknięciu rozpocznie się dedykowana wycieczka po procesie wyboru obszaru!"
       },
+      "dashboard": {
+        "tabsOverview": {
+          "title": "Filtruj według statusu",
+          "description": "Te zakładki filtrują Twoje modele według stanu, z licznikami na żywo dla każdej grupy."
+        },
+        "tabAll": {
+          "title": "Wszystkie modele",
+          "description": "Wszystkie rodziny modeli w tej przestrzeni roboczej, z przypiętymi rodzinami na górze."
+        },
+        "tabPinned": {
+          "title": "Przypięte",
+          "description": "Modele, które przypiąłeś. Przypięcie dowolnej wersji utrzymuje całą rodzinę na górze."
+        },
+        "tabRunning": {
+          "title": "W trakcie",
+          "description": "Modele w kolejce, obliczane, uruchomione lub przetwarzane. Lista aktualizuje się na żywo podczas ich działania."
+        },
+        "tabCompleted": {
+          "title": "Ukończone",
+          "description": "Ukończone i opublikowane modele, gotowe do otwarcia i przeglądania."
+        },
+        "tabDrafts": {
+          "title": "Wersje robocze",
+          "description": "Modele robocze i zmodyfikowane, które wciąż trzeba uruchomić."
+        },
+        "tabFailed": {
+          "title": "Nieudane",
+          "description": "Nieudane lub anulowane uruchomienia. Sprawdź błąd i uruchom ponownie, gdy będziesz gotowy."
+        },
+        "search": {
+          "title": "Wyszukiwanie i okres",
+          "description": "Szukaj tytułów modeli i filtruj według okresu symulacji. Wyniki obejmują starsze wersje rodziny."
+        },
+        "familyRow": {
+          "title": "Jeden wiersz na model",
+          "description": "Każdy wiersz to rodzina modeli pokazująca najnowszą wersję. Odznaka wersji rozwija pełną historię."
+        },
+        "columns": {
+          "title": "Kolumny",
+          "description": "Ostatnia aktywność pokazuje najpierw uruchomione modele, potem ostatnio zakończone. Okres, obszar i ryzyko w jednym miejscu."
+        },
+        "pin": {
+          "title": "Przypnij modele",
+          "description": "Przypnij model, aby jego rodzina pozostawała na górze każdej zakładki."
+        },
+        "primaryAction": {
+          "title": "Główna akcja",
+          "description": "Przeglądaj ukończone modele lub uruchamiaj wersje robocze bezpośrednio z wiersza."
+        },
+        "moreMenu": {
+          "title": "Więcej akcji",
+          "description": "Edytuj, kopiuj, pobieraj, udostępniaj, przenoś do przestrzeni roboczej lub usuwaj z tego menu."
+        },
+        "newBadge": {
+          "title": "Nowe wyniki",
+          "description": "Ostatnio ukończone modele, których jeszcze nie otworzyłeś, są oznaczone jako nowe."
+        },
+        "refresh": {
+          "title": "Odśwież, udostępnij i kopiuj",
+          "description": "Odśwież ponownie ładuje listę modeli (modele w toku aktualizują się też same). Udostępnij daje zespołowi dostęp do tego obszaru, a Kopiuj duplikuje go wraz z modelami."
+        }
+      },
+      "ui": {
+        "stepOf": "Krok {{current}} z {{total}}",
+        "skipTour": "Pomiń wycieczkę",
+        "finish": "Zakończ",
+        "whatsNew": "Nowości",
+        "sections": {
+          "welcome": "Powitanie",
+          "navigation": "Nawigacja",
+          "dashboard": "Panel",
+          "tabs": "Zakładki",
+          "rows": "Wiersze",
+          "finish": "Zakończenie",
+          "tools": "Narzędzia"
+        },
+        "chips": {
+          "filters": "Filtry"
+        }
+      },
       "profile": {
         "title": "Profil i Ustawienia",
         "description": "Uzyskaj dostęp do swojego profilu, ustawień konta i preferencji użytkownika. Zarządzaj swoim kontem i dodatkowymi opcjami."
       },
       "navigation": {
-        "title": "Nawigacja Panelu",
-        "description": "Uzyskaj dostęp do głównego panelu, aby zobaczyć swoje projekty, ostatnie oceny i ogólne statystyki. To jest Twoja baza."
+        "title": "Panel administratora",
+        "description": "Zarządzaj obszarami roboczymi, użytkownikami i wszystkimi modelami na platformie. Widoczne tylko dla administratorów."
       },
       "simulations": {
         "title": "Symulacje Wildfire",
@@ -986,9 +1066,46 @@
         "title": "Wszystko gotowe!",
         "description": "Ukończyłeś wycieczkę! Jesteś teraz gotowy do tworzenia symulacji Wildfire.",
         "nextSteps": "Kolejne Kroki",
-        "nextStepsDescription": "Spróbuj utworzyć swoją pierwszą symulację Wildfire lub odkryj mapę interaktywną.",
+        "nextStepsDescription": "Filtruj modele za pomocą zakładek statusu, przypinaj ważne rodziny i rozwiń wiersz, aby przeglądać jego wersje.",
         "restartTour": "Uruchom Ponownie Wycieczkę",
         "restartTourDescription": "Możesz uruchomić tę wycieczkę ponownie w dowolnym momencie z paska bocznego."
+      },
+      "help": {
+        "title": "Pomoc",
+        "description": "Wszystko w jednym miejscu: otwórz dokumentację, uruchom ten przewodnik ponownie w dowolnej chwili lub wyślij nam opinię."
+      },
+      "restartTour": {
+        "title": "Uruchom przewodnik ponownie",
+        "description": "Odtwórz ten przewodnik w dowolnej chwili z menu Pomoc."
+      },
+      "github": {
+        "title": "GitHub",
+        "description": "Przeglądaj otwarty kod źródłowy i zgłaszaj problemy na GitHubie."
+      },
+      "weather": {
+        "title": "Pogoda",
+        "description": "Sprawdź aktualną pogodę dla swojej lokalizacji. Aktualizuje się automatycznie."
+      },
+      "notifications": {
+        "title": "Powiadomienia",
+        "description": "Tutaj zobaczysz zakończone obliczenia, udostępnienia i komunikaty systemowe."
+      },
+      "version": {
+        "title": "Co nowego",
+        "description": "Kliknij numer wersji, aby zobaczyć najnowsze funkcje i ulepszenia."
+      },
+      "language": {
+        "title": "Język",
+        "description": "Zmień język interfejsu. Twój wybór zostanie zapisany w tej przeglądarce."
+      },
+      "demo": {
+        "title": "Letnie ryzyko pożarowe – Galicja",
+        "example": "Przykład",
+        "justNow": "Przed chwilą"
+      },
+      "workspace": {
+        "title": "Obszar roboczy",
+        "description": "Modele należą do obszaru roboczego. Przełącz obszar tutaj lub utwórz nowy, aby porządkować projekty i udostępniać je zespołowi."
       }
     },
     "areaSelect": {
@@ -1072,6 +1189,15 @@
       "saveSummary": {
         "description": "To końcowe podsumowanie pokazuje wartości, które zostaną zapisane z modelem i wysłane do procesu obliczeń.",
         "title": "Podsumowanie zapisu"
+      },
+      "ui": {
+        "sections": {
+          "intro": "Wstęp",
+          "setup": "Konfiguracja",
+          "map": "Mapa",
+          "layers": "Warstwy",
+          "review": "Przegląd"
+        }
       }
     },
     "buttons": {
@@ -2258,5 +2384,77 @@
       "revoked": "Unieważniony"
     },
     "usageHint": "Użyj tokenu z dowolnej aplikacji: Authorization: Bearer <token>. Tokeny tylko do odczytu mogą pobierać listę modeli i wyniki z uprawnieniami tego użytkownika."
+  },
+  "whatsNew": {
+    "open": "Co nowego w tej wersji",
+    "title": "Co nowego",
+    "version": "Wersja {{version}}",
+    "released": "Wydano {{date}}",
+    "intro": "Podsumowanie najnowszych funkcji, ulepszeń i poprawek w tym wydaniu.",
+    "where": "Gdzie",
+    "viewAll": "Wszystkie zmiany na GitHubie",
+    "close": "Rozumiem",
+    "groups": {
+      "new": "Nowe",
+      "improved": "Ulepszone",
+      "fixed": "Naprawione"
+    },
+    "items": {
+      "families": {
+        "title": "Grupowanie wersji modeli",
+        "description": "Każdy model pojawia się raz, ze wszystkimi wersjami w tym samym wierszu. Najnowsza wersja jest pierwsza, a znacznik wersji rozwija pełną historię.",
+        "where": "Panel modeli → lista modeli"
+      },
+      "tabs": {
+        "title": "Karty statusu",
+        "description": "Przełączaj między Wszystkie, Przypięte, W toku, Ukończone, Szkice i Nieudane. Wyszukiwanie i filtr okresu działają w każdej karcie.",
+        "where": "Panel modeli → nad listą"
+      },
+      "pinning": {
+        "title": "Przypinanie modeli",
+        "description": "Przypięty model zostaje na górze listy. Przypięcie dowolnej wersji utrzymuje na górze całą rodzinę, a karta Przypięte zbiera je w jednym miejscu.",
+        "where": "Wiersz modelu → ikona pinezki"
+      },
+      "newBadge": {
+        "title": "Oznaczenie nowych wyników",
+        "description": "Niedawno ukończone modele otrzymują znacznik Nowe. Najedź na niego, aby zobaczyć, kiedy obliczenia się zakończyły.",
+        "where": "Wiersz modelu → obok tytułu"
+      },
+      "coordinates": {
+        "title": "Wyszukiwanie współrzędnych",
+        "description": "Wpisz szerokość i długość geograficzną w wyszukiwarce mapy, aby przejść prosto do miejsca – obok wyszukiwania po nazwie.",
+        "where": "Mapa → pasek wyszukiwania"
+      },
+      "tour": {
+        "title": "Odświeżony przewodnik",
+        "description": "Przewodnik prowadzi krok po kroku przez panel, mapę i narzędzia, z kropkami sekcji i nawigacją strzałkami.",
+        "where": "Menu Pomoc → Uruchom przewodnik ponownie"
+      },
+      "docs": {
+        "title": "Dokumentacja w aplikacji",
+        "description": "Poradniki i materiały otwierają się w aplikacji, więc nie tracisz miejsca pracy.",
+        "where": "Menu Pomoc → Dokumentacja"
+      },
+      "shortcuts": {
+        "title": "Skróty klawiszowe",
+        "description": "Przybliżaj, przesuwaj mapę i steruj terenem 3D z klawiatury. Panel skrótów na mapie pokazuje wszystkie klawisze.",
+        "where": "Mapa → panel skrótów"
+      },
+      "fireWeather": {
+        "title": "Poprawione etykiety pogody pożarowej",
+        "description": "Konfigurator pokazuje teraz właściwą godzinę pogody pożarowej, wagi czynników i etykiety dnia szczytowego.",
+        "where": "Nowa symulacja → konfigurator"
+      },
+      "sharing": {
+        "title": "Kopiowanie i udostępnianie między obszarami",
+        "description": "Modele można teraz kopiować i udostępniać między obszarami roboczymi bez utraty dostępu.",
+        "where": "Wiersz modelu → menu …"
+      },
+      "dateField": {
+        "title": "Dostępność w polu daty",
+        "description": "Pole daty nie zgłasza już braku dat, gdy dostępne są prawidłowe daty.",
+        "where": "Nowa symulacja → zakres dat"
+      }
+    }
   }
 }

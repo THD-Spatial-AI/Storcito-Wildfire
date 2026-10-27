@@ -940,13 +940,93 @@
         "description": "Pronto a iniziare? Clicca questo pulsante per creare la tua prima simulazione Wildfire. Si aprirà la procedura guidata di selezione dell'area.",
         "tip": "Cliccando, accederai a un tour dedicato al processo di selezione dell'area!"
       },
+      "dashboard": {
+        "tabsOverview": {
+          "title": "Filtra per stato",
+          "description": "Queste schede filtrano i tuoi modelli per stato, con conteggi in tempo reale per ogni gruppo."
+        },
+        "tabAll": {
+          "title": "Tutti i modelli",
+          "description": "Ogni famiglia di modelli in questo workspace, con le famiglie fissate in cima."
+        },
+        "tabPinned": {
+          "title": "Fissati",
+          "description": "I modelli che hai fissato. Fissare una versione mantiene l'intera famiglia in cima."
+        },
+        "tabRunning": {
+          "title": "In esecuzione",
+          "description": "Modelli in coda, in calcolo, in esecuzione o in elaborazione. L'elenco si aggiorna in tempo reale mentre sono in corso."
+        },
+        "tabCompleted": {
+          "title": "Completati",
+          "description": "Modelli completati e pubblicati, pronti da aprire ed esplorare."
+        },
+        "tabDrafts": {
+          "title": "Bozze",
+          "description": "Modelli in bozza o modificati che devono ancora essere eseguiti."
+        },
+        "tabFailed": {
+          "title": "Falliti",
+          "description": "Esecuzioni fallite o annullate. Ispeziona l'errore e riavvia quando sei pronto."
+        },
+        "search": {
+          "title": "Ricerca e periodo",
+          "description": "Cerca nei titoli dei modelli e filtra per periodo di simulazione. I risultati includono le versioni precedenti di una famiglia."
+        },
+        "familyRow": {
+          "title": "Una riga per modello",
+          "description": "Ogni riga è una famiglia di modelli che mostra l'ultima versione. Il badge delle versioni espande la cronologia completa."
+        },
+        "columns": {
+          "title": "Colonne",
+          "description": "Ultima attività elenca prima i modelli in esecuzione, poi quelli terminati più di recente. Periodo, area e rischio a colpo d'occhio."
+        },
+        "pin": {
+          "title": "Fissa i modelli",
+          "description": "Fissa un modello per mantenere la sua famiglia in cima a ogni scheda."
+        },
+        "primaryAction": {
+          "title": "Azione principale",
+          "description": "Visualizza i modelli completati o esegui le bozze direttamente dalla riga."
+        },
+        "moreMenu": {
+          "title": "Altre azioni",
+          "description": "Modifica, copia, scarica, condividi, sposta in un workspace o elimina da questo menu."
+        },
+        "newBadge": {
+          "title": "Nuovi risultati",
+          "description": "I modelli completati di recente che non hai ancora aperto sono contrassegnati come nuovi."
+        },
+        "refresh": {
+          "title": "Aggiorna, condividi e copia",
+          "description": "Aggiorna ricarica l'elenco dei modelli (quelli in esecuzione si aggiornano anche da soli). Condividi dà accesso al team a quest'area di lavoro e Copia la duplica con i suoi modelli."
+        }
+      },
+      "ui": {
+        "stepOf": "Passo {{current}} di {{total}}",
+        "skipTour": "Salta tour",
+        "finish": "Fine",
+        "whatsNew": "Novità",
+        "sections": {
+          "welcome": "Benvenuto",
+          "navigation": "Navigazione",
+          "dashboard": "Dashboard",
+          "tabs": "Schede",
+          "rows": "Righe",
+          "finish": "Fine",
+          "tools": "Strumenti"
+        },
+        "chips": {
+          "filters": "Filtri"
+        }
+      },
       "profile": {
         "title": "Profilo e Impostazioni",
         "description": "Accedi al tuo profilo, impostazioni account e preferenze utente. Gestisci il tuo account e opzioni aggiuntive."
       },
       "navigation": {
-        "title": "Navigazione Dashboard",
-        "description": "Accedi alla tua dashboard principale per visualizzare progetti, valutazioni recenti e statistiche generali. Questa è la tua base."
+        "title": "Dashboard amministratore",
+        "description": "Gestisci aree di lavoro, utenti e tutti i modelli della piattaforma. Visibile solo agli amministratori."
       },
       "simulations": {
         "title": "Simulazioni Wildfire",
@@ -986,9 +1066,46 @@
         "title": "Tutto pronto!",
         "description": "Hai completato il tour! Ora sei pronto per iniziare a creare simulazioni Wildfire.",
         "nextSteps": "Prossimi Passi",
-        "nextStepsDescription": "Prova a creare la tua prima simulazione Wildfire o esplora la mappa interattiva.",
+        "nextStepsDescription": "Filtra i modelli con le schede di stato, fissa le famiglie importanti ed espandi una riga per sfogliarne le versioni.",
         "restartTour": "Riavvia Tour",
         "restartTourDescription": "Puoi riavviare questo tour in qualsiasi momento dalla barra laterale."
+      },
+      "help": {
+        "title": "Aiuto",
+        "description": "Tutto in un unico posto: apri la documentazione, riavvia questo tour in qualsiasi momento o inviaci un feedback."
+      },
+      "restartTour": {
+        "title": "Riavvia tour",
+        "description": "Ripeti questo tour in qualsiasi momento dal menu Aiuto."
+      },
+      "github": {
+        "title": "GitHub",
+        "description": "Consulta il codice open source e segnala problemi su GitHub."
+      },
+      "weather": {
+        "title": "Meteo",
+        "description": "Controlla il meteo attuale per la tua posizione. Si aggiorna automaticamente."
+      },
+      "notifications": {
+        "title": "Notifiche",
+        "description": "Qui trovi le simulazioni completate, le condivisioni e gli avvisi di sistema."
+      },
+      "version": {
+        "title": "Novità",
+        "description": "Fai clic sul numero di versione per vedere le ultime funzionalità e miglioramenti."
+      },
+      "language": {
+        "title": "Lingua",
+        "description": "Cambia la lingua dell'interfaccia. La tua scelta viene salvata in questo browser."
+      },
+      "demo": {
+        "title": "Rischio incendi estivo – Galizia",
+        "example": "Esempio",
+        "justNow": "Proprio ora"
+      },
+      "workspace": {
+        "title": "Area di lavoro",
+        "description": "I modelli appartengono a un'area di lavoro. Cambia area qui o creane una nuova per organizzare i progetti e condividerli con il team."
       }
     },
     "areaSelect": {
@@ -1072,6 +1189,15 @@
       "saveSummary": {
         "description": "Questo riepilogo finale mostra i valori che verranno salvati con il modello e inviati al flusso di calcolo.",
         "title": "Riepilogo di salvataggio"
+      },
+      "ui": {
+        "sections": {
+          "intro": "Intro",
+          "setup": "Configurazione",
+          "map": "Mappa",
+          "layers": "Livelli",
+          "review": "Revisione"
+        }
       }
     },
     "buttons": {
@@ -2258,5 +2384,77 @@
       "revoked": "Revocato"
     },
     "usageHint": "Usa il token da qualsiasi applicazione: Authorization: Bearer <token>. I token di sola lettura possono elencare i modelli e scaricare i risultati con i permessi di questo utente."
+  },
+  "whatsNew": {
+    "open": "Novità di questa versione",
+    "title": "Novità",
+    "version": "Versione {{version}}",
+    "released": "Rilasciata il {{date}}",
+    "intro": "Un riepilogo delle ultime funzionalità, miglioramenti e correzioni di questa versione.",
+    "where": "Dove",
+    "viewAll": "Tutte le modifiche su GitHub",
+    "close": "Ho capito",
+    "groups": {
+      "new": "Nuovo",
+      "improved": "Migliorato",
+      "fixed": "Corretto"
+    },
+    "items": {
+      "families": {
+        "title": "Versioni dei modelli raggruppate",
+        "description": "Ogni modello compare una sola volta, con tutte le versioni nella stessa riga. La versione più recente è mostrata per prima e il badge delle versioni apre la cronologia.",
+        "where": "Dashboard modelli → elenco"
+      },
+      "tabs": {
+        "title": "Schede di stato",
+        "description": "Passa tra Tutti, Fissati, In esecuzione, Completati, Bozze e Non riusciti. Ricerca e filtro del periodo funzionano in ogni scheda.",
+        "where": "Dashboard modelli → sopra l'elenco"
+      },
+      "pinning": {
+        "title": "Fissa i modelli",
+        "description": "Un modello fissato resta in cima all'elenco. Fissare una versione mantiene in alto l'intera famiglia, e la scheda Fissati li raccoglie in un unico posto.",
+        "where": "Riga del modello → icona puntina"
+      },
+      "newBadge": {
+        "title": "Badge nuovi risultati",
+        "description": "I modelli completati di recente ricevono il badge Nuovo. Passa il mouse sopra per vedere quando è terminata la simulazione.",
+        "where": "Riga del modello → accanto al titolo"
+      },
+      "coordinates": {
+        "title": "Ricerca per coordinate",
+        "description": "Inserisci latitudine e longitudine nella ricerca della mappa per andare direttamente a un luogo, oltre alla ricerca per nome.",
+        "where": "Mappa → barra di ricerca"
+      },
+      "tour": {
+        "title": "Tour guidato riprogettato",
+        "description": "Il tour attraversa passo passo dashboard, mappa e strumenti, con punti di sezione e navigazione con le frecce.",
+        "where": "Menu Aiuto → Riavvia tour"
+      },
+      "docs": {
+        "title": "Documentazione integrata",
+        "description": "Guide e riferimenti si aprono nell'app, così non perdi il punto in cui eri.",
+        "where": "Menu Aiuto → Documentazione"
+      },
+      "shortcuts": {
+        "title": "Scorciatoie da tastiera",
+        "description": "Ingrandisci, sposta la mappa e controlla il rilievo 3D da tastiera. Il pannello scorciatoie sulla mappa elenca tutti i tasti.",
+        "where": "Mappa → pannello scorciatoie"
+      },
+      "fireWeather": {
+        "title": "Etichette meteo incendi corrette",
+        "description": "Il configuratore mostra ora l'ora meteo corretta, i pesi dei fattori e le etichette del giorno di picco.",
+        "where": "Nuova simulazione → configuratore"
+      },
+      "sharing": {
+        "title": "Copia e condivisione tra aree di lavoro",
+        "description": "I modelli si possono ora copiare e condividere tra aree di lavoro senza perdere l'accesso.",
+        "where": "Riga del modello → menu …"
+      },
+      "dateField": {
+        "title": "Disponibilità nel campo data",
+        "description": "Il campo data non segnala più che non ci sono date quando esistono date valide.",
+        "where": "Nuova simulazione → intervallo date"
+      }
+    }
   }
 }

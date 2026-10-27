@@ -1946,13 +1946,93 @@
         "description": "Pronto para começar? Clique neste botão para criar a sua primeira simulação de incêndio. Isto abre o assistente de seleção de área.",
         "tip": "Ao clicar aqui, entra numa visita dedicada ao processo de seleção de área!"
       },
+      "dashboard": {
+        "tabsOverview": {
+          "title": "Filtrar por estado",
+          "description": "Estes separadores filtram os seus modelos por estado, com contagens ao vivo para cada grupo."
+        },
+        "tabAll": {
+          "title": "Todos os modelos",
+          "description": "Todas as famílias de modelos neste espaço de trabalho, com as famílias fixadas no topo."
+        },
+        "tabPinned": {
+          "title": "Fixados",
+          "description": "Modelos que fixou. Fixar qualquer versão mantém a família inteira no topo."
+        },
+        "tabRunning": {
+          "title": "Em execução",
+          "description": "Modelos em fila, a calcular, em execução ou a processar. A lista atualiza em tempo real enquanto executam."
+        },
+        "tabCompleted": {
+          "title": "Concluídos",
+          "description": "Modelos concluídos e publicados, prontos a abrir e explorar."
+        },
+        "tabDrafts": {
+          "title": "Rascunhos",
+          "description": "Modelos em rascunho ou modificados que ainda precisam de ser executados."
+        },
+        "tabFailed": {
+          "title": "Com falha",
+          "description": "Execuções falhadas ou canceladas. Inspecione o erro e execute novamente quando estiver pronto."
+        },
+        "search": {
+          "title": "Pesquisa e período",
+          "description": "Pesquise títulos de modelos e filtre por período de simulação. Os resultados incluem versões antigas de uma família."
+        },
+        "familyRow": {
+          "title": "Uma linha por modelo",
+          "description": "Cada linha é uma família de modelos que mostra a versão mais recente. O distintivo de versões expande o histórico completo."
+        },
+        "columns": {
+          "title": "Colunas",
+          "description": "Última atividade lista primeiro os modelos em execução, depois os terminados mais recentemente. Período, área e risco num relance."
+        },
+        "pin": {
+          "title": "Fixar modelos",
+          "description": "Fixe um modelo para manter a sua família no topo de todos os separadores."
+        },
+        "primaryAction": {
+          "title": "Ação principal",
+          "description": "Veja modelos concluídos ou execute rascunhos diretamente a partir da linha."
+        },
+        "moreMenu": {
+          "title": "Mais ações",
+          "description": "Edite, copie, transfira, partilhe, mova para um espaço de trabalho ou elimine a partir deste menu."
+        },
+        "newBadge": {
+          "title": "Novos resultados",
+          "description": "Os modelos concluídos recentemente que ainda não abriu são marcados como novos."
+        },
+        "refresh": {
+          "title": "Atualizar, partilhar e copiar",
+          "description": "Atualizar recarrega a lista de modelos (os modelos em execução também se atualizam sozinhos). Partilhar dá à sua equipa acesso a este espaço e Copiar duplica-o com os seus modelos."
+        }
+      },
+      "ui": {
+        "stepOf": "Passo {{current}} de {{total}}",
+        "skipTour": "Ignorar a visita",
+        "finish": "Concluir",
+        "whatsNew": "Novo",
+        "sections": {
+          "welcome": "Boas-vindas",
+          "navigation": "Navegação",
+          "dashboard": "Painel",
+          "tabs": "Separadores",
+          "rows": "Linhas",
+          "finish": "Concluir",
+          "tools": "Ferramentas"
+        },
+        "chips": {
+          "filters": "Filtros"
+        }
+      },
       "profile": {
         "title": "Perfil e definições",
         "description": "Aceda ao seu perfil, às definições da conta e às preferências de utilizador. Faça a gestão da sua conta e aceda a opções adicionais."
       },
       "navigation": {
-        "title": "Navegação do painel",
-        "description": "Aceda ao seu painel principal para ver os seus projetos, as avaliações recentes e as estatísticas gerais. É o seu ponto de partida."
+        "title": "Painel de administração",
+        "description": "Gerencie espaços de trabalho, usuários e todos os modelos da plataforma. Visível apenas para administradores."
       },
       "simulations": {
         "title": "Simulações de incêndios",
@@ -1992,9 +2072,46 @@
         "title": "Está tudo pronto!",
         "description": "Concluiu a visita guiada! Já pode começar a criar simulações de incêndios.",
         "nextSteps": "Próximos passos",
-        "nextStepsDescription": "Experimente criar a sua primeira simulação de incêndio ou explore o mapa interativo.",
+        "nextStepsDescription": "Filtre modelos com os separadores de estado, fixe famílias importantes e expanda uma linha para ver as suas versões.",
         "restartTour": "Reiniciar a visita",
         "restartTourDescription": "Pode reiniciar esta visita a qualquer momento a partir da barra lateral."
+      },
+      "help": {
+        "title": "Ajuda",
+        "description": "Tudo num só lugar: abra a documentação, reinicie este tour a qualquer momento ou envie-nos feedback."
+      },
+      "restartTour": {
+        "title": "Reiniciar tour",
+        "description": "Repita este tour a qualquer momento pelo menu Ajuda."
+      },
+      "github": {
+        "title": "GitHub",
+        "description": "Veja o código aberto e reporte problemas no GitHub."
+      },
+      "weather": {
+        "title": "Clima",
+        "description": "Confira o clima atual da sua localização. Ele é atualizado automaticamente."
+      },
+      "notifications": {
+        "title": "Notificações",
+        "description": "Veja aqui simulações concluídas, compartilhamentos e avisos do sistema."
+      },
+      "version": {
+        "title": "Novidades",
+        "description": "Clique no número da versão para ver os recursos e melhorias mais recentes."
+      },
+      "language": {
+        "title": "Idioma",
+        "description": "Altere o idioma da interface. A sua escolha fica guardada neste navegador."
+      },
+      "demo": {
+        "title": "Risco de incêndio no verão – Galiza",
+        "example": "Exemplo",
+        "justNow": "Agora mesmo"
+      },
+      "workspace": {
+        "title": "Espaço de trabalho",
+        "description": "Os modelos pertencem a um espaço de trabalho. Troque de espaço aqui ou crie um novo para organizar projetos e partilhá-los com a sua equipa."
       }
     },
     "areaSelect": {
@@ -2078,6 +2195,15 @@
       "saveSummary": {
         "title": "Resumo antes de guardar",
         "description": "Este resumo final mostra os valores que serão guardados com o modelo e enviados para o fluxo de cálculo."
+      },
+      "ui": {
+        "sections": {
+          "intro": "Introdução",
+          "setup": "Configuração",
+          "map": "Mapa",
+          "layers": "Camadas",
+          "review": "Revisão"
+        }
       }
     },
     "buttons": {
@@ -2251,6 +2377,78 @@
       "municipalities": "Municípios da Galiza",
       "riskDistribution": "Distribuição do risco",
       "trendAnalysis": "Análise da tendência de risco"
+    }
+  },
+  "whatsNew": {
+    "open": "Novidades desta versão",
+    "title": "Novidades",
+    "version": "Versão {{version}}",
+    "released": "Lançada em {{date}}",
+    "intro": "Um resumo dos recursos, melhorias e correções mais recentes desta versão.",
+    "where": "Onde",
+    "viewAll": "Todas as alterações no GitHub",
+    "close": "Entendi",
+    "groups": {
+      "new": "Novo",
+      "improved": "Melhorado",
+      "fixed": "Corrigido"
+    },
+    "items": {
+      "families": {
+        "title": "Versões de modelos agrupadas",
+        "description": "Cada modelo aparece uma única vez, com todas as suas versões na mesma linha. A versão mais recente aparece primeiro e o selo de versões expande o histórico.",
+        "where": "Painel de modelos → lista de modelos"
+      },
+      "tabs": {
+        "title": "Abas de status",
+        "description": "Alterne entre Todos, Fixados, Em execução, Concluídos, Rascunhos e Com falha. A busca e o filtro de período funcionam em todas as abas.",
+        "where": "Painel de modelos → acima da lista"
+      },
+      "pinning": {
+        "title": "Fixar modelos",
+        "description": "Um modelo fixado fica no topo da lista. Fixar qualquer versão mantém toda a família no topo, e a aba Fixados reúne-os num só lugar.",
+        "where": "Linha do modelo → ícone de alfinete"
+      },
+      "newBadge": {
+        "title": "Selo de novos resultados",
+        "description": "Modelos concluídos recentemente recebem o selo Novo. Passe o cursor para ver quando a simulação terminou.",
+        "where": "Linha do modelo → ao lado do título"
+      },
+      "coordinates": {
+        "title": "Busca por coordenadas",
+        "description": "Digite latitude e longitude na busca do mapa para ir direto a um local, além da busca por nome.",
+        "where": "Mapa → barra de busca"
+      },
+      "tour": {
+        "title": "Tour guiado redesenhado",
+        "description": "O tour percorre passo a passo o painel, o mapa e as ferramentas, com pontos de seção e navegação pelas setas.",
+        "where": "Menu Ajuda → Reiniciar tour"
+      },
+      "docs": {
+        "title": "Documentação integrada",
+        "description": "Guias e referências abrem dentro da aplicação, para não perder o seu lugar.",
+        "where": "Menu Ajuda → Documentação"
+      },
+      "shortcuts": {
+        "title": "Atalhos de teclado",
+        "description": "Aproxime, mova o mapa e controle o relevo 3D pelo teclado. O painel de atalhos no mapa lista todas as teclas.",
+        "where": "Mapa → painel de atalhos"
+      },
+      "fireWeather": {
+        "title": "Rótulos de clima de incêndio corrigidos",
+        "description": "O configurador mostra agora a hora meteorológica correta, os pesos dos fatores e os rótulos do dia de pico.",
+        "where": "Nova simulação → configurador"
+      },
+      "sharing": {
+        "title": "Copiar e compartilhar entre espaços",
+        "description": "Os modelos agora podem ser copiados e compartilhados entre espaços de trabalho sem perder o acesso.",
+        "where": "Linha do modelo → menu …"
+      },
+      "dateField": {
+        "title": "Disponibilidade no campo de data",
+        "description": "O campo de data não indica mais que não há datas quando existem datas válidas.",
+        "where": "Nova simulação → intervalo de datas"
+      }
     }
   }
 }

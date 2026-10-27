@@ -940,13 +940,93 @@
         "description": "Připraveni začít? Klikněte na toto tlačítko a vytvořte svou první simulaci Wildfire. Otevře se průvodce výběrem oblasti.",
         "tip": "Po kliknutí přejdete na speciální prohlídku procesu výběru oblasti!"
       },
+      "dashboard": {
+        "tabsOverview": {
+          "title": "Filtrování podle stavu",
+          "description": "Tyto záložky filtrují vaše modely podle stavu, s živými počty pro každou skupinu."
+        },
+        "tabAll": {
+          "title": "Všechny modely",
+          "description": "Každá rodina modelů v tomto pracovním prostoru, s připnutými rodinami nahoře."
+        },
+        "tabPinned": {
+          "title": "Připnuté",
+          "description": "Modely, které jste připnuli. Připnutí libovolné verze udrží celou rodinu nahoře."
+        },
+        "tabRunning": {
+          "title": "Běžící",
+          "description": "Modely ve frontě, ve výpočtu, běžící nebo zpracovávané. Seznam se během běhu aktualizuje živě."
+        },
+        "tabCompleted": {
+          "title": "Dokončené",
+          "description": "Dokončené a publikované modely, připravené k otevření a prozkoumání."
+        },
+        "tabDrafts": {
+          "title": "Koncepty",
+          "description": "Koncepty a upravené modely, které ještě potřebují spustit."
+        },
+        "tabFailed": {
+          "title": "Selhaly",
+          "description": "Selhané nebo zrušené běhy. Prohlédněte si chybu a až budete připraveni, spusťte je znovu."
+        },
+        "search": {
+          "title": "Hledání a období",
+          "description": "Hledejte názvy modelů a filtrujte podle období simulace. Výsledky zahrnují i starší verze rodiny."
+        },
+        "familyRow": {
+          "title": "Jeden řádek na model",
+          "description": "Každý řádek je rodina modelů zobrazující nejnovější verzi. Odznak verzí rozbalí celou historii."
+        },
+        "columns": {
+          "title": "Sloupce",
+          "description": "Poslední aktivita řadí nejprve běžící modely, poté naposledy dokončené. Období, oblast a riziko na první pohled."
+        },
+        "pin": {
+          "title": "Připnout modely",
+          "description": "Připněte model, aby jeho rodina zůstala nahoře v každé záložce."
+        },
+        "primaryAction": {
+          "title": "Hlavní akce",
+          "description": "Zobrazte dokončené modely nebo spusťte koncepty přímo z řádku."
+        },
+        "moreMenu": {
+          "title": "Další akce",
+          "description": "Upravte, kopírujte, stáhněte, sdílejte, přesuňte do pracovního prostoru nebo smažte z této nabídky."
+        },
+        "newBadge": {
+          "title": "Nové výsledky",
+          "description": "Nedávno dokončené modely, které jste ještě neotevřeli, jsou označeny jako nové."
+        },
+        "refresh": {
+          "title": "Obnovit, sdílet a kopírovat",
+          "description": "Obnovit znovu načte seznam modelů (běžící modely se obnovují i samy). Sdílet zpřístupní tento prostor vašemu týmu a Kopírovat jej zduplikuje i s modely."
+        }
+      },
+      "ui": {
+        "stepOf": "Krok {{current}} z {{total}}",
+        "skipTour": "Přeskočit prohlídku",
+        "finish": "Dokončit",
+        "whatsNew": "Nové",
+        "sections": {
+          "welcome": "Vítejte",
+          "navigation": "Navigace",
+          "dashboard": "Řídicí panel",
+          "tabs": "Záložky",
+          "rows": "Řádky",
+          "finish": "Dokončit",
+          "tools": "Nástroje"
+        },
+        "chips": {
+          "filters": "Filtry"
+        }
+      },
       "profile": {
         "title": "Profil a Nastavení",
         "description": "Přístup k vašemu profilu, nastavení účtu a uživatelským preferencím. Spravujte svůj účet a další možnosti."
       },
       "navigation": {
-        "title": "Navigace Řídicího Panelu",
-        "description": "Přístup k hlavnímu řídicímu panelu pro zobrazení projektů, nedávných hodnocení a celkových statistik. Toto je vaše základna."
+        "title": "Administrátorský panel",
+        "description": "Spravujte pracovní prostory, uživatele a všechny modely na platformě. Viditelné pouze pro administrátory."
       },
       "simulations": {
         "title": "Simulace Wildfire",
@@ -986,9 +1066,46 @@
         "title": "Vše je připraveno!",
         "description": "Dokončili jste prohlídku! Nyní jste připraveni vytvářet simulace Wildfire.",
         "nextSteps": "Další kroky",
-        "nextStepsDescription": "Zkuste vytvořit svou první simulaci Wildfire nebo prozkoumejte interaktivní mapu.",
+        "nextStepsDescription": "Filtrujte modely pomocí záložek stavu, připněte důležité rodiny a rozbalte řádek pro procházení jeho verzí.",
         "restartTour": "Restartovat Prohlídku",
         "restartTourDescription": "Tuto prohlídku můžete kdykoli restartovat z postranního panelu."
+      },
+      "help": {
+        "title": "Nápověda",
+        "description": "Vše na jednom místě: otevřete dokumentaci, kdykoli znovu spusťte tohoto průvodce nebo nám pošlete zpětnou vazbu."
+      },
+      "restartTour": {
+        "title": "Restartovat průvodce",
+        "description": "Tohoto průvodce můžete kdykoli spustit znovu z nabídky Nápověda."
+      },
+      "github": {
+        "title": "GitHub",
+        "description": "Prohlédněte si otevřený zdrojový kód a nahlaste problémy na GitHubu."
+      },
+      "weather": {
+        "title": "Počasí",
+        "description": "Zkontrolujte aktuální počasí pro vaši polohu. Aktualizuje se automaticky."
+      },
+      "notifications": {
+        "title": "Oznámení",
+        "description": "Zde uvidíte dokončené výpočty, sdílení a systémová oznámení."
+      },
+      "version": {
+        "title": "Co je nového",
+        "description": "Klikněte na číslo verze a zobrazte nejnovější funkce a vylepšení."
+      },
+      "language": {
+        "title": "Jazyk",
+        "description": "Změňte jazyk rozhraní. Vaše volba se uloží v tomto prohlížeči."
+      },
+      "demo": {
+        "title": "Letní riziko požárů – Galicie",
+        "example": "Ukázka",
+        "justNow": "Právě teď"
+      },
+      "workspace": {
+        "title": "Pracovní prostor",
+        "description": "Modely patří do pracovního prostoru. Zde prostor přepnete nebo vytvoříte nový pro organizaci projektů a sdílení s týmem."
       }
     },
     "areaSelect": {
@@ -1072,6 +1189,15 @@
       "saveSummary": {
         "description": "Tento závěrečný souhrn zobrazuje hodnoty, které budou uloženy s modelem a odeslány do výpočetního procesu.",
         "title": "Souhrn uložení"
+      },
+      "ui": {
+        "sections": {
+          "intro": "Úvod",
+          "setup": "Nastavení",
+          "map": "Mapa",
+          "layers": "Vrstvy",
+          "review": "Kontrola"
+        }
       }
     },
     "buttons": {
@@ -2258,5 +2384,77 @@
       "revoked": "Odvolán"
     },
     "usageHint": "Token použijte z libovolné aplikace: Authorization: Bearer <token>. Tokeny jen pro čtení mohou vypsat modely a stáhnout výsledky s oprávněními tohoto uživatele."
+  },
+  "whatsNew": {
+    "open": "Co je nového v této verzi",
+    "title": "Co je nového",
+    "version": "Verze {{version}}",
+    "released": "Vydáno {{date}}",
+    "intro": "Přehled nejnovějších funkcí, vylepšení a oprav v tomto vydání.",
+    "where": "Kde",
+    "viewAll": "Všechny změny na GitHubu",
+    "close": "Rozumím",
+    "groups": {
+      "new": "Nové",
+      "improved": "Vylepšené",
+      "fixed": "Opravené"
+    },
+    "items": {
+      "families": {
+        "title": "Seskupené verze modelů",
+        "description": "Každý model se zobrazí jen jednou a všechny jeho verze jsou ve stejném řádku. Nejnovější verze je první a odznak verzí rozbalí celou historii.",
+        "where": "Panel modelů → seznam modelů"
+      },
+      "tabs": {
+        "title": "Karty stavů",
+        "description": "Přepínejte mezi Vše, Připnuté, Běžící, Dokončené, Koncepty a Neúspěšné. Vyhledávání a filtr období fungují v každé kartě.",
+        "where": "Panel modelů → nad seznamem"
+      },
+      "pinning": {
+        "title": "Připnutí modelů",
+        "description": "Připnutý model zůstane nahoře v seznamu. Připnutí libovolné verze drží nahoře celou rodinu a karta Připnuté je shromažďuje na jednom místě.",
+        "where": "Řádek modelu → ikona připnutí"
+      },
+      "newBadge": {
+        "title": "Odznak nových výsledků",
+        "description": "Nedávno dokončené modely dostanou odznak Nové. Najeďte na něj a uvidíte, kdy výpočet skončil.",
+        "where": "Řádek modelu → vedle názvu"
+      },
+      "coordinates": {
+        "title": "Vyhledávání souřadnic",
+        "description": "Zadejte zeměpisnou šířku a délku do vyhledávání na mapě a přesuňte se přímo na místo – vedle běžného hledání podle názvu.",
+        "where": "Mapa → vyhledávací pole"
+      },
+      "tour": {
+        "title": "Přepracovaný průvodce",
+        "description": "Průvodce vás krok za krokem provede panelem, mapou a nástroji, s tečkami sekcí a ovládáním šipkami.",
+        "where": "Nápověda → Restartovat průvodce"
+      },
+      "docs": {
+        "title": "Dokumentace v aplikaci",
+        "description": "Návody a reference se otevírají přímo v aplikaci, takže neztratíte rozpracovanou práci.",
+        "where": "Nápověda → Dokumentace"
+      },
+      "shortcuts": {
+        "title": "Klávesové zkratky",
+        "description": "Přibližujte, posouvejte mapu a ovládejte 3D terén klávesnicí. Panel zkratek na mapě uvádí všechny klávesy.",
+        "where": "Mapa → panel klávesových zkratek"
+      },
+      "fireWeather": {
+        "title": "Opravené popisky požárního počasí",
+        "description": "Konfigurátor nyní zobrazuje správnou hodinu požárního počasí, váhy faktorů a popisky špičkového dne.",
+        "where": "Nová simulace → konfigurátor"
+      },
+      "sharing": {
+        "title": "Kopírování a sdílení mezi prostory",
+        "description": "Modely lze nyní kopírovat a sdílet mezi pracovními prostory bez ztráty přístupu.",
+        "where": "Řádek modelu → nabídka …"
+      },
+      "dateField": {
+        "title": "Dostupnost v poli data",
+        "description": "Pole data již nehlásí, že nejsou k dispozici žádná data, když platná data existují.",
+        "where": "Nová simulace → časové období"
+      }
+    }
   }
 }

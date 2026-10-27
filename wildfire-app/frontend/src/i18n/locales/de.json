@@ -1106,13 +1106,93 @@
         "description": "Bereit loszulegen? Klicken Sie auf diese Schaltfläche, um Ihre erste Wildfire-Simulation zu erstellen. Dadurch wird der Bereichsauswahl-Assistent geöffnet.",
         "tip": "Wenn Sie darauf klicken, öffnet sich eine spezielle Tour für die Bereichsauswahl!"
       },
+      "dashboard": {
+        "tabsOverview": {
+          "title": "Nach Status filtern",
+          "description": "Diese Tabs filtern Ihre Modelle nach Status, mit Live-Zählern für jede Gruppe."
+        },
+        "tabAll": {
+          "title": "Alle Modelle",
+          "description": "Jede Modellfamilie in diesem Arbeitsbereich, angepinnte Familien ganz oben."
+        },
+        "tabPinned": {
+          "title": "Angepinnt",
+          "description": "Von Ihnen angepinnte Modelle. Das Anpinnen einer Version hält die gesamte Familie oben."
+        },
+        "tabRunning": {
+          "title": "Laufend",
+          "description": "Wartende, berechnende, laufende oder in Verarbeitung befindliche Modelle. Die Liste aktualisiert sich live während der Ausführung."
+        },
+        "tabCompleted": {
+          "title": "Abgeschlossen",
+          "description": "Abgeschlossene und veröffentlichte Modelle, bereit zum Öffnen und Erkunden."
+        },
+        "tabDrafts": {
+          "title": "Entwürfe",
+          "description": "Entwürfe und geänderte Modelle, die noch ausgeführt werden müssen."
+        },
+        "tabFailed": {
+          "title": "Fehlgeschlagen",
+          "description": "Fehlgeschlagene oder abgebrochene Durchläufe. Prüfen Sie den Fehler und führen Sie die Simulation erneut aus."
+        },
+        "search": {
+          "title": "Suche & Zeitraum",
+          "description": "Durchsuchen Sie Modelltitel und filtern Sie nach Simulationszeitraum. Treffer umfassen auch ältere Versionen einer Familie."
+        },
+        "familyRow": {
+          "title": "Eine Zeile pro Modell",
+          "description": "Jede Zeile ist eine Modellfamilie und zeigt die neueste Version. Das Versions-Badge zeigt den gesamten Verlauf."
+        },
+        "columns": {
+          "title": "Spalten",
+          "description": "Letzte Aktivität listet zuerst laufende Modelle, dann die zuletzt abgeschlossenen. Zeitraum, Gebiet und Risiko auf einen Blick."
+        },
+        "pin": {
+          "title": "Modelle anpinnen",
+          "description": "Pinnen Sie ein Modell an, um seine Familie in jedem Tab oben zu halten."
+        },
+        "primaryAction": {
+          "title": "Hauptaktion",
+          "description": "Öffnen Sie abgeschlossene Modelle oder starten Sie Entwürfe direkt aus der Zeile."
+        },
+        "moreMenu": {
+          "title": "Weitere Aktionen",
+          "description": "Bearbeiten, kopieren, herunterladen, teilen, in einen Arbeitsbereich verschieben oder löschen – über dieses Menü."
+        },
+        "newBadge": {
+          "title": "Neue Ergebnisse",
+          "description": "Kürzlich abgeschlossene Modelle, die Sie noch nicht geöffnet haben, werden als neu markiert."
+        },
+        "refresh": {
+          "title": "Aktualisieren, teilen & kopieren",
+          "description": "Aktualisieren lädt die Modellliste neu (laufende Modelle aktualisieren sich auch selbst). Teilen gibt Ihrem Team Zugriff auf diesen Arbeitsbereich, Kopieren dupliziert ihn samt Modellen."
+        }
+      },
+      "ui": {
+        "stepOf": "Schritt {{current}} von {{total}}",
+        "skipTour": "Tour überspringen",
+        "finish": "Fertigstellen",
+        "whatsNew": "Neu",
+        "sections": {
+          "welcome": "Willkommen",
+          "navigation": "Navigation",
+          "dashboard": "Dashboard",
+          "tabs": "Tabs",
+          "rows": "Zeilen",
+          "finish": "Abschluss",
+          "tools": "Werkzeuge"
+        },
+        "chips": {
+          "filters": "Filter"
+        }
+      },
       "profile": {
         "title": "Profil & Einstellungen",
         "description": "Greifen Sie auf Ihr Profil, Kontoeinstellungen und Benutzereinstellungen zu. Verwalten Sie Ihr Konto und zusätzliche Optionen."
       },
       "navigation": {
-        "title": "Dashboard-Navigation",
-        "description": "Greifen Sie auf Ihr Haupt-Dashboard zu, um Ihre Projekte, aktuelle Bewertungen und Gesamtstatistiken anzuzeigen. Dies ist Ihre Basis."
+        "title": "Admin-Dashboard",
+        "description": "Verwalten Sie Arbeitsbereiche, Benutzer und alle Modelle der Plattform. Nur für Administratoren sichtbar."
       },
       "simulations": {
         "title": "Wildfire-Simulationen",
@@ -1152,9 +1232,46 @@
         "title": "Alles bereit!",
         "description": "Sie haben die Tour abgeschlossen! Sie sind jetzt bereit, Wildfire-Simulationen zu erstellen.",
         "nextSteps": "Nächste Schritte",
-        "nextStepsDescription": "Erstellen Sie Ihre erste Wildfire-Simulation oder erkunden Sie die interaktive Karte.",
+        "nextStepsDescription": "Filtern Sie Modelle mit den Status-Tabs, pinnen Sie wichtige Familien an und klappen Sie eine Zeile auf, um ihre Versionen zu durchsuchen.",
         "restartTour": "Tour neu starten",
         "restartTourDescription": "Sie können diese Tour jederzeit über die Seitenleiste neu starten."
+      },
+      "help": {
+        "title": "Hilfe",
+        "description": "Alles an einem Ort: Öffnen Sie die Dokumentation, starten Sie diese Tour jederzeit neu oder senden Sie uns Feedback."
+      },
+      "restartTour": {
+        "title": "Tour neu starten",
+        "description": "Starten Sie diese Tour jederzeit über das Hilfemenü erneut."
+      },
+      "github": {
+        "title": "GitHub",
+        "description": "Sehen Sie den Open-Source-Code ein und melden Sie Probleme auf GitHub."
+      },
+      "weather": {
+        "title": "Wetter",
+        "description": "Prüfen Sie das aktuelle Wetter für Ihren Standort. Es wird automatisch aktualisiert."
+      },
+      "notifications": {
+        "title": "Benachrichtigungen",
+        "description": "Hier sehen Sie abgeschlossene Läufe, Freigaben und Systemmeldungen."
+      },
+      "version": {
+        "title": "Neuigkeiten",
+        "description": "Klicken Sie auf die Versionsnummer, um die neuesten Funktionen und Verbesserungen zu sehen."
+      },
+      "language": {
+        "title": "Sprache",
+        "description": "Wechseln Sie die Sprache der Oberfläche. Ihre Auswahl wird in diesem Browser gespeichert."
+      },
+      "demo": {
+        "title": "Sommer-Waldbrandrisiko – Galicien",
+        "example": "Beispiel",
+        "justNow": "Gerade eben"
+      },
+      "workspace": {
+        "title": "Arbeitsbereich",
+        "description": "Modelle gehören zu einem Arbeitsbereich. Wechseln Sie hier den Arbeitsbereich oder erstellen Sie einen neuen, um Projekte zu ordnen und mit Ihrem Team zu teilen."
       }
     },
     "areaSelect": {
@@ -1238,6 +1355,15 @@
       "saveSummary": {
         "description": "Diese abschließende Zusammenfassung zeigt die Werte, die mit dem Modell gespeichert und an den Berechnungs-Workflow gesendet werden.",
         "title": "Speicherübersicht"
+      },
+      "ui": {
+        "sections": {
+          "intro": "Einführung",
+          "setup": "Einrichtung",
+          "map": "Karte",
+          "layers": "Ebenen",
+          "review": "Überprüfung"
+        }
       }
     },
     "buttons": {
@@ -2258,5 +2384,77 @@
       "revoked": "Widerrufen"
     },
     "usageHint": "Verwenden Sie das Token aus jeder Anwendung: Authorization: Bearer <token>. Tokens mit Nur-Lese-Rechten können Modelle auflisten und Ergebnisse mit den Rechten dieses Nutzers herunterladen."
+  },
+  "whatsNew": {
+    "open": "Neuigkeiten in dieser Version",
+    "title": "Neuigkeiten",
+    "version": "Version {{version}}",
+    "released": "Veröffentlicht am {{date}}",
+    "intro": "Eine Übersicht über die neuesten Funktionen, Verbesserungen und Fehlerbehebungen dieser Version.",
+    "where": "Wo",
+    "viewAll": "Alle Änderungen auf GitHub",
+    "close": "Verstanden",
+    "groups": {
+      "new": "Neu",
+      "improved": "Verbessert",
+      "fixed": "Behoben"
+    },
+    "items": {
+      "families": {
+        "title": "Modellversionen gruppiert",
+        "description": "Jedes Modell erscheint nur noch einmal, mit allen Versionen in derselben Zeile. Die neueste Version steht zuerst; das Versions-Badge klappt den Verlauf auf.",
+        "where": "Modell-Dashboard → Modellliste"
+      },
+      "tabs": {
+        "title": "Status-Tabs",
+        "description": "Wechseln Sie zwischen Alle, Angeheftet, Läuft, Abgeschlossen, Entwürfe und Fehlgeschlagen. Suche und Zeitraumfilter funktionieren in jedem Tab.",
+        "where": "Modell-Dashboard → über der Liste"
+      },
+      "pinning": {
+        "title": "Modelle anheften",
+        "description": "Angeheftete Modelle bleiben oben in der Liste. Das Anheften einer Version hält die ganze Familie oben; der Tab Angeheftet sammelt sie an einem Ort.",
+        "where": "Modellzeile → Pin-Symbol"
+      },
+      "newBadge": {
+        "title": "Badge für neue Ergebnisse",
+        "description": "Kürzlich abgeschlossene Modelle erhalten ein Neu-Badge. Fahren Sie darüber, um zu sehen, wann der Lauf endete.",
+        "where": "Modellzeile → neben dem Titel"
+      },
+      "coordinates": {
+        "title": "Koordinatensuche",
+        "description": "Geben Sie Breiten- und Längengrad in die Kartensuche ein, um direkt zu einem Ort zu springen – zusätzlich zur Ortsnamensuche.",
+        "where": "Karte → Suchleiste"
+      },
+      "tour": {
+        "title": "Neu gestaltete geführte Tour",
+        "description": "Die Tour führt Schritt für Schritt durch Dashboard, Karte und Werkzeuge, mit Abschnittspunkten und Pfeiltasten-Navigation.",
+        "where": "Hilfemenü → Tour neu starten"
+      },
+      "docs": {
+        "title": "Dokumentation in der App",
+        "description": "Anleitungen und Referenzen öffnen sich in der App, sodass Sie Ihren Arbeitsstand behalten.",
+        "where": "Hilfemenü → Dokumentation"
+      },
+      "shortcuts": {
+        "title": "Tastenkürzel",
+        "description": "Zoomen, Karte verschieben und 3D-Gelände per Tastatur steuern. Das Kürzel-Panel auf der Karte listet alle Tasten.",
+        "where": "Karte → Tastenkürzel-Panel"
+      },
+      "fireWeather": {
+        "title": "Feuerwetter-Beschriftungen korrigiert",
+        "description": "Der Konfigurator zeigt jetzt die richtige Feuerwetter-Stunde, Faktorgewichte und Spitzentag-Beschriftungen.",
+        "where": "Neue Simulation → Konfigurator"
+      },
+      "sharing": {
+        "title": "Kopieren und Teilen zwischen Arbeitsbereichen",
+        "description": "Modelle lassen sich jetzt zwischen Arbeitsbereichen kopieren und teilen, ohne den Zugriff zu verlieren.",
+        "where": "Modellzeile → …-Menü"
+      },
+      "dateField": {
+        "title": "Verfügbarkeit im Datumsfeld",
+        "description": "Das Datumsfeld meldet nicht mehr fälschlich, dass keine Daten verfügbar sind.",
+        "where": "Neue Simulation → Zeitraum"
+      }
+    }
   }
 }

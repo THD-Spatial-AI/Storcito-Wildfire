@@ -1106,13 +1106,93 @@
         "description": "Ready to get started? Click this button to create your first wildfire simulation. This will open the area selection wizard.",
         "tip": "When you click this, you'll enter a dedicated tour for the area selection process!"
       },
+      "dashboard": {
+        "tabsOverview": {
+          "title": "Filter by status",
+          "description": "These tabs filter your models by state, with live counts for each group."
+        },
+        "tabAll": {
+          "title": "All models",
+          "description": "Every model family in this workspace, with pinned families on top."
+        },
+        "tabPinned": {
+          "title": "Pinned",
+          "description": "Models you pinned. Pinning any version keeps the whole family on top."
+        },
+        "tabRunning": {
+          "title": "Running",
+          "description": "Queued, calculating, running or processing models. The list updates live while they run."
+        },
+        "tabCompleted": {
+          "title": "Completed",
+          "description": "Completed and published models, ready to open and explore."
+        },
+        "tabDrafts": {
+          "title": "Drafts",
+          "description": "Draft and modified models that still need to be run."
+        },
+        "tabFailed": {
+          "title": "Failed",
+          "description": "Failed or cancelled runs. Inspect the error and re-run when ready."
+        },
+        "search": {
+          "title": "Search & period",
+          "description": "Search model titles and filter by simulation period. Matches include older versions of a family."
+        },
+        "familyRow": {
+          "title": "One row per model",
+          "description": "Each row is a model family showing the latest version. The versions badge expands the full history."
+        },
+        "columns": {
+          "title": "Columns",
+          "description": "Last activity lists running models first, then the most recently finished. Period, area and risk at a glance."
+        },
+        "pin": {
+          "title": "Pin models",
+          "description": "Pin a model to keep its family at the top of every tab."
+        },
+        "primaryAction": {
+          "title": "Primary action",
+          "description": "View finished models or run drafts straight from the row."
+        },
+        "moreMenu": {
+          "title": "More actions",
+          "description": "Edit, copy, download, share, move to a workspace or delete from this menu."
+        },
+        "newBadge": {
+          "title": "New results",
+          "description": "Recently completed models you have not opened yet are marked as new."
+        },
+        "refresh": {
+          "title": "Refresh, share & copy",
+          "description": "Refresh reloads the model list (running models also update on their own). Share gives your team access to this workspace, and Copy duplicates it with its models."
+        }
+      },
+      "ui": {
+        "stepOf": "Step {{current}} of {{total}}",
+        "skipTour": "Skip tour",
+        "finish": "Finish",
+        "whatsNew": "New",
+        "sections": {
+          "welcome": "Welcome",
+          "navigation": "Navigation",
+          "dashboard": "Dashboard",
+          "tabs": "Tabs",
+          "rows": "Rows",
+          "finish": "Finish",
+          "tools": "Tools"
+        },
+        "chips": {
+          "filters": "Filters"
+        }
+      },
       "profile": {
         "title": "Profile & Settings",
         "description": "Access your profile, account settings, and user preferences. Manage your account and access additional options."
       },
       "navigation": {
-        "title": "Dashboard Navigation",
-        "description": "Access your main dashboard to view your projects, recent assessments, and overall statistics. This is your home base."
+        "title": "Admin Dashboard",
+        "description": "Manage workspaces, users and every model on the platform. Visible to administrators only."
       },
       "simulations": {
         "title": "Wildfire Simulations",
@@ -1152,9 +1232,46 @@
         "title": "You're All Set!",
         "description": "You've completed the tour! You're now ready to start creating wildfire simulations.",
         "nextSteps": "Next Steps",
-        "nextStepsDescription": "Try creating your first wildfire simulation or explore the interactive map.",
+        "nextStepsDescription": "Filter models with the status tabs, pin important families, and expand a row to browse its versions.",
         "restartTour": "Restart Tour",
         "restartTourDescription": "You can restart this tour anytime from the sidebar."
+      },
+      "help": {
+        "title": "Help",
+        "description": "Everything you need in one place: open the documentation, restart this tour at any time, or send us feedback."
+      },
+      "restartTour": {
+        "title": "Restart Tour",
+        "description": "Replay this tour at any time from the Help menu."
+      },
+      "github": {
+        "title": "GitHub",
+        "description": "View the open-source code and report issues on GitHub."
+      },
+      "weather": {
+        "title": "Weather",
+        "description": "Check the current weather for your location. It updates automatically."
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "See finished runs, shares and system announcements here."
+      },
+      "version": {
+        "title": "What's New",
+        "description": "Click the version number to see the latest features and improvements."
+      },
+      "language": {
+        "title": "Language",
+        "description": "Switch the interface language. Your choice is saved in this browser."
+      },
+      "demo": {
+        "title": "Summer fire risk – Galicia",
+        "example": "Example",
+        "justNow": "Just now"
+      },
+      "workspace": {
+        "title": "Workspace",
+        "description": "Models belong to a workspace. Switch workspaces here, or create a new one to organise projects and share them with your team."
       }
     },
     "areaSelect": {
@@ -1238,6 +1355,15 @@
       "saveSummary": {
         "title": "Save summary",
         "description": "This final summary shows the values that will be saved with the model and sent to the calculation workflow."
+      },
+      "ui": {
+        "sections": {
+          "intro": "Intro",
+          "setup": "Setup",
+          "map": "Map",
+          "layers": "Layers",
+          "review": "Review"
+        }
       }
     },
     "buttons": {
@@ -2252,5 +2378,77 @@
       "revoked": "Revoked"
     },
     "usageHint": "Use the token from any app: Authorization: Bearer <token>. Read-only tokens can list models and download results with this user's permissions."
+  },
+  "whatsNew": {
+    "open": "What's new in this version",
+    "title": "What's new",
+    "version": "Version {{version}}",
+    "released": "Released {{date}}",
+    "intro": "A summary of the latest features, improvements and fixes in this release.",
+    "where": "Where",
+    "viewAll": "All changes on GitHub",
+    "close": "Got it",
+    "groups": {
+      "new": "New",
+      "improved": "Improved",
+      "fixed": "Fixed"
+    },
+    "items": {
+      "families": {
+        "title": "Model versions grouped",
+        "description": "Each model now appears once, with all of its versions in the same row. The latest version is shown first, and the version badge expands the full history.",
+        "where": "Model dashboard → model list"
+      },
+      "tabs": {
+        "title": "Status tabs",
+        "description": "Switch between All, Pinned, Running, Completed, Drafts and Failed to see only the models you need. Search and period filters work inside every tab.",
+        "where": "Model dashboard → above the list"
+      },
+      "pinning": {
+        "title": "Pin models",
+        "description": "Pin a model to keep it at the top of the list. Pinning any version keeps the whole family on top, and the Pinned tab collects them in one place.",
+        "where": "Model row → pin icon"
+      },
+      "newBadge": {
+        "title": "New results badge",
+        "description": "Recently finished models get a New badge so fresh results stand out. Hover over it to see when the run finished.",
+        "where": "Model row → next to the title"
+      },
+      "coordinates": {
+        "title": "Coordinate search",
+        "description": "Type a latitude and longitude in the map search bar to jump straight to a location, alongside the usual place-name search.",
+        "where": "Map → search bar"
+      },
+      "tour": {
+        "title": "Redesigned guided tour",
+        "description": "The tour now walks through the dashboard, map and tools step by step, with section dots and arrow-key navigation.",
+        "where": "Help menu → Restart tour"
+      },
+      "docs": {
+        "title": "In-app documentation",
+        "description": "Guides and references open from inside the app, so you keep your place while reading.",
+        "where": "Help menu → Documentation"
+      },
+      "shortcuts": {
+        "title": "Keyboard shortcuts",
+        "description": "Zoom, move the map and control 3D terrain from the keyboard. The shortcut panel on the map lists every key.",
+        "where": "Map → keyboard shortcuts panel"
+      },
+      "fireWeather": {
+        "title": "Fire-weather labels corrected",
+        "description": "The configurator now shows the correct fire-weather hour, factor weights and peak-day labels.",
+        "where": "New simulation → configurator"
+      },
+      "sharing": {
+        "title": "Copying and sharing across workspaces",
+        "description": "Models can now be copied and shared between workspaces without losing access.",
+        "where": "Model row → … menu"
+      },
+      "dateField": {
+        "title": "Date field availability",
+        "description": "The date field no longer reports that no dates exist when valid dates are available.",
+        "where": "New simulation → date range"
+      }
+    }
   }
 }
