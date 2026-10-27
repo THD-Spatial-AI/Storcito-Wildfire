@@ -37,7 +37,7 @@ export function ModelStatusTabs({ stats, statsLoaded, pinnedCount, activeTab, on
 	const limitText = isUnlimited ? t("dashboard.stats.unlimited") : `${stats.total}/${stats.model_limit}`;
 
 	return (
-		<div className="flex flex-wrap items-center gap-x-1 gap-y-2 border-b border-border px-2 sm:px-3">
+		<div data-tour="status-tabs" className="flex flex-wrap items-center gap-x-1 gap-y-2 border-b border-border px-2 sm:px-3">
 			{STATUS_TAB_ORDER.map((tab) => {
 				const isActive = activeTab === tab;
 				const isEmpty = statsLoaded && counts[tab] === 0;
@@ -45,6 +45,7 @@ export function ModelStatusTabs({ stats, statsLoaded, pinnedCount, activeTab, on
 					<button
 						key={tab}
 						type="button"
+						data-tour={`tab-${tab}`}
 						onClick={() => onTabChange(tab)}
 						aria-pressed={isActive}
 						className={`inline-flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-sm font-medium transition-colors duration-150 ${

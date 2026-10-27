@@ -3,6 +3,12 @@ import { AlertCircle, ArrowUpDown, BarChart3, ChevronDown, ChevronUp, Plus, Refr
 import { Tooltip, TooltipContent, TooltipTrigger } from "@spatialhub/ui";
 import Pagination from "@/components/ui/Pagination";
 import { ModelTableRow } from "../ModelTableRow";
+import { TourDemoRow } from "../TourDemoRow";
+import { useActiveTourStepId } from "@/features/guided-tour/hooks/useActiveTourStepId";
+import {
+	isRecentlyCompleted,
+	useSeenCompletedModelsStore,
+} from "@/features/model-dashboard/store/seen-completed-models";
 import type { ModelFamily } from "@/features/model-dashboard/utils/dashboardHelpers";
 import { useTranslation } from "@/i18n";
 import { useModelDashboardActions } from "./ModelDashboardActionsContext";
@@ -14,6 +20,12 @@ interface ModelDashboardTableProps {
 	totalItems: number;
 	filterText: string;
 }
+
+// Dashboard steps needing a row.
+const DEMO_ROW_STEPS = new Set([
+	"tabsOverview", "tabAll", "tabPinned", "tabRunning", "tabCompleted", "tabDrafts", "tabFailed",
+	"search", "refresh", "columns", "familyRow", "pin", "primaryAction", "moreMenu", "newBadge",
+]);
 
 interface SortHeaderButtonProps {
 	field: string;
@@ -60,7 +72,7 @@ interface EmptyModelsStateProps {
 function EmptyModelsState({ filterText, isModelLimitReached, statsTotal, statsModelLimit, onNewModel }: EmptyModelsStateProps) {
 	const { t } = useTranslation();
 	return (
-		<div className="md-fade-in m-4 sm:m-5 flex flex-col items-center rounded-xl border border-dashed border-border bg-muted/30 px-6 py-16 text-center">
+		<div data-tour="models-loaded" className="md-fade-in m-4 sm:m-5 flex flex-col items-center rounded-xl border border-dashed border-border bg-muted/30 px-6 py-16 text-center">
 			<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-border bg-muted/50">
 				<BarChart3 className="h-7 w-7 text-muted-foreground" />
 			</div>
@@ -166,6 +178,15 @@ export function ModelDashboardTable({
 		]),
 		[families, expandedFamilies]
 	);
+	const tourStepId = useActiveTourStepId();
+	const seenCompleted = useSeenCompletedModelsStore((s) => s.seen);
+	const hasRealNewBadge = families.some((family) => isRecentlyCompleted(family.display, seenCompleted));
+	// Example row during tour.
+	const showDemoRow =
+		tourStepId !== null &&
+		((families.length === 0 && DEMO_ROW_STEPS.has(tourStepId)) ||
+			(tourStepId === "newBadge" && !hasRealNewBadge));
+
 	const visibleIdSet = useMemo(() => new Set(visibleModels.map((m) => m.id)), [visibleModels]);
 	const allVisibleSelected =
 		visibleModels.length > 0 && selectedModels.filter((m) => visibleIdSet.has(m.id)).length === visibleModels.length;
@@ -190,12 +211,12 @@ export function ModelDashboardTable({
 				</div>
 			) : (
 				<>
-					{!isLoading && families.length > 0 ? (
-						<div className="md-fade-in overflow-hidden">
+					{!isLoading && (families.length > 0 || showDemoRow) ? (
+						<div data-tour="models-loaded" className="md-fade-in overflow-hidden">
 							<div className="w-full overflow-auto">
 								<table className="w-full table-auto">
 									<thead>
-										<tr className="border-b border-border bg-muted/30">
+										<tr data-tour="model-columns" className="border-b border-border bg-muted/30">
 											<th className="w-12 px-4 py-3 text-center">
 												<Tooltip>
 													<TooltipTrigger asChild>
@@ -261,6 +282,7 @@ export function ModelDashboardTable({
 										</tr>
 									</thead>
 									<tbody className="divide-y divide-border/60 bg-card">
+										{showDemoRow && <TourDemoRow />}
 										{families.map((family) => {
 											const expanded = expandedFamilies.has(family.root.id);
 											const rootTitle = family.root.title.trim();
@@ -307,7 +329,7 @@ export function ModelDashboardTable({
 						<EmptyModelsState
 							filterText={filterText}
 							isModelLimitReached={isModelLimitReached}
-							statsTotal={stats.total}
+							statsTotal={stats.total ?? 0}
 							statsModelLimit={stats.model_limit}
 							onNewModel={handleNewModel}
 						/>

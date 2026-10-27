@@ -226,7 +226,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
   }`;
 
   return (
-    <tr className={rowClassName}>
+    <tr data-tour="model-row" className={rowClassName}>
       <td className={`pl-4 pr-2 py-2.5 ${indentClass}`}>
         <div className="flex items-center justify-center gap-1.5">
           <input
@@ -239,6 +239,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
             <TooltipTrigger asChild>
               <button
                 type="button"
+                data-tour="model-pin"
                 onClick={(e) => {
                   e.stopPropagation();
                   handlePinToggle();
@@ -273,6 +274,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
           {versionCount !== undefined && versionCount > 1 && onToggleVersions && familyRootId !== undefined && (
             <button
               type="button"
+              data-tour="model-versions-toggle"
               onClick={(e) => {
                 e.stopPropagation();
                 onToggleVersions(familyRootId);
@@ -306,7 +308,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
       </td>
 
       <td className="whitespace-nowrap px-4 py-2.5">
-        <div className="flex items-center gap-2">
+        <div data-tour="model-status" className="flex items-center gap-2">
           {model.status === "failed" ? (
             <Tooltip>
               <TooltipTrigger asChild>
@@ -329,6 +331,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
               <TooltipTrigger asChild>
                 <button
                   type="button"
+                  data-tour="model-new-badge"
                   onClick={() => handleView(model)}
                   className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-500/20 transition-colors hover:bg-emerald-500/20 dark:text-emerald-300"
                 >

@@ -149,7 +149,7 @@ function ModelRowActions<T extends { id: number; status: ModelStatus; user_id?: 
 			{primaryAction && (
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<span className="inline-flex">
+						<span className="inline-flex" data-tour="model-primary-action">
 							<button
 								type="button"
 								disabled={primaryAction.disabled}
@@ -178,6 +178,7 @@ function ModelRowActions<T extends { id: number; status: ModelStatus; user_id?: 
 						<DropdownMenuTrigger asChild>
 							<button
 								type="button"
+								data-tour="model-row-menu"
 								aria-label={t("model.actions")}
 								className="inline-flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground"
 							>
