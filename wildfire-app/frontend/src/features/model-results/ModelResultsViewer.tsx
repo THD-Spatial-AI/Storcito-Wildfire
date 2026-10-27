@@ -49,6 +49,10 @@ import { MapShortcutsPanel } from "@/components/map-controls/MapShortcutsPanel";
 import { RiskTimelinePanel } from "./components/RiskTimelinePanel";
 import { useSeenCompletedModelsStore } from "@/features/model-dashboard/store/seen-completed-models";
 
+// Daily playback pacing.
+const FRAME_MIN_MS = 2000;
+const FRAME_MAX_MS = 15000;
+
 // Lazy-load Cesium.
 const CesiumWildfire3DView = lazy(() =>
   import("./components/CesiumWildfire3DView").then((m) => ({ default: m.CesiumWildfire3DView }))
@@ -121,6 +125,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     attachLayer,
     selectLayer,
     applyDailyFrame,
+    isFrameLoaded,
     scheduleMapRenderRefresh,
   } = useRiskLayers({
     map,
@@ -252,14 +257,21 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     // Resume current frame.
     const current = dailyFrames.findIndex((f) => f.key === selectedLayerKeyRef.current);
     playFrameRef.current = current >= 0 ? current : -1;
-    const tick = () => {
+    let shownAt = 0;
+    const advance = () => {
       playFrameRef.current = (playFrameRef.current + 1) % dailyFrames.length;
       applyDailyFrame(dailyFrames[playFrameRef.current]);
+      shownAt = Date.now();
     };
-    tick();
-    const id = window.setInterval(tick, 2000);
+    advance();
+    // Wait for tiles, capped.
+    const id = window.setInterval(() => {
+      const elapsed = Date.now() - shownAt;
+      if (elapsed < FRAME_MIN_MS) return;
+      if (isFrameLoaded() || elapsed >= FRAME_MAX_MS) advance();
+    }, 250);
     return () => clearInterval(id);
-  }, [playing, dailyFrames, applyDailyFrame, selectedLayerKeyRef]);
+  }, [playing, dailyFrames, applyDailyFrame, isFrameLoaded, selectedLayerKeyRef]);
 
   const [prefetchReady, setPrefetchReady] = useState(false);
   useEffect(() => {

@@ -358,6 +358,15 @@ export const useRiskLayers = ({
     setWms3D((w) => (w ? { ...w, layerName: frame.layer_name } : w));
   }, []);
 
+  // Current frame fully loaded.
+  const isFrameLoaded = useCallback(
+    () =>
+      riskLayerEntriesRef.current.every(
+        ({ layer }) => (tileLoadStatsRef.current.get(layer)?.pending ?? 0) === 0
+      ),
+    []
+  );
+
   // Reactive layer controls.
   useEffect(() => {
     visibleRiskLevelsRef.current = visibleRiskLevels;
@@ -423,6 +432,7 @@ export const useRiskLayers = ({
     attachLayer,
     selectLayer,
     applyDailyFrame,
+    isFrameLoaded,
     scheduleMapRenderRefresh,
   };
 };

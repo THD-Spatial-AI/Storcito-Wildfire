@@ -1,9 +1,13 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import ReactJoyride, { CallBackProps, STATUS, Step, EVENTS, ACTIONS, TooltipRenderProps } from "react-joyride";
+import ReactJoyride, { CallBackProps, STATUS, Step, EVENTS, ACTIONS } from "react-joyride";
 import { buildCurvedPath } from "@/features/guided-tour/utils/tourUtils";
 import { useTranslation } from "@/i18n";
-import { TourTooltip, type TourSectionLink } from "./TourStepComponents";
+import {
+	TourTooltipExtrasContext,
+	TourTooltipWithExtras,
+	type TourSectionLink,
+} from "./TourStepComponents";
 import { buildTourSections, type TourStepDef } from "./steps/tourStepTypes";
 import "./tour.css";
 
@@ -21,6 +25,24 @@ interface TourControllerProps {
 const WAIT_POLL_MS = 250;
 const WAIT_TIMEOUT_MS = 8000;
 const LOADED_MARKER = '[data-tour="models-loaded"]';
+
+// Stable joyride props.
+const FLOATER_PROPS = {
+	disableAnimation: true,
+	hideArrow: true,
+} as const;
+
+const JOYRIDE_STYLES = {
+	options: {
+		zIndex: 20000,
+	},
+	overlay: {
+		backgroundColor: "rgba(0, 0, 0, 0.55)",
+	},
+	spotlight: {
+		backgroundColor: "transparent",
+	},
+} as const;
 
 export const TourController: React.FC<TourControllerProps> = ({
 	steps: rawSteps,
@@ -136,10 +158,12 @@ export const TourController: React.FC<TourControllerProps> = ({
 			window.addEventListener("resize", debouncedUpdate);
 			window.addEventListener("scroll", debouncedUpdate, true);
 
-			// Watch panel, not body.
-			const observed = document.querySelector('[data-tour="configurator-panel"]') ?? document.body;
-			const observer = new MutationObserver(debouncedUpdate);
+		// Watch panel only.
+		const observed = document.querySelector('[data-tour="configurator-panel"]');
+		const observer = new MutationObserver(debouncedUpdate);
+		if (observed) {
 			observer.observe(observed, { childList: true, subtree: true, attributes: false });
+		}
 
 			return () => {
 				clearTimeout(timeoutId);
@@ -252,11 +276,20 @@ export const TourController: React.FC<TourControllerProps> = ({
 		[stepIndex, advanceTo]
 	);
 
-	const renderTooltip = useCallback(
-		(props: TooltipRenderProps) => (
-			<TourTooltip {...props} sections={sectionLinks} whatsNew={whatsNew} onGoToStep={handleGoToStep} />
-		),
+	const tooltipExtras = useMemo(
+		() => ({ sections: sectionLinks, whatsNew, onGoToStep: handleGoToStep }),
 		[sectionLinks, whatsNew, handleGoToStep]
+	);
+
+	const locale = useMemo(
+		() => ({
+			back: t("tour.buttons.back"),
+			close: t("tour.buttons.close"),
+			last: t("tour.buttons.finish"),
+			next: t("tour.buttons.next"),
+			skip: t("tour.buttons.skip"),
+		}),
+		[t]
 	);
 
 	const handleJoyrideCallback = (data: CallBackProps) => {
@@ -340,46 +373,29 @@ export const TourController: React.FC<TourControllerProps> = ({
 
 			{children}
 
-			<ReactJoyride
-				steps={steps}
-				run={run}
-				stepIndex={stepIndex}
-				continuous={true}
-				showProgress={false}
-				showSkipButton={true}
-				disableScrolling={true}
-				disableOverlay={false}
-				callback={handleJoyrideCallback}
-				disableOverlayClose={false}
-				disableCloseOnEsc={true}
-				hideCloseButton={false}
-				spotlightClicks={false}
-				disableScrollParentFix={true}
-				tooltipComponent={renderTooltip}
-				floaterProps={{
-					disableAnimation: true,
-					hideArrow: true,
-				}}
-				spotlightPadding={6}
-				styles={{
-					options: {
-						zIndex: 20000,
-					},
-					overlay: {
-						backgroundColor: "rgba(0, 0, 0, 0.55)",
-					},
-					spotlight: {
-						backgroundColor: "transparent",
-					},
-				}}
-				locale={{
-					back: t("tour.buttons.back"),
-					close: t("tour.buttons.close"),
-					last: t("tour.buttons.finish"),
-					next: t("tour.buttons.next"),
-					skip: t("tour.buttons.skip"),
-				}}
-			/>
+			<TourTooltipExtrasContext.Provider value={tooltipExtras}>
+				<ReactJoyride
+					steps={steps}
+					run={run}
+					stepIndex={stepIndex}
+					continuous={true}
+					showProgress={false}
+					showSkipButton={true}
+					disableScrolling={true}
+					disableOverlay={false}
+					callback={handleJoyrideCallback}
+					disableOverlayClose={false}
+					disableCloseOnEsc={true}
+					hideCloseButton={false}
+					spotlightClicks={false}
+					disableScrollParentFix={true}
+					tooltipComponent={TourTooltipWithExtras}
+					floaterProps={FLOATER_PROPS}
+					spotlightPadding={6}
+					styles={JOYRIDE_STYLES}
+					locale={locale}
+				/>
+			</TourTooltipExtrasContext.Provider>
 		</>
 	);
 };

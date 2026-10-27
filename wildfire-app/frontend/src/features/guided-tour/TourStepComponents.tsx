@@ -210,3 +210,21 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
 		</div>
 	);
 };
+
+interface TourTooltipExtras {
+	sections: TourSectionLink[];
+	whatsNew: boolean;
+	onGoToStep: (index: number) => void;
+}
+
+export const TourTooltipExtrasContext = React.createContext<TourTooltipExtras>({
+	sections: [],
+	whatsNew: false,
+	onGoToStep: () => {},
+});
+
+/** Stable tooltip component. */
+export const TourTooltipWithExtras: React.FC<TooltipRenderProps> = (props) => {
+	const extras = React.useContext(TourTooltipExtrasContext);
+	return <TourTooltip {...props} {...extras} />;
+};
