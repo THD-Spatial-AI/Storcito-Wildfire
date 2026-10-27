@@ -17,7 +17,7 @@ export const useAppLayoutState = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const performLogout = useLogout();
-  const { startTour, restartAreaSelectTour } = useProductTour();
+  const { startTour, startDashboardTour, restartAreaSelectTour } = useProductTour();
   const baseLayers = useMapStore((s) => s.layers);
   const selectedBaseLayerId = useMapStore((s) => s.selectedBaseLayerId);
   const setSelectedBaseLayerId = useMapStore((s) => s.setSelectedBaseLayerId);
@@ -91,10 +91,12 @@ export const useAppLayoutState = () => {
 
     if (isAreaSelectPage) {
       restartAreaSelectTour();
+    } else if (location.pathname.replace(/\/$/, "") === "/app/model-dashboard") {
+      startDashboardTour();
     } else {
       startTour();
     }
-  }, [location.pathname, restartAreaSelectTour, startTour]);
+  }, [location.pathname, restartAreaSelectTour, startDashboardTour, startTour]);
 
   const sidebarItems: SidebarItem[] = useMemo(
     () => ([

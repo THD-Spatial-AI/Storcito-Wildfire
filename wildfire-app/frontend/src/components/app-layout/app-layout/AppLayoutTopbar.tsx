@@ -56,12 +56,18 @@ export const AppLayoutTopbar: React.FC<AppLayoutTopbarProps> = ({
 
         <div className="flex items-center gap-1 mr-4" data-tour="navigation">
           {/* Weather is global. */}
-          <LanguageSwitcher />
+          <div data-tour="language">
+            <LanguageSwitcher />
+          </div>
           <Authorized>
-            <NotificationDropdown />
+            <div data-tour="notifications">
+              <NotificationDropdown />
+            </div>
           </Authorized>
           <Authorized>
-            <WeatherDropdown showSettingsIcon={false} />
+            <div data-tour="weather">
+              <WeatherDropdown showSettingsIcon={false} />
+            </div>
           </Authorized>
         </div>
 

@@ -40,6 +40,7 @@ export const HelpMenu: React.FC<HelpMenuProps> = ({
           <DropdownMenuTrigger asChild>
             <button
               type="button"
+              data-tour="help"
               aria-label={t("common.tooltips.help", "Help")}
               className="cursor-pointer w-7 h-7 rounded-button flex items-center justify-center transition-all duration-normal hover:bg-muted group"
             >

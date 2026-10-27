@@ -6,6 +6,7 @@ import { ADMIN_PATH, GITHUB_URL } from "./constants";
 import { LayersSheet } from "./LayersSheet";
 import { ProfileMenu } from "./ProfileMenu";
 import { HelpMenu } from "./HelpMenu";
+import { WhatsNewDialog } from "./WhatsNewDialog";
 import type { NavigationHandlers, SidebarItem, UserMenuItem } from "./types";
 import { APP_VERSION } from "@/version";
 
@@ -79,6 +80,7 @@ export const AppLayoutSidebar: React.FC<AppLayoutSidebarProps> = ({
           icon={GithubIcon}
           tooltip="GitHub repository"
           onClick={() => window.open(GITHUB_URL, "_blank", "noopener,noreferrer")}
+          dataTour="github"
         />
 
         <HelpMenu
@@ -102,12 +104,7 @@ export const AppLayoutSidebar: React.FC<AppLayoutSidebarProps> = ({
 
         <ProfileMenu userMenuItems={userMenuItems} getUserInitial={getUserInitial} />
 
-        <span
-          className="text-[9px] font-medium tabular-nums text-muted-foreground/60"
-          title={`App version ${APP_VERSION}`}
-        >
-          v{APP_VERSION}
-        </span>
+        <WhatsNewDialog version={APP_VERSION} />
       </div>
     </aside>
   );
