@@ -187,6 +187,15 @@ jobs:
           sed -i 's|^GEOSERVER_BASE_URL=.*|GEOSERVER_BASE_URL=http://geoserver:8080/geoserver|' "$GEO_ENV"
           GEO_HOST="${SERVER_URL_PROD#https://}"
           sed -i "s|^GEOSERVER_CSRF_WHITELIST=.*|GEOSERVER_CSRF_WHITELIST=${GEO_HOST},localhost|" "$GEO_ENV"
+          # Public HTTPS behind nginx.
+          for kv in "GEOSERVER_PROXY_NAME=${GEO_HOST}" "GEOSERVER_PROXY_PORT=443" "GEOSERVER_SCHEME=https"; do
+            key="${kv%%=*}"
+            if grep -q "^${key}=" "$GEO_ENV"; then
+              sed -i "s|^${key}=.*|${kv}|" "$GEO_ENV"
+            else
+              echo "$kv" >> "$GEO_ENV"
+            fi
+          done
           chmod 600 "$GEO_ENV"
           docker network create spatialhub-net 2>/dev/null || true
           docker volume create backend-storage-prod >/dev/null

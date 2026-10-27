@@ -8,6 +8,10 @@ services:
       GEOSERVER_ADMIN_USER: ${GEOSERVER_USERNAME:-admin}
       GEOSERVER_ADMIN_PASSWORD: ${GEOSERVER_PASSWORD:-geoserver}
       GEOSERVER_CSRF_WHITELIST: ${GEOSERVER_CSRF_WHITELIST:-localhost}
+      # Behind nginx HTTPS.
+      HTTP_PROXY_NAME: ${GEOSERVER_PROXY_NAME:-}
+      HTTP_PROXY_PORT: ${GEOSERVER_PROXY_PORT:-}
+      HTTP_SCHEME: ${GEOSERVER_SCHEME:-http}
       STABLE_EXTENSIONS: wps,csw
       COMMUNITY_EXTENSIONS: ogcapi-features,ogcapi-maps,ogcapi-tiles
     volumes:
