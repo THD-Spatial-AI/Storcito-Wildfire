@@ -25,23 +25,10 @@
 	animation: tour-dash 1s linear infinite;
 }
 
-@keyframes tour-spotlight-pulse {
-	0%,
-	100% {
-		box-shadow: 0 0 0 2px rgb(99 102 241 / 0.45);
-	}
-	50% {
-		box-shadow: 0 0 0 8px rgb(99 102 241 / 0.12);
-	}
-}
-
+/* Static ring; no flicker. */
 .react-joyride__spotlight {
 	border-radius: 10px !important;
-	animation: tour-spotlight-pulse 2.2s ease-in-out infinite;
-}
-
-.react-joyride__overlay {
-	backdrop-filter: blur(2px);
+	box-shadow: 0 0 0 3px rgb(99 102 241 / 0.4);
 }
 
 /* Mobile bottom sheet. */
@@ -66,7 +53,6 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.tour-step-body,
-	.react-joyride__spotlight,
 	.tour-connector-path {
 		animation: none !important;
 	}
