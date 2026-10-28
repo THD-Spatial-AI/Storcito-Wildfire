@@ -975,7 +975,7 @@
         },
         "familyRow": {
           "title": "Eén rij per model",
-          "description": "Elke rij is een modelfamilie met de nieuwste versie. De versiebadge klapt de volledige geschiedenis uit."
+          "description": "Elke rij is een modelfamilie met het oorspronkelijke model bovenaan. De versiebadge klapt de kopieën uit, oudste eerst."
         },
         "columns": {
           "title": "Kolommen",
@@ -2402,7 +2402,7 @@
     "items": {
       "families": {
         "title": "Modelversies gegroepeerd",
-        "description": "Elk model verschijnt één keer, met al zijn versies in dezelfde rij. De nieuwste versie staat eerst en het versielabel klapt de volledige geschiedenis uit.",
+        "description": "Elk model verschijnt nu één keer, met de kopieën eronder gegroepeerd. Het oorspronkelijke model blijft bovenaan en de versiebadge klapt de kopieën uit, oudste eerst.",
         "where": "Modeldashboard → modellenlijst"
       },
       "tabs": {

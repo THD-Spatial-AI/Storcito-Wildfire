@@ -975,7 +975,7 @@
         },
         "familyRow": {
           "title": "Jeden řádek na model",
-          "description": "Každý řádek je rodina modelů zobrazující nejnovější verzi. Odznak verzí rozbalí celou historii."
+          "description": "Každý řádek je rodina modelů s původním modelem nahoře. Odznak verzí rozbalí kopie, od nejstarší."
         },
         "columns": {
           "title": "Sloupce",
@@ -2402,7 +2402,7 @@
     "items": {
       "families": {
         "title": "Seskupené verze modelů",
-        "description": "Každý model se zobrazí jen jednou a všechny jeho verze jsou ve stejném řádku. Nejnovější verze je první a odznak verzí rozbalí celou historii.",
+        "description": "Každý model se nyní zobrazí jen jednou a jeho kopie jsou seskupeny pod ním. Původní model zůstává nahoře a odznak verzí rozbalí kopie, od nejstarší.",
         "where": "Panel modelů → seznam modelů"
       },
       "tabs": {

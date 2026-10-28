@@ -137,7 +137,10 @@ export const WhatsNewDialog: React.FC<WhatsNewDialogProps> = ({ version }) => {
       </Tooltip>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-lg gap-0 overflow-hidden rounded-2xl p-0" showCloseButton={false}>
+        <DialogContent
+          className="w-[calc(100vw-2rem)] !max-w-4xl gap-0 overflow-hidden rounded-2xl p-0"
+          showCloseButton={false}
+        >
           <div className="border-b border-border px-5 pt-5 pb-4">
             <div className="flex items-start gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -163,7 +166,7 @@ export const WhatsNewDialog: React.FC<WhatsNewDialogProps> = ({ version }) => {
             </DialogDescription>
           </div>
 
-          <div className="max-h-[60vh] space-y-5 overflow-y-auto px-5 py-4">
+          <div className="max-h-[65vh] space-y-5 overflow-y-auto px-6 py-4">
             {GROUP_ORDER.map((group) => {
               const items = WHATS_NEW_ITEMS.filter((item) => item.group === group);
               const styles = GROUP_STYLES[group];
@@ -176,7 +179,7 @@ export const WhatsNewDialog: React.FC<WhatsNewDialogProps> = ({ version }) => {
                     <span className="text-[11px] tabular-nums text-muted-foreground">{items.length}</span>
                     <div className="h-px flex-1 bg-border" />
                   </div>
-                  <ul className="space-y-2">
+                  <ul className="grid gap-2 md:grid-cols-2">
                     {items.map(({ key, icon: Icon }) => (
                       <li key={key} className="flex gap-3 rounded-xl border border-border bg-card p-3">
                         <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", styles.tile)}>

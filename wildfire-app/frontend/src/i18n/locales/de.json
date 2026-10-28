@@ -1141,7 +1141,7 @@
         },
         "familyRow": {
           "title": "Eine Zeile pro Modell",
-          "description": "Jede Zeile ist eine Modellfamilie und zeigt die neueste Version. Das Versions-Badge zeigt den gesamten Verlauf."
+          "description": "Jede Zeile ist eine Modellfamilie mit dem Originalmodell oben. Das Versions-Badge klappt die Kopien auf, die älteste zuerst."
         },
         "columns": {
           "title": "Spalten",
@@ -2402,7 +2402,7 @@
     "items": {
       "families": {
         "title": "Modellversionen gruppiert",
-        "description": "Jedes Modell erscheint nur noch einmal, mit allen Versionen in derselben Zeile. Die neueste Version steht zuerst; das Versions-Badge klappt den Verlauf auf.",
+        "description": "Jedes Modell erscheint jetzt nur einmal, seine Kopien sind darunter gruppiert. Das Originalmodell bleibt oben, und das Versions-Badge klappt die Kopien auf, die älteste zuerst.",
         "where": "Modell-Dashboard → Modellliste"
       },
       "tabs": {

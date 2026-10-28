@@ -1141,7 +1141,7 @@
         },
         "familyRow": {
           "title": "Une ligne par modèle",
-          "description": "Chaque ligne est une famille de modèles affichant la dernière version. Le badge de versions déploie l'historique complet."
+          "description": "Chaque ligne est une famille de modèles avec le modèle d'origine en haut. Le badge de versions déploie ses copies, de la plus ancienne à la plus récente."
         },
         "columns": {
           "title": "Colonnes",
@@ -2402,7 +2402,7 @@
     "items": {
       "families": {
         "title": "Versions de modèles regroupées",
-        "description": "Chaque modèle n'apparaît qu'une fois, avec toutes ses versions sur la même ligne. La plus récente s'affiche en premier et le badge de versions déplie l'historique.",
+        "description": "Chaque modèle n'apparaît plus qu'une fois, avec ses copies regroupées en dessous. Le modèle d'origine reste en haut et le badge de versions affiche ses copies, de la plus ancienne à la plus récente.",
         "where": "Tableau des modèles → liste"
       },
       "tabs": {

@@ -975,7 +975,7 @@
         },
         "familyRow": {
           "title": "Jeden wiersz na model",
-          "description": "Każdy wiersz to rodzina modeli pokazująca najnowszą wersję. Odznaka wersji rozwija pełną historię."
+          "description": "Każdy wiersz to rodzina modeli z modelem oryginalnym na górze. Odznaka wersji rozwija kopie, od najstarszej."
         },
         "columns": {
           "title": "Kolumny",
@@ -2402,7 +2402,7 @@
     "items": {
       "families": {
         "title": "Grupowanie wersji modeli",
-        "description": "Każdy model pojawia się raz, ze wszystkimi wersjami w tym samym wierszu. Najnowsza wersja jest pierwsza, a znacznik wersji rozwija pełną historię.",
+        "description": "Każdy model pojawia się teraz tylko raz, a jego kopie są zgrupowane pod nim. Model oryginalny pozostaje na górze, a plakietka wersji rozwija kopie, od najstarszej.",
         "where": "Panel modeli → lista modeli"
       },
       "tabs": {

@@ -975,7 +975,7 @@
         },
         "familyRow": {
           "title": "Una riga per modello",
-          "description": "Ogni riga è una famiglia di modelli che mostra l'ultima versione. Il badge delle versioni espande la cronologia completa."
+          "description": "Ogni riga è una famiglia di modelli con il modello originale in alto. Il badge delle versioni espande le copie, dalla più vecchia."
         },
         "columns": {
           "title": "Colonne",
@@ -2402,7 +2402,7 @@
     "items": {
       "families": {
         "title": "Versioni dei modelli raggruppate",
-        "description": "Ogni modello compare una sola volta, con tutte le versioni nella stessa riga. La versione più recente è mostrata per prima e il badge delle versioni apre la cronologia.",
+        "description": "Ogni modello ora compare una sola volta, con le sue copie raggruppate sotto. Il modello originale resta in alto e il badge delle versioni mostra le copie, dalla più vecchia.",
         "where": "Dashboard modelli → elenco"
       },
       "tabs": {

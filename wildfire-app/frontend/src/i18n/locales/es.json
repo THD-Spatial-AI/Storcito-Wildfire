@@ -1141,7 +1141,7 @@
         },
         "familyRow": {
           "title": "Una fila por modelo",
-          "description": "Cada fila es una familia de modelos que muestra la versión más reciente. La insignia de versiones expande el historial completo."
+          "description": "Cada fila es una familia de modelos con el modelo original arriba. La insignia de versiones despliega sus copias, de la más antigua a la más reciente."
         },
         "columns": {
           "title": "Columnas",
@@ -2402,7 +2402,7 @@
     "items": {
       "families": {
         "title": "Versiones de modelos agrupadas",
-        "description": "Cada modelo aparece una sola vez, con todas sus versiones en la misma fila. La versión más reciente se muestra primero y la insignia de versiones despliega el historial.",
+        "description": "Cada modelo aparece ahora una sola vez, con sus copias agrupadas debajo. El modelo original queda arriba y la insignia de versiones despliega sus copias, de la más antigua a la más reciente.",
         "where": "Panel de modelos → lista de modelos"
       },
       "tabs": {

@@ -1141,7 +1141,7 @@
         },
         "familyRow": {
           "title": "One row per model",
-          "description": "Each row is a model family showing the latest version. The versions badge expands the full history."
+          "description": "Each row is a model family with the original model on top. The versions badge expands its copies, oldest first."
         },
         "columns": {
           "title": "Columns",
@@ -2396,7 +2396,7 @@
     "items": {
       "families": {
         "title": "Model versions grouped",
-        "description": "Each model now appears once, with all of its versions in the same row. The latest version is shown first, and the version badge expands the full history.",
+        "description": "Each model now appears once, with its copies grouped under it. The original model stays on top, and the version badge expands its copies, oldest first.",
         "where": "Model dashboard → model list"
       },
       "tabs": {
