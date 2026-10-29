@@ -291,7 +291,7 @@ export function ModelDashboardTable({
 													<ModelTableRow
 														model={family.display}
 														level={0}
-														parentModelTitle={family.display.is_copy ? rootTitle : undefined}
+														parentModelTitle={family.display.is_copy ? family.display.parent_model_title || rootTitle : undefined}
 														versionCount={family.versionCount}
 														versionsExpanded={expanded}
 														familyRootId={family.root.id}

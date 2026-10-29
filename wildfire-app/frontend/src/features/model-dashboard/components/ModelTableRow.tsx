@@ -53,7 +53,7 @@ interface ModelTableRowProps {
   familyRootId?: number;
   familyMemberIds?: number[];
   onToggleVersions?: (rootId: number) => void;
-  /** Ends the version connector. */
+  /** Last version. */
   isLastVersion?: boolean;
 }
 
@@ -218,7 +218,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
   const isNotModelOwner =
     currentUserId && model.user_id && String(model.user_id) !== String(currentUserId);
 
-  // Selected and new outrank the version tint.
+  // Selected, then new, then version.
   const rowClassName = `group transition-colors duration-150 ${
     isSelected
       ? "bg-muted/50 shadow-[inset_2px_0_0_0_var(--primary)]"
@@ -268,7 +268,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
 
       <td className={`relative w-[40%] max-w-0 pl-2 pr-4 py-2.5 ${indentClass}`}>
         {level > 0 && (
-          // Links versions to the parent; meets the elbow.
+          // Version connector.
           <span
             aria-hidden="true"
             className={`pointer-events-none absolute left-[2.625rem] top-0 w-px bg-gray-300 dark:bg-gray-600 ${isLastVersion ? "h-1/2" : "bottom-0"}`}

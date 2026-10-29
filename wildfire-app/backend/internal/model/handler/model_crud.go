@@ -67,7 +67,9 @@ func (h *ModelHandler) GetModels(c *gin.Context) {
 		return
 	}
 	pinnedIDs := parsePinnedIDs(c)
-	grouped := isGroupedRequest(c)
+	// Status tabs: flat.
+	statusFiltered := len(parseStatusFilter(c)) > 0
+	grouped := isGroupedRequest(c) && !statusFiltered
 	if grouped {
 		// One row per family.
 		query = query.Where("parent_model_id IS NULL")
@@ -90,7 +92,7 @@ func (h *ModelHandler) GetModels(c *gin.Context) {
 		return
 	}
 
-	if !grouped {
+	if !grouped && !statusFiltered {
 		modelsList = h.includeParentModels(modelsList)
 	}
 	modelsList = h.postProcessModelWorkspacesBatch(ctx, userCtx, modelsList)
