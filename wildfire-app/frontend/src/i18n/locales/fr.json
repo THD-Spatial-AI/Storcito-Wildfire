@@ -563,6 +563,12 @@
     "risk": "Risque",
     "versions_one": "{{count}} version",
     "versions_other": "{{count}} versions",
+    "showVersions_one": "Afficher {{count}} version",
+    "showVersions_other": "Afficher {{count}} versions",
+    "hideVersions_one": "Masquer {{count}} version",
+    "hideVersions_other": "Masquer {{count}} versions",
+    "originalVersion": "Original",
+    "originalVersionHint": "Cette ligne est le modèle original. Son statut, sa période et son activité lui sont propres ; chaque version a sa propre ligne.",
     "tabs": {
       "all": "Tous",
       "pinned": "Épinglés",

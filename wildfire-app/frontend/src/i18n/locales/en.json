@@ -563,6 +563,12 @@
     "risk": "Risk",
     "versions_one": "{{count}} version",
     "versions_other": "{{count}} versions",
+    "showVersions_one": "Show {{count}} version",
+    "showVersions_other": "Show {{count}} versions",
+    "hideVersions_one": "Hide {{count}} version",
+    "hideVersions_other": "Hide {{count}} versions",
+    "originalVersion": "Original",
+    "originalVersionHint": "This row is the original model. Its status, period and activity are its own; each version has its own row.",
     "tabs": {
       "all": "All",
       "pinned": "Pinned",

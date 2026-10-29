@@ -1057,6 +1057,12 @@
     "risk": "Risco",
     "versions_one": "{{count}} versão",
     "versions_other": "{{count}} versões",
+    "showVersions_one": "Mostrar {{count}} versão",
+    "showVersions_other": "Mostrar {{count}} versões",
+    "hideVersions_one": "Ocultar {{count}} versão",
+    "hideVersions_other": "Ocultar {{count}} versões",
+    "originalVersion": "Original",
+    "originalVersionHint": "Esta linha é o modelo original. O estado, o período e a atividade são dele; cada versão tem a sua própria linha.",
     "tabs": {
       "all": "Todos",
       "pinned": "Fixados",

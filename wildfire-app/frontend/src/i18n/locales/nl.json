@@ -397,6 +397,12 @@
     "risk": "Risico",
     "versions_one": "{{count}} versie",
     "versions_other": "{{count}} versies",
+    "showVersions_one": "{{count}} versie tonen",
+    "showVersions_other": "{{count}} versies tonen",
+    "hideVersions_one": "{{count}} versie verbergen",
+    "hideVersions_other": "{{count}} versies verbergen",
+    "originalVersion": "Origineel",
+    "originalVersionHint": "Deze rij is het originele model. Status, periode en activiteit horen bij dit model; elke versie heeft een eigen rij.",
     "tabs": {
       "all": "Alle",
       "pinned": "Vastgezet",

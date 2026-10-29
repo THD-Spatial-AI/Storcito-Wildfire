@@ -31,9 +31,12 @@ export const TourDemoRow: React.FC = () => {
               {t("tour.product.demo.example")}
             </span>
           </div>
-          <span className="ml-2.5 inline-flex w-fit items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-muted-foreground">
-            <ChevronRight className="h-3 w-3" />
-            {t("model.versions", { count: 3 })}
+          <span className="ml-2.5 flex min-w-0 items-center gap-1.5">
+            <span className="inline-flex w-fit items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium text-foreground/70">
+              <ChevronRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
+              {t("model.versions", { count: 3 })}
+            </span>
+            <span className="truncate text-[11px] text-muted-foreground">· {t("model.originalVersion", "Original")}</span>
           </span>
         </div>
       </td>

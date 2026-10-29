@@ -43,6 +43,9 @@ const formatDuration = (seconds: number): string => {
   return rest === 0 ? `${hours} h` : `${hours} h ${rest} min`;
 };
 
+/** Version row id. */
+const versionRowId = (id: number): string => `model-version-row-${id}`;
+
 interface ModelTableRowProps {
   model: Model;
   level?: number;
@@ -198,6 +201,10 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
   const favoriteIds = useFavoriteModelsStore((s) => s.favoriteIds);
   const toggleFavorite = useFavoriteModelsStore((s) => s.toggleFavorite);
   const memberIds = familyMemberIds ?? [model.id];
+  const versionRowIds = memberIds
+    .filter((id) => id !== familyRootId)
+    .map(versionRowId)
+    .join(" ");
   const favorited = memberIds.some((id) => favoriteIds.includes(id));
   const handlePinToggle = () => {
     const pinned = memberIds.filter((id) => favoriteIds.includes(id));
@@ -230,7 +237,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
   }`;
 
   return (
-    <tr data-tour="model-row" className={rowClassName}>
+    <tr data-tour="model-row" id={level > 0 ? versionRowId(model.id) : undefined} className={rowClassName}>
       <td className={`pl-4 pr-2 py-2.5 ${indentClass}`}>
         <div className="flex items-center justify-center gap-1.5">
           <input
@@ -283,21 +290,44 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
             isNotModelOwner={isNotModelOwner}
           />
           {versionCount !== undefined && versionCount > 1 && onToggleVersions && familyRootId !== undefined && (
-            <button
-              type="button"
-              data-tour="model-versions-toggle"
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleVersions(familyRootId);
-              }}
-              aria-expanded={versionsExpanded}
-              className="ml-2.5 inline-flex w-fit items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            >
-              <ChevronRight
-                className={`h-3 w-3 transition-transform duration-150 ${versionsExpanded ? "rotate-90" : ""}`}
-              />
-              {t("model.versions", { count: versionCount - 1 })}
-            </button>
+            <div className="ml-2.5 flex min-w-0 items-center gap-1.5">
+              <button
+                type="button"
+                data-tour="model-versions-toggle"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleVersions(familyRootId);
+                }}
+                onKeyDown={(e) => e.stopPropagation()}
+                aria-expanded={versionsExpanded}
+                aria-controls={versionsExpanded ? versionRowIds : undefined}
+                aria-label={
+                  versionsExpanded
+                    ? t("model.hideVersions", { count: versionCount - 1, defaultValue: "Hide {{count}} versions" })
+                    : t("model.showVersions", { count: versionCount - 1, defaultValue: "Show {{count}} versions" })
+                }
+                className="relative inline-flex w-fit items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium text-foreground/70 transition-colors before:absolute before:-inset-x-1 before:-top-0.5 before:-bottom-2 before:content-[''] hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background"
+              >
+                <ChevronRight
+                  aria-hidden="true"
+                  className={`h-3.5 w-3.5 shrink-0 transition-transform duration-200 ease-out motion-reduce:transition-none ${versionsExpanded ? "rotate-90" : ""}`}
+                />
+                {t("model.versions", { count: versionCount - 1 })}
+              </button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="truncate text-[11px] text-muted-foreground">
+                    · {t("model.originalVersion", "Original")}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  {t(
+                    "model.originalVersionHint",
+                    "This row is the original model. Its status, period and activity are its own; each version has its own row."
+                  )}
+                </TooltipContent>
+              </Tooltip>
+            </div>
           )}
         </div>
       </td>

@@ -563,6 +563,12 @@
     "risk": "Risiko",
     "versions_one": "{{count}} Version",
     "versions_other": "{{count}} Versionen",
+    "showVersions_one": "{{count}} Version anzeigen",
+    "showVersions_other": "{{count}} Versionen anzeigen",
+    "hideVersions_one": "{{count}} Version ausblenden",
+    "hideVersions_other": "{{count}} Versionen ausblenden",
+    "originalVersion": "Original",
+    "originalVersionHint": "Diese Zeile ist das Originalmodell. Status, Zeitraum und Aktivität gehören zu diesem Modell; jede Version hat eine eigene Zeile.",
     "tabs": {
       "all": "Alle",
       "pinned": "Angeheftet",

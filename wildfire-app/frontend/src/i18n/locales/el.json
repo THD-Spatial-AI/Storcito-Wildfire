@@ -800,6 +800,12 @@
     "risk": "Κίνδυνος",
     "versions_one": "{{count}} έκδοση",
     "versions_other": "{{count}} εκδόσεις",
+    "showVersions_one": "Εμφάνιση {{count}} έκδοσης",
+    "showVersions_other": "Εμφάνιση {{count}} εκδόσεων",
+    "hideVersions_one": "Απόκρυψη {{count}} έκδοσης",
+    "hideVersions_other": "Απόκρυψη {{count}} εκδόσεων",
+    "originalVersion": "Αρχικό",
+    "originalVersionHint": "Αυτή η γραμμή είναι το αρχικό μοντέλο. Η κατάσταση, η περίοδος και η δραστηριότητα είναι δικές του· κάθε έκδοση έχει τη δική της γραμμή.",
     "tabs": {
       "all": "Όλα",
       "pinned": "Καρφιτσωμένα",

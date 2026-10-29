@@ -397,6 +397,12 @@
     "risk": "Rischio",
     "versions_one": "{{count}} versione",
     "versions_other": "{{count}} versioni",
+    "showVersions_one": "Mostra {{count}} versione",
+    "showVersions_other": "Mostra {{count}} versioni",
+    "hideVersions_one": "Nascondi {{count}} versione",
+    "hideVersions_other": "Nascondi {{count}} versioni",
+    "originalVersion": "Originale",
+    "originalVersionHint": "Questa riga è il modello originale. Stato, periodo e attività sono i suoi; ogni versione ha la propria riga.",
     "tabs": {
       "all": "Tutti",
       "pinned": "Fissati",

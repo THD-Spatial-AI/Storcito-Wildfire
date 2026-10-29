@@ -32,9 +32,9 @@ const CHIP_COLOR_CLASSES: Record<ChipColor, Record<ChipVariant, string>> = {
 		gradient: "bg-cyan-500/10 text-cyan-700 ring-1 ring-cyan-500/20 dark:text-cyan-300"
 	},
 	success: {
-		filled: "bg-emerald-500/10 text-emerald-700 ring-1 ring-emerald-500/20 dark:text-emerald-300",
-		outlined: "border border-emerald-500/40 bg-emerald-500/5 text-emerald-700 hover:bg-emerald-500/10 dark:text-emerald-300",
-		gradient: "bg-emerald-500/10 text-emerald-700 ring-1 ring-emerald-500/20 dark:text-emerald-300"
+		filled: "bg-emerald-500/20 text-emerald-800 ring-1 ring-emerald-600/30 dark:bg-emerald-500/25 dark:text-emerald-200",
+		outlined: "border border-emerald-600/50 bg-emerald-500/10 text-emerald-800 hover:bg-emerald-500/20 dark:text-emerald-200",
+		gradient: "bg-emerald-500/20 text-emerald-800 ring-1 ring-emerald-600/30 dark:bg-emerald-500/25 dark:text-emerald-200"
 	},
 	warning: {
 		filled: "bg-yellow-500/10 text-yellow-700 ring-1 ring-yellow-500/25 dark:text-yellow-300",

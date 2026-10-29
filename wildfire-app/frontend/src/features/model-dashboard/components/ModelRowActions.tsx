@@ -157,10 +157,10 @@ function ModelRowActions<T extends { id: number; status: ModelStatus; user_id?: 
 									e.stopPropagation();
 									primaryAction.onClick();
 								}}
-								className={`inline-flex h-7 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 ${
+								className={`inline-flex h-7 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-70 ${
 									primaryAction.primary
 										? "bg-primary text-primary-foreground hover:bg-primary/90"
-										: "bg-emerald-600 text-white hover:bg-emerald-500"
+										: "bg-emerald-700 text-white hover:bg-emerald-600"
 								}`}
 							>
 								<primaryAction.icon className="h-3.5 w-3.5" />

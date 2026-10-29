@@ -563,6 +563,12 @@
     "risk": "Riesgo",
     "versions_one": "{{count}} versión",
     "versions_other": "{{count}} versiones",
+    "showVersions_one": "Mostrar {{count}} versión",
+    "showVersions_other": "Mostrar {{count}} versiones",
+    "hideVersions_one": "Ocultar {{count}} versión",
+    "hideVersions_other": "Ocultar {{count}} versiones",
+    "originalVersion": "Original",
+    "originalVersionHint": "Esta fila es el modelo original. Su estado, periodo y actividad son propios; cada versión tiene su propia fila.",
     "tabs": {
       "all": "Todos",
       "pinned": "Fijados",
