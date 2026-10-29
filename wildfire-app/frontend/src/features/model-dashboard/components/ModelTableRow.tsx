@@ -53,6 +53,8 @@ interface ModelTableRowProps {
   familyRootId?: number;
   familyMemberIds?: number[];
   onToggleVersions?: (rootId: number) => void;
+  /** Ends the version connector. */
+  isLastVersion?: boolean;
 }
 
 interface ModelNameCellProps {
@@ -101,7 +103,7 @@ const ModelNameCell: React.FC<ModelNameCellProps> = ({
         >
           {level > 0 && (
             <div className="flex items-center mr-0.5">
-              <div className="w-3 h-3 border-l border-b border-muted-foreground/40 rounded-bl-md"></div>
+              <div className="w-3 h-3 border-l border-b border-gray-300 dark:border-gray-600 rounded-bl-md"></div>
             </div>
           )}
 
@@ -132,7 +134,7 @@ const ModelNameCell: React.FC<ModelNameCellProps> = ({
             )}
           </div>
 
-          <span className="font-medium text-sm text-foreground truncate">{modelTitle}</span>
+          <span className={`text-sm text-foreground truncate ${level > 0 ? "font-medium" : "font-semibold"}`}>{modelTitle}</span>
 
           <PencilLine className="w-3.5 h-3.5 text-muted-foreground opacity-0 group-hover/title:opacity-100 transition-opacity flex-shrink-0" />
         </button>
@@ -154,6 +156,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
   familyRootId,
   familyMemberIds,
   onToggleVersions,
+  isLastVersion = false,
 }) => {
   const { t } = useTranslation();
   const {
@@ -215,14 +218,15 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
   const isNotModelOwner =
     currentUserId && model.user_id && String(model.user_id) !== String(currentUserId);
 
-  const rowClassName = `group transition-colors duration-150 hover:bg-muted/40 ${
-    level > 0 ? "border-l-2 border-border bg-muted/20" : ""
-  } ${
+  // Selected and new outrank the version tint.
+  const rowClassName = `group transition-colors duration-150 ${
     isSelected
       ? "bg-muted/50 shadow-[inset_2px_0_0_0_var(--primary)]"
       : isNew
         ? "bg-emerald-500/[0.06] shadow-[inset_2px_0_0_0_var(--color-emerald-500)]"
-        : ""
+        : level > 0
+          ? "bg-gray-50 hover:bg-[#F0F2F4] dark:bg-muted/20 dark:hover:bg-muted/40"
+          : "hover:bg-muted/40"
   }`;
 
   return (
@@ -262,7 +266,14 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
         </div>
       </td>
 
-      <td className={`w-[40%] max-w-0 pl-2 pr-4 py-2.5 ${indentClass}`}>
+      <td className={`relative w-[40%] max-w-0 pl-2 pr-4 py-2.5 ${indentClass}`}>
+        {level > 0 && (
+          // Links versions to the parent; meets the elbow.
+          <span
+            aria-hidden="true"
+            className={`pointer-events-none absolute left-[2.625rem] top-0 w-px bg-gray-300 dark:bg-gray-600 ${isLastVersion ? "h-1/2" : "bottom-0"}`}
+          />
+        )}
         <div className="flex min-w-0 flex-col gap-0.5">
           <ModelNameCell
             modelTitle={model.title.trim()}
@@ -285,7 +296,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
               <ChevronRight
                 className={`h-3 w-3 transition-transform duration-150 ${versionsExpanded ? "rotate-90" : ""}`}
               />
-              {t("model.versions", { count: versionCount })}
+              {t("model.versions", { count: versionCount - 1 })}
             </button>
           )}
         </div>
@@ -498,6 +509,7 @@ const areRowPropsEqual = (prev: ModelTableRowProps, next: ModelTableRowProps): b
   if (prev.versionCount !== next.versionCount) return false;
   if (prev.versionsExpanded !== next.versionsExpanded) return false;
   if (prev.familyRootId !== next.familyRootId) return false;
+  if (prev.isLastVersion !== next.isLastVersion) return false;
   if ((prev.familyMemberIds ?? []).join(",") !== (next.familyMemberIds ?? []).join(",")) return false;
 
   return true;

@@ -299,12 +299,13 @@ export function ModelDashboardTable({
 														onToggleVersions={toggleVersions}
 													/>
 													{expanded &&
-														family.otherVersions.map((version) => (
+														family.otherVersions.map((version, index) => (
 															<ModelTableRow
 																key={version.id}
 																model={version}
 																level={1}
 																parentModelTitle={version.is_copy ? rootTitle : undefined}
+																isLastVersion={index === family.otherVersions.length - 1}
 															/>
 														))}
 												</Fragment>
