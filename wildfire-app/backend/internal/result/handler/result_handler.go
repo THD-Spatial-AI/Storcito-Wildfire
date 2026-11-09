@@ -107,6 +107,10 @@ func (h *ResultHandler) DownloadModelResult(c *gin.Context) {
 
 	latestResult := results[0]
 
+	if h.tryDownloadStoredZip(c, modelID, latestResult.ZipPath) {
+		return
+	}
+
 	if h.tryDownloadFromTifPath(c, modelID, latestResult.TifFilePath) {
 		return
 	}

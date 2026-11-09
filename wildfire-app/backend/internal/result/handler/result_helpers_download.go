@@ -12,6 +12,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Full engine archive
+func (h *ResultHandler) tryDownloadStoredZip(c *gin.Context, modelID, zipPath string) bool {
+	if zipPath == "" || !fileExists(zipPath) {
+		return false
+	}
+	c.FileAttachment(zipPath, fmt.Sprintf("sim_%s.zip", modelID))
+	return true
+}
+
 func (h *ResultHandler) tryDownloadFromTifPath(c *gin.Context, modelID, tifFilePath string) bool {
 	if tifFilePath == "" {
 		return false
