@@ -119,6 +119,10 @@ func (h *ResultHandler) DownloadModelResult(c *gin.Context) {
 		return
 	}
 
+	if h.tryDownloadExtractedDir(c, modelID, latestResult.ExtractedPath) {
+		return
+	}
+
 	if h.tryDownloadTifFile(c, latestResult) {
 		return
 	}
