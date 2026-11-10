@@ -33,7 +33,7 @@ Figures from the accompanying manuscript, *Coverage-aware wildfire-danger mappin
 ### Wildfire-danger map
 
 <p align="center">
-  <img src=".github/assets/figures/main-map.png" alt="Wildfire-danger classes near Santiago de Compostela on 2 July 2026, with an area-by-class panel and a Galicia locator" width="100%">
+  <img src=".github/assets/figures/main-map-2026-07.png" alt="Wildfire-danger classes near Santiago de Compostela on 2 July 2026, with an area-by-class panel and a Galicia locator" width="100%">
 </p>
 
 Danger classes 1–5 on a ≈21.7 m grid (WGS 84 / UTM zone 29N), with an area-by-class panel and a Galicia locator. Only classes 3–5 occur on this day: 37% class 3, 60% class 4 and 3% class 5 of the 51.0 km² mapped area.
@@ -41,7 +41,7 @@ Danger classes 1–5 on a ≈21.7 m grid (WGS 84 / UTM zone 29N), with an area-b
 ### Processing workflow
 
 <p align="center">
-  <img src=".github/assets/figures/workflow.png" alt="Workflow from data acquisition and dated source selection through harmonisation and AHP scoring to delivery" width="90%">
+  <img src=".github/assets/figures/workflow-2026-07.png" alt="Workflow from data acquisition and dated source selection through harmonisation and AHP scoring to delivery" width="90%">
 </p>
 
 Source acquisition, dated selection, harmonisation onto a common grid, scoring and Analytic Hierarchy Process (AHP) aggregation, and delivery through GeoServer to the web viewer.
@@ -49,7 +49,7 @@ Source acquisition, dated selection, harmonisation onto a common grid, scoring a
 ### Study domain
 
 <p align="center">
-  <img src=".github/assets/figures/study-domain.png" alt="Galicia with four overlapping processing tiles and the example area near Santiago de Compostela" width="60%">
+  <img src=".github/assets/figures/study-domain-2026-07.png" alt="Galicia with four overlapping processing tiles and the example area near Santiago de Compostela" width="60%">
 </p>
 
 Galicia, the four overlapping processing tiles used for regional runs, and the example area.
@@ -57,7 +57,7 @@ Galicia, the four overlapping processing tiles used for regional runs, and the e
 ### Seven-day series
 
 <p align="center">
-  <img src=".github/assets/figures/daily-series.png" alt="Daily class areas and mean FWI from 29 June to 5 July 2026, with maps for 29 June, 2 July and 5 July and a class-change map" width="90%">
+  <img src=".github/assets/figures/daily-series-2026-07.png" alt="Daily class areas and mean FWI from 29 June to 5 July 2026, with maps for 29 June, 2 July and 5 July and a class-change map" width="90%">
 </p>
 
 Class areas and area-mean FWI for each day, maps for the first day, the peak-FWI day and the last day, and the class change over the week. The share of cells in classes 4–5 rose from 18% to 65%, but the classes stopped following FWI once it passed its top class limit.
@@ -65,7 +65,7 @@ Class areas and area-mean FWI for each day, maps for the first day, the peak-FWI
 ### Input factors, danger index and coverage
 
 <p align="center">
-  <img src=".github/assets/figures/factors-and-coverage.png" alt="Six input factor scores, the continuous danger index, the classified map and input coverage for 2 July 2026" width="90%">
+  <img src=".github/assets/figures/factors-and-coverage-2026-07.png" alt="Six input factor scores, the continuous danger index, the classified map and input coverage for 2 July 2026" width="90%">
 </p>
 
 Six factor scores (TWI, fuel, NDVI, NDMI, WUI and LST), the continuous danger index, the classified map and input coverage. Coverage is 1 wherever a danger value exists; purple cells lack a required input and have no danger value.
@@ -73,7 +73,7 @@ Six factor scores (TWI, fuel, NDVI, NDMI, WUI and LST), the continuous danger in
 ### Structural sensitivity
 
 <p align="center">
-  <img src=".github/assets/figures/sensitivity.png" alt="Changes in class area and class agreement under factor removal, weight changes, alternative classification and spatial averaging" width="80%">
+  <img src=".github/assets/figures/sensitivity-2026-07.png" alt="Changes in class area and class agreement under factor removal, weight changes, alternative classification and spatial averaging" width="80%">
 </p>
 
 How the map changes when single factors are removed, topic weights change by ±20%, class boundaries shift or cells are averaged spatially. Shown for the 14 scenarios with the lowest agreement with the baseline map.
