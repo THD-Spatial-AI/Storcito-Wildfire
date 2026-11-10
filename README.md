@@ -1,9 +1,9 @@
 # Wildfire App
-### Wildfire Risk Assessment & Simulation Platform
+### Wildfire-Danger Mapping Platform
 
 [![DOI](https://img.shields.io/badge/DOI-10.5194%2Fisprs--archives--XLVIII--M--13--2026--33--2026-blue)](https://doi.org/10.5194/isprs-archives-XLVIII-M-13-2026-33-2026)
 
-**Wildfire App** is a geospatial platform for assessing and simulating wildfire risk over user-defined regions. Users draw a polygon on an interactive map, configure a date range and resolution, and dispatch a simulation run. Results are published as GeoServer raster layers and surfaced as risk metrics, choropleth maps, and model comparisons in the browser.
+**Wildfire App** is a geospatial platform for mapping wildfire danger over user-defined regions. Users draw a polygon on an interactive map, choose an assessment day, and dispatch a calculation run. Results are published as GeoServer raster layers and surfaced as risk metrics, choropleth maps, and model comparisons in the browser.
 
 The application is part of the **SpatialHub** ecosystem at TH Deggendorf, running at `wildfire-app.th-deg.de`.
 
@@ -14,14 +14,14 @@ The application is part of the **SpatialHub** ecosystem at TH Deggendorf, runnin
 ### Core Capabilities
 
 - **Interactive Map** — Draw and edit region polygons (OpenLayers + MapLibre GL, 2D) with geocoding search and bookmarks
-- **Model Configurator** — Step-by-step wizard to set region, date range, resolution, and optional layers before dispatching a simulation
+- **Model Configurator** — Step-by-step wizard to set region, assessment day and optional layers before dispatching a calculation
 - **Risk Metrics** — Weighted risk scoring (Very Low → Very High), affected area (km²), distribution histogram, and trend vs. prior run
-- **Results Viewer** — Per-model results with GeoServer-backed choropleth map and ECharts visualisations
+- **Results Viewer** — Per-model results with GeoServer-backed choropleth map, a 3D Cesium view and ECharts visualisations
 - **Model Comparison** — Side-by-side risk metrics and distribution charts across any two models
 - **Workspaces & Groups** — Organise models into workspaces; share with Keycloak-managed groups
-- **Real-time Notifications** — SSE push + Asynq background jobs for simulation status and system events
+- **Real-time Notifications** — SSE push + Asynq background jobs for calculation status and system events
 - **Admin Dashboard** — User, model, feedback, and webservice management with role-based access
-- **Weather Settings** — Configure meteorological inputs for simulation runs
+- **Weather Settings** — Choose the location shown in the weather widget
 - **Feedback System** — In-app feedback with image attachments; auto-cleanup of closed items after 7 days
 
 ---
@@ -91,7 +91,7 @@ The full system architecture is documented on the project's MkDocs documentation
 
 1. **Authentication**: Frontend → Nginx → Keycloak (OAuth2/OIDC) → Backend validates token → Redis session
 2. **Model Creation**: User draws polygon + sets date range → Backend stores model draft
-3. **Simulation Dispatch**: Backend → Platform Webservice queues model → Simulation engine runs → results ZIP POSTed back via callback
+3. **Calculation Dispatch**: Backend → Platform Webservice queues model → risk engine runs → results ZIP POSTed back via callback
 4. **Result Processing**: Asynq worker unpacks ZIP → publishes GeoServer layer → stores result in PostgreSQL
 5. **Risk Metrics**: Backend samples GeoServer raster distribution (up to 2 000 pixels) → computes weighted score + trend vs. prior run
 6. **Visualisation**: Frontend renders choropleth map (MapLibre), metric cards, and ECharts distribution chart
@@ -118,7 +118,7 @@ The full system architecture is documented on the project's MkDocs documentation
 
 **Platform Core** (included in this repository)
 - `platform-core/auth-service` — authentication microservice
-- `platform-core/webservice` — simulation dispatcher and capacity manager
+- `platform-core/webservice` — calculation dispatcher and capacity manager
 - `infrastructure/platform` — shared Go libraries (server, database, worker, email, security)
 - `infrastructure/common` — shared domain models
 - `libs/` — shared React component libraries (`@spatialhub/ui`, `auth`, `forms`, `i18n`)
@@ -158,7 +158,7 @@ make setup
 │           └── configuration/
 ├── platform-core/        # Platform services (auth-service, webservice, geoserver)
 │   ├── auth-service/     # Authentication microservice
-│   ├── webservice/       # Simulation dispatcher & capacity manager
+│   ├── webservice/       # Calculation dispatcher & capacity manager
 │   └── geoserver/        # GeoServer stack
 ├── infrastructure/       # Shared Go libraries
 │   ├── common/           # Shared domain models & contracts
