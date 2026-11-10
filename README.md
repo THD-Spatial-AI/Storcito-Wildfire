@@ -167,6 +167,12 @@ make setup
 
 ---
 
+## Translations
+
+The web interface is available in 11 languages: English, Czech, Dutch, French, Galician, German, Greek, Italian, Polish, Portuguese, Spanish. English is the source language. The other translations in `wildfire-app/frontend/src/i18n/locales/` were generated with AI and have not been reviewed by native speakers, so they may contain errors. Corrections are welcome through issues or pull requests.
+
+---
+
 ## Contributing
 
 Bug reports, feature requests and pull requests are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md) before getting started.
