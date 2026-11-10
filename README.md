@@ -28,15 +28,15 @@ The application is part of the **SpatialHub** ecosystem at TH Deggendorf, runnin
 
 ## Visualizations
 
-Figures from the accompanying manuscript, *Coverage-aware wildfire-danger mapping in Galicia, Spain: workflow and structural sensitivity* (in preparation). The example outputs come from a saved run for a 65.5 km² area near Santiago de Compostela on 2 May 2026.
+Figures from the accompanying manuscript, *Coverage-aware wildfire-danger mapping in Galicia, Spain: workflow and structural sensitivity* (in preparation). The example outputs come from a seven-day dynamic run (29 June to 5 July 2026) for a 66.7 km² area near Santiago de Compostela. The detailed figures show 2 July, the day with the highest Fire Weather Index (FWI) in that week.
 
 ### Wildfire-danger map
 
 <p align="center">
-  <img src=".github/assets/figures/main-map.png" alt="Wildfire-danger classes near Santiago de Compostela on 2 May 2026, with a configured-weight coverage panel and a Galicia locator" width="100%">
+  <img src=".github/assets/figures/main-map.png" alt="Wildfire-danger classes near Santiago de Compostela on 2 July 2026, with an area-by-class panel and a Galicia locator" width="100%">
 </p>
 
-Danger classes 1–5 on a ≈21.7 m grid (WGS 84 / UTM zone 29N), with a panel showing configured-weight coverage (the share of model inputs available in each cell) and a Galicia locator. Only classes 2–4 occur in this output.
+Danger classes 1–5 on a ≈21.7 m grid (WGS 84 / UTM zone 29N), with an area-by-class panel and a Galicia locator. Only classes 3–5 occur on this day: 37% class 3, 60% class 4 and 3% class 5 of the 51.0 km² mapped area.
 
 ### Processing workflow
 
@@ -54,13 +54,21 @@ Source acquisition, dated selection, harmonisation onto a common grid, scoring a
 
 Galicia, the four overlapping processing tiles used for regional runs, and the example area.
 
+### Seven-day series
+
+<p align="center">
+  <img src=".github/assets/figures/daily-series.png" alt="Daily class areas and mean FWI from 29 June to 5 July 2026, with maps for 29 June, 2 July and 5 July and a class-change map" width="90%">
+</p>
+
+Class areas and area-mean FWI for each day, maps for the first day, the peak-FWI day and the last day, and the class change over the week. The share of cells in classes 4–5 rose from 18% to 65%, but the classes stopped following FWI once it passed its top class limit.
+
 ### Input factors, danger index and coverage
 
 <p align="center">
-  <img src=".github/assets/figures/factors-and-coverage.png" alt="Four input factor scores, the continuous danger index, the classified map and coverage for 2 May 2026" width="90%">
+  <img src=".github/assets/figures/factors-and-coverage.png" alt="Six input factor scores, the continuous danger index, the classified map and input coverage for 2 July 2026" width="90%">
 </p>
 
-Four representative factor scores (elevation, fuel, infrastructure and FWI), the continuous danger index, the classified map and configured-weight coverage.
+Six factor scores (TWI, fuel, NDVI, NDMI, WUI and LST), the continuous danger index, the classified map and input coverage. Coverage is 1 wherever a danger value exists; purple cells lack a required input and have no danger value.
 
 ### Structural sensitivity
 
@@ -71,7 +79,7 @@ Four representative factor scores (elevation, fuel, infrastructure and FWI), the
 How the map changes when single factors are removed, topic weights change by ±20%, class boundaries shift or cells are averaged spatially. Shown for the 14 scenarios with the lowest agreement with the baseline map.
 
 > [!NOTE]
-> The example run used an earlier version of the scoring rules than the current engine. The danger index is experimental and has not been validated against observed fires.
+> The danger index is experimental and has not been validated against observed fires.
 
 ---
 
@@ -169,7 +177,7 @@ make setup
 
 ## Translations
 
-The web interface is available in 11 languages: English, Czech, Dutch, French, Galician, German, Greek, Italian, Polish, Portuguese, Spanish. English is the source language. The other translations in `wildfire-app/frontend/src/i18n/locales/` were generated with AI and have not been reviewed by native speakers, so they may contain errors. Corrections are welcome through issues or pull requests.
+The web interface is available in 11 languages: English, Czech, Dutch, French, Galician, German, Greek, Italian, Polish, Portuguese, Spanish. English is the source language. The other translations in `wildfire-app/frontend/src/i18n/locales/` **were generated with AI** and have not been reviewed by native speakers, so they may contain errors. Corrections are welcome through issues or pull requests.
 
 ---
 
