@@ -9,6 +9,7 @@ import (
 	authhandler "platform.local/auth-service/internal/handler/auth"
 	"platform.local/auth-service/internal/middleware"
 	authredis "platform.local/auth-service/internal/store/redis"
+	"platform.local/common/pkg/httputil"
 	pkgauth "platform.local/platform/auth"
 	platformconfig "platform.local/platform/config"
 	platformdatabase "platform.local/platform/database"
@@ -129,14 +130,6 @@ func setupGinEngine(cfg *config.Config, log *logrus.Logger) *gin.Engine {
 
 	r.LoadHTMLGlob("internal/handler/auth/templates/*/*.tmpl")
 
-	middleware.SetCSRFConfig(&middleware.CSRFConfig{
-		CookieDomain:        cfg.CookieDomain,
-		CookieMaxAge:        cfg.SessionTTLMinutes * 60,
-		IsProduction:        cfg.AppEnv == "production",
-		EnableRotation:      true,
-		RotationGracePeriod: 5 * time.Second,
-	})
-
 	middleware.SetSessionCookieMaxAge(cfg.SessionTTLMinutes * 60)
 	middleware.SetSessionCookieDomain(cfg.CookieDomain)
 	middleware.SetSessionCookieIsProduction(cfg.AppEnv == "production")
@@ -166,6 +159,8 @@ func configureAuthRoutes(r *gin.Engine, cfg *config.Config, deps *AppDependencie
 	strictRateLimiter := middleware.StrictAuthRateLimiter()
 
 	api := r.Group("/api")
+	// Require csrf token
+	api.Use(httputil.CSRFProtection(nil))
 	{
 		// CSRF token endpoint
 		api.GET("/csrf-token", func(c *gin.Context) {
