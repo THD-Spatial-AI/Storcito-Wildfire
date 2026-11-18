@@ -45,15 +45,14 @@ func (h *SettingsHandler) GetUserSettings(c *gin.Context) {
 	httputil.SuccessResponse(c, settings)
 }
 
-func (h *SettingsHandler) UpdatePrivacyAccepted(c *gin.Context) {
+// save one setting
+func updateUserSetting[T any](h *SettingsHandler, c *gin.Context, successMsg string, apply func(*models.UserSetting, T)) {
 	userCtx, ok := httputil.GetUserContext(c)
 	if !ok {
 		return
 	}
 
-	var req struct {
-		Accepted bool `json:"accepted"`
-	}
+	var req T
 	if err := c.ShouldBindJSON(&req); err != nil {
 		httputil.BadRequest(c, errInvalidRequestData)
 		return
@@ -64,74 +63,41 @@ func (h *SettingsHandler) UpdatePrivacyAccepted(c *gin.Context) {
 		httputil.InternalError(c, "Failed to fetch settings")
 		return
 	}
-	settings.PrivacyAccepted = req.Accepted
+	apply(settings, req)
 	if err := h.store.SaveUserSettings(settings); err != nil {
 		httputil.InternalError(c, "Failed to save settings")
 		return
 	}
 
-	httputil.SuccessMessage(c, "Privacy updated")
+	httputil.SuccessMessage(c, successMsg)
+}
+
+func (h *SettingsHandler) UpdatePrivacyAccepted(c *gin.Context) {
+	updateUserSetting(h, c, "Privacy updated", func(s *models.UserSetting, req struct {
+		Accepted bool `json:"accepted"`
+	}) {
+		s.PrivacyAccepted = req.Accepted
+	})
 }
 
 func (h *SettingsHandler) UpdateProductTourCompleted(c *gin.Context) {
-	userCtx, ok := httputil.GetUserContext(c)
-	if !ok {
-		return
-	}
-
-	var req struct {
+	updateUserSetting(h, c, "Tour status updated", func(s *models.UserSetting, req struct {
 		Completed bool `json:"completed"`
-	}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		httputil.BadRequest(c, errInvalidRequestData)
-		return
-	}
-
-	settings, err := h.store.GetOrCreateUserSettings(userCtx.UserID, userCtx.Email)
-	if err != nil {
-		httputil.InternalError(c, "Failed to fetch settings")
-		return
-	}
-	settings.ProductTourCompleted = req.Completed
-	if err := h.store.SaveUserSettings(settings); err != nil {
-		httputil.InternalError(c, "Failed to save settings")
-		return
-	}
-
-	httputil.SuccessMessage(c, "Tour status updated")
+	}) {
+		s.ProductTourCompleted = req.Completed
+	})
 }
 
-// updateLocationSetting is a helper function to update location settings (map or weather)
+// save location field
 func (h *SettingsHandler) updateLocationSetting(c *gin.Context, jsonKey, successMsg string, updateFn func(*models.UserSetting, *string)) {
-	userCtx, ok := httputil.GetUserContext(c)
-	if !ok {
-		return
-	}
-
-	var req map[string]string
-	if err := c.ShouldBindJSON(&req); err != nil {
-		httputil.BadRequest(c, errInvalidRequestData)
-		return
-	}
-
-	settings, err := h.store.GetOrCreateUserSettings(userCtx.UserID, userCtx.Email)
-	if err != nil {
-		httputil.InternalError(c, "Failed to fetch settings")
-		return
-	}
-
-	location := req[jsonKey]
-	if location == "" {
-		updateFn(settings, nil)
-	} else {
-		updateFn(settings, &location)
-	}
-
-	if err := h.store.SaveUserSettings(settings); err != nil {
-		httputil.InternalError(c, "Failed to save settings")
-		return
-	}
-	httputil.SuccessMessage(c, successMsg)
+	updateUserSetting(h, c, successMsg, func(s *models.UserSetting, req map[string]string) {
+		location := req[jsonKey]
+		if location == "" {
+			updateFn(s, nil)
+			return
+		}
+		updateFn(s, &location)
+	})
 }
 
 func (h *SettingsHandler) UpdateMapLocation(c *gin.Context) {
@@ -139,65 +105,20 @@ func (h *SettingsHandler) UpdateMapLocation(c *gin.Context) {
 		func(s *models.UserSetting, val *string) { s.MapLocation = val })
 }
 
-func (h *SettingsHandler) UpdateWeatherLocation(c *gin.Context) {
-	h.updateLocationSetting(c, "weather_location", "Weather location updated",
-		func(s *models.UserSetting, val *string) { s.WeatherLocation = val })
-}
-
 func (h *SettingsHandler) UpdateTheme(c *gin.Context) {
-	userCtx, ok := httputil.GetUserContext(c)
-	if !ok {
-		return
-	}
-
-	var req struct {
+	updateUserSetting(h, c, "Theme updated", func(s *models.UserSetting, req struct {
 		Theme string `json:"theme"`
-	}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		httputil.BadRequest(c, errInvalidRequestData)
-		return
-	}
-
-	settings, err := h.store.GetOrCreateUserSettings(userCtx.UserID, userCtx.Email)
-	if err != nil {
-		httputil.InternalError(c, "Failed to fetch settings")
-		return
-	}
-	settings.Theme = req.Theme
-	if err := h.store.SaveUserSettings(settings); err != nil {
-		httputil.InternalError(c, "Failed to save settings")
-		return
-	}
-
-	httputil.SuccessMessage(c, "Theme updated")
+	}) {
+		s.Theme = req.Theme
+	})
 }
 
 func (h *SettingsHandler) UpdateLanguage(c *gin.Context) {
-	userCtx, ok := httputil.GetUserContext(c)
-	if !ok {
-		return
-	}
-
-	var req struct {
+	updateUserSetting(h, c, "Language updated", func(s *models.UserSetting, req struct {
 		Language string `json:"language"`
-	}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		httputil.BadRequest(c, errInvalidRequestData)
-		return
-	}
-
-	settings, err := h.store.GetOrCreateUserSettings(userCtx.UserID, userCtx.Email)
-	if err != nil {
-		httputil.InternalError(c, "Failed to fetch settings")
-		return
-	}
-	settings.Language = req.Language
-	if err := h.store.SaveUserSettings(settings); err != nil {
-		httputil.InternalError(c, "Failed to save settings")
-		return
-	}
-
-	httputil.SuccessMessage(c, "Language updated")
+	}) {
+		s.Language = req.Language
+	})
 }
 
 func (h *SettingsHandler) UpdateSettings(c *gin.Context) {

@@ -11,7 +11,6 @@ func registerSettingsRoutes(api *gin.RouterGroup, handler *settingshandler.Setti
 	api.PUT(routeSettings+"/privacy-accepted", handler.UpdatePrivacyAccepted)
 	api.PUT(routeSettings+"/product-tour-completed", handler.UpdateProductTourCompleted)
 	api.PUT(routeSettings+"/map-location", handler.UpdateMapLocation)
-	api.PUT(routeSettings+"/weather-location", handler.UpdateWeatherLocation)
 	api.PUT(routeSettings+"/theme", handler.UpdateTheme)
 	api.PUT(routeSettings+"/language", handler.UpdateLanguage)
 	api.DELETE(routeSettings, handler.DeleteAllSettings)

@@ -79,47 +79,6 @@ func TestCountByUserID(t *testing.T) {
 	assert.Equal(t, int64(5), count)
 }
 
-func TestCountByUserIDAndStatus(t *testing.T) {
-	db, mock := testutil.NewMockDB(t)
-	store := NewStore(db)
-
-	rows := sqlmock.NewRows([]string{"count"}).AddRow(3)
-	mock.ExpectQuery(`SELECT count\(\*\) FROM "models" WHERE \(user_id = \$1 AND status = \$2 AND deleted_at IS NULL\) AND "models"\."deleted_at" IS NULL`).
-		WithArgs("user-123", "completed").
-		WillReturnRows(rows)
-
-	count, err := store.CountByUserIDAndStatus("user-123", "completed")
-	require.NoError(t, err)
-	assert.Equal(t, int64(3), count)
-}
-
-func TestIsDefaultWorkspace(t *testing.T) {
-	db, mock := testutil.NewMockDB(t)
-	store := NewStore(db)
-
-	t.Run("is default", func(t *testing.T) {
-		rows := sqlmock.NewRows([]string{"id", "user_id", "is_default"}).
-			AddRow(10, "user-1", true)
-		mock.ExpectQuery(`SELECT \* FROM "workspaces" WHERE user_id = \$1 AND is_default = \$2 AND id = \$3`).
-			WithArgs("user-1", true, 10, 1).
-			WillReturnRows(rows)
-
-		result, err := store.IsDefaultWorkspace("user-1", 10)
-		require.NoError(t, err)
-		assert.True(t, result)
-	})
-
-	t.Run("not default", func(t *testing.T) {
-		mock.ExpectQuery(`SELECT \* FROM "workspaces" WHERE user_id = \$1 AND is_default = \$2 AND id = \$3`).
-			WithArgs("user-1", true, 20, 1).
-			WillReturnRows(sqlmock.NewRows(nil))
-
-		result, err := store.IsDefaultWorkspace("user-1", 20)
-		require.NoError(t, err)
-		assert.False(t, result)
-	})
-}
-
 func TestIsWorkspaceSharedWithUser(t *testing.T) {
 	db, mock := testutil.NewMockDB(t)
 	store := NewStore(db)

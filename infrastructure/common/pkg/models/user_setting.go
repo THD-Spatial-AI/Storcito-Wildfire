@@ -18,7 +18,6 @@ type UserSetting struct {
 
 	MapLocation *string `json:"map_location,omitempty" gorm:"type:jsonb"`
 
-	WeatherLocation *string `json:"weather_location,omitempty" gorm:"type:jsonb"`
 
 	Theme    string `json:"theme" gorm:"type:varchar(20);default:'system'"`
 	Language string `json:"language" gorm:"type:varchar(10);default:'en'"`

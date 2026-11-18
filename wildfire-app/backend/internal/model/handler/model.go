@@ -20,7 +20,6 @@ const (
 	errFailedToFetchModel    = "Failed to fetch model"
 	errModelLimitReached     = "Model creation limit reached"
 	dateFormat               = "2006-01-02"
-	sqlUserStatusNotDeleted  = "user_id = ? AND status = ? AND deleted_at IS NULL"
 	sqlWhereID               = "id = ?"
 	sqlWhereAccessLevel      = "access_level = ?"
 	preloadWorkspaceMembers  = "Workspace.Members"

@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
+	"github.com/sirupsen/logrus"
 	"platform.local/common/pkg/httputil"
 	"platform.local/platform/logger"
 
@@ -32,97 +33,52 @@ func NewHandler(service *riskmetricsservice.Service, accessStore access.ModelAcc
 func (h *Handler) Get(c *gin.Context) {
 	log := logger.ForComponent("risk_metrics")
 
-	userCtx, ok := httputil.GetUserContext(c)
+	modelID, ok := h.authorizedModelID(c, log)
 	if !ok {
-		return
-	}
-
-	modelID, ok := parseModelID(c)
-	if !ok {
-		return
-	}
-
-	if _, err := access.EnsureModelAccess(h.accessStore, userCtx, modelID); err != nil {
-		switch {
-		case errors.Is(err, access.ErrModelNotFound):
-			httputil.NotFound(c, "Model not found")
-		case errors.Is(err, access.ErrForbidden):
-			httputil.Forbidden(c, "Access denied")
-		default:
-			log.Errorf("access check failed model_id=%d err=%v", modelID, err)
-			httputil.InternalError(c, "Failed to verify access")
-		}
 		return
 	}
 
 	metrics, err := h.service.CalculateForModel(c.Request.Context(), modelID)
-	if err != nil {
-		if errors.Is(err, riskmetricsservice.ErrNoConfiguredResult) || errors.Is(err, gorm.ErrRecordNotFound) {
-			c.JSON(http.StatusOK, gin.H{"data": nil, "ready": false})
-			return
-		}
-		log.Errorf("risk metrics calculation failed model_id=%d err=%v", modelID, err)
-		httputil.InternalError(c, "Failed to calculate risk metrics")
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": metrics, "ready": true})
+	respond(c, log, modelID, metrics, err, "risk metrics calculation failed", "Failed to calculate risk metrics")
 }
 
 // GetMapSamples handles GET /models/:id/risk-map-samples.
 func (h *Handler) GetMapSamples(c *gin.Context) {
 	log := logger.ForComponent("risk_metrics")
 
-	userCtx, ok := httputil.GetUserContext(c)
+	modelID, ok := h.authorizedModelID(c, log)
 	if !ok {
-		return
-	}
-
-	modelID, ok := parseModelID(c)
-	if !ok {
-		return
-	}
-
-	if _, err := access.EnsureModelAccess(h.accessStore, userCtx, modelID); err != nil {
-		switch {
-		case errors.Is(err, access.ErrModelNotFound):
-			httputil.NotFound(c, "Model not found")
-		case errors.Is(err, access.ErrForbidden):
-			httputil.Forbidden(c, "Access denied")
-		default:
-			log.Errorf("access check failed model_id=%d err=%v", modelID, err)
-			httputil.InternalError(c, "Failed to verify access")
-		}
 		return
 	}
 
 	sampleCount := parseSampleCount(c.Query("sample_count"))
 	samples, err := h.service.SampleMapForModel(c.Request.Context(), modelID, sampleCount)
-	if err != nil {
-		if errors.Is(err, riskmetricsservice.ErrNoConfiguredResult) || errors.Is(err, gorm.ErrRecordNotFound) {
-			c.JSON(http.StatusOK, gin.H{"data": nil, "ready": false})
-			return
-		}
-		log.Errorf("risk map sampling failed model_id=%d err=%v", modelID, err)
-		httputil.InternalError(c, "Failed to sample risk map")
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": samples, "ready": true})
+	respond(c, log, modelID, samples, err, "risk map sampling failed", "Failed to sample risk map")
 }
 
 // GetDailyDistributions handles GET /models/:id/risk-daily-distribution.
 func (h *Handler) GetDailyDistributions(c *gin.Context) {
 	log := logger.ForComponent("risk_metrics")
 
-	userCtx, ok := httputil.GetUserContext(c)
+	modelID, ok := h.authorizedModelID(c, log)
 	if !ok {
 		return
 	}
 
+	series, err := h.service.DailyDistributionsForModel(c.Request.Context(), modelID)
+	respond(c, log, modelID, series, err, "daily risk distribution failed", "Failed to compute daily risk distribution")
+}
+
+// check model access
+func (h *Handler) authorizedModelID(c *gin.Context, log *logrus.Entry) (uint, bool) {
+	userCtx, ok := httputil.GetUserContext(c)
+	if !ok {
+		return 0, false
+	}
+
 	modelID, ok := parseModelID(c)
 	if !ok {
-		return
+		return 0, false
 	}
 
 	if _, err := access.EnsureModelAccess(h.accessStore, userCtx, modelID); err != nil {
@@ -135,21 +91,24 @@ func (h *Handler) GetDailyDistributions(c *gin.Context) {
 			log.Errorf("access check failed model_id=%d err=%v", modelID, err)
 			httputil.InternalError(c, "Failed to verify access")
 		}
-		return
+		return 0, false
 	}
+	return modelID, true
+}
 
-	series, err := h.service.DailyDistributionsForModel(c.Request.Context(), modelID)
+// send ready data
+func respond(c *gin.Context, log *logrus.Entry, modelID uint, data any, err error, logMsg, userMsg string) {
 	if err != nil {
 		if errors.Is(err, riskmetricsservice.ErrNoConfiguredResult) || errors.Is(err, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusOK, gin.H{"data": nil, "ready": false})
 			return
 		}
-		log.Errorf("daily risk distribution failed model_id=%d err=%v", modelID, err)
-		httputil.InternalError(c, "Failed to compute daily risk distribution")
+		log.Errorf("%s model_id=%d err=%v", logMsg, modelID, err)
+		httputil.InternalError(c, userMsg)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": series, "ready": true})
+	c.JSON(http.StatusOK, gin.H{"data": data, "ready": true})
 }
 
 func parseModelID(c *gin.Context) (uint, bool) {

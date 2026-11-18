@@ -9,7 +9,6 @@ import (
 	commonModels "platform.local/common/pkg/models"
 
 	"gorm.io/gorm"
-	gormlogger "gorm.io/gorm/logger"
 )
 
 // Store handles model DB operations.
@@ -143,15 +142,6 @@ func (s *Store) CountByUserID(userID string) (int64, error) {
 	return count, err
 }
 
-// CountByUserIDAndStatus counts user models with status.
-func (s *Store) CountByUserIDAndStatus(userID, status string) (int64, error) {
-	var count int64
-	err := s.db.Model(&commonModels.Model{}).
-		Where("user_id = ? AND status = ? AND deleted_at IS NULL", userID, status).
-		Count(&count).Error
-	return count, err
-}
-
 // CountByUserIDGrouped counts user models by status.
 func (s *Store) CountByUserIDGrouped(userID string) (total int64, byStatus map[string]int64, err error) {
 	byStatus = make(map[string]int64)
@@ -183,21 +173,6 @@ func (s *Store) FindByIDs(ids []uint) ([]commonModels.Model, error) {
 }
 
 // Workspace access
-
-// IsDefaultWorkspace checks if default workspace.
-func (s *Store) IsDefaultWorkspace(userID string, workspaceID uint) (bool, error) {
-	var workspace commonModels.Workspace
-	err := s.db.Session(&gorm.Session{Logger: s.db.Logger.LogMode(gormlogger.Silent)}).
-		Where("user_id = ? AND is_default = ? AND id = ?", userID, true, workspaceID).
-		First(&workspace).Error
-	if err == nil {
-		return true, nil
-	}
-	if err == gorm.ErrRecordNotFound {
-		return false, nil
-	}
-	return false, err
-}
 
 // GetDefaultWorkspace gets user default workspace.
 func (s *Store) GetDefaultWorkspace(userID string) (*commonModels.Workspace, error) {
