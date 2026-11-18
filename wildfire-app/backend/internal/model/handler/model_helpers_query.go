@@ -43,7 +43,7 @@ func parseGetModelsParams(c *gin.Context) (limit, offset int, search, workspaceI
 
 	if sb := c.Query("sort_by"); sb != "" {
 		switch sb {
-		case "title", "status", "created_at", "updated_at", "last_activity":
+		case "title", "status", "created_at", "updated_at", "last_activity", "user_email", "region":
 			sortBy = sb
 		}
 	}
@@ -134,25 +134,33 @@ func joinIDList(ids []uint) string {
 	return strings.Join(parts, ",")
 }
 
+// owner and territory
+func applyOwnerTerritoryFilters(c *gin.Context, query *gorm.DB) *gorm.DB {
+	if owner := strings.TrimSpace(c.Query("owner")); owner != "" {
+		query = query.Where("user_email ILIKE ?", "%"+owner+"%")
+	}
+	if territory := strings.TrimSpace(c.Query("territory")); territory != "" {
+		pattern := "%" + territory + "%"
+		query = query.Where("region ILIKE ? OR country ILIKE ?", pattern, pattern)
+	}
+	return query
+}
+
 func isGroupedRequest(c *gin.Context) bool {
 	return c.Query("grouped") == "true"
 }
 
-const activeStatusList = "'queue','calculating','running','processing'"
 
-// Active first, then latest.
+// strict family sort
 func listOrderClause(sortBy, sortOrder string, grouped bool) string {
 	if sortBy != "last_activity" {
 		return sortBy + " " + sortOrder
 	}
 	if grouped {
-		return "CASE WHEN EXISTS (SELECT 1 FROM models active_versions WHERE active_versions.deleted_at IS NULL " +
-			"AND (active_versions.id = models.id OR active_versions.parent_model_id = models.id) " +
-			"AND active_versions.status IN (" + activeStatusList + ")) THEN 0 ELSE 1 END, " +
-			"(SELECT MAX(COALESCE(latest_versions.calculation_completed_at, latest_versions.updated_at)) FROM models latest_versions " +
+		return "(SELECT MAX(COALESCE(latest_versions.calculation_completed_at, latest_versions.updated_at)) FROM models latest_versions " +
 			"WHERE latest_versions.deleted_at IS NULL AND (latest_versions.id = models.id OR latest_versions.parent_model_id = models.id)) " + sortOrder
 	}
-	return "CASE WHEN status IN (" + activeStatusList + ") THEN 0 ELSE 1 END, COALESCE(calculation_completed_at, updated_at) " + sortOrder
+	return "COALESCE(calculation_completed_at, updated_at) " + sortOrder
 }
 
 func (h *ModelHandler) buildWorkspaceFilteredQuery(c *gin.Context, userCtx *httputil.UserContext, workspaceID uint) (*gorm.DB, bool) {

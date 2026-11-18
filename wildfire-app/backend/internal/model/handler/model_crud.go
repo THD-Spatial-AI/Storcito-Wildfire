@@ -66,14 +66,18 @@ func (h *ModelHandler) GetModels(c *gin.Context) {
 	if !ok {
 		return
 	}
+	query = applyOwnerTerritoryFilters(c, query)
 	pinnedIDs := parsePinnedIDs(c)
-	// Status tabs: flat.
 	statusFiltered := len(parseStatusFilter(c)) > 0
-	grouped := isGroupedRequest(c) && !statusFiltered
+	// families per tab
+	grouped := isGroupedRequest(c)
 	if grouped {
 		// One row per family.
 		query = query.Where("parent_model_id IS NULL")
-		query = h.applyFamilyListFilters(query, search, fromDate, toDate, parseStatusFilter(c))
+		query = h.applyFamilyListFilters(query, search, fromDate, toDate, nil)
+		if statuses := parseStatusFilter(c); len(statuses) > 0 {
+			query = query.Where("status IN ?", statuses)
+		}
 		if c.Query("pinned_only") == "true" {
 			if len(pinnedIDs) == 0 {
 				query = query.Where("1 = 0")

@@ -9,6 +9,8 @@ import (
 
 func registerModelRoutes(api *gin.RouterGroup, modelHandler *modelhandler.ModelHandler, resultHandler *resulthandler.ResultHandler, riskHandler *riskmetricshandler.Handler) {
 	api.GET("/models/stats", modelHandler.GetModelStats)
+	api.GET("/models/tab-counts", modelHandler.GetTabCounts)
+	api.GET("/models/admin-metrics", modelHandler.GetAdminMetrics)
 	api.GET("/models", modelHandler.GetModels)
 	api.POST("/models", modelHandler.CreateModel)
 	api.PATCH("/models/bulk-move", modelHandler.BulkMoveModels)

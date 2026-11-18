@@ -237,10 +237,17 @@ func TestListOrderClause_GroupedLastActivityUsesFamilyMax(t *testing.T) {
 	assert.Contains(t, clause, "parent_model_id")
 }
 
-func TestListOrderClause_LastActivityActiveFirst(t *testing.T) {
-	clause := listOrderClause("last_activity", "desc", false)
-	assert.Contains(t, clause, "CASE WHEN status IN ('queue','calculating','running','processing') THEN 0 ELSE 1 END")
-	assert.True(t, strings.HasSuffix(clause, "COALESCE(calculation_completed_at, updated_at) desc"))
+func TestListOrderClause_LastActivityStrict(t *testing.T) {
+	// no status bucket
+	assert.Equal(t, "COALESCE(calculation_completed_at, updated_at) desc", listOrderClause("last_activity", "desc", false))
+}
+
+func TestListOrderClause_LastActivityFamilyNewest(t *testing.T) {
+	clause := listOrderClause("last_activity", "desc", true)
+	assert.NotContains(t, clause, "CASE WHEN")
+	assert.True(t, strings.HasPrefix(clause, "(SELECT MAX(COALESCE(latest_versions.calculation_completed_at"))
+	assert.Contains(t, clause, "latest_versions.parent_model_id = models.id")
+	assert.True(t, strings.HasSuffix(clause, " desc"))
 }
 
 func TestListOrderClause_PlainColumn(t *testing.T) {
@@ -251,4 +258,28 @@ func TestPinnedFamilyOrderClause_LiftsVersionPins(t *testing.T) {
 	clause := pinnedFamilyOrderClause([]uint{7})
 	assert.Contains(t, clause, "id IN (7)")
 	assert.Contains(t, clause, "parent_model_id")
+}
+
+func TestApplyOwnerTerritoryFilters(t *testing.T) {
+	db, _ := testutil.NewMockDB(t)
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	c.Request = httptest.NewRequest(http.MethodGet, "/models?owner=ana&territory=lugo", nil)
+	sql := db.ToSQL(func(tx *gorm.DB) *gorm.DB {
+		return applyOwnerTerritoryFilters(c, tx.Model(&commonmodels.Model{})).Find(&[]commonmodels.Model{})
+	})
+	assert.Contains(t, sql, "user_email ILIKE '%ana%'")
+	assert.Contains(t, sql, "region ILIKE '%lugo%' OR country ILIKE '%lugo%'")
+}
+
+func TestAdminTabsCoverEveryStatus(t *testing.T) {
+	// tabs sum up
+	seen := map[string]int{}
+	for _, tab := range []string{"drafts", "queue", "in_progress", "completed_only", "published", "failed"} {
+		for _, s := range tabStatuses[tab] {
+			seen[s]++
+		}
+	}
+	for s := range listableStatuses {
+		assert.Equal(t, 1, seen[s], s)
+	}
 }
