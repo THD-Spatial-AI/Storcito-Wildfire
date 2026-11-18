@@ -138,6 +138,10 @@ func refreshSessionCookie(c *gin.Context, sessionID string, opts AuthServiceOpti
 	}
 
 	httputil.SetAuthCookie(c, cookieOptions(opts), "session_id", sessionID, opts.SessionCookieMaxAgeSeconds, true)
+	// Renew csrf cookie
+	if token, err := c.Cookie("csrf_token"); err == nil && token != "" {
+		httputil.SetAuthCookie(c, cookieOptions(opts), "csrf_token", token, opts.SessionCookieMaxAgeSeconds, false)
+	}
 }
 
 func clearAuthCookies(c *gin.Context, opts AuthServiceOptions) {

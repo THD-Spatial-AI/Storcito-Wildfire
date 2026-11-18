@@ -14,6 +14,8 @@ import (
 	usershandler "spatialhub_backend/internal/handler/users"
 	"spatialhub_backend/internal/handler/weather"
 	"spatialhub_backend/internal/middleware"
+
+	"platform.local/common/pkg/httputil"
 	modelhandler "spatialhub_backend/internal/model/handler"
 	resulthandler "spatialhub_backend/internal/result/handler"
 	riskmetricshandler "spatialhub_backend/internal/risk_metrics/handler"
@@ -77,6 +79,8 @@ func Register(r *gin.Engine, deps Deps) {
 
 func RegisterPublic(r *gin.Engine, deps Deps) {
 	api := r.Group("/api")
+	// Require csrf token
+	api.Use(httputil.CSRFProtection(nil))
 
 	api.GET("/health", server.HealthHandler("backend"))
 
@@ -117,6 +121,7 @@ func RegisterProtected(r *gin.Engine, deps Deps) {
 		// Must run before the session middleware.
 		protectedAPI.Use(middleware.APITokenAuth(deps.APITokenValidator))
 	}
+	protectedAPI.Use(httputil.CSRFProtection(middleware.IsAPITokenAuthenticated))
 	protectedAPI.Use(middleware.AuthServiceMiddleware(middleware.AuthServiceOptions{
 		AuthServiceURL:             deps.AuthServiceURL,
 		SessionCookieMaxAgeSeconds: deps.SessionCookieMaxAgeSeconds,

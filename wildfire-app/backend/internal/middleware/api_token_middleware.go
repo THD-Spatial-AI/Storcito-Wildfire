@@ -16,6 +16,11 @@ import (
 // ctxAPITokenAuthenticated marks a request already authenticated by an API token.
 const ctxAPITokenAuthenticated = "api_token_authenticated"
 
+// Token auth passed
+func IsAPITokenAuthenticated(c *gin.Context) bool {
+	return c.GetBool(ctxAPITokenAuthenticated)
+}
+
 // APITokenValidator checks a plaintext token (implemented by apitoken.Service).
 type APITokenValidator interface {
 	Validate(plaintext string) (*backendModels.APIToken, error)
