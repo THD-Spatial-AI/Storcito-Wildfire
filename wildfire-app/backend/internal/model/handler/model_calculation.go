@@ -14,7 +14,9 @@ func (h *ModelHandler) StartCalculation(c *gin.Context) {
 		return
 	}
 	modelSvc := h.newModelService()
-	updated, err := modelSvc.StartCalculation(c.Request.Context(), userCtx.UserID, userCtx.AccessLevel, c.Param("id"), h.asynqClient)
+	// Quiet day switch
+	quiet := c.Query("notify") == "false"
+	updated, err := modelSvc.StartCalculation(c.Request.Context(), userCtx.UserID, userCtx.AccessLevel, c.Param("id"), h.asynqClient, quiet)
 	if err != nil {
 		msg := err.Error()
 		switch {

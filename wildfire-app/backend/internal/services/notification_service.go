@@ -153,6 +153,15 @@ func (s *NotificationService) createBrowserNotification(ctx context.Context, use
 	return nil
 }
 
+// Run without notify
+func IsQuietRun(config []byte) bool {
+	var cfg struct {
+		QuietRun bool `json:"quiet_run"`
+	}
+	_ = json.Unmarshal(config, &cfg)
+	return cfg.QuietRun
+}
+
 func buildModelStatusNotification(userID, modelTitle string, modelID uint, status string) backendModels.UserNotification {
 	var title, message, notifType string
 	var resultModelID *uint

@@ -39,7 +39,7 @@ func (s *ModelService) LogCalculationPayload(model *models.Model, calcPayload in
 	}
 }
 
-func (s *ModelService) StartCalculation(ctx context.Context, userID string, accessLevel string, modelIDParam string, asynqClient *asynq.Client) (*models.Model, error) {
+func (s *ModelService) StartCalculation(ctx context.Context, userID string, accessLevel string, modelIDParam string, asynqClient *asynq.Client, quiet bool) (*models.Model, error) {
 	log := platformlogger.ForComponent("model")
 
 	model, err := s.store.FindModelWithWorkspace(modelIDParam)
@@ -64,6 +64,11 @@ func (s *ModelService) StartCalculation(ctx context.Context, userID string, acce
 		"calculation_queued_at":    now,
 		"calculation_started_at":   nil,
 		"calculation_completed_at": nil,
+		// Store quiet flag
+		"config": gorm.Expr(
+			"jsonb_set(COALESCE(NULLIF(config, 'null'::jsonb), '{}'::jsonb), '{quiet_run}', to_jsonb(?::boolean))",
+			quiet,
+		),
 	}, queuedEvent); err != nil {
 		return nil, fmt.Errorf("failed to update model status: %w", err)
 	}

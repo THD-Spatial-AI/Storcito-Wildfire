@@ -14,6 +14,7 @@ import (
 	"platform.local/common/pkg/httputil"
 	commonModels "platform.local/common/pkg/models"
 	"spatialhub_backend/internal/jobs"
+	"spatialhub_backend/internal/services"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hibiken/asynq"
@@ -53,7 +54,7 @@ func (h *ResultHandler) handleWebserviceFailure(c *gin.Context, model *commonMod
 	}
 
 	// Send failure notification
-	if h.notificationService != nil {
+	if h.notificationService != nil && !services.IsQuietRun(model.Config) {
 		go func() {
 			if err := h.notificationService.SendModelCompletionNotification(
 				context.Background(),

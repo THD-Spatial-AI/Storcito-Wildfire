@@ -180,7 +180,7 @@ func HandleProcessResult(
 	}
 
 	// Send completion notification
-	if notificationService != nil {
+	if notificationService != nil && !services.IsQuietRun(model.Config) {
 		if err := notificationService.SendModelCompletionNotification(
 			ctx,
 			payload.UserID,
