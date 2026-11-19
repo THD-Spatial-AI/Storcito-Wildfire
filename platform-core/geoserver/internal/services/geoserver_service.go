@@ -188,7 +188,7 @@ func (s *GeoServerService) doGeoServerRequest(method, url string, body io.Reader
 	return s.doGeoServerRequestWithHeaders(method, url, body, nil, acceptedCodes...)
 }
 
-// authed request, headers
+// authed request headers
 func (s *GeoServerService) doGeoServerRequestWithHeaders(method, url string, body io.Reader, headers map[string]string, acceptedCodes ...int) error {
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
@@ -864,17 +864,9 @@ func (s *GeoServerService) sampleLayerDistribution(result *models.ModelResult, s
 		"very_high": 0,
 	}
 
-	bounds, err := s.GetLayerBounds(result)
+	_, minx, miny, maxx, maxy, err := s.layerBox(result)
 	if err != nil {
 		return nil, 0, 0, err
-	}
-
-	minx, ok1 := bounds["minx"].(float64)
-	maxx, ok2 := bounds["maxx"].(float64)
-	miny, ok3 := bounds["miny"].(float64)
-	maxy, ok4 := bounds["maxy"].(float64)
-	if !(ok1 && ok2 && ok3 && ok4) {
-		return nil, 0, 0, fmt.Errorf("invalid bounds data")
 	}
 
 	if sampleCount <= 0 {
@@ -956,16 +948,9 @@ func (s *GeoServerService) SampleDailyDistributions(ctx context.Context, resultI
 	}
 	sort.Slice(days, func(i, j int) bool { return days[i].date < days[j].date })
 
-	bounds, err := s.GetLayerBounds(result)
+	_, minx, miny, maxx, maxy, err := s.layerBox(result)
 	if err != nil {
 		return nil, err
-	}
-	minx, ok1 := bounds["minx"].(float64)
-	maxx, ok2 := bounds["maxx"].(float64)
-	miny, ok3 := bounds["miny"].(float64)
-	maxy, ok4 := bounds["maxy"].(float64)
-	if !(ok1 && ok2 && ok3 && ok4) {
-		return nil, fmt.Errorf("invalid bounds data")
 	}
 
 	if sampleCount <= 0 {
@@ -1023,20 +1008,28 @@ func (s *GeoServerService) SampleDailyDistributions(ctx context.Context, resultI
 	return out, nil
 }
 
-func (s *GeoServerService) sampleLayerGrid(ctx context.Context, result *models.ModelResult, sampleCount int) (*GridSampleResult, error) {
-	log := logger.ForComponent("geoserver")
-
-	bounds, err := s.GetLayerBounds(result)
+// numeric layer bounds
+func (s *GeoServerService) layerBox(result *models.ModelResult) (bounds map[string]interface{}, minx, miny, maxx, maxy float64, err error) {
+	bounds, err = s.GetLayerBounds(result)
 	if err != nil {
-		return nil, err
+		return nil, 0, 0, 0, 0, err
 	}
-
 	minx, ok1 := bounds["minx"].(float64)
 	maxx, ok2 := bounds["maxx"].(float64)
 	miny, ok3 := bounds["miny"].(float64)
 	maxy, ok4 := bounds["maxy"].(float64)
 	if !(ok1 && ok2 && ok3 && ok4) {
-		return nil, fmt.Errorf("invalid bounds data")
+		return nil, 0, 0, 0, 0, fmt.Errorf("invalid bounds data")
+	}
+	return bounds, minx, miny, maxx, maxy, nil
+}
+
+func (s *GeoServerService) sampleLayerGrid(ctx context.Context, result *models.ModelResult, sampleCount int) (*GridSampleResult, error) {
+	log := logger.ForComponent("geoserver")
+
+	bounds, minx, miny, maxx, maxy, err := s.layerBox(result)
+	if err != nil {
+		return nil, err
 	}
 
 	if sampleCount <= 0 {
