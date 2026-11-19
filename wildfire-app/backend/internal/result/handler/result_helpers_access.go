@@ -13,7 +13,7 @@ import (
 	"spatialhub_backend/internal/access"
 )
 
-// getResultFromRequest fetches the result for the :id param with access validation for current user
+// fetches result id
 func (h *ResultHandler) getResultFromRequest(c *gin.Context) (*commonModels.ModelResult, bool) {
 	userCtx, ok := httputil.GetUserContext(c)
 	if !ok {
@@ -27,7 +27,7 @@ func (h *ResultHandler) getResultFromRequest(c *gin.Context) (*commonModels.Mode
 	return result, true
 }
 
-// fetchResultWithAccess fetches a result by ID and validates user access
+// fetches result id
 func (h *ResultHandler) fetchResultWithAccess(c *gin.Context, userCtx *httputil.UserContext, resultID uint) (*commonModels.ModelResult, bool) {
 	result, err := h.store.GetResultByID(resultID)
 	if err != nil {
@@ -61,6 +61,20 @@ func (h *ResultHandler) ensureModelAccess(c *gin.Context, userCtx *httputil.User
 		httputil.InternalError(c, "Failed to verify model access")
 	}
 	return false
+}
+
+// user model access
+func (h *ResultHandler) authorizedModel(c *gin.Context) (*commonModels.Model, string, bool) {
+	userCtx, ok := httputil.GetUserContext(c)
+	if !ok {
+		return nil, "", false
+	}
+	modelID := c.Param("id")
+	model, ok := h.fetchModelByID(c, modelID)
+	if !ok || !h.userHasModelAccess(c, model, userCtx) {
+		return nil, "", false
+	}
+	return model, modelID, true
 }
 
 func (h *ResultHandler) fetchModelByID(c *gin.Context, modelID string) (*commonModels.Model, bool) {

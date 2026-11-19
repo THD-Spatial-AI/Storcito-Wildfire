@@ -21,17 +21,8 @@ import (
 const fwiAreaSummaryPath = "/api/webservices/fwi-area"
 
 func (h *ResultHandler) GetModelFireWeather(c *gin.Context) {
-	userCtx, ok := httputil.GetUserContext(c)
+	model, modelID, ok := h.authorizedModel(c)
 	if !ok {
-		return
-	}
-
-	modelID := c.Param("id")
-	model, ok := h.fetchModelByID(c, modelID)
-	if !ok {
-		return
-	}
-	if !h.userHasModelAccess(c, model, userCtx) {
 		return
 	}
 
@@ -128,9 +119,7 @@ func dailyWeatherFromMetadata(raw datatypes.JSON, day string) (map[string]interf
 	return summary, ok && len(summary) > 0
 }
 
-// persistDailyWeatherSummary caches a per-day summary under
-// metadata.weather_summary_daily[date]; reads the current row to avoid
-// clobbering concurrent writers of other dates.
+// caches per-day summary
 func (h *ResultHandler) persistDailyWeatherSummary(resultID uint, day string, summary map[string]interface{}) {
 	var current commonModels.ModelResult
 	if err := h.store.DB().Select("metadata").First(&current, resultID).Error; err != nil {

@@ -31,8 +31,7 @@ type ResultHandler struct {
 	geoserverPublicURL  string
 }
 
-// NewResultHandler constructs a ResultHandler. geoClient may be nil in
-// environments that do not run the geoservice.
+// constructs resulthandler
 func NewResultHandler(
 	db *gorm.DB,
 	notificationService *services.NotificationService,
@@ -55,19 +54,8 @@ func NewResultHandler(
 }
 
 func (h *ResultHandler) GetModelResults(c *gin.Context) {
-	userCtx, ok := httputil.GetUserContext(c)
+	_, modelID, ok := h.authorizedModel(c)
 	if !ok {
-		return
-	}
-
-	modelID := c.Param("id")
-
-	model, ok := h.fetchModelByID(c, modelID)
-	if !ok {
-		return
-	}
-
-	if !h.userHasModelAccess(c, model, userCtx) {
 		return
 	}
 
@@ -80,18 +68,8 @@ func (h *ResultHandler) GetModelResults(c *gin.Context) {
 }
 
 func (h *ResultHandler) DownloadModelResult(c *gin.Context) {
-	userCtx, ok := httputil.GetUserContext(c)
+	_, modelID, ok := h.authorizedModel(c)
 	if !ok {
-		return
-	}
-
-	modelID := c.Param("id")
-	model, ok := h.fetchModelByID(c, modelID)
-	if !ok {
-		return
-	}
-
-	if !h.userHasModelAccess(c, model, userCtx) {
 		return
 	}
 
