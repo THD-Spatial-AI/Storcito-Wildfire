@@ -60,7 +60,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         />
 
         <main
-          className="relative flex-1 bg-background text-foreground"
+          className="relative isolate flex-1 bg-background text-foreground"
           style={{
             paddingTop: "var(--topbar-height)",
             paddingLeft: "var(--sidebar-width)",

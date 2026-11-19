@@ -1,10 +1,12 @@
-/* Tailwind CSS directives */
+/* tailwind directives */
 @import "tailwindcss";
+/* legal page prose */
+@plugin "@tailwindcss/typography";
 
-/* Class-based dark mode. */
+/* class dark mode */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Scan shared libs. */
+/* scan shared libs */
 /* stylelint-disable-next-line at-rule-no-unknown */
 @source "../../../../libs/forms/src";
 /* stylelint-disable-next-line at-rule-no-unknown */
@@ -163,12 +165,12 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Custom selection styles */
+  /* selection styles */
   ::selection {
     @apply bg-blue-100 text-blue-900;
   }
 
-  /* Webkit scrollbars. */
+  /* webkit scrollbars */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -187,27 +189,27 @@
   }
 }
 
-/* Component layer. */
+/* component layer */
 @layer components {
-  /* Loading spinner */
+  /* loading spinner */
   .spinner {
     @apply inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin;
   }
 
-  /* Focus ring utility */
+  /* focus ring */
   .focus-ring {
     @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
   }
 
-  /* Text gradient utility */
+  /* text gradient */
   .text-gradient {
     @apply bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent;
   }
 }
 
-/* Utility layer. */
+/* utility layer */
 @layer utilities {
-  /* Hide scrollbar. */
+  /* hide scrollbar */
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -217,7 +219,7 @@
     display: none;
   }
 
-  /* Mobile safe areas. */
+  /* mobile safe areas */
   .safe-top {
     padding-top: env(safe-area-inset-top);
   }
@@ -243,7 +245,7 @@
   display: none !important;
 }
 
-/* Panel appear. */
+/* panel appear */
 @keyframes panel-appear {
   0% {
     opacity: 0;
@@ -260,7 +262,7 @@
   transform-origin: center center;
 }
 
-/* Dashboard motion. */
+/* dashboard motion */
 @keyframes md-fade-in {
   from {
     opacity: 0;
@@ -338,13 +340,13 @@
   }
 }
 
-/* Restore focus ring. */
+/* restore focus ring */
 .md-scope :focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
 
-/* Landing motion. */
+/* landing motion */
 @layer components {
   .lp-reveal {
     opacity: 0;
@@ -386,7 +388,7 @@
   }
 }
 
-/* Sharp extruded heading. */
+/* extruded heading */
 .auth-title-3d {
   text-shadow:
     0 1px 0 rgba(150, 150, 185, 0.9),
@@ -394,9 +396,9 @@
     0 3px 2px rgba(0, 0, 0, 0.35);
 }
 
-/* Landing decorations. */
+/* landing decorations */
 
-/* Grid background. */
+/* grid background */
 .lp-grid-pattern {
   background-size: 40px 40px;
   background-image:
@@ -404,7 +406,7 @@
     linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
 }
 
-/* Mockup float. */
+/* mockup float */
 @keyframes float-y {
   0%,
   100% {
@@ -421,7 +423,7 @@
   transform-style: preserve-3d;
 }
 
-/* Radar Scan effect */
+/* radar scan */
 @keyframes radar-sweep {
   0% {
     transform: rotate(0deg);
@@ -435,7 +437,7 @@
   animation: radar-sweep 8s linear infinite;
 }
 
-/* Pulsing radar rings */
+/* pulsing radar rings */
 @keyframes ping-slow {
   0% {
     transform: scale(0.6);
@@ -450,7 +452,7 @@
   animation: ping-slow 3s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
 
-/* Glow effects. */
+/* glow effects */
 .btn-glow-amber {
   box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -460,7 +462,7 @@
   transform: translateY(-2px);
 }
 
-/* Drifting glows. */
+/* drifting glows */
 @keyframes drift-glow {
   0%,
   100% {
@@ -480,7 +482,7 @@
   animation: drift-glow 22s ease-in-out infinite alternate;
 }
 
-/* Micro-spark particles rising */
+/* rising sparks */
 @keyframes spark-rise {
   0% {
     transform: translateY(0) translateX(0) scale(1);
@@ -532,7 +534,7 @@
   animation: spark-rise 6s infinite 0.1s;
 }
 
-/* Card hover glow. */
+/* card hover glow */
 .bento-glow-card {
   position: relative;
   overflow: hidden;
@@ -565,7 +567,7 @@
   opacity: 1;
 }
 
-/* Light bento cards. */
+/* light bento cards */
 .light-bento-card {
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.06);
@@ -596,7 +598,7 @@
   opacity: 1;
 }
 
-/* Responsive mockup. */
+/* responsive mockup */
 @media (max-width: 1023px) {
   .animate-float-mockup {
     animation: float-y-mobile 6s ease-in-out infinite;
@@ -613,7 +615,7 @@
     transform: translateY(-8px);
   }
 }
-/* Capsule header. */
+/* capsule header */
 .floating-capsule-nav-container {
   margin-top: 16px;
   padding-left: 16px;
@@ -632,7 +634,7 @@
   transition: all 0.3s ease;
 }
 
-/* Light theme cards. */
+/* light theme cards */
 .premium-glow-card {
   position: relative;
   border-radius: 24px;
@@ -651,7 +653,7 @@
     0 0 20px -2px rgba(245, 158, 11, 0.05);
 }
 
-/* Card spot glow. */
+/* card spot glow */
 .premium-glow-card::before {
   content: "";
   position: absolute;
@@ -671,7 +673,7 @@
   opacity: 1;
 }
 
-/* Accent Badge Wrapper */
+/* accent badge */
 .icon-badge-wrapper {
   width: 46px;
   height: 46px;
@@ -682,7 +684,7 @@
   transition: all 0.3s ease;
 }
 
-/* Premium gradient headers */
+/* gradient headers */
 .title-gradient-amber {
   background: linear-gradient(135deg, #ffffff 0%, #fef3c7 50%, #f59e0b 100%);
   -webkit-background-clip: text;
@@ -695,8 +697,28 @@
   -webkit-text-fill-color: transparent;
 }
 
-/* Landing hero reveal. */
+/* hero reveal */
 @keyframes hero-clip {
   from { clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%); }
   to { clip-path: polygon(25% 0, 100% 0, 100% 100%, 0% 100%); }
+}
+
+/* dialogs above sidebar */
+[data-slot="dialog-overlay"],
+[data-slot="alert-dialog-overlay"] {
+  z-index: 60;
+}
+[data-slot="dialog-content"],
+[data-slot="alert-dialog-content"] {
+  z-index: 61;
+}
+
+/* menus above dialogs */
+[data-radix-popper-content-wrapper] > * {
+  z-index: 70;
+}
+
+/* no stray tooltips */
+body:has([data-slot="alert-dialog-content"]) [data-slot="tooltip-content"] {
+  display: none;
 }
