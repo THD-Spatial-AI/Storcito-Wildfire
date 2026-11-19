@@ -72,7 +72,7 @@ func NewGeoServerService(db *gorm.DB) *GeoServerService {
 
 	baseURL := os.Getenv("GEOSERVER_BASE_URL")
 	if baseURL == "" {
-		// Default to the docker-compose service name instead of localhost
+		// compose service name
 		baseURL = "http://geoserver:8080/geoserver"
 	}
 
@@ -88,7 +88,7 @@ func NewGeoServerService(db *gorm.DB) *GeoServerService {
 
 	containerMount := os.Getenv("GEOSERVER_CONTAINER_MOUNT")
 	if containerMount == "" {
-		// Use a path relative to GeoServer data_dir so "file:data/..." works without external resource permissions
+		// path under data_dir
 		containerMount = "data/results"
 	}
 
@@ -105,7 +105,7 @@ func NewGeoServerService(db *gorm.DB) *GeoServerService {
 	}
 }
 
-// ConfigureResult provisions GeoServer resources for a model result ID.
+// set up result
 func (s *GeoServerService) ConfigureResult(ctx context.Context, resultID uint) error {
 	result, err := s.fetchResult(resultID)
 	if err != nil {
@@ -114,7 +114,7 @@ func (s *GeoServerService) ConfigureResult(ctx context.Context, resultID uint) e
 	return s.CreateLayer(ctx, result)
 }
 
-// DeleteResultLayer removes GeoServer artifacts tied to a result.
+// remove result layer
 func (s *GeoServerService) DeleteResultLayer(ctx context.Context, resultID uint) error {
 	result, err := s.fetchResult(resultID)
 	if err != nil {
@@ -123,7 +123,7 @@ func (s *GeoServerService) DeleteResultLayer(ctx context.Context, resultID uint)
 	return s.DeleteLayer(ctx, result)
 }
 
-// GetBoundsForResult fetches cached bounds for the GeoServer layer belonging to the result.
+// result layer bounds
 func (s *GeoServerService) GetBoundsForResult(resultID uint) (map[string]interface{}, error) {
 	result, err := s.fetchResult(resultID)
 	if err != nil {
@@ -135,14 +135,14 @@ func (s *GeoServerService) GetBoundsForResult(resultID uint) (map[string]interfa
 	return s.GetLayerBounds(result)
 }
 
-// SampleResult is one sampling pass: bucketed counts plus valid/total samples.
+// one sampling pass
 type SampleResult struct {
 	Distribution map[string]int `json:"distribution"`
 	ValidSamples int            `json:"valid_samples"`
 	TotalSamples int            `json:"total_samples"`
 }
 
-// GridSample is one valid raster sample point from the GeoServer layer.
+// one raster sample
 type GridSample struct {
 	X      float64 `json:"x"`
 	Y      float64 `json:"y"`
@@ -152,7 +152,7 @@ type GridSample struct {
 	Column int     `json:"column"`
 }
 
-// GridSampleResult holds positioned raster samples for frontend charts.
+// samples for charts
 type GridSampleResult struct {
 	Bounds       map[string]interface{} `json:"bounds"`
 	GridSize     int                    `json:"grid_size"`
@@ -174,7 +174,7 @@ func (s *GeoServerService) SampleDistributionDetailed(ctx context.Context, resul
 	return &SampleResult{Distribution: dist, ValidSamples: valid, TotalSamples: total}, nil
 }
 
-// SampleGridDetailed returns positioned raster samples (one GetFeatureInfo per cell).
+// sample each cell
 func (s *GeoServerService) SampleGridDetailed(ctx context.Context, resultID uint, sampleCount int) (*GridSampleResult, error) {
 	result, err := s.fetchResult(resultID)
 	if err != nil {
@@ -183,12 +183,12 @@ func (s *GeoServerService) SampleGridDetailed(ctx context.Context, resultID uint
 	return s.sampleLayerGrid(ctx, result, sampleCount)
 }
 
-// doGeoServerRequest performs an HTTP request with basic auth and error handling
+// authed request
 func (s *GeoServerService) doGeoServerRequest(method, url string, body io.Reader, acceptedCodes ...int) error {
 	return s.doGeoServerRequestWithHeaders(method, url, body, nil, acceptedCodes...)
 }
 
-// doGeoServerRequestWithHeaders performs an HTTP request with basic auth, custom headers, and error handling
+// authed request, headers
 func (s *GeoServerService) doGeoServerRequestWithHeaders(method, url string, body io.Reader, headers map[string]string, acceptedCodes ...int) error {
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
@@ -206,7 +206,7 @@ func (s *GeoServerService) doGeoServerRequestWithHeaders(method, url string, bod
 	}
 	defer func() { _ = resp.Body.Close() }()
 
-	// Check if status code is in accepted list
+	// accepted status
 	if len(acceptedCodes) > 0 {
 		accepted := false
 		for _, code := range acceptedCodes {
@@ -223,7 +223,7 @@ func (s *GeoServerService) doGeoServerRequestWithHeaders(method, url string, bod
 		respBody, _ := io.ReadAll(resp.Body)
 		errStr := string(respBody)
 
-		// Handle "already exists" errors which might come as 500 or 409
+		// already exists
 		if resp.StatusCode == http.StatusConflict ||
 			strings.Contains(errStr, "already exists") ||
 			strings.Contains(errStr, "already exist") {
@@ -236,7 +236,7 @@ func (s *GeoServerService) doGeoServerRequestWithHeaders(method, url string, bod
 	return nil
 }
 
-// doJSONRequest sends a JSON request to GeoServer with the provided payload and validates the response
+// send json request
 func (s *GeoServerService) doJSONRequest(method, url string, payload interface{}, acceptedCodes ...int) error {
 	body, _ := json.Marshal(payload)
 	headers := map[string]string{"Content-Type": "application/json"}
@@ -483,7 +483,7 @@ func (s *GeoServerService) DeleteLayer(ctx context.Context, result *models.Model
 	return nil
 }
 
-// deleteResource is a helper function to perform DELETE requests to GeoServer
+// delete resource
 func (s *GeoServerService) deleteResource(url string) error {
 	return s.doGeoServerRequest(http.MethodDelete, url, nil, http.StatusOK, http.StatusNoContent, http.StatusNotFound)
 }
@@ -507,7 +507,7 @@ func (s *GeoServerService) ensureWorkspaceExists() error {
 		},
 	}
 
-	// Accept Created, OK, Conflict (already exists), and UnprocessableEntity (already exists)
+	// ok or exists
 	return s.doJSONRequest(http.MethodPost, url, payload, http.StatusCreated, http.StatusOK, http.StatusConflict, http.StatusUnprocessableEntity)
 }
 
@@ -580,7 +580,7 @@ type riskColorMapEntry struct {
 }
 
 func buildRiskStyleSLD(def riskStyleDefinition) string {
-	// Classes render at full strength; transparency is applied once, client-side, by the opacity slider.
+	// opacity set client-side
 	entries := []riskColorMapEntry{
 		{quantity: 0, label: "No data", color: "#000000", opacity: 0},
 		{quantity: 1, label: "Very Low", color: "#9ca3af", opacity: 1},
@@ -641,12 +641,12 @@ func (s *GeoServerService) GetLayerBounds(result *models.ModelResult) (map[strin
 		return nil, fmt.Errorf("no layer name")
 	}
 
-	// Try coverage endpoint first
+	// coverage first
 	if bounds := s.tryGetCoverageBounds(result); bounds != nil {
 		return bounds, nil
 	}
 
-	// Fallback to layer endpoint
+	// then layer
 	return s.getLayerBounds(result)
 }
 
@@ -667,6 +667,11 @@ func (s *GeoServerService) tryGetCoverageBounds(result *models.ModelResult) map[
 }
 
 func (s *GeoServerService) fetchCoverageInfo(url string) (map[string]interface{}, error) {
+	return s.getJSON(url, "status %d")
+}
+
+// fetch rest json
+func (s *GeoServerService) getJSON(url, statusFormat string) (map[string]interface{}, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
@@ -680,15 +685,15 @@ func (s *GeoServerService) fetchCoverageInfo(url string) (map[string]interface{}
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("status %d", resp.StatusCode)
+		return nil, fmt.Errorf(statusFormat, resp.StatusCode)
 	}
 
-	var cov map[string]interface{}
-	if err := json.NewDecoder(resp.Body).Decode(&cov); err != nil {
+	var out map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
 		return nil, err
 	}
 
-	return cov, nil
+	return out, nil
 }
 
 func extractBoundsFromCoverage(cov map[string]interface{}) map[string]interface{} {
@@ -697,12 +702,12 @@ func extractBoundsFromCoverage(cov map[string]interface{}) map[string]interface{
 		return nil
 	}
 
-	// Try latLonBoundingBox first (EPSG:4326)
+	// lat-lon first
 	if bounds := tryExtractLatLonBounds(coverage); bounds != nil {
 		return bounds
 	}
 
-	// Fallback to nativeBoundingBox
+	// then native
 	return tryExtractNativeBounds(coverage)
 }
 
@@ -765,28 +770,7 @@ func (s *GeoServerService) getLayerBounds(result *models.ModelResult) (map[strin
 }
 
 func (s *GeoServerService) fetchLayerInfo(url string) (map[string]interface{}, error) {
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.SetBasicAuth(s.username, s.password)
-	resp, err := s.client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer func() { _ = resp.Body.Close() }()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to get layer info: %d", resp.StatusCode)
-	}
-
-	var layerInfo map[string]interface{}
-	if err := json.NewDecoder(resp.Body).Decode(&layerInfo); err != nil {
-		return nil, err
-	}
-
-	return layerInfo, nil
+	return s.getJSON(url, "failed to get layer info: %d")
 }
 
 func extractBBoxFromLayer(layerInfo map[string]interface{}) map[string]interface{} {
@@ -808,7 +792,7 @@ func extractBBoxFromLayer(layerInfo map[string]interface{}) map[string]interface
 	return nbb
 }
 
-// parseBBox extracts minx/miny/maxx/maxy from a GeoServer bbox JSON object
+// parse bbox
 func parseBBox(obj map[string]interface{}) map[string]interface{} {
 	get := func(key string) (float64, bool) {
 		if v, ok := obj[key]; ok {
@@ -842,7 +826,7 @@ func parseBBox(obj map[string]interface{}) map[string]interface{} {
 	}
 }
 
-// extractCRS normalizes various GeoServer CRS representations
+// normalize crs
 func extractCRS(crsField interface{}) string {
 	switch t := crsField.(type) {
 	case string:
@@ -931,7 +915,7 @@ func (s *GeoServerService) sampleLayerDistribution(result *models.ModelResult, s
 	return distribution, validSamples, totalAttempted, nil
 }
 
-// DailyDistribution is the class histogram of one day of a dynamic run.
+// one day histogram
 type DailyDistribution struct {
 	Date         string         `json:"date"`
 	Distribution map[string]int `json:"distribution"`
@@ -941,7 +925,7 @@ type DailyDistribution struct {
 
 var dailyRiskLayerKey = regexp.MustCompile(`^risk_(\d{4}-\d{2}-\d{2})$`)
 
-// SampleDailyDistributions returns one class histogram per published risk_<date> layer.
+// histogram per day
 func (s *GeoServerService) SampleDailyDistributions(ctx context.Context, resultID uint, sampleCount int) ([]DailyDistribution, error) {
 	log := logger.ForComponent("geoserver")
 

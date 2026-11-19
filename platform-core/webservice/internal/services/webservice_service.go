@@ -28,14 +28,11 @@ import (
 const (
 	endpointStatus = "/status"
 
-	// maxResponseBytes limits the size of response bodies read from
-	// webservice instances to prevent unbounded memory allocation.
-	maxResponseBytes = 10 * 1024 * 1024 // 10 MB
+	// cap response size
+	maxResponseBytes = 10 * 1024 * 1024 // 10 mb
 )
 
-// sharedTransport is reused across all WebserviceService instances so that
-// idle TCP connections are pooled and reused across scheduler ticks and
-// concurrent dispatch workers.
+// shared connection pool
 var sharedTransport = &http.Transport{
 	MaxIdleConns:        100,
 	MaxIdleConnsPerHost: 20,
@@ -51,7 +48,7 @@ type WebserviceService struct {
 func NewWebserviceService(db *gorm.DB) *WebserviceService {
 	return &WebserviceService{
 		client: &http.Client{
-			Timeout:   0, // no timeout – match old enerplanet behaviour; model fails only on file verification or stuck-model scheduler
+			Timeout:   0, // no timeout
 			Transport: sharedTransport,
 		},
 		repo: store.NewWebserviceRepository(db),
@@ -164,8 +161,7 @@ func (s *WebserviceService) ReserveAvailableInstanceTx(ctx context.Context, tx *
 	log := logger.ForComponent("webservice")
 	var instance models.WebserviceInstance
 
-	// Lock one eligible row and reserve a slot atomically.
-	// Skip instances whose last-reported CPU usage exceeds the threshold.
+	// reserve free slot
 	query := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
 		Where("status = ? AND available = ? AND current_concurrency < max_concurrency",
 			models.StatusActive, true)
@@ -367,31 +363,15 @@ func (s *WebserviceService) getAvailableDates(ctx context.Context, path string, 
 }
 
 func (s *WebserviceService) GetAvailableDataCoverage(ctx context.Context) (map[string]interface{}, error) {
-	var instance models.WebserviceInstance
-	if err := s.db.
-		Where("status = ?", models.StatusActive).
-		Order("available DESC, current_concurrency ASC, id ASC").
-		First(&instance).Error; err != nil {
-		return nil, err
-	}
-
-	url := buildURL(&instance, "/available-data-coverage")
-	status, _, respBytes, err := s.doJSON(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-	if status < 200 || status >= 300 {
-		return nil, fmt.Errorf("request failed with status %d: %s", status, string(respBytes))
-	}
-
-	var result map[string]interface{}
-	if err := json.Unmarshal(respBytes, &result); err != nil {
-		return nil, fmt.Errorf("invalid available data coverage response: %w", err)
-	}
-	return result, nil
+	return s.callActiveInstance(ctx, http.MethodGet, "/available-data-coverage", nil, "available data coverage")
 }
 
 func (s *WebserviceService) GetFWIAreaSummary(ctx context.Context, payload map[string]interface{}) (map[string]interface{}, error) {
+	return s.callActiveInstance(ctx, http.MethodPost, "/fwi/area", payload, "FWI area")
+}
+
+// call active instance
+func (s *WebserviceService) callActiveInstance(ctx context.Context, method, path string, payload map[string]interface{}, label string) (map[string]interface{}, error) {
 	var instance models.WebserviceInstance
 	if err := s.db.
 		Where("status = ?", models.StatusActive).
@@ -400,8 +380,12 @@ func (s *WebserviceService) GetFWIAreaSummary(ctx context.Context, payload map[s
 		return nil, err
 	}
 
-	url := buildURL(&instance, "/fwi/area")
-	status, _, respBytes, err := s.doJSON(ctx, http.MethodPost, url, payload)
+	url := buildURL(&instance, path)
+	var body interface{}
+	if payload != nil {
+		body = payload
+	}
+	status, _, respBytes, err := s.doJSON(ctx, method, url, body)
 	if err != nil {
 		return nil, err
 	}
@@ -411,7 +395,7 @@ func (s *WebserviceService) GetFWIAreaSummary(ctx context.Context, payload map[s
 
 	var result map[string]interface{}
 	if err := json.Unmarshal(respBytes, &result); err != nil {
-		return nil, fmt.Errorf("invalid FWI area response: %w", err)
+		return nil, fmt.Errorf("invalid %s response: %w", label, err)
 	}
 	return result, nil
 }
