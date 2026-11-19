@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	urlpkg "net/url"
+	"strconv"
 	"strings"
 
 	applogger "platform.local/platform/logger"
@@ -19,28 +20,28 @@ const (
 	urlPatternAdminUser = "%s/admin/realms/%s/users/%s"
 )
 
-// Default model limits per access level
+// default model limits
 var defaultModelLimits = map[string]int{
-	"very_low":      10,
-	"intermediate":  25,
-	"manager":       50,
-	"expert":        0, // 0 = unlimited
+	"very_low":     10,
+	"intermediate": 25,
+	"manager":      50,
+	"expert":       0, // 0 unlimited
 }
 
-// getDefaultModelLimit returns the default model limit for an access level
+// returns default model
 func getDefaultModelLimit(accessLevel string) int {
 	if limit, ok := defaultModelLimits[accessLevel]; ok {
 		return limit
 	}
-	return 10 // Default to basic user limit
+	return 10 // default basic user
 }
 
-// Store handles all Keycloak user CRUD operations
+// handles all keycloak
 type Store struct {
 	cfg *config.Config
 }
 
-// keycloakRequest performs a Keycloak API request with authentication
+// performs keycloak api
 func (s *Store) keycloakRequest(method, url, authToken string, body io.Reader) (*http.Response, error) {
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
@@ -59,7 +60,7 @@ func (s *Store) keycloakRequest(method, url, authToken string, body io.Reader) (
 	return resp, nil
 }
 
-// buildUserUpdatePayload creates a standard user update payload
+// creates standard user
 func buildUserUpdatePayload(user *User) map[string]interface{} {
 	return map[string]interface{}{
 		"username":        user.Username,
@@ -71,7 +72,7 @@ func buildUserUpdatePayload(user *User) map[string]interface{} {
 	}
 }
 
-// checkKeycloakResponse validates HTTP response and returns error if status is not in acceptedCodes
+// validates http response
 func checkKeycloakResponse(resp *http.Response, acceptedCodes ...int) error {
 	for _, code := range acceptedCodes {
 		if resp.StatusCode == code {
@@ -82,7 +83,7 @@ func checkKeycloakResponse(resp *http.Response, acceptedCodes ...int) error {
 	return fmt.Errorf("keycloak error (status %d): %s", resp.StatusCode, string(body))
 }
 
-// doKeycloakRequest performs a request, checks status, and handles response cleanup
+// performs request checks
 func (s *Store) doKeycloakRequest(method, url, authToken string, body io.Reader, acceptedCodes ...int) (*http.Response, error) {
 	resp, err := s.keycloakRequest(method, url, authToken, body)
 	if err != nil {
@@ -97,7 +98,7 @@ func (s *Store) doKeycloakRequest(method, url, authToken string, body io.Reader,
 	return resp, nil
 }
 
-// getKeycloakUsers performs a GET request and decodes a list of users
+// performs get request
 func (s *Store) getKeycloakUsers(authToken, url string) ([]User, error) {
 	resp, err := s.doKeycloakRequest("GET", url, authToken, nil, http.StatusOK)
 	if err != nil {
@@ -113,7 +114,7 @@ func (s *Store) getKeycloakUsers(authToken, url string) ([]User, error) {
 	return users, nil
 }
 
-// updateUserPayload sends a user update to Keycloak
+// sends user update
 func (s *Store) updateUserPayload(authToken, userID string, user *User) error {
 	updatePayload := buildUserUpdatePayload(user)
 
@@ -126,11 +127,31 @@ func (s *Store) updateUserPayload(authToken, userID string, user *User) error {
 	return s.doKeycloakPUT(authToken, url, body, http.StatusNoContent, http.StatusOK)
 }
 
+// invite link valid
+const setPasswordLinkSeconds = 72 * 60 * 60
+
+// set password email
+func (s *Store) SendSetPasswordEmail(authToken, userID string) error {
+	params := urlpkg.Values{}
+	params.Set("lifespan", strconv.Itoa(setPasswordLinkSeconds))
+	if s.cfg.Auth.ClientID != "" && s.cfg.AppURL != "" {
+		params.Set("client_id", s.cfg.Auth.ClientID)
+		params.Set("redirect_uri", strings.TrimRight(s.cfg.AppURL, "/")+"/login")
+	}
+	endpoint := fmt.Sprintf(urlPatternAdminUser+"/execute-actions-email?%s", s.cfg.Auth.BaseURL, s.cfg.Auth.Realm, urlpkg.PathEscape(userID), params.Encode())
+	resp, err := s.keycloakRequest("PUT", endpoint, authToken, strings.NewReader(`["UPDATE_PASSWORD"]`))
+	if err != nil {
+		return err
+	}
+	defer func() { _ = resp.Body.Close() }()
+	return checkKeycloakResponse(resp, http.StatusOK, http.StatusNoContent)
+}
+
 func New(cfg *config.Config) *Store {
 	return &Store{cfg: cfg}
 }
 
-// User represents a Keycloak user
+// represents keycloak user
 type User struct {
 	ID               string              `json:"id"`
 	Username         string              `json:"username"`
@@ -142,7 +163,7 @@ type User struct {
 	CreatedTimestamp *int64              `json:"createdTimestamp,omitempty"`
 }
 
-// CreateUserRequest represents data needed to create a user
+// represents data needed
 type CreateUserRequest struct {
 	Email       string
 	Name        string
@@ -150,7 +171,7 @@ type CreateUserRequest struct {
 	AccessLevel string
 }
 
-// UpdateUserRequest represents data needed to update a user
+// represents data needed
 type UpdateUserRequest struct {
 	Email         *string
 	Name          *string
@@ -160,7 +181,7 @@ type UpdateUserRequest struct {
 	ModelLimit    *int
 }
 
-// ListUsersParams represents parameters for listing users
+// represents parameters listing
 type ListUsersParams struct {
 	First  int
 	Max    int
@@ -200,7 +221,7 @@ func (s *Store) ListUsers(authToken string, params ListUsersParams) ([]User, err
 }
 
 func (s *Store) CreateUser(authToken string, req CreateUserRequest) (string, error) {
-	// Get default model limit based on access level
+	// get default model
 	modelLimit := getDefaultModelLimit(req.AccessLevel)
 
 	payload := map[string]interface{}{
@@ -232,7 +253,7 @@ func (s *Store) CreateUser(authToken string, req CreateUserRequest) (string, err
 		return "", err
 	}
 
-	// Find the created user by email to get the ID
+	// find created user
 	users, err := s.FindUserByEmail(authToken, req.Email)
 	if err != nil {
 		return "", fmt.Errorf("failed to find created user: %w", err)
@@ -265,7 +286,7 @@ func applyUserUpdates(user *User, req UpdateUserRequest) {
 	if req.AccessLevel != nil && *req.AccessLevel != "" {
 		newAccessLevel := strings.ToLower(*req.AccessLevel)
 		user.Attributes["access_level"] = []string{newAccessLevel}
-		// Auto-update model_limit when access_level changes (unless explicitly set)
+		// auto-update model_limit access_level
 		if req.ModelLimit == nil {
 			user.Attributes["model_limit"] = []string{fmt.Sprintf("%d", getDefaultModelLimit(newAccessLevel))}
 		}
@@ -344,7 +365,7 @@ func (s *Store) SetUserPassword(authToken, userID, password string, temporary bo
 	return s.doKeycloakPUT(authToken, url, body, http.StatusNoContent, http.StatusOK)
 }
 
-// doKeycloakPUT executes a PUT request with JSON body and checks accepted status codes
+// executes put request
 func (s *Store) doKeycloakPUT(authToken, url string, body []byte, acceptedCodes ...int) error {
 	resp, err := s.keycloakRequest("PUT", url, authToken, bytes.NewReader(body))
 	if err != nil {

@@ -74,7 +74,7 @@ func (h *Handler) ListUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": gin.H{"data": users, "page": pagination.Page, "per_page": pagination.PerPage, "total": total}})
 }
 
-// markAPIAccess flags users that hold an active API token for the admin UI.
+// flags users hold
 func (h *Handler) markAPIAccess(users []services.UserDTO) {
 	ids := make([]string, 0, len(users))
 	for i := range users {
@@ -96,6 +96,8 @@ type createUserRequest struct {
 	Password    string `json:"password"`
 	AccessLevel string `json:"access_level"`
 	GroupID     string `json:"group_id"`
+	// email set-password link
+	SendInvite bool `json:"send_invite"`
 }
 
 func (h *Handler) CreateUser(c *gin.Context) {
@@ -115,6 +117,10 @@ func (h *Handler) CreateUser(c *gin.Context) {
 	if req.AccessLevel == "" {
 		req.AccessLevel = "very_low"
 	}
+	if !req.SendInvite && req.Password == "" {
+		httputil.BadRequest(c, "password required unless an invite email is sent")
+		return
+	}
 
 	authToken := h.getAuthToken(sessionData)
 	if existing, err := h.userStore.FindUserByEmail(authToken, req.Email); err == nil && len(existing) > 0 {
@@ -132,7 +138,36 @@ func (h *Handler) CreateUser(c *gin.Context) {
 
 	h.userService.SetUserPasswordIfProvided(authToken, userID, req.Email, req.Password)
 	h.userService.AssignUserToGroup(c.Request.Context(), userID, req.GroupID, sessionData)
-	httputil.Created(c, gin.H{"message": "user created"})
+
+	inviteSent := false
+	if req.SendInvite {
+		if err := h.userStore.SendSetPasswordEmail(authToken, userID); err != nil {
+			// user exists, resend later
+			applogger.ForComponent("users").Errorf("invite email failed user_id=%s err=%v", userID, err)
+		} else {
+			inviteSent = true
+		}
+	}
+	httputil.Created(c, gin.H{"message": "user created", "invite_sent": inviteSent})
+}
+
+// admin sends reset link
+func (h *Handler) SendPasswordEmail(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		httputil.BadRequest(c, errIDRequired)
+		return
+	}
+	authToken, ok := h.validateManagerUserAccess(c, id, "send password email")
+	if !ok {
+		return
+	}
+	if err := h.userStore.SendSetPasswordEmail(authToken, id); err != nil {
+		applogger.ForComponent("users").Errorf("password email failed user_id=%s err=%v", id, err)
+		httputil.BadGateway(c, "failed to send password email")
+		return
+	}
+	httputil.SuccessResponse(c, gin.H{"message": "password email sent"})
 }
 
 type updateUserRequest struct {
@@ -176,7 +211,7 @@ func (h *Handler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	// Capture the access level before the update to determine if we need to sync groups after the update
+	// capture access level
 	previousLevel := ""
 	if req.AccessLevel != nil {
 		if current, err := h.userStore.GetUser(authToken, id); err == nil {

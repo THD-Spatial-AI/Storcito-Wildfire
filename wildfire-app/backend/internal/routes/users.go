@@ -17,12 +17,13 @@ func registerUserManagementRoutes(api *gin.RouterGroup, handler *usershandler.Ha
 	api.GET(routeUsersByID, handler.GetUser)
 	api.PUT(routeUsersByID, handler.UpdateUser)
 	api.PUT(routeUsersByID+"/verify-email", handler.VerifyEmail)
+	api.POST(routeUsersByID+"/password-email", handler.SendPasswordEmail)
 	api.DELETE(routeUsersByID, handler.DeleteUser)
 	api.PUT(routeUsersByID+"/disable", handler.DisableUser)
 	api.PUT(routeUsersByID+"/enable", handler.EnableUser)
 	api.POST("/users/bulk-delete", handler.BulkDeleteUsers)
 
-	// Personal access tokens, managed by experts for each user.
+	// personal access tokens
 	api.POST(routeUsersByID+"/tokens", handler.CreateUserToken)
 	api.GET(routeUsersByID+"/tokens", handler.ListUserTokens)
 	api.DELETE(routeUsersByID+"/tokens/:tokenId", handler.RevokeUserToken)
