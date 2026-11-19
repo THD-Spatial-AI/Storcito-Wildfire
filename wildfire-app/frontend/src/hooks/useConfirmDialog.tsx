@@ -14,7 +14,7 @@ import {
 	IconCircleCheck,
 	IconExclamationCircle,
 	IconInfoCircle,
-	IconX,
+	IconTrash,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
@@ -32,6 +32,8 @@ interface ConfirmOptions {
 	itemName?: string;
 	itemType?: string;
 	isDangerous?: boolean;
+	/** set internally */
+	inlineName?: boolean;
 }
 
 interface ConfirmContextValue {
@@ -71,8 +73,10 @@ export const ConfirmProvider = ({ children }: { children: ReactNode }) => {
 			}
 			
 			if (!opts.description) {
-				finalOptions.description = itemName 
-					? `Are you sure you want to delete "${itemName}"? This action cannot be undone.`
+				// bold name leads
+				finalOptions.inlineName = Boolean(itemName);
+				finalOptions.description = itemName
+					? `will be permanently deleted. This action cannot be undone.`
 					: `Are you sure you want to delete this ${itemType}? This action cannot be undone.`;
 			}
 			
@@ -123,42 +127,31 @@ export const ConfirmProvider = ({ children }: { children: ReactNode }) => {
 		<ConfirmContext.Provider value={confirmValue}>
 			{children}
 			<AlertDialog open={isOpen} onOpenChange={onOpenChange}>
-				<AlertDialogContent className="p-0 overflow-hidden max-w-xs">
-					{/* Close button */}
-					<button
-						type="button"
-						onClick={handleCancel}
-						disabled={loading}
-						className="absolute right-3 top-3 z-10 p-1 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
-					>
-						<IconX className="w-3.5 h-3.5" />
-					</button>
-
-					{/* Content */}
-					<div className="px-4 pt-4 pb-3">
-						<div className="flex items-start gap-3">
-							{options.type && <AlertBadge type={options.type} />}
-							<AlertDialogHeader className="space-y-1 flex-1 min-w-0">
-								<AlertDialogTitle className="text-base font-semibold text-gray-900 dark:text-gray-100 pr-4">
-									{options.title}
-								</AlertDialogTitle>
-								<AlertDialogDescription className={cn(
-									"text-sm text-gray-500 dark:text-gray-400 leading-relaxed",
-									options.description ? "" : "sr-only"
-								)}>
-									{options.description || options.title || "Confirmation dialog"}
-								</AlertDialogDescription>
-							</AlertDialogHeader>
-						</div>
+				<AlertDialogContent className="w-[calc(100vw-2rem)] !max-w-[420px] gap-0 overflow-hidden rounded-xl border border-border bg-card p-0 shadow-[0_24px_48px_-12px_rgb(0_0_0/0.25)]">
+					<div className="flex gap-3.5 px-5 pt-5 pb-5">
+						{options.type && <AlertBadge type={options.type} />}
+						<AlertDialogHeader className="min-w-0 flex-1 space-y-1 text-left">
+							<AlertDialogTitle className="text-[15px] font-semibold leading-6 text-foreground">
+								{options.title}
+							</AlertDialogTitle>
+							<AlertDialogDescription className={cn(
+								"text-[13px] leading-5 text-muted-foreground",
+								options.description ? "" : "sr-only"
+							)}>
+								{options.inlineName && options.itemName && (
+									<span className="font-medium text-foreground">{options.itemName} </span>
+								)}
+								{options.description || options.title || "Confirmation dialog"}
+							</AlertDialogDescription>
+						</AlertDialogHeader>
 					</div>
 
-					{/* Footer */}
-					<AlertDialogFooter className="px-4 py-3 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-800 gap-2 sm:gap-2">
-						<Button 
-							variant="ghost" 
-							disabled={loading} 
-							onClick={handleCancel} 
-							className="rounded-lg cursor-pointer text-sm h-9 px-4 font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
+					<AlertDialogFooter className="flex-row justify-end gap-2 border-t border-border bg-muted px-5 py-3 sm:space-x-0">
+						<Button
+							variant="outline"
+							disabled={loading}
+							onClick={handleCancel}
+							className="h-8 cursor-pointer rounded-lg border-border bg-background px-3.5 text-[13px] font-medium text-foreground shadow-none hover:bg-muted"
 						>
 							{options.cancelLabel || "Cancel"}
 						</Button>
@@ -169,14 +162,14 @@ export const ConfirmProvider = ({ children }: { children: ReactNode }) => {
 							disabled={loading}
 							onClick={handleConfirm}
 							className={cn(
-								"rounded-lg cursor-pointer text-sm h-9 px-4 font-medium min-w-[80px]",
-								"transition-all duration-200",
-								isDestructive 
-									? "bg-red-600 hover:bg-red-700 text-white dark:bg-red-600 dark:hover:bg-red-700" 
-									: "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-200"
+								"h-8 min-w-[72px] cursor-pointer rounded-lg px-3.5 text-[13px] font-medium shadow-none transition-colors duration-150",
+								"focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+								isDestructive
+									? "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/40"
+									: "bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring"
 							)}
 						>
-							{loading ? <LoadingDots className={isDestructive ? "bg-white" : "bg-white dark:bg-gray-900"} /> : options.confirmLabel || "Confirm"}
+							{loading ? <LoadingDots className={isDestructive ? "bg-white" : "bg-primary-foreground"} /> : options.confirmLabel || "Confirm"}
 						</Button>
 					</AlertDialogFooter>
 				</AlertDialogContent>
@@ -192,50 +185,21 @@ export const useConfirm = () => {
 	return context.confirm;
 };
 
+// dashboard tones
+const BADGE: Record<ConfirmType, { tone: string; Icon: typeof IconAlertTriangle }> = {
+	success: { tone: "text-emerald-600 dark:text-emerald-400", Icon: IconCircleCheck },
+	error: { tone: "text-destructive", Icon: IconExclamationCircle },
+	info: { tone: "text-blue-600 dark:text-blue-400", Icon: IconInfoCircle },
+	delete: { tone: "text-destructive", Icon: IconTrash },
+	warning: { tone: "text-amber-600 dark:text-amber-400", Icon: IconAlertTriangle },
+	default: { tone: "text-foreground/70", Icon: IconAlertTriangle },
+};
+
 const AlertBadge: React.FC<{ type: ConfirmType }> = ({ type }) => {
-	const baseClasses = "flex items-center justify-center w-8 h-8 rounded-lg flex-shrink-0";
-	
-	switch (type) {
-		case "success":
-			return (
-				<div className={cn(baseClasses, "bg-green-100 dark:bg-green-900/30")}>
-					<IconCircleCheck className="w-4 h-4 text-green-600 dark:text-green-400" />
-				</div>
-			);
-
-		case "error":
-			return (
-				<div className={cn(baseClasses, "bg-red-100 dark:bg-red-900/30")}>
-					<IconExclamationCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
-				</div>
-			);
-
-		case "info":
-			return (
-				<div className={cn(baseClasses, "bg-blue-100 dark:bg-blue-900/30")}>
-					<IconInfoCircle className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-				</div>
-			);
-
-		case "delete":
-			return (
-				<div className={cn(baseClasses, "bg-red-100 dark:bg-red-900/30")}>
-					<IconAlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400" />
-				</div>
-			);
-
-		case "warning":
-			return (
-				<div className={cn(baseClasses, "bg-amber-100 dark:bg-amber-900/30")}>
-					<IconAlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-				</div>
-			);
-
-		default:
-			return (
-				<div className={cn(baseClasses, "bg-gray-100 dark:bg-gray-800")}>
-					<IconAlertTriangle className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-				</div>
-			);
-	}
+	const { tone, Icon } = BADGE[type] ?? BADGE.default;
+	return (
+		<div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] border border-border bg-muted", tone)}>
+			<Icon className="h-[18px] w-[18px]" stroke={1.75} />
+		</div>
+	);
 };

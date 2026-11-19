@@ -22,7 +22,7 @@ export const useDeleteConfirm = ({
 		let customDescription: string | undefined;
 		if (hasChildren) {
 			const childText = children.length > 1 ? "s" : "";
-			customDescription = `Are you sure you want to delete "${model.title}"? This model has ${children.length} child model${childText} that will remain but become independent. This action cannot be undone.`;
+			customDescription = `"${model.title}" has ${children.length} version${childText}; they will stay as separate models. This action cannot be undone.`;
 		}
 
 		await confirm({
