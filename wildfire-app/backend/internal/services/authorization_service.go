@@ -34,20 +34,28 @@ func NewAuthorizationService(db *gorm.DB, kc *platformkeycloak.Client) Authoriza
 	return &authorizationService{db: db, kc: kc}
 }
 
-func (s *authorizationService) CanManageUser(ctx context.Context, actor *httputil.UserContext, targetUserID string) error {
+// expert manager groups
+func (s *authorizationService) managerGroups(ctx context.Context, actor *httputil.UserContext) (map[string]bool, bool, error) {
 	if actor == nil {
-		return ErrAccessDenied
+		return nil, false, ErrAccessDenied
 	}
 	if actor.AccessLevel == constants.AccessLevelExpert {
-		return nil
+		return nil, true, nil
 	}
 	if actor.AccessLevel != constants.AccessLevelManager || s.kc == nil {
-		return ErrAccessDenied
+		return nil, false, ErrAccessDenied
 	}
-
 	mgrSet, err := s.kc.GetManagerGroupSet(ctx, actor.UserID)
 	if err != nil {
-		return ErrAuthzFailed
+		return nil, false, ErrAuthzFailed
+	}
+	return mgrSet, false, nil
+}
+
+func (s *authorizationService) CanManageUser(ctx context.Context, actor *httputil.UserContext, targetUserID string) error {
+	mgrSet, expert, err := s.managerGroups(ctx, actor)
+	if err != nil || expert {
+		return err
 	}
 
 	sharedDefaultID := ""
@@ -115,18 +123,9 @@ func (s *authorizationService) CanManageWorkspace(ctx context.Context, actor *ht
 }
 
 func (s *authorizationService) CanManageGroup(ctx context.Context, actor *httputil.UserContext, groupID string) error {
-	if actor == nil {
-		return ErrAccessDenied
-	}
-	if actor.AccessLevel == constants.AccessLevelExpert {
-		return nil
-	}
-	if actor.AccessLevel != constants.AccessLevelManager || s.kc == nil {
-		return ErrAccessDenied
-	}
-	mgrSet, err := s.kc.GetManagerGroupSet(ctx, actor.UserID)
-	if err != nil {
-		return ErrAuthzFailed
+	mgrSet, expert, err := s.managerGroups(ctx, actor)
+	if err != nil || expert {
+		return err
 	}
 	if !mgrSet[groupID] {
 		return ErrAccessDenied
