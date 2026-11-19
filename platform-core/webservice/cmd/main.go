@@ -215,6 +215,8 @@ func registerRoutes(r *gin.Engine, deps *appDependencies) {
 		api.GET("/webservices/available-precomputed-dates", wsHandler.GetAvailablePrecomputedDates)
 		api.GET("/webservices/available-data-coverage", wsHandler.GetAvailableDataCoverage)
 		api.POST("/webservices/fwi-area", wsHandler.GetFWIAreaSummary)
+		api.GET("/webservices/boundaries/:level", wsHandler.ListBoundaries)
+		api.GET("/webservices/boundaries/:level/:code", wsHandler.GetBoundary)
 		api.GET("/webservices/:id", wsHandler.GetWebserviceByID)
 		api.PUT("/webservices/:id", wsHandler.UpdateWebservice)
 		api.DELETE("/webservices/:id", wsHandler.DeleteWebservice)
