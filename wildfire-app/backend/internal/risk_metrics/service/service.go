@@ -1,4 +1,4 @@
-// Package riskmetricsservice computes risk analytics from published rasters.
+// riskmetricsservice computes risk
 package riskmetricsservice
 
 import (
@@ -14,7 +14,7 @@ import (
 	commonModels "platform.local/common/pkg/models"
 )
 
-// Level is a categorical risk classification exposed to clients.
+// categorical risk classification
 type Level string
 
 const (
@@ -26,7 +26,7 @@ const (
 	LevelVeryHigh Level = "very_high"
 )
 
-// Trend describes how the current risk compares to the previous run.
+// describes current risk
 type Trend string
 
 const (
@@ -36,7 +36,7 @@ const (
 	TrendWorsening Trend = "worsening"
 )
 
-// Distribution mirrors geoserver.Distribution in the domain layer.
+// mirrors geoserver distribution
 type Distribution struct {
 	VeryLow  int `json:"very_low"`
 	Low      int `json:"low"`
@@ -45,7 +45,7 @@ type Distribution struct {
 	VeryHigh int `json:"very_high"`
 }
 
-// Metrics is the JSON payload returned to the frontend.
+// json payload returned
 type Metrics struct {
 	ModelID          uint         `json:"model_id"`
 	ResultID         uint         `json:"result_id"`
@@ -60,7 +60,7 @@ type Metrics struct {
 	PreviousScore    *float64     `json:"previous_score,omitempty"`
 }
 
-// MapSample is one valid geographically positioned raster sample.
+// one valid geographically
 type MapSample struct {
 	X      float64 `json:"x"`
 	Y      float64 `json:"y"`
@@ -70,7 +70,7 @@ type MapSample struct {
 	Column int     `json:"column"`
 }
 
-// MapSamples powers frontend geo heatmap and choropleth charts.
+// powers frontend geo
 type MapSamples struct {
 	ModelID      uint                   `json:"model_id"`
 	ResultID     uint                   `json:"result_id"`
@@ -82,7 +82,7 @@ type MapSamples struct {
 	Distribution geoserver.Distribution `json:"distribution"`
 }
 
-// DayAreas is the analyzed surface area per risk class, in km².
+// analyzed surface area
 type DayAreas struct {
 	VeryLow  float64 `json:"very_low"`
 	Low      float64 `json:"low"`
@@ -91,7 +91,7 @@ type DayAreas struct {
 	VeryHigh float64 `json:"very_high"`
 }
 
-// DayDistribution is one day of a dynamic run, as counts and km² per class.
+// one day dynamic
 type DayDistribution struct {
 	Date         string       `json:"date"`
 	Distribution Distribution `json:"distribution"`
@@ -100,14 +100,14 @@ type DayDistribution struct {
 	TotalSamples int          `json:"total_samples"`
 }
 
-// DailySeries powers the risk-over-time stacked area chart for dynamic runs.
+// powers risk-over-time stacked
 type DailySeries struct {
 	ModelID  uint              `json:"model_id"`
 	ResultID uint              `json:"result_id"`
 	Days     []DayDistribution `json:"days"`
 }
 
-// severityWeights assigns a normalized risk weight to each bucket
+// assigns normalized risk
 var severityWeights = map[string]float64{
 	"very_low":  0.20,
 	"low":       0.40,
@@ -116,25 +116,25 @@ var severityWeights = map[string]float64{
 	"very_high": 1.00,
 }
 
-// defaultSampleCount is the pixel sample target sent to the geoservice.
+// pixel sample target
 const defaultSampleCount = 2000
 
 const defaultMapSampleCount = 625
 
 const defaultDailySampleCount = 0
 
-// ResultStore is the minimum surface we need from persistence.
+// minimum surface need
 type ResultStore interface {
-	// LatestConfiguredResult returns the newest configured result (ErrRecordNotFound when absent).
+	// returns newest configured
 	LatestConfiguredResult(ctx context.Context, modelID uint) (*commonModels.ModelResult, error)
-	// PreviousConfiguredResult returns the prior configured result, for the trend.
+	// returns prior configured
 	PreviousConfiguredResult(ctx context.Context, modelID, excludeResultID uint) (*commonModels.ModelResult, error)
 }
 
-// ErrNoConfiguredResult means the model has no configured GeoServer layer.
+// means model has
 var ErrNoConfiguredResult = errors.New("risk_metrics: no configured result for model")
 
-// Cache stores computed Metrics keyed by the immutable result ID.
+// stores computed metrics
 type Cache interface {
 	Get(ctx context.Context, resultID uint) (*Metrics, bool)
 	Set(ctx context.Context, resultID uint, m *Metrics)
@@ -142,30 +142,29 @@ type Cache interface {
 	SetDaily(ctx context.Context, resultID uint, s *DailySeries)
 }
 
-// Service computes risk metrics.
+// computes risk metrics
 type Service struct {
 	geo   geoserver.Client
 	store ResultStore
 	cache Cache
 }
 
-// NewService constructs a Service. Both dependencies are required.
+// constructs service
 func NewService(store ResultStore, geo geoserver.Client) *Service {
 	return &Service{store: store, geo: geo}
 }
 
-// WithCache attaches a metrics cache and returns the service for chaining.
+// attaches metrics cache
 func (s *Service) WithCache(c Cache) *Service {
 	s.cache = c
 	return s
 }
 
-// CalculateForModel computes Metrics for the latest configured result.
-func (s *Service) CalculateForModel(ctx context.Context, modelID uint) (*Metrics, error) {
+// configured latest result
+func (s *Service) latestResult(ctx context.Context, modelID uint) (*commonModels.ModelResult, error) {
 	if s == nil || s.store == nil || s.geo == nil {
 		return nil, errors.New("risk_metrics: service not configured")
 	}
-
 	result, err := s.store.LatestConfiguredResult(ctx, modelID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -173,8 +172,17 @@ func (s *Service) CalculateForModel(ctx context.Context, modelID uint) (*Metrics
 		}
 		return nil, fmt.Errorf("risk_metrics: load latest result: %w", err)
 	}
+	return result, nil
+}
 
-	// Cache hit (keyed by immutable result ID) skips the GeoServer sampling.
+// computes metrics latest
+func (s *Service) CalculateForModel(ctx context.Context, modelID uint) (*Metrics, error) {
+	result, err := s.latestResult(ctx, modelID)
+	if err != nil {
+		return nil, err
+	}
+
+	// cache hit skips
 	if s.cache != nil {
 		if cached, ok := s.cache.Get(ctx, result.ID); ok {
 			return cached, nil
@@ -201,18 +209,11 @@ func (s *Service) CalculateForModel(ctx context.Context, modelID uint) (*Metrics
 	return metrics, nil
 }
 
-// SampleMapForModel returns positioned raster samples for map charts.
+// returns positioned raster
 func (s *Service) SampleMapForModel(ctx context.Context, modelID uint, sampleCount int) (*MapSamples, error) {
-	if s == nil || s.store == nil || s.geo == nil {
-		return nil, errors.New("risk_metrics: service not configured")
-	}
-
-	result, err := s.store.LatestConfiguredResult(ctx, modelID)
+	result, err := s.latestResult(ctx, modelID)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, ErrNoConfiguredResult
-		}
-		return nil, fmt.Errorf("risk_metrics: load latest result: %w", err)
+		return nil, err
 	}
 
 	if sampleCount <= 0 {
@@ -252,18 +253,11 @@ func (s *Service) SampleMapForModel(ctx context.Context, modelID uint, sampleCou
 	return out, nil
 }
 
-// DailyDistributionsForModel returns per-day class areas (km²), cached by result ID.
+// returns per-day class
 func (s *Service) DailyDistributionsForModel(ctx context.Context, modelID uint) (*DailySeries, error) {
-	if s == nil || s.store == nil || s.geo == nil {
-		return nil, errors.New("risk_metrics: service not configured")
-	}
-
-	result, err := s.store.LatestConfiguredResult(ctx, modelID)
+	result, err := s.latestResult(ctx, modelID)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, ErrNoConfiguredResult
-		}
-		return nil, fmt.Errorf("risk_metrics: load latest result: %w", err)
+		return nil, err
 	}
 
 	if s.cache != nil {
@@ -339,7 +333,7 @@ func buildMetrics(modelID, resultID uint, sample geoserver.SampleResult, bounds 
 	affectedFraction := riskyFraction(dist)
 	bboxArea := areaKm2(bounds)
 
-	// Scale the bbox area down to the non-nodata surface.
+	// scale bbox area
 	validFraction := sample.ValidFraction()
 	analyzedArea := bboxArea
 	if validFraction > 0 {
@@ -366,7 +360,7 @@ func buildMetrics(modelID, resultID uint, sample geoserver.SampleResult, bounds 
 	}
 }
 
-// overallScore is a weighted mean of bucket proportions (0 when empty).
+// weighted mean bucket
 func overallScore(d geoserver.Distribution) float64 {
 	total := float64(d.Total())
 	if total == 0 {
@@ -380,7 +374,7 @@ func overallScore(d geoserver.Distribution) float64 {
 	return sum / total
 }
 
-// riskyFraction is the fraction of pixels classified high or very high.
+// fraction pixels classified
 func riskyFraction(d geoserver.Distribution) float64 {
 	total := d.Total()
 	if total == 0 {
@@ -404,7 +398,7 @@ func addToDistribution(d *geoserver.Distribution, level Level) {
 	}
 }
 
-// classifyLevel maps the continuous score to a Level at class midpoints.
+// maps continuous score
 func classifyLevel(score float64) Level {
 	switch {
 	case score <= 0:
@@ -422,7 +416,7 @@ func classifyLevel(score float64) Level {
 	}
 }
 
-// classifyTrend compares scores; a ±5% band counts as stable.
+// compares scores ±5%
 func classifyTrend(current, previous float64) Trend {
 	const band = 0.05
 	delta := current - previous
@@ -436,7 +430,7 @@ func classifyTrend(current, previous float64) Trend {
 	}
 }
 
-// areaKm2 approximates the EPSG:4326 bbox area (flat-earth, dashboard-grade).
+// approximates epsg
 func areaKm2(b geoserver.Bounds) float64 {
 	dx := math.Abs(b.MaxX - b.MinX)
 	dy := math.Abs(b.MaxY - b.MinY)
@@ -444,7 +438,7 @@ func areaKm2(b geoserver.Bounds) float64 {
 		return 0
 	}
 	midLat := (b.MinY + b.MaxY) / 2
-	// Degrees to km, approximate (WGS84 mean).
+	// degrees km approximate
 	const kmPerDegLat = 110.574
 	const kmPerDegLonAtEq = 111.320
 	widthKm := dx * kmPerDegLonAtEq * math.Cos(midLat*math.Pi/180)

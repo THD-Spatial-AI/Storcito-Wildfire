@@ -1,4 +1,4 @@
-// Package riskmetricshandler serves the risk-metrics HTTP endpoints.
+// riskmetricshandler serves risk-metrics
 package riskmetricshandler
 
 import (
@@ -18,18 +18,18 @@ import (
 	riskmetricsservice "spatialhub_backend/internal/risk_metrics/service"
 )
 
-// Handler serves GET /models/:id/risk-metrics.
+// serves get /models/
 type Handler struct {
 	service     *riskmetricsservice.Service
 	accessStore access.ModelAccessStore
 }
 
-// NewHandler constructs the handler. Both dependencies are required.
+// constructs handler
 func NewHandler(service *riskmetricsservice.Service, accessStore access.ModelAccessStore) *Handler {
 	return &Handler{service: service, accessStore: accessStore}
 }
 
-// Get handles GET /models/:id/risk-metrics.
+// handles get /models/
 func (h *Handler) Get(c *gin.Context) {
 	log := logger.ForComponent("risk_metrics")
 
@@ -42,7 +42,7 @@ func (h *Handler) Get(c *gin.Context) {
 	respond(c, log, modelID, metrics, err, "risk metrics calculation failed", "Failed to calculate risk metrics")
 }
 
-// GetMapSamples handles GET /models/:id/risk-map-samples.
+// handles get /models/
 func (h *Handler) GetMapSamples(c *gin.Context) {
 	log := logger.ForComponent("risk_metrics")
 
@@ -56,7 +56,7 @@ func (h *Handler) GetMapSamples(c *gin.Context) {
 	respond(c, log, modelID, samples, err, "risk map sampling failed", "Failed to sample risk map")
 }
 
-// GetDailyDistributions handles GET /models/:id/risk-daily-distribution.
+// handles get /models/
 func (h *Handler) GetDailyDistributions(c *gin.Context) {
 	log := logger.ForComponent("risk_metrics")
 

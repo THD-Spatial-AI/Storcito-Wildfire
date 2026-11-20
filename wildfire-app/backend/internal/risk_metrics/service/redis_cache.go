@@ -9,16 +9,16 @@ import (
 	goredis "github.com/redis/go-redis/v9"
 )
 
-// defaultCacheTTL is a safety expiry; metrics are immutable per result.
+// safety expiry metrics
 const defaultCacheTTL = 7 * 24 * time.Hour
 
-// RedisCache is a Redis-backed Cache for computed risk Metrics.
+// redis-backed cache computed
 type RedisCache struct {
 	client *goredis.Client
 	ttl    time.Duration
 }
 
-// NewRedisCache builds a RedisCache; non-positive ttl falls back to defaultCacheTTL.
+// builds rediscache non-positive
 func NewRedisCache(client *goredis.Client, ttl time.Duration) *RedisCache {
 	if ttl <= 0 {
 		ttl = defaultCacheTTL
@@ -30,7 +30,7 @@ func (c *RedisCache) key(resultID uint) string {
 	return fmt.Sprintf("risk_metrics:result:%d", resultID)
 }
 
-// Get returns cached metrics for the result, or false on miss / any error.
+// returns cached metrics
 func (c *RedisCache) Get(ctx context.Context, resultID uint) (*Metrics, bool) {
 	if c == nil || c.client == nil {
 		return nil, false
@@ -46,7 +46,7 @@ func (c *RedisCache) Get(ctx context.Context, resultID uint) (*Metrics, bool) {
 	return &m, true
 }
 
-// Set stores metrics for the result; failures are swallowed (cache is optional).
+// stores metrics result
 func (c *RedisCache) Set(ctx context.Context, resultID uint, m *Metrics) {
 	if c == nil || c.client == nil || m == nil {
 		return
@@ -62,7 +62,7 @@ func (c *RedisCache) dailyKey(resultID uint) string {
 	return fmt.Sprintf("risk_metrics:daily:%d", resultID)
 }
 
-// GetDaily returns the cached per-day series, or false on miss / any error.
+// returns cached per-day
 func (c *RedisCache) GetDaily(ctx context.Context, resultID uint) (*DailySeries, bool) {
 	if c == nil || c.client == nil {
 		return nil, false
@@ -78,7 +78,7 @@ func (c *RedisCache) GetDaily(ctx context.Context, resultID uint) (*DailySeries,
 	return &s, true
 }
 
-// SetDaily stores the per-day series; failures are swallowed (cache is optional).
+// stores per-day series
 func (c *RedisCache) SetDaily(ctx context.Context, resultID uint, s *DailySeries) {
 	if c == nil || c.client == nil || s == nil {
 		return
