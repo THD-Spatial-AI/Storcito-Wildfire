@@ -90,6 +90,8 @@ func registerRoutes(r *gin.Engine, deps *appDependencies) {
 	internal := api.Group("/internal/geoserver")
 	{
 		svc := services.NewGeoServerService(deps.DB)
+		// create styles early
+		go svc.WarmRiskStyles()
 		handler := geohandler.NewHandler(svc)
 		internal.POST("/results/:id/configure", handler.ConfigureResult)
 		internal.DELETE("/results/:id/layer", handler.DeleteLayer)

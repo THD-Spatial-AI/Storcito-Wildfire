@@ -123,6 +123,13 @@ func (s *GeoServerService) DeleteResultLayer(ctx context.Context, resultID uint)
 	return s.DeleteLayer(ctx, result)
 }
 
+// styles at startup
+func (s *GeoServerService) WarmRiskStyles() {
+	if err := s.ensureRiskStylesReady(); err != nil {
+		logger.ForComponent("geoserver").Warnf("risk style warm-up failed, retried on first use err=%v", err)
+	}
+}
+
 // result layer bounds
 func (s *GeoServerService) GetBoundsForResult(resultID uint) (map[string]interface{}, error) {
 	result, err := s.fetchResult(resultID)
@@ -526,11 +533,20 @@ func (s *GeoServerService) applyStyleToLayer(layerName string) error {
 	return s.doJSONRequest(http.MethodPut, url, payload, http.StatusOK)
 }
 
+// risk palettes by suffix
+var riskPalettes = map[string][5]string{
+	"":    {"#9ca3af", "#16a34a", "#eab308", "#f97316", "#dc2626"},
+	"_cb": {"#bdbdbd", "#fed98e", "#fe9929", "#d95f0e", "#7f2704"},
+}
+
 func (s *GeoServerService) ensureRiskStyles() error {
 	var errs []string
-	for _, def := range riskStyleDefinitions {
-		if err := s.upsertSLDStyle(def.name, buildRiskStyleSLD(def)); err != nil {
-			errs = append(errs, fmt.Sprintf("%s: %v", def.name, err))
+	for suffix, palette := range riskPalettes {
+		for _, def := range riskStyleDefinitions {
+			name := def.name + suffix
+			if err := s.upsertSLDStyle(name, buildRiskStyleSLD(def, name, palette)); err != nil {
+				errs = append(errs, fmt.Sprintf("%s: %v", name, err))
+			}
 		}
 	}
 	if len(errs) > 0 {
@@ -579,15 +595,15 @@ type riskColorMapEntry struct {
 	opacity  float64
 }
 
-func buildRiskStyleSLD(def riskStyleDefinition) string {
+func buildRiskStyleSLD(def riskStyleDefinition, name string, palette [5]string) string {
 	// opacity set client-side
 	entries := []riskColorMapEntry{
 		{quantity: 0, label: "No data", color: "#000000", opacity: 0},
-		{quantity: 1, label: "Very Low", color: "#9ca3af", opacity: 1},
-		{quantity: 2, label: "Low", color: "#16a34a", opacity: 1},
-		{quantity: 3, label: "Moderate", color: "#eab308", opacity: 1},
-		{quantity: 4, label: "High", color: "#f97316", opacity: 1},
-		{quantity: 5, label: "Very High", color: "#dc2626", opacity: 1},
+		{quantity: 1, label: "Very Low", color: palette[0], opacity: 1},
+		{quantity: 2, label: "Low", color: palette[1], opacity: 1},
+		{quantity: 3, label: "Moderate", color: palette[2], opacity: 1},
+		{quantity: 4, label: "High", color: palette[3], opacity: 1},
+		{quantity: 5, label: "Very High", color: palette[4], opacity: 1},
 	}
 
 	visibleValues := make(map[int]bool, len(def.visibleValues))
@@ -633,7 +649,7 @@ func buildRiskStyleSLD(def riskStyleDefinition) string {
     </UserStyle>
   </NamedLayer>
 </StyledLayerDescriptor>
-`, def.name, def.title, colorMap.String())
+`, name, def.title, colorMap.String())
 }
 
 func (s *GeoServerService) GetLayerBounds(result *models.ModelResult) (map[string]interface{}, error) {
