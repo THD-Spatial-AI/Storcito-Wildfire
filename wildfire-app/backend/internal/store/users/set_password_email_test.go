@@ -4,6 +4,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 
 	"platform.local/platform/auth"
@@ -34,5 +35,28 @@ func TestSendSetPasswordEmail(t *testing.T) {
 	// link back to app
 	if gotQuery["redirect_uri"][0] != "https://app.example/login" || gotQuery["client_id"][0] != "app" || gotQuery["lifespan"][0] != "259200" {
 		t.Fatalf("wrong query %v", gotQuery)
+	}
+}
+
+func TestSendSetPasswordEmailRetriesWithoutRedirect(t *testing.T) {
+	var calls []url.Values
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		calls = append(calls, r.URL.Query())
+		if r.URL.Query().Get("redirect_uri") != "" {
+			w.WriteHeader(http.StatusBadRequest)
+			_, _ = w.Write([]byte(`{"errorMessage":"Invalid redirect uri."}`))
+			return
+		}
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	defer srv.Close()
+
+	s := New(&config.Config{Auth: auth.Config{BaseURL: srv.URL, Realm: "r1", ClientID: "app"}, AppURL: "http://wrong:8000"})
+	if err := s.SendSetPasswordEmail("token", "u-1"); err != nil {
+		t.Fatalf("expected fallback success, got %v", err)
+	}
+	// second call plain
+	if len(calls) != 2 || calls[1].Get("redirect_uri") != "" || calls[1].Get("lifespan") != "259200" {
+		t.Fatalf("unexpected calls %v", calls)
 	}
 }

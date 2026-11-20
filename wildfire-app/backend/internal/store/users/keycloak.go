@@ -132,9 +132,20 @@ const setPasswordLinkSeconds = 72 * 60 * 60
 
 // set password email
 func (s *Store) SendSetPasswordEmail(authToken, userID string) error {
+	withRedirect := s.cfg.Auth.ClientID != "" && s.cfg.AppURL != ""
+	err := s.executeActionsEmail(authToken, userID, withRedirect)
+	// redirect not allowed
+	if err != nil && withRedirect && strings.Contains(err.Error(), "redirect") {
+		applogger.ForComponent("users").Warnf("app url %s not an allowed keycloak redirect, sending without return link", s.cfg.AppURL)
+		return s.executeActionsEmail(authToken, userID, false)
+	}
+	return err
+}
+
+func (s *Store) executeActionsEmail(authToken, userID string, withRedirect bool) error {
 	params := urlpkg.Values{}
 	params.Set("lifespan", strconv.Itoa(setPasswordLinkSeconds))
-	if s.cfg.Auth.ClientID != "" && s.cfg.AppURL != "" {
+	if withRedirect {
 		params.Set("client_id", s.cfg.Auth.ClientID)
 		params.Set("redirect_uri", strings.TrimRight(s.cfg.AppURL, "/")+"/login")
 	}
