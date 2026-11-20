@@ -1,202 +1,266 @@
-import { Activity, CheckCircle, Clock, Cloud, Cpu, Edit, HardDrive, Plus, RotateCw, Server, Settings, Trash2, XCircle, Zap } from "lucide-react";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@spatialhub/ui";
+import { CheckCircle2, Edit, MoreHorizontal, Plus, Server, Trash2, Wrench, XCircle, Zap } from "lucide-react";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@spatialhub/ui";
 import Pagination from "@/components/ui/Pagination";
-import ModelActionGroup from "@/components/shared/ModelActionGroup";
+import StatusBadge from "@/components/ui/StatusBadge";
 import type { WebserviceInstance } from "@/features/admin-dashboard/types";
-import { formatDateTime24h } from "@/utils/dateHelpers";
+import { formatDateTime24h, formatShortDateTime } from "@/utils/dateHelpers";
 import { useTranslation } from "@/i18n";
 
+export type EngineState = "online" | "busy" | "offline" | "inactive" | "maintenance";
+
+// one combined state
+export const engineState = (s: WebserviceInstance): EngineState => {
+	if (s.status === "maintenance") return "maintenance";
+	if (s.status === "inactive") return "inactive";
+	if (!s.available) return "offline";
+	if (s.busy || (s.max_concurrency > 0 && s.current_concurrency >= s.max_concurrency)) return "busy";
+	return "online";
+};
+
+const STATE_VARIANT: Record<EngineState, "success" | "info" | "danger" | "default" | "warning"> = {
+	online: "success",
+	busy: "info",
+	offline: "danger",
+	inactive: "default",
+	maintenance: "warning",
+};
+
+const STATE_FALLBACK: Record<EngineState, string> = {
+	online: "Online",
+	busy: "Busy",
+	offline: "Offline",
+	inactive: "Inactive",
+	maintenance: "Maintenance",
+};
+
+const HEADER_LABEL = "text-[11px] font-semibold uppercase tracking-wider text-muted-foreground";
+const STICKY = "sticky right-0 shadow-[-8px_0_8px_-8px_rgb(0_0_0/0.12)]";
+const ICON_BUTTON =
+	"inline-flex h-8 w-8 items-center justify-center rounded-lg text-foreground/80 transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+
 interface WebservicesTableProps {
-webservices: WebserviceInstance[];
-loading: boolean;
-readOnly: boolean;
-currentPage: number;
-itemsPerPage: number;
-setCurrentPage: (page: number) => void;
-setItemsPerPage: (itemsPerPage: number) => void;
-onAdd: () => void;
-onEdit: (service: WebserviceInstance) => void;
-onDelete: (service: WebserviceInstance) => void | Promise<void>;
-onServiceAction: (serviceId: number, action: string, serviceName?: string) => void | Promise<void>;
+	webservices: WebserviceInstance[];
+	loading: boolean;
+	readOnly: boolean;
+	currentPage: number;
+	itemsPerPage: number;
+	setCurrentPage: (page: number) => void;
+	setItemsPerPage: (itemsPerPage: number) => void;
+	onAdd: () => void;
+	onEdit: (service: WebserviceInstance) => void;
+	onDelete: (service: WebserviceInstance) => void | Promise<void>;
+	onServiceAction: (serviceId: number, action: string, serviceName?: string) => void | Promise<void>;
 }
 
-const getStatusColor = (status: string) => {
-switch (status) {
-case "active":
-return "bg-gray-600 text-white border-gray-700";
-case "inactive":
-return "bg-gray-300 text-gray-800 border-gray-400";
-case "maintenance":
-return "bg-gray-500 text-white border-gray-600";
-default:
-return "bg-gray-100 text-gray-800 border-gray-200";
-}
-};
+// percent when reported
+const usage = (value?: number | null) => (value === null || value === undefined ? null : `${Math.round(value)}%`);
 
-const getStatusIcon = (status: string) => {
-switch (status) {
-case "active":
-return <CheckCircle className="w-3 h-3" />;
-case "inactive":
-return <XCircle className="w-3 h-3" />;
-case "maintenance":
-return <Settings className="w-3 h-3" />;
-default:
-return <XCircle className="w-3 h-3" />;
-}
-};
+export function WebservicesTable({
+	webservices, loading, readOnly, currentPage, itemsPerPage, setCurrentPage, setItemsPerPage, onAdd, onEdit, onDelete, onServiceAction,
+}: WebservicesTableProps) {
+	const { t } = useTranslation();
+	const label = (s: WebserviceInstance) => s.name || `${t("webservicesManagement.table.service")} ${s.id}`;
+	const rows = webservices.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
+	const columns = readOnly ? 4 : 5;
 
-export function WebservicesTable({ webservices, loading, readOnly, currentPage, itemsPerPage, setCurrentPage, setItemsPerPage, onAdd, onEdit, onDelete, onServiceAction }: WebservicesTableProps) {
-const { t } = useTranslation();
-const renderAvailabilityStatus = (service: WebserviceInstance) => (
-<div className="flex items-center gap-2">
-<div className={`w-2 h-2 rounded-full ${service.available ? "bg-green-500" : "bg-gray-400"}`} />
-<span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-{service.available ? t("webservicesManagement.status.online") : t("webservicesManagement.status.offline")}
-</span>
-</div>
-);
-
-const renderBusyStatus = (service: WebserviceInstance) => {
-const isCalculating = service.current_concurrency > 0;
-return (
-<div className="flex items-center gap-2">
-{service.available && isCalculating ? (
-<>
-<RotateCw className="w-4 h-4 text-gray-500 dark:text-gray-400 animate-spin" />
-<span className="text-sm text-foreground">{t("webservicesManagement.busyStatus.calculating", { current: service.current_concurrency, max: service.max_concurrency })}</span>
-</>
-) : service.available ? (
-<>
-<Clock className="w-4 h-4 text-gray-500 dark:text-gray-400 dark:text-gray-300" />
-<span className="text-sm text-gray-700 dark:text-gray-300">{t("webservicesManagement.busyStatus.idle", { max: service.max_concurrency })}</span>
-</>
-) : (
-<span className="text-sm text-gray-500 dark:text-gray-400">N/A</span>
-)}
-</div>
-);
-};
-
-return (
-<div className="md-rise overflow-hidden rounded-xl border border-border bg-card shadow-sm" style={{ animationDelay: "120ms" }}>
-{loading && (
-<div className="h-1 bg-muted overflow-hidden">
-<div className="h-full w-1/3 bg-gradient-to-r from-blue-400 to-blue-600 animate-[shimmer_1.5s_infinite]"></div>
-</div>
-)}
-<div className="overflow-x-auto">
-<table className="min-w-full divide-y divide-border">
-<thead>
-<tr className="border-b border-border bg-muted/40">
-<th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("webservicesManagement.table.service")}</th>
-{!readOnly && <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("webservicesManagement.table.endpoint")}</th>}
-<th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("webservicesManagement.table.status")}</th>
-<th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("webservicesManagement.table.availability")}</th>
-<th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("webservicesManagement.table.jobs")}</th>
-<th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("webservicesManagement.table.performance")}</th>
-<th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("webservicesManagement.table.user")}</th>
-<th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("webservicesManagement.table.lastCheck")}</th>
-<th className="px-6 py-4 text-right text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("webservicesManagement.table.actions")}</th>
-</tr>
-</thead>
-<tbody className="divide-y divide-border">
-{webservices.length === 0 && !loading ? (
-<tr>
-<td colSpan={readOnly ? 8 : 9} className="px-6 py-16 text-center">
-<div className="md-fade-in flex flex-col items-center justify-center gap-3">
-<div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-2xl flex items-center justify-center border border-border shadow-sm">
-<Cloud className="w-8 h-8 text-gray-400 dark:text-gray-300" />
-</div>
-<div>
-<h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">{t("webservicesManagement.noWebservicesFound")}</h3>
-<p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-{readOnly ? t("webservicesManagement.noWebservicesAvailable") : t("webservicesManagement.noWebservicesDescription")}
-</p>
-</div>
-{!readOnly && (
-<button onClick={onAdd} className="inline-flex h-9 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-all duration-200 hover:bg-primary/90 hover:shadow-md active:scale-[0.98]">
-<Plus className="w-4 h-4" />
-{t("webservicesManagement.registerNew")}
-</button>
-)}
-</div>
-</td>
-</tr>
-) : (
-webservices.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage).map((service) => (
-<tr key={service.id} className="transition-colors duration-150 hover:bg-muted/40">
-<td className="px-6 py-4">
-<div className="flex items-center gap-3">
-<div className="w-10 h-10 rounded-lg flex items-center justify-center bg-muted"><Server className="w-5 h-5 text-muted-foreground" /></div>
-<div className="text-sm font-medium text-foreground">{service.name || `${t("webservicesManagement.table.service")} ${service.id}`}</div>
-</div>
-</td>
-{!readOnly && (
-<td className="px-6 py-4">
-<div>
-<div className="text-sm font-mono text-foreground">{service.protocol}://{service.ip}:{service.port}</div>
-{service.endpoint && <div className="text-xs text-muted-foreground">{service.endpoint}</div>}
-</div>
-</td>
-)}
-<td className="px-6 py-4"><span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium ${getStatusColor(service.status)}`}>{getStatusIcon(service.status)}{service.status.charAt(0).toUpperCase() + service.status.slice(1)}</span></td>
-<td className="px-6 py-4">{renderAvailabilityStatus(service)}</td>
-<td className="px-6 py-4">{renderBusyStatus(service)}</td>
-<td className="px-6 py-4">
-<div className="space-y-1.5">
-<div className="flex items-center gap-2">
-<Cpu className="w-3.5 h-3.5 text-muted-foreground" />
-<div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden w-16"><div className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transition-all" style={{ width: `${service.cpu_usage ?? 0}%` }}></div></div>
-<span className="text-xs text-muted-foreground w-10">{service.cpu_usage !== null && service.cpu_usage !== undefined ? `${service.cpu_usage.toFixed(0)}%` : "N/A"}</span>
-</div>
-<div className="flex items-center gap-2">
-<HardDrive className="w-3.5 h-3.5 text-muted-foreground" />
-<div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden w-16"><div className="h-full bg-gradient-to-r from-purple-400 to-purple-600 rounded-full transition-all" style={{ width: `${service.memory_usage ?? 0}%` }}></div></div>
-<span className="text-xs text-muted-foreground w-10">{service.memory_usage !== null && service.memory_usage !== undefined ? `${service.memory_usage.toFixed(0)}%` : "N/A"}</span>
-</div>
-</div>
-</td>
-<td className="px-6 py-4"><span className="text-sm text-foreground">{service.user ? service.user.name : "-"}</span></td>
-<td className="px-6 py-4"><span className="text-xs text-muted-foreground">{service.last_check ? formatDateTime24h(service.last_check) : t("webservicesManagement.table.never")}</span></td>
-<td className="px-6 py-4">
-<div className="flex items-center justify-end gap-3">
-<Tooltip>
-<TooltipTrigger asChild>
-<div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-muted text-foreground rounded-lg border border-border cursor-default"><Activity className="w-3.5 h-3.5 text-muted-foreground" /><span className="text-xs font-medium">{service.current_concurrency}/{service.max_concurrency}</span></div>
-</TooltipTrigger>
-<TooltipContent><p className="text-sm">{t("common.current")}: <span className="font-semibold">{service.current_concurrency}</span> / {t("common.max")}: <span className="font-semibold">{service.max_concurrency}</span></p></TooltipContent>
-</Tooltip>
-{!readOnly && (
-<ModelActionGroup
-actions={[
-{ key: "ping", icon: Zap, tooltip: t("webservicesManagement.actions.pingWebservice"), variant: service.available ? "success" : "warning", onClick: () => { void onServiceAction(service.id, "ping", service.name || service.ip); } },
-{ key: "edit", icon: Edit, tooltip: t("webservicesManagement.actions.editWebservice"), variant: "default", onClick: () => onEdit(service) },
-{ key: "delete", icon: Trash2, tooltip: t("webservicesManagement.actions.deleteWebservice"), variant: "danger", onClick: () => { void onDelete(service); }, disabled: service.busy },
-]}
-layout="horizontal"
-size="small"
-/>
-)}
-</div>
-</td>
-</tr>
-))
-)}
-</tbody>
-</table>
-</div>
-<Pagination
-currentPage={currentPage}
-totalItems={webservices.length}
-itemsPerPage={itemsPerPage}
-onPageChange={setCurrentPage}
-onItemsPerPageChange={(newItemsPerPage: number) => {
-setItemsPerPage(newItemsPerPage);
-setCurrentPage(0);
-}}
-isLoading={loading}
-/>
-</div>
-);
+	return (
+		<>
+			<div className="overflow-x-auto">
+				<table className="w-full min-w-[760px] table-fixed">
+					<colgroup>
+						<col />
+						<col className="w-[150px]" />
+						<col className="w-[150px]" />
+						<col className="w-[150px]" />
+						{!readOnly && <col className="w-[104px]" />}
+					</colgroup>
+					<thead>
+						<tr className="border-y border-border bg-muted/90">
+							<th className="px-5 py-3 text-left"><span className={HEADER_LABEL}>{t("webservicesManagement.table.service")}</span></th>
+							<th className="px-4 py-3 text-left"><span className={HEADER_LABEL}>{t("webservicesManagement.table.status")}</span></th>
+							<th className="px-4 py-3 text-left"><span className={HEADER_LABEL}>{t("webservicesManagement.table.load", "Load")}</span></th>
+							<th className="px-4 py-3 text-left"><span className={HEADER_LABEL}>{t("webservicesManagement.table.lastCheck")}</span></th>
+							{!readOnly && (
+								<th className={`${STICKY} z-[2] bg-muted py-3 pl-2 pr-4 text-right`}>
+									<span className={HEADER_LABEL}>{t("webservicesManagement.table.actions")}</span>
+								</th>
+							)}
+						</tr>
+					</thead>
+					<tbody className="divide-y divide-border">
+						{rows.length === 0 && loading &&
+							// loading rows
+							Array.from({ length: 3 }, (_, i) => (
+								<tr key={`sk-${i}`}>
+									<td colSpan={columns} className="px-5 py-4">
+										<div className="h-9 animate-pulse rounded-md bg-muted" />
+									</td>
+								</tr>
+							))}
+						{rows.length === 0 && !loading && (
+							<tr>
+								<td colSpan={columns} className="px-6 py-14 text-center">
+									<div className="mx-auto flex max-w-sm flex-col items-center gap-2">
+										<Server className="h-8 w-8 text-muted-foreground" />
+										<p className="text-sm font-medium text-foreground">{t("webservicesManagement.noWebservicesFound")}</p>
+										<p className="text-sm text-muted-foreground">
+											{readOnly ? t("webservicesManagement.noWebservicesAvailable") : t("webservicesManagement.noWebservicesDescription")}
+										</p>
+										{!readOnly && (
+											<button
+												type="button"
+												onClick={onAdd}
+												className="mt-2 inline-flex h-9 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+											>
+												<Plus className="h-4 w-4" />
+												{t("webservicesManagement.registerNew")}
+											</button>
+										)}
+									</div>
+								</td>
+							</tr>
+						)}
+						{rows.map((service) => {
+							const state = engineState(service);
+							const url = `${service.protocol}://${service.ip}:${service.port}${service.endpoint ?? ""}`;
+							const cpu = usage(service.cpu_usage);
+							const memory = usage(service.memory_usage);
+							const running = state === "online" || state === "busy";
+							return (
+								<tr key={service.id} className="group transition-colors hover:bg-muted/40">
+									<td className="px-5 py-3">
+										<div className="flex min-w-0 items-center gap-3">
+											<span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted">
+												<Server className="h-4 w-4 text-muted-foreground" />
+											</span>
+											<div className="min-w-0">
+												<p className="truncate text-sm font-semibold text-foreground">{label(service)}</p>
+												{!readOnly && (
+													<p className="truncate font-mono text-xs text-muted-foreground" title={url}>{url}</p>
+												)}
+											</div>
+										</div>
+									</td>
+									<td className="px-4 py-3">
+										<StatusBadge
+											size="small"
+											variant={STATE_VARIANT[state]}
+											text={t(`webservicesManagement.state.${state}`, STATE_FALLBACK[state])}
+										/>
+									</td>
+									<td className="px-4 py-3 text-sm tabular-nums">
+										{running ? (
+											<>
+												<span className="text-foreground">
+													{t("webservicesManagement.loadJobs", {
+														current: service.current_concurrency,
+														max: service.max_concurrency,
+														defaultValue: "{{current}} of {{max}} jobs",
+													})}
+												</span>
+												{(cpu || memory) && (
+													<span className="block text-xs text-muted-foreground">
+														{[cpu && `CPU ${cpu}`, memory && `${t("webservicesManagement.memory", "Mem")} ${memory}`].filter(Boolean).join(" · ")}
+													</span>
+												)}
+											</>
+										) : (
+											<span className="text-muted-foreground">—</span>
+										)}
+									</td>
+									<td className="px-4 py-3 text-sm text-muted-foreground">
+										{service.last_check ? (
+											<span title={formatDateTime24h(service.last_check)}>{formatShortDateTime(service.last_check)}</span>
+										) : (
+											t("webservicesManagement.table.never")
+										)}
+									</td>
+									{!readOnly && (
+										<td className={`${STICKY} z-[1] bg-card py-2 pl-2 pr-4 group-hover:bg-muted`}>
+											<div className="flex items-center justify-end gap-1">
+												<Tooltip>
+													<TooltipTrigger asChild>
+														<button
+															type="button"
+															data-compact
+															className={ICON_BUTTON}
+															aria-label={t("webservicesManagement.actions.pingWebservice")}
+															onClick={() => void onServiceAction(service.id, "ping", label(service))}
+														>
+															<Zap className="h-4 w-4" />
+														</button>
+													</TooltipTrigger>
+													<TooltipContent>{t("webservicesManagement.actions.pingWebservice")}</TooltipContent>
+												</Tooltip>
+												<DropdownMenu>
+													<DropdownMenuTrigger asChild>
+														<button type="button" data-compact className={ICON_BUTTON} aria-label={t("webservicesManagement.table.actions")}>
+															<MoreHorizontal className="h-4 w-4" />
+														</button>
+													</DropdownMenuTrigger>
+													<DropdownMenuContent align="end" className="min-w-[13rem] rounded-lg border-border/80 p-1 shadow-lg">
+														<DropdownMenuItem onSelect={() => onEdit(service)}>
+															<Edit className="h-4 w-4" />
+															{t("webservicesManagement.actions.editWebservice")}
+														</DropdownMenuItem>
+														{service.available ? (
+															<DropdownMenuItem onSelect={() => void onServiceAction(service.id, "mark_unavailable")}>
+																<XCircle className="h-4 w-4" />
+																{t("webservicesManagement.actions.markUnavailable", "Mark unavailable")}
+															</DropdownMenuItem>
+														) : (
+															<DropdownMenuItem onSelect={() => void onServiceAction(service.id, "mark_available")}>
+																<CheckCircle2 className="h-4 w-4" />
+																{t("webservicesManagement.actions.markAvailable", "Mark available")}
+															</DropdownMenuItem>
+														)}
+														{service.busy && (
+															<DropdownMenuItem onSelect={() => void onServiceAction(service.id, "mark_idle")}>
+																<Wrench className="h-4 w-4" />
+																{t("webservicesManagement.actions.markIdle", "Reset to idle")}
+															</DropdownMenuItem>
+														)}
+														<div role="separator" className="my-1 h-px bg-border" />
+														<DropdownMenuItem
+															variant="destructive"
+															disabled={service.busy}
+															onSelect={() => void onDelete(service)}
+														>
+															<Trash2 className="h-4 w-4" />
+															{t("webservicesManagement.actions.deleteWebservice")}
+														</DropdownMenuItem>
+													</DropdownMenuContent>
+												</DropdownMenu>
+											</div>
+										</td>
+									)}
+								</tr>
+							);
+						})}
+					</tbody>
+				</table>
+			</div>
+			{webservices.length > 0 && (
+				<Pagination
+					currentPage={currentPage}
+					totalItems={webservices.length}
+					itemsPerPage={itemsPerPage}
+					onPageChange={setCurrentPage}
+					onItemsPerPageChange={(n: number) => {
+						setItemsPerPage(n);
+						setCurrentPage(0);
+					}}
+					isLoading={loading}
+				/>
+			)}
+		</>
+	);
 }

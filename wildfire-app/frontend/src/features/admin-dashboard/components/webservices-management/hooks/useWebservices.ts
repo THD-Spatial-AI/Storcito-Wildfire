@@ -9,6 +9,7 @@ import { useTranslation } from "@/i18n";
 
 type NotificationState = {
 open: boolean;
+title?: string;
 message: string;
 severity: "success" | "error" | "warning";
 };
@@ -41,7 +42,7 @@ const [formLoading, setFormLoading] = useState(false);
 const [filters, setFilters] = useState<WebserviceFilters>({ status: "", available: "", search: "" });
 const [searchInput, setSearchInput] = useState("");
 const [currentPage, setCurrentPage] = useState(0);
-const [itemsPerPage, setItemsPerPage] = useState(5);
+const [itemsPerPage, setItemsPerPage] = useState(20);
 const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
 useEffect(() => {
@@ -53,7 +54,7 @@ setUserQueueCount(response.data.queue || 0);
 setUserRunningCount(response.data.running || 0);
 }
 } catch {
-// Ignore errors
+// ignore errors
 }
 };
 fetchUserStats();
@@ -128,9 +129,11 @@ case "health_check":
 case "ping": {
 const pingResult = await api.pingWebservice(serviceId);
 const isAvailable = pingResult?.available;
-const status = isAvailable ? t("webservicesManagement.status.available") : t("webservicesManagement.status.unavailable");
-const serviceLabel = serviceName || `${t("webservicesManagement.table.service")} ${serviceId}`;
-setNotification({ open: true, message: `${t("webservicesManagement.healthCheck")}: ${serviceLabel} - ${status}`, severity: isAvailable ? "success" : "warning" });
+const name = serviceName || `${t("webservicesManagement.table.service")} ${serviceId}`;
+// readable health result
+setNotification(isAvailable
+? { open: true, severity: "success", title: t("webservicesManagement.health.okTitle", { name, defaultValue: "{{name}} is reachable" }), message: t("webservicesManagement.health.okBody", "Health check passed. The engine can take new runs.") }
+: { open: true, severity: "warning", title: t("webservicesManagement.health.failTitle", { name, defaultValue: "{{name}} is not responding" }), message: t("webservicesManagement.health.failBody", "Health check failed. Runs will wait until the engine is back.") });
 return;
 }
 default:
