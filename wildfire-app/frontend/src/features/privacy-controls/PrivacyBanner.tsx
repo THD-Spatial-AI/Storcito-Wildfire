@@ -15,7 +15,8 @@ export const PrivacyBanner: React.FC<PrivacyBannerProps> = ({
   const { t } = useTranslation();
   
   return (
-    <div className="fixed bottom-4 left-[72px] z-50 animate-in slide-in-from-bottom-4 fade-in duration-700">
+    // map corner anchor
+    <div className="absolute bottom-4 left-4 z-50 animate-in slide-in-from-bottom-4 fade-in duration-700">
       <button
         onClick={onClick}
         aria-pressed={hasAccepted}

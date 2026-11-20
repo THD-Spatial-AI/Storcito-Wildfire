@@ -1,4 +1,5 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import { Shield, ExternalLink } from "lucide-react";
 import { IconX } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
@@ -21,17 +22,18 @@ export const PrivacyConsentDialog: React.FC<PrivacyConsentDialogProps> = ({
   
   if (!isOpen) return null;
 
-  return (
+  // above sidebar, centred
+  return createPortal(
     <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end justify-start p-6 z-50 animate-in fade-in duration-300"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in duration-300"
       aria-modal="true"
       aria-labelledby="privacy-dialog-title"
     >
       <dialog
         open
-        className="bg-background/95 dark:bg-card/95 backdrop-blur-2xl border-border rounded-lg shadow-xl max-w-md w-full mb-16 ml-[72px] max-h-[80vh] flex flex-col border animate-in zoom-in-95 slide-in-from-bottom-4 duration-300"
+        className="static m-0 bg-background/95 dark:bg-card/95 backdrop-blur-2xl border-border rounded-lg shadow-xl max-w-md w-full max-h-[85vh] flex flex-col border animate-in zoom-in-95 duration-300"
       >
-        {/* Header */}
+        {/* header */}
         <div className="flex items-center justify-between p-6 border-b border-border">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center shadow-lg">
@@ -50,7 +52,7 @@ export const PrivacyConsentDialog: React.FC<PrivacyConsentDialogProps> = ({
           </button>
         </div>
 
-        {/* Content */}
+        {/* content */}
         <div className="p-6 space-y-4 text-sm text-muted-foreground overflow-y-auto">
           <p>
             {t('privacy.cartoDescription')}
@@ -100,7 +102,7 @@ export const PrivacyConsentDialog: React.FC<PrivacyConsentDialogProps> = ({
           </p>
         </div>
 
-        {/* Actions */}
+        {/* actions */}
         <div className="flex gap-3 p-6 border-t border-border">
           <button
             onClick={onDeny}
@@ -119,6 +121,7 @@ export const PrivacyConsentDialog: React.FC<PrivacyConsentDialogProps> = ({
           </button>
         </div>
       </dialog>
-    </div>
+    </div>,
+    document.body
   );
 };

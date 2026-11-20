@@ -1,25 +1,29 @@
 import React from 'react';
-import { CheckCircle, XCircle, AlertTriangle, X } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Info, X, XCircle } from "lucide-react";
+import { useTranslation } from "@/i18n";
 
 interface NotificationProps {
 	isOpen: boolean;
 	message: string;
+	/** optional bold line */
+	title?: string;
 	severity: "success" | "error" | "warning" | "info";
 	onClose: () => void;
 	duration?: number;
 }
 
-/**
- * Shared notification component for displaying toast messages
- */
-const Notification: React.FC<NotificationProps> = ({
-	isOpen,
-	message,
-	severity,
-	onClose,
-	duration = 5000
-}) => {
-	// Auto-hide after duration
+const STYLES = {
+	success: { icon: CheckCircle2, tint: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" },
+	error: { icon: XCircle, tint: "bg-red-500/10 text-red-600 dark:text-red-400" },
+	warning: { icon: AlertTriangle, tint: "bg-amber-500/10 text-amber-600 dark:text-amber-400" },
+	info: { icon: Info, tint: "bg-blue-500/10 text-blue-600 dark:text-blue-400" },
+} as const;
+
+/** shared toast */
+const Notification: React.FC<NotificationProps> = ({ isOpen, message, title, severity, onClose, duration = 5000 }) => {
+	const { t } = useTranslation();
+
+	// auto hide
 	React.useEffect(() => {
 		if (isOpen && duration > 0) {
 			const timer = setTimeout(onClose, duration);
@@ -28,45 +32,29 @@ const Notification: React.FC<NotificationProps> = ({
 	}, [isOpen, duration, onClose]);
 
 	if (!isOpen) return null;
-
-	const getNotificationIcon = (severity: string) => {
-		switch (severity) {
-			case "success":
-				return <CheckCircle className="w-5 h-5" />;
-			case "error":
-				return <XCircle className="w-5 h-5" />;
-			case "warning":
-				return <AlertTriangle className="w-5 h-5" />;
-			default:
-				return <CheckCircle className="w-5 h-5" />;
-		}
-	};
-
-	const getNotificationColors = (severity: string) => {
-		switch (severity) {
-			case "success":
-				return "bg-green-50 border-green-200 text-green-800";
-			case "error":
-				return "bg-red-50 border-red-200 text-red-800";
-			case "warning":
-				return "bg-yellow-50 border-yellow-200 text-yellow-800";
-			case "info":
-				return "bg-blue-50 border-blue-200 text-blue-800";
-			default:
-				return "bg-gray-50 border-gray-200 text-gray-700";
-		}
-	};
+	const { icon: Icon, tint } = STYLES[severity] ?? STYLES.info;
 
 	return (
-		<div className="fixed top-16 right-4 z-50 animate-slide-in">
-			<div className={`flex items-center gap-3 px-4 py-3 rounded-lg border shadow-lg max-w-md ${getNotificationColors(severity)}`}>
-				{getNotificationIcon(severity)}
-				<span className="text-sm font-medium flex-1">{message}</span>
-				<button 
-					onClick={onClose} 
-					className="ml-2 text-current hover:opacity-70 transition-opacity"
+		<div
+			role={severity === "error" ? "alert" : "status"}
+			aria-live={severity === "error" ? "assertive" : "polite"}
+			className="fixed right-4 top-16 z-[80] w-[min(24rem,calc(100vw-2rem))] animate-slide-in"
+		>
+			<div className="flex items-start gap-3 rounded-xl border border-border bg-popover p-3.5 text-popover-foreground shadow-lg">
+				<span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${tint}`}>
+					<Icon className="h-4 w-4" />
+				</span>
+				<div className="min-w-0 flex-1 pt-0.5">
+					{title && <p className="text-sm font-semibold text-foreground">{title}</p>}
+					<p className={title ? "mt-0.5 text-sm text-muted-foreground" : "text-sm font-medium text-foreground"}>{message}</p>
+				</div>
+				<button
+					type="button"
+					onClick={onClose}
+					aria-label={t("common.close", "Close")}
+					className="-mr-1 -mt-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
 				>
-					<X className="w-4 h-4" />
+					<X className="h-4 w-4" />
 				</button>
 			</div>
 		</div>

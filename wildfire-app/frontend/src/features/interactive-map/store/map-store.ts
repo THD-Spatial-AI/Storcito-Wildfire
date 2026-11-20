@@ -14,7 +14,7 @@ import {
 } from './base-layer-recovery';
 import { withCartoBasemapKey } from '@/utils/carto-basemap';
 
-// Base layer metadata interface
+// base layer metadata
 interface BaseLayerInfo {
 	id: string;
 	name: string;
@@ -43,12 +43,11 @@ interface MapStore {
 	setFireRiskOverlay: (layer: TileLayer | null) => void;
 }
 
-// Retired base layers. They are gone from the picker; these ids only survive so
-// a browser that persisted one of them still lands on a layer that exists.
+// retired base layers
 const LEGACY_MAPLIBRE_LAYER_ID = "maplibre_3d";
 const MAPLIBRE_DARK_LAYER_ID = "maplibre_dark";
 const RETIRED_OPENTOPOMAP_LAYER_ID = "opentopomap";
-export const MAPLIBRE_VOYAGER_LAYER_ID = "maplibre_voyager";
+const MAPLIBRE_VOYAGER_LAYER_ID = "maplibre_voyager";
 const DEFAULT_BASE_LAYER_ID = "osm_standard";
 
 export function normalizeBaseLayerId(id: string): string {
@@ -72,7 +71,7 @@ export function markBaseLayerHealthy(id: string): void {
 	failedBaseLayersUntil.delete(normalizeBaseLayerId(id));
 }
 
-/** Mark a provider unhealthy and switch the active map to another raster source. */
+/** mark provider unhealthy */
 export function reportBaseLayerFailure(id: string): string | null {
 	const failedId = normalizeBaseLayerId(id);
 	const now = Date.now();
@@ -93,8 +92,7 @@ export function reportBaseLayerFailure(id: string): string | null {
 	return fallbackId;
 }
 
-// Tile servers drop the occasional request. Without this a failed tile stays
-// blank until the whole page is reloaded, which is what testers reported.
+// tile servers drop
 function withTileRetry<T extends OSM | XYZ>(source: T, layerId: string, maxRetries = 2): T {
 	const attempts = new WeakMap<object, number>();
 	let exhaustedTileErrors = 0;
@@ -134,6 +132,8 @@ const baseLayers: BaseLayerInfo[] = [
 		description: "Standard OpenStreetMap layer",
 		source: withTileRetry(new OSM({
 			attributions: [OSM_ATTR],
+			// browser default policy
+			referrerPolicy: "strict-origin-when-cross-origin",
 		}), "osm_standard"),
 		accessLevel: "very_low",
 	},
@@ -184,7 +184,7 @@ const baseLayers: BaseLayerInfo[] = [
 		id: MAPLIBRE_VOYAGER_LAYER_ID,
 		name: "MapLibre Voyager",
 		description: "Detailed vector basemap",
-		source: new XYZ({ url: '' }), // Vector source loaded via MapLibre GL
+		source: new XYZ({ url: '' }), // vector source loaded
 		accessLevel: "intermediate",
 	},
 ];
@@ -252,10 +252,7 @@ export const useMapStore = create<MapStore>()(
 	)
 );
 
-/**
- * Update map position from saved user preference
- * Call this when map is initialized and user's saved location is loaded
- */
+/** update map position */
 export const updateMapToSavedLocation = (customLocation?: { latitude: number; longitude: number; zoom?: number }) => {
 	const mapLocation = customLocation || useMapLocationStore.getState().location;
 	const mapStore = useMapStore.getState();
