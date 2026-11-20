@@ -32,7 +32,7 @@ func (h *ModelHandler) CreateModel(c *gin.Context) {
 		httputil.BadRequest(c, "Invalid request data: "+err.Error())
 		return
 	}
-	// Fallback copy workspace
+	// fallback copy workspace
 	if req.WorkspaceID != nil && req.IsCopy != nil && *req.IsCopy && !h.hasWorkspaceAccess(c, userCtx, *req.WorkspaceID) {
 		req.WorkspaceID = nil
 		if ws, err := h.newModelService().GetDefaultWorkspace(userCtx.UserID); err == nil {
@@ -40,6 +40,12 @@ func (h *ModelHandler) CreateModel(c *gin.Context) {
 		}
 	}
 	if req.WorkspaceID != nil && !h.ensureWorkspaceAccess(c, userCtx.UserID, *req.WorkspaceID, errAccessDeniedWorkspace) {
+		return
+	}
+	if !h.ensureArea(c, userCtx, req.Coordinates) {
+		return
+	}
+	if !h.ensurePeriod(c, userCtx, parseDay(req.FromDate), parseDay(req.ToDate)) {
 		return
 	}
 
@@ -72,7 +78,7 @@ func (h *ModelHandler) GetModels(c *gin.Context) {
 	// families per tab
 	grouped := isGroupedRequest(c)
 	if grouped {
-		// One row per family.
+		// one row family
 		query = query.Where("parent_model_id IS NULL")
 		query = h.applyFamilyListFilters(query, search, fromDate, toDate, nil)
 		if statuses := parseStatusFilter(c); len(statuses) > 0 {
@@ -153,6 +159,22 @@ func (h *ModelHandler) UpdateModel(c *gin.Context) {
 	}
 	if req.WorkspaceID != nil && !h.ensureWorkspaceAccess(c, userCtx.UserID, *req.WorkspaceID, errAccessDeniedWorkspace) {
 		return
+	}
+	if len(req.Coordinates) > 0 && !h.ensureArea(c, userCtx, req.Coordinates) {
+		return
+	}
+	// changed dates only
+	if req.FromDate != nil || req.ToDate != nil {
+		from, to := model.FromDate, model.ToDate
+		if req.FromDate != nil {
+			from = parseDay(*req.FromDate)
+		}
+		if req.ToDate != nil {
+			to = parseDay(*req.ToDate)
+		}
+		if !h.ensurePeriod(c, userCtx, from, to) {
+			return
+		}
 	}
 
 	updates, err := h.newModelService().BuildUpdateModelUpdates(req, req.WorkspaceID)

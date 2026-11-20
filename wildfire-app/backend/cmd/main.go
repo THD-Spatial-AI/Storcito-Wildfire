@@ -12,10 +12,12 @@ import (
 	"go.uber.org/automaxprocs/maxprocs"
 
 	"spatialhub_backend/internal/apitoken"
+	"spatialhub_backend/internal/areas"
 	"spatialhub_backend/internal/cache"
 	"spatialhub_backend/internal/config"
 	"spatialhub_backend/internal/events"
 	geoserverclient "spatialhub_backend/internal/geoserver"
+	areashandler "spatialhub_backend/internal/handler/areas"
 	feedback "spatialhub_backend/internal/handler/feedback"
 	geocodinghandler "spatialhub_backend/internal/handler/geocoding"
 	grouphandler "spatialhub_backend/internal/handler/group"
@@ -47,6 +49,8 @@ import (
 	redisstore "platform.local/platform/session/redis"
 	platformworker "platform.local/platform/worker"
 
+	platformkeycloak "platform.local/platform/keycloak"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/hibiken/asynq"
@@ -71,10 +75,10 @@ func main() {
 		return
 	}
 
-	// Set GIN to release mode to disable debug messages
+	// set gin release
 	gin.SetMode(gin.ReleaseMode)
 
-	// Automatically set GOMAXPROCS to match container CPU quota (silenced)
+	// automatically set gomaxprocs
 	maxprocs.Set(maxprocs.Logger(func(string, ...interface{}) {}))
 
 	if err := platformlogger.Init("logs", "app"); err != nil {
@@ -98,10 +102,10 @@ func main() {
 
 	configureRoutes(r, cfg, appDeps)
 
-	// Start background cleanup for old closed/resolved feedback (every 24h, deletes after 7 days)
+	// start background cleanup
 	go startFeedbackCleanup(appDeps.DB, log)
 
-	// Start the outbox relay that publishes domain events to the async queue.
+	// start outbox relay
 	outboxRelay := events.NewRelay(
 		events.NewOutboxStore(appDeps.DB),
 		jobs.NewAsynqEventPublisher(appDeps.AsynqClient),
@@ -134,7 +138,7 @@ func checkServerHealth(port string) error {
 	return nil
 }
 
-// AppDependencies holds all infrastructure connections and their cleanup functions
+// holds all infrastructure
 type AppDependencies struct {
 	DB                  *gorm.DB
 	SQLdb               *sql.DB
@@ -150,7 +154,7 @@ type AppDependencies struct {
 	Cfg                 *config.Config
 }
 
-// Close properly closes all infrastructure connections
+// properly closes all
 func (d *AppDependencies) Close() {
 	if d.SQLdb != nil {
 		_ = d.SQLdb.Close()
@@ -166,7 +170,7 @@ func (d *AppDependencies) Close() {
 	}
 }
 
-// initializeInfrastructure sets up database, Redis, auth, and async workers
+// sets up database
 func initializeInfrastructure(cfg *config.Config, log *logrus.Logger) *AppDependencies {
 	db, sqlDB, err := platformdatabase.ConnectWithPing(cfg.Database)
 	if err != nil {
@@ -174,7 +178,7 @@ func initializeInfrastructure(cfg *config.Config, log *logrus.Logger) *AppDepend
 	}
 	log.WithField("component", "startup").Info("Database connection successful")
 
-	// Configure connection pool
+	// configure connection pool
 	sqlDB.SetMaxOpenConns(25)
 	sqlDB.SetMaxIdleConns(10)
 	sqlDB.SetConnMaxLifetime(time.Hour)
@@ -253,7 +257,7 @@ func initializeInfrastructure(cfg *config.Config, log *logrus.Logger) *AppDepend
 	}
 }
 
-// setupGinEngine creates and configures the Gin engine with middleware
+// creates configures gin
 func setupGinEngine(cfg *config.Config, log *logrus.Logger) *gin.Engine {
 	trusted := []string{"10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"}
 
@@ -294,7 +298,7 @@ func setupGinEngine(cfg *config.Config, log *logrus.Logger) *gin.Engine {
 	return r
 }
 
-// configureRoutes sets up all application routes.
+// sets up all
 func configureRoutes(r *gin.Engine, cfg *config.Config, deps *AppDependencies) {
 	routes.Register(r, buildRouteDeps(cfg, deps))
 }
@@ -326,6 +330,11 @@ func buildRouteDeps(cfg *config.Config, deps *AppDependencies) routes.Deps {
 		WithCache(riskmetricsservice.NewRedisCache(deps.RedisClient, 0))
 	riskHandler := riskmetricshandler.NewHandler(riskService, resultStore.NewStore(deps.DB))
 	geocodingHandler := geocodinghandler.NewHandler()
+	// area access engine
+	areaKC := platformkeycloak.NewClient(cfg.Auth.BaseURL, cfg.Auth.Realm, deps.AdminTokenProvider)
+	areaService := areas.NewService(deps.DB, areas.NewEngineBoundaries(deps.WebserviceClient), areaKC)
+	modelHandler.WithAreas(areaService)
+	areasHandler := areashandler.NewHandler(areaService, services.NewAuthorizationService(deps.DB, areaKC))
 
 	return routes.Deps{
 		AuthServiceURL:             cfg.AuthServiceURL,
@@ -345,6 +354,7 @@ func buildRouteDeps(cfg *config.Config, deps *AppDependencies) routes.Deps {
 		RiskHandler:                riskHandler,
 		GeocodingHandler:           geocodingHandler,
 		WebserviceClient:           deps.WebserviceClient,
+		AreasHandler:               areasHandler,
 	}
 }
 
@@ -353,7 +363,7 @@ func startFeedbackCleanup(db *gorm.DB, log *logrus.Logger) {
 	ticker := time.NewTicker(24 * time.Hour)
 	defer ticker.Stop()
 
-	// Run once at startup, then every 24h
+	// run startup every
 	for {
 		deleted, err := store.DeleteClosedOlderThan(7)
 		if err != nil {

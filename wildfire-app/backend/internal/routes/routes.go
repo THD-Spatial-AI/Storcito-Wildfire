@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	areashandler "spatialhub_backend/internal/handler/areas"
 	feedback "spatialhub_backend/internal/handler/feedback"
 	geocodinghandler "spatialhub_backend/internal/handler/geocoding"
 	grouphandler "spatialhub_backend/internal/handler/group"
@@ -52,7 +53,7 @@ type Deps struct {
 	CookieDomain               string
 	IsProduction               bool
 
-	// APITokenValidator enables personal access tokens on the protected API when non-nil.
+	// enables personal access
 	APITokenValidator middleware.APITokenValidator
 
 	ResultHandler         *resulthandler.ResultHandler
@@ -66,6 +67,7 @@ type Deps struct {
 	ModelHandler          *modelhandler.ModelHandler
 	RiskHandler           *riskmetricshandler.Handler
 	GeocodingHandler      *geocodinghandler.Handler
+	AreasHandler          *areashandler.Handler
 	WebserviceClient      *webservice.Client
 }
 
@@ -77,7 +79,7 @@ func Register(r *gin.Engine, deps Deps) {
 
 func RegisterPublic(r *gin.Engine, deps Deps) {
 	api := r.Group("/api")
-	// Require csrf token
+	// require csrf token
 	api.Use(httputil.CSRFProtection(nil))
 
 	api.GET("/health", server.HealthHandler("backend"))
@@ -102,7 +104,7 @@ func RegisterPublic(r *gin.Engine, deps Deps) {
 	registerInternalRoutes(r, deps)
 }
 
-// registerInternalRoutes mounts the internal lifecycle API other services use to change model status.
+// mounts internal lifecycle
 func registerInternalRoutes(r *gin.Engine, deps Deps) {
 	internal := r.Group("/api/internal")
 	internal.Use(middleware.CallbackAuthMiddleware())
@@ -116,7 +118,7 @@ func registerInternalRoutes(r *gin.Engine, deps Deps) {
 func RegisterProtected(r *gin.Engine, deps Deps) {
 	protectedAPI := r.Group("/api")
 	if deps.APITokenValidator != nil {
-		// Must run before the session middleware.
+		// run before session
 		protectedAPI.Use(middleware.APITokenAuth(deps.APITokenValidator))
 	}
 	protectedAPI.Use(httputil.CSRFProtection(middleware.IsAPITokenAuthenticated))
@@ -142,6 +144,7 @@ func RegisterProtected(r *gin.Engine, deps Deps) {
 	registerGroupRoutes(protectedAPI, deps.GroupHandler)
 	registerModelRoutes(protectedAPI, deps.ModelHandler, deps.ResultHandler, deps.RiskHandler)
 	registerGeocodingRoutes(protectedAPI, deps.GeocodingHandler)
+	registerAreaRoutes(protectedAPI, deps.AreasHandler)
 }
 
 func registerFrontend(r *gin.Engine) {

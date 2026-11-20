@@ -1,7 +1,10 @@
 package model
 
 import (
+	"encoding/json"
 	"strings"
+
+	"platform.local/common/pkg/models"
 
 	"platform.local/common/pkg/httputil"
 
@@ -13,8 +16,20 @@ func (h *ModelHandler) StartCalculation(c *gin.Context) {
 	if !ok {
 		return
 	}
+	// run time checks
+	if h.areas != nil {
+		var target models.Model
+		if err := h.store.DB().Select("id", "coordinates", "from_date", "to_date").Where(sqlWhereID, c.Param("id")).First(&target).Error; err == nil {
+			if !h.ensureArea(c, userCtx, json.RawMessage(target.Coordinates)) {
+				return
+			}
+			if !h.ensurePeriod(c, userCtx, target.FromDate, target.ToDate) {
+				return
+			}
+		}
+	}
 	modelSvc := h.newModelService()
-	// Quiet day switch
+	// day switch
 	quiet := c.Query("notify") == "false"
 	updated, err := modelSvc.StartCalculation(c.Request.Context(), userCtx.UserID, userCtx.AccessLevel, c.Param("id"), h.asynqClient, quiet)
 	if err != nil {
