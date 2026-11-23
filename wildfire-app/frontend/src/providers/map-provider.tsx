@@ -48,7 +48,7 @@ const MapControlsWrapper: React.FC<MapControlsWrapperProps> = ({ onZoomIn, onZoo
 	/>
 );
 
-// Separate component factory to avoid creating components inside parent
+// separate component factory
 const createMapControlsComponent = (
 	zoomIn: () => void,
 	zoomOut: () => void,
@@ -130,9 +130,7 @@ export const MapProvider: React.FC<MapProviderProps> = ({ children }) => {
 			} else {
 				baseLayer.setVisible(true);
 				baseLayer.setSource(selected.source);
-				// Swapping in a source that previously failed keeps serving its
-				// error state until something asks for the tiles again — that is
-				// why switching layers sometimes needed a page reload.
+				// swapping source previously
 				selected.source.refresh();
 			}
 			if (map) {
@@ -195,29 +193,37 @@ export const MapProvider: React.FC<MapProviderProps> = ({ children }) => {
 		changeToSelectedMapLayer();
 	}, [changeToSelectedMapLayer]);
 
-	const zoomIn = useCallback(() => {
-		if (!map) return;
-		const view = map.getView();
-		const zoom = view.getZoom();
-		if (zoom !== undefined) {
-			view.animate({
-				zoom: zoom + 1,
-				duration: 250,
-			});
-		}
+	// redraw before paint
+	useEffect(() => {
+		if (!map || typeof ResizeObserver === "undefined") return;
+		let observed: Element | null = null;
+		const observer = new ResizeObserver(() => {
+			map.updateSize();
+			map.renderSync();
+		});
+		const watch = () => {
+			const target = map.getTargetElement();
+			if (target === observed) return;
+			if (observed) observer.unobserve(observed);
+			observed = target ?? null;
+			if (observed) observer.observe(observed);
+		};
+		watch();
+		map.on("change:target", watch);
+		return () => {
+			map.un("change:target", watch);
+			observer.disconnect();
+		};
 	}, [map]);
 
-	const zoomOut = useCallback(() => {
-		if (!map) return;
-		const view = map.getView();
-		const zoom = view.getZoom();
-		if (zoom !== undefined) {
-			view.animate({
-				zoom: zoom - 1,
-				duration: 250,
-			});
-		}
+	// one zoom step
+	const zoomBy = useCallback((step: number) => {
+		const view = map?.getView();
+		const zoom = view?.getZoom();
+		if (view && zoom !== undefined) view.animate({ zoom: zoom + step, duration: 250 });
 	}, [map]);
+	const zoomIn = useCallback(() => zoomBy(1), [zoomBy]);
+	const zoomOut = useCallback(() => zoomBy(-1), [zoomBy]);
 
 	const centerMap = useCallback(() => {
 		if (!map) return;
@@ -231,8 +237,7 @@ export const MapProvider: React.FC<MapProviderProps> = ({ children }) => {
 
 	const clearDrawingLayers = useCallback(() => {
 		if (!map) return;
-		// Snapshot arrays before iterating - getLayers().getArray() returns the
-		// live internal array, so removing during iteration skips elements.
+		// snapshot arrays before
 		const layers = [...map.getLayers().getArray()];
 		for (const layer of layers) {
 			if (layer instanceof VectorLayer) {
@@ -273,4 +278,4 @@ export const MapProvider: React.FC<MapProviderProps> = ({ children }) => {
 	);
 };
 
-// Hook moved to map-context.ts to satisfy react-refresh export hygiene
+// hook moved map-context

@@ -23,9 +23,18 @@ export default defineConfig({
 	server: {
 		port: 3000,
 		proxy: {
+			// same origin api
 			"/api": {
-				target: "http://localhost:8002",
+				target: "http://localhost:8000",
 				changeOrigin: true,
+				// host only cookies
+				cookieDomainRewrite: "",
+				configure: (proxy) => {
+					// backend allows localhost
+					proxy.on("proxyReq", (req) => {
+						if (req.getHeader("origin")) req.setHeader("origin", "http://localhost:3000");
+					});
+				},
 			},
 		},
 	},

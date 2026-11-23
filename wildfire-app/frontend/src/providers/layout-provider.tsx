@@ -25,7 +25,7 @@ export const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
 						>
 							<main
 								className={cn(
-									"h-full min-h-screen w-full",
+									"h-full min-h-[100dvh] w-full",
 									"bg-background text-foreground",
 									"transition-colors duration-200"
 								)}
