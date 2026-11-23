@@ -23,7 +23,7 @@ function ensureActiveStart(
 
 	let completionCleared = false;
 	
-	// Reset on requeue.
+	// reset on requeue
 	if (completionInfo[model.id]) {
 		delete completionInfo[model.id];
 		completionCleared = true;
@@ -31,7 +31,7 @@ function ensureActiveStart(
 
 	const backendStart = model.calculation_queued_at ?? model.calculation_started_at;
 	
-	// Prefer backend time.
+	// prefer backend time
 	if (backendStart) {
 		if (startTimes[model.id] !== backendStart) {
 			startTimes[model.id] = backendStart;
@@ -40,7 +40,7 @@ function ensureActiveStart(
 		return { startChanged: false, completionCleared };
 	}
 	
-	// Fallback timestamp.
+	// fallback timestamp
 	if (!startTimes[model.id]) {
 		startTimes[model.id] = new Date().toISOString();
 		return { startChanged: true, completionCleared };
@@ -98,11 +98,11 @@ function ensureCompletionInfo(
 }
 
 function calculateDurationSeconds(start: string, end: string): number {
-	// Backend sends UTC.
+	// backend sends utc
 	const startDate = new Date(start);
 	const endDate = new Date(end);
 
-	// Validate parsed dates
+	// validate parsed dates
 	if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
 		return 0;
 	}

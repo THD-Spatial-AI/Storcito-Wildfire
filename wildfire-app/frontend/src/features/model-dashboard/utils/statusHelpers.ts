@@ -1,15 +1,13 @@
 import { ModelStatus, StatusColor } from '@/types/models';
 
-/**
- * Get status color for UI components
- */
+/** get status color */
 export const getStatusColor = (status: ModelStatus): StatusColor => {
 	const colorMap: Record<ModelStatus, StatusColor> = {
 		draft: "default",
 		queue: "info",
-		calculating: "primary",
-		running: "primary",
-		processing: "primary",
+		calculating: "info",
+		running: "info",
+		processing: "info",
 		completed: "success", 
 		published: "success",
 		failed: "error",
@@ -19,9 +17,7 @@ export const getStatusColor = (status: ModelStatus): StatusColor => {
 	return colorMap[status] || "default";
 };
 
-/**
- * Get CSS classes for model status styling
- */
+/** get css classes */
 export const getModelStatusColor = (status: ModelStatus): string => {
 	const colorMap: Record<ModelStatus, string> = {
 		completed: "bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border-green-200 hover:from-green-200 hover:to-emerald-200 shadow-sm",
@@ -42,31 +38,56 @@ export const isActiveStatus = (status: ModelStatus): boolean => {
 	return status === "queue" || status === "running" || status === "calculating" || status === "processing";
 };
 
-export type StatusTab = "all" | "pinned" | "running" | "completed" | "drafts" | "failed";
+export type StatusTab =
+	| "all" | "pinned" | "running" | "completed" | "drafts" | "failed"
+	| "queue" | "in_progress" | "completed_only" | "published";
 
 export const STATUS_TAB_ORDER: StatusTab[] = ["all", "pinned", "running", "completed", "drafts", "failed"];
 
-export const STATUS_TAB_STATUSES: Record<Exclude<StatusTab, "all" | "pinned">, ModelStatus[]> = {
+// admin tabs sum
+export const ADMIN_STATUS_TAB_ORDER: StatusTab[] = ["all", "drafts", "queue", "in_progress", "completed_only", "published", "failed"];
+
+const STATUS_TAB_STATUSES: Record<Exclude<StatusTab, "all" | "pinned">, ModelStatus[]> = {
 	running: ["queue", "calculating", "running", "processing"],
 	completed: ["completed", "published"],
 	drafts: ["draft", "modified"],
 	failed: ["failed", "cancelled"],
+	queue: ["queue"],
+	in_progress: ["calculating", "running", "processing"],
+	completed_only: ["completed"],
+	published: ["published"],
 };
 
 export const statusTabParam = (tab: StatusTab): string | undefined =>
 	tab === "all" || tab === "pinned" ? undefined : STATUS_TAB_STATUSES[tab].join(",");
 
-/**
- * Check if a model is in a processing state and should be disabled
- */
+/** check model processing */
 export const isModelDisabled = (status: ModelStatus): boolean => {
 	return status === "running" || status === "queue" || status === "calculating" || status === "processing";
 };
 
-/**
- * Check if a model has completed successfully
- */
+/** check model has */
 export const isModelCompleted = (status: ModelStatus): boolean => {
 	return status === "completed" || status === "published";
 };
 
+
+/** tab label keys */
+export const TAB_LABEL_KEYS: Record<StatusTab, string> = {
+	all: "model.tabs.all",
+	pinned: "model.tabs.pinned",
+	running: "model.tabs.running",
+	completed: "model.tabs.completed",
+	drafts: "model.tabs.drafts",
+	failed: "model.tabs.failed",
+	queue: "model.tabs.queue",
+	in_progress: "model.tabs.inProgress",
+	completed_only: "model.tabs.completed",
+	published: "model.tabs.published",
+};
+
+export const TAB_LABEL_FALLBACK: Partial<Record<StatusTab, string>> = {
+	queue: "In Queue",
+	in_progress: "In Progress",
+	published: "Published",
+};

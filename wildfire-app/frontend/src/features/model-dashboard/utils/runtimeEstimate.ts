@@ -8,14 +8,14 @@ const MAX_SAMPLE_SECONDS = 6 * 60 * 60;
 const MIN_SAMPLES = 1;
 const MAX_SAMPLES = 20;
 const MAX_AREA_RATIO = 2;
-/** Ratio 1 means exact match. */
+/** ratio 1 means */
 const MAX_DAY_RATIO = 1;
 const MAX_BUFFER_RATIO = 1;
 
 export interface RuntimeEstimate {
 	totalSeconds: number;
 	sampleCount: number;
-	/** Runs short. */
+	/** runs short */
 	approximate: boolean;
 }
 
@@ -23,7 +23,7 @@ interface RuntimeSample {
 	completedAt: number;
 	model: Model;
 	seconds: number;
-	/** Backfilled queue time. */
+	/** backfilled queue time */
 	estimated: boolean;
 }
 
@@ -112,8 +112,8 @@ const comparableWorkload = (target: WorkloadProfile, sample: WorkloadProfile): b
 	valuesWithinRatio(target.dayCount, sample.dayCount, MAX_DAY_RATIO) &&
 	valuesWithinRatio(target.bufferMetres, sample.bufferMetres, MAX_BUFFER_RATIO);
 
-/** Full user-visible runtime. */
-export const modelRuntimeSeconds = (model: Model): number | null => {
+/** full user-visible runtime */
+const modelRuntimeSeconds = (model: Model): number | null => {
 	if (!model.calculation_queued_at || !model.calculation_completed_at) return null;
 	const start = Date.parse(model.calculation_queued_at);
 	const end = Date.parse(model.calculation_completed_at);
@@ -121,8 +121,8 @@ export const modelRuntimeSeconds = (model: Model): number | null => {
 	return (end - start) / 1000;
 };
 
-/** Median sample. */
-export const typicalRuntimeFromSamples = (durations: number[]): number | null => {
+/** median sample */
+const typicalRuntimeFromSamples = (durations: number[]): number | null => {
 	const samples = durations
 		.filter((seconds) => seconds >= MIN_SAMPLE_SECONDS && seconds <= MAX_SAMPLE_SECONDS)
 		.sort((left, right) => left - right);
@@ -134,7 +134,7 @@ export const typicalRuntimeFromSamples = (durations: number[]): number | null =>
 		: samples[middle];
 };
 
-/** Estimate remaining. */
+/** estimate remaining */
 export const estimateRuntimesForModels = (
 	targets: Model[],
 	history: Model[],
@@ -169,7 +169,7 @@ export const estimateRuntimesForModels = (
 			sample.model.id !== target.id &&
 			comparableWorkload(targetProfile, profileFor(sample.model)));
 
-		// Prefer measured samples.
+		// prefer measured samples
 		const measured = comparable.filter((sample) => !sample.estimated);
 		const chosen = (measured.length > 0 ? measured : comparable).slice(0, MAX_SAMPLES);
 
@@ -185,11 +185,8 @@ export const estimateRuntimesForModels = (
 	return estimates;
 };
 
-/** Estimate one model. */
-export const estimateRuntimeForModel = (target: Model, history: Model[]): RuntimeEstimate | null =>
-	estimateRuntimesForModels([target], history)[target.id] ?? null;
-
-/** Seconds remaining. */
+/** estimate one model */
+/** seconds remaining */
 export const remainingSeconds = (
 	typicalSeconds: number | null,
 	queuedAt: string | undefined,

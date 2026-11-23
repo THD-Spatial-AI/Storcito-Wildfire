@@ -3,7 +3,7 @@ import type { TooltipRenderProps } from "react-joyride";
 import { Info, X } from "lucide-react";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { useTranslation } from "@/i18n";
-import type { StatusTab } from "@/features/model-dashboard/utils/statusHelpers";
+import { TAB_LABEL_KEYS, type StatusTab } from "@/features/model-dashboard/utils/statusHelpers";
 import { tourSectionChipKeys, type TourStepDef } from "./steps/tourStepTypes";
 
 export interface TourSectionLink {
@@ -18,16 +18,8 @@ interface TourTooltipProps extends TooltipRenderProps {
 	onGoToStep: (index: number) => void;
 }
 
-const TAB_LABEL_KEYS: Record<StatusTab, string> = {
-	all: "model.tabs.all",
-	pinned: "model.tabs.pinned",
-	running: "model.tabs.running",
-	completed: "model.tabs.completed",
-	drafts: "model.tabs.drafts",
-	failed: "model.tabs.failed",
-};
 
-const TAB_DOT_CLASS: Record<StatusTab, string> = {
+const TAB_DOT_CLASS: Partial<Record<StatusTab, string>> = {
 	all: "bg-slate-400",
 	pinned: "bg-amber-500",
 	running: "bg-blue-500",
@@ -45,7 +37,7 @@ const TourPreviewChip: React.FC<{ def: TourStepDef }> = ({ def }) => {
 		return (
 			<span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-xs font-medium text-foreground">
 				<span className={`h-1.5 w-1.5 rounded-full ${TAB_DOT_CLASS[preview.tab]}`} />
-				{t(TAB_LABEL_KEYS[preview.tab])}
+				{t(TAB_LABEL_KEYS[preview.tab] ?? "model.tabs.all")}
 			</span>
 		);
 	}
@@ -62,7 +54,7 @@ const TourPreviewChip: React.FC<{ def: TourStepDef }> = ({ def }) => {
 	);
 };
 
-export const TourTooltip: React.FC<TourTooltipProps> = ({
+const TourTooltip: React.FC<TourTooltipProps> = ({
 	index,
 	size,
 	isLastStep,
@@ -157,7 +149,7 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
 				)}
 
 				<div className="flex items-center justify-between pt-1">
-					<span className="text-xs tabular-nums text-muted-foreground">
+					<span className="whitespace-nowrap text-xs tabular-nums text-muted-foreground">
 						{t("tour.product.ui.stepOf", { current: index + 1, total: size })}
 					</span>
 					<div className="flex items-center gap-1.5">
@@ -165,6 +157,7 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
 							<button
 								key={section.id}
 								type="button"
+								data-compact
 								aria-label={section.label}
 								title={section.label}
 								onClick={() => onGoToStep(section.firstIndex)}
@@ -223,7 +216,7 @@ export const TourTooltipExtrasContext = React.createContext<TourTooltipExtras>({
 	onGoToStep: () => {},
 });
 
-/** Stable tooltip component. */
+/** stable tooltip component */
 export const TourTooltipWithExtras: React.FC<TooltipRenderProps> = (props) => {
 	const extras = React.useContext(TourTooltipExtrasContext);
 	return <TourTooltip {...props} {...extras} />;

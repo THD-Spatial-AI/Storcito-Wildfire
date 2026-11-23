@@ -1,11 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { modelService, Model, ModelListResponse, UpdateModelRequest, ModelResponse } from "@/features/model-dashboard/services/modelService";
+import { modelService, Model, ModelListResponse, UpdateModelRequest, ModelResponse, type ModelListParams, type TabCountParams } from "@/features/model-dashboard/services/modelService";
 import { isActiveStatus } from "@/features/model-dashboard/utils/statusHelpers";
 
 const modelKeys = {
 	all: ["models"] as const,
 	lists: () => [...modelKeys.all, "list"] as const,
-	list: (params?: { limit?: number; offset?: number; search?: string; workspace_id?: number; sort_by?: string; sort_order?: string; from_date?: string; to_date?: string; pinned?: string; pinned_only?: string; status?: string; grouped?: boolean }) =>
+	list: (params?: { limit?: number; offset?: number; search?: string; workspace_id?: number; sort_by?: string; sort_order?: string; from_date?: string; to_date?: string; pinned?: string; pinned_only?: string; status?: string; grouped?: boolean; owner?: string; territory?: string }) =>
 		[...modelKeys.lists(), params] as const,
 	runtimeHistory: (workspaceId: number | undefined) =>
 		[...modelKeys.lists(), "runtime-history", workspaceId] as const,
@@ -13,20 +13,18 @@ const modelKeys = {
 	detail: (id: number) => [...modelKeys.all, "detail", id] as const,
 };
 
-export const useModelsQuery = (params?: {
-	limit?: number;
-	offset?: number;
-	search?: string;
-	workspace_id?: number;
-	sort_by?: string;
-	sort_order?: string;
-	from_date?: string;
-	to_date?: string;
-	pinned?: string;
-	pinned_only?: string;
-	status?: string;
-	grouped?: boolean;
-}, options?: { requireWorkspace?: boolean }) => {
+/** tab counts refreshes */
+export const useTabCountsQuery = (params: TabCountParams, options?: { requireWorkspace?: boolean }) =>
+	useQuery({
+		queryKey: [...modelKeys.lists(), "tab-counts", params] as const,
+		queryFn: () => modelService.getTabCounts(params),
+		enabled: (options?.requireWorkspace ?? true) ? params.workspace_id !== undefined : true,
+		refetchOnWindowFocus: true,
+		refetchInterval: 10_000,
+		refetchIntervalInBackground: false,
+	});
+
+export const useModelsQuery = (params?: ModelListParams, options?: { requireWorkspace?: boolean }) => {
 	const requireWorkspace = options?.requireWorkspace ?? true;
 	return useQuery({
 		queryKey: modelKeys.list(params),
@@ -55,11 +53,11 @@ export const useModelsQuery = (params?: {
 	});
 };
 
-// Includes nested versions.
+// includes nested versions
 const hasActiveVersion = (model: Model): boolean =>
 	isActiveStatus(model.status) || (model.versions ?? []).some((v) => isActiveStatus(v.status));
 
-/** Samples for estimates. */
+/** samples for estimates */
 export const useRuntimeHistoryQuery = (workspaceId: number | undefined) => {
 	return useQuery({
 		queryKey: modelKeys.runtimeHistory(workspaceId),
@@ -76,6 +74,16 @@ export const useRuntimeHistoryQuery = (workspaceId: number | undefined) => {
 		refetchInterval: false,
 	});
 };
+
+/** admin cards refreshes */
+export const useAdminMetricsQuery = (enabled = true) =>
+	useQuery({
+		queryKey: [...modelKeys.lists(), "admin-metrics"] as const,
+		queryFn: () => modelService.getAdminMetrics(),
+		enabled,
+		refetchInterval: 15_000,
+		refetchIntervalInBackground: false,
+	});
 
 export const useModelStatsQuery = () => {
 	return useQuery({
@@ -98,7 +106,7 @@ export const useDuplicateModelMutation = () => {
 
 	return useMutation({
 		mutationFn: (id: number) => {
-			// Reuse cached models.
+			// reuse cached models
 			const cachedQueries = queryClient.getQueriesData<ModelListResponse>({ queryKey: modelKeys.lists() });
 			const cachedModels = cachedQueries.flatMap(([, data]) => (data && Array.isArray(data.data) ? data.data : []));
 			return modelService.duplicateModel(id, cachedModels.length > 0 ? cachedModels : undefined);

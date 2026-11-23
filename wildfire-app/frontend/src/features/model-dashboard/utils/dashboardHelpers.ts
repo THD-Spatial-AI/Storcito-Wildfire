@@ -2,9 +2,9 @@ import { Model } from "@/features/model-dashboard/services/modelService";
 
 export interface ModelFamily {
 	root: Model;
-	/** Parent shown on top. */
+	/** parent shown top */
 	display: Model;
-	/** Copies, oldest first. */
+	/** copies oldest first */
 	otherVersions: Model[];
 	versionCount: number;
 	memberIds: number[];
