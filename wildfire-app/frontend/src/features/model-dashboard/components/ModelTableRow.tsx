@@ -1,14 +1,13 @@
 import React, { memo } from "react";
-import { ChevronRight, Copy, PencilLine, Users, Clock, Pin } from "lucide-react";
+import { ChevronDown, Copy, Loader2, PencilLine, Users, Pin } from "lucide-react";
 import { Model } from "@/features/model-dashboard/services/modelService";
 import StatusBadge from "@/components/ui/StatusBadge";
-import ElapsedTimer from "@/components/ui/ElapsedTimer";
 import { remainingSeconds } from "@/features/model-dashboard/utils/runtimeEstimate";
-import { SimulationProgress } from "@/components/ui/SimulationProgress";
-import CompletedTimer from "@/components/ui/CompletedTimer";
+import { useSecondTicker } from "@/hooks/use-second-ticker";
+import { formatElapsedTime } from "@/utils/timeUtils";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@spatialhub/ui";
 import ModelRowActions from "./ModelRowActions";
-import RiskLevelBadge from "./RiskLevelBadge";
+import RiskScoreCell from "./RiskScoreCell";
 import { formatDateTime, formatDateRange, formatShortDateTime } from "@/utils/dateHelpers";
 import { useTranslation } from "@/i18n";
 import { useFavoriteModelsStore } from "@/features/model-dashboard/store/favorite-models";
@@ -17,6 +16,7 @@ import {
   useSeenCompletedModelsStore,
 } from "@/features/model-dashboard/store/seen-completed-models";
 import { isActiveStatus } from "@/features/model-dashboard/utils/statusHelpers";
+import { displayTitle } from "@/features/model-dashboard/utils/modelDisplay";
 import { useModelDashboardActions } from "./model-dashboard/ModelDashboardActionsContext";
 
 const getErrorMessage = (error: unknown): string => {
@@ -33,7 +33,7 @@ const getErrorMessage = (error: unknown): string => {
   return String(error);
 };
 
-/** Compact duration. */
+/** compact duration */
 const formatDuration = (seconds: number): string => {
   const mins = Math.round(seconds / 60);
   if (mins < 1) return "<1 min";
@@ -43,110 +43,261 @@ const formatDuration = (seconds: number): string => {
   return rest === 0 ? `${hours} h` : `${hours} h ${rest} min`;
 };
 
-/** Version row id. */
+// short date full
+const DateCell: React.FC<{ value?: string | null }> = ({ value }) => (
+  <td className="hidden truncate px-4 py-2 xl:table-cell">
+    {value ? (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="text-xs tabular-nums text-foreground/70">{formatShortDateTime(value)}</span>
+        </TooltipTrigger>
+        <TooltipContent>{formatDateTime(value)}</TooltipContent>
+      </Tooltip>
+    ) : (
+      <span className="text-xs text-muted-foreground">—</span>
+    )}
+  </td>
+);
+
+/** version row id */
 const versionRowId = (id: number): string => `model-version-row-${id}`;
+
+// run time chip
+const DurationText: React.FC<{ startTime?: string; totalSeconds?: number; status?: string; spinner?: boolean }> = ({
+  startTime,
+  totalSeconds,
+  status,
+  spinner = false,
+}) => {
+  const { t } = useTranslation();
+  const startMs = startTime ? Date.parse(startTime) : NaN;
+  const now = useSecondTicker(!Number.isNaN(startMs));
+  const seconds = typeof totalSeconds === "number" ? totalSeconds : Number.isNaN(startMs) ? null : (now - startMs) / 1000;
+  if (seconds === null) return null;
+  const time = formatElapsedTime(Math.max(0, seconds));
+  const chip = (
+    <span className="inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-px text-[11px] font-medium tabular-nums text-foreground/70">
+      {spinner && <Loader2 aria-hidden className="h-3 w-3 animate-spin motion-reduce:animate-none" />}
+      {time}
+    </span>
+  );
+  // finished runs explain
+  const tooltipKey =
+    status === "failed"
+      ? "notifications.failedAfter"
+      : status === "cancelled"
+        ? "notifications.cancelledAfter"
+        : status === "completed"
+          ? "notifications.completedIn"
+          : null;
+  if (!tooltipKey) return chip;
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{chip}</TooltipTrigger>
+      <TooltipContent>{t(tooltipKey, { time })}</TooltipContent>
+    </Tooltip>
+  );
+};
+
+// clicks not open
+const stop = (e: React.SyntheticEvent) => e.stopPropagation();
 
 interface ModelTableRowProps {
   model: Model;
   level?: number;
   parentModelTitle?: string;
-  /** Family row info. */
+  /** family row info */
   versionCount?: number;
   versionsExpanded?: boolean;
   familyRootId?: number;
   familyMemberIds?: number[];
   onToggleVersions?: (rootId: number) => void;
-  /** Last version. */
+  /** last version */
   isLastVersion?: boolean;
+  /** newest activity family */
+  lastActivityAt?: string;
 }
 
 interface ModelNameCellProps {
-  modelTitle: string;
-  parentModelTitle?: string;
-  level: number;
+  /** admin id chip */
+  showId?: boolean;
   model: Model;
-  isNotModelOwner: boolean | "" | 0 | null | undefined;
+  level: number;
+  parentModelTitle?: string;
+  isNotModelOwner: boolean;
+  isNew: boolean;
+  versionCount?: number;
+  /** shown below xl */
+  updatedLabel?: string;
+  versionsExpanded: boolean;
+  versionRowIds: string;
+  onToggleVersions?: () => void;
 }
 
 const ModelNameCell: React.FC<ModelNameCellProps> = ({
-  modelTitle,
-  parentModelTitle,
-  level,
   model,
+  showId = false,
+  level,
+  parentModelTitle,
   isNotModelOwner,
+  isNew,
+  versionCount,
+  updatedLabel,
+  versionsExpanded,
+  versionRowIds,
+  onToggleVersions,
 }) => {
   const { t } = useTranslation();
-  const { editingModel, editTitle, setEditTitle, updateTitle, cancelTitleEdit, startTitleEdit } =
+  const { editingModel, editTitle, setEditTitle, updateTitle, cancelTitleEdit, handleView, startTitleEdit } =
     useModelDashboardActions();
-  const isEditing = editingModel?.id === model.id;
+  const title = displayTitle(model);
+  const renameLabel = t("model.rename", "Rename");
 
-  if (isEditing) {
+  if (editingModel?.id === model.id) {
     return (
       <input
         type="text"
         value={editTitle}
         onChange={(e) => setEditTitle(e.target.value)}
         onBlur={updateTitle}
+        onClick={stop}
         onKeyDown={(e) => {
+          e.stopPropagation();
           if (e.key === "Enter") updateTitle();
           if (e.key === "Escape") cancelTitleEdit();
         }}
         autoFocus
-        className="min-w-40 px-3 py-1.5 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-sm text-foreground"
+        aria-label={renameLabel}
+        className="w-full min-w-40 px-2.5 py-1 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-sm text-foreground"
       />
     );
   }
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <button
-          onClick={() => startTitleEdit(model)}
-          className="flex min-w-0 max-w-full items-center gap-2 py-1.5 px-2.5 rounded-lg hover:bg-muted transition-colors group/title"
-        >
-          {level > 0 && (
-            <div className="flex items-center mr-0.5">
-              <div className="w-3 h-3 border-l border-b border-gray-300 dark:border-gray-600 rounded-bl-md"></div>
-            </div>
+    <div className="flex min-w-0 items-center gap-2">
+      <div className="min-w-0 flex-1">
+        <div className="group/name flex min-w-0 items-center gap-1.5">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span
+                className={`truncate text-sm text-foreground decoration-foreground/30 underline-offset-[3px] transition-colors duration-150 hover:underline ${
+                  level > 0 ? "font-medium" : "font-semibold"
+                }`}
+              >
+                {title}
+              </span>
+            </TooltipTrigger>
+            <TooltipContent className="max-w-sm break-words">{model.title.trim()}</TooltipContent>
+          </Tooltip>
+          {showId && (
+            <span className="shrink-0 rounded-md bg-muted px-1.5 py-px text-[11px] font-medium tabular-nums text-foreground/60">
+              #{model.id}
+            </span>
           )}
-
-          <div className="flex shrink-0 items-center gap-1.5">
-            {model.is_copy && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="flex items-center justify-center w-5 h-5 bg-muted rounded-md">
-                    <Copy className="w-3 h-3 text-muted-foreground" />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {t("model.copyOf", { name: parentModelTitle || t("model.anotherModel") })}
-                </TooltipContent>
-              </Tooltip>
-            )}
-            {isNotModelOwner && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="flex items-center justify-center w-5 h-5 bg-muted rounded-md">
-                    <Users className="w-3 h-3 text-muted-foreground" />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {t("model.ownedBy")}: {model.user_email || t("common.unknown")}
-                </TooltipContent>
-              </Tooltip>
-            )}
+          {/* rename on hover */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={(e) => {
+                  stop(e);
+                  startTitleEdit(model);
+                }}
+                onKeyDown={stop}
+                aria-label={renameLabel}
+                data-compact
+                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-muted hover:text-foreground focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group-hover/name:opacity-100"
+              >
+                <PencilLine className="h-3.5 w-3.5" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>{renameLabel}</TooltipContent>
+          </Tooltip>
+          {model.is_copy && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-muted">
+                  <Copy className="h-3 w-3 text-muted-foreground" />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>{t("model.copyOf", { name: parentModelTitle || t("model.anotherModel") })}</TooltipContent>
+            </Tooltip>
+          )}
+          {isNotModelOwner && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-muted">
+                  <Users className="h-3 w-3 text-muted-foreground" />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                {t("model.ownedBy")}: {model.user_email || t("common.unknown")}
+              </TooltipContent>
+            </Tooltip>
+          )}
+          {isNew && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  data-tour="model-new-badge"
+                  data-compact
+                  onClick={(e) => {
+                    stop(e);
+                    handleView(model);
+                  }}
+                  className="flex shrink-0 items-center gap-1 rounded-full bg-emerald-500/10 px-1.5 py-px text-[11px] font-medium text-emerald-700 ring-1 ring-emerald-500/20 transition-colors hover:bg-emerald-500/20 dark:text-emerald-300"
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  {t("model.recentlyCompleted", "New")}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {t("model.recentlyCompletedTooltip", {
+                  time: formatDateTime(model.calculation_completed_at!),
+                  defaultValue: "Finished {{time}}. Open it to see the results.",
+                })}
+              </TooltipContent>
+            </Tooltip>
+          )}
+        </div>
+        {/* versions own line */}
+        {versionCount !== undefined && versionCount > 1 && onToggleVersions && (
+          <div className="mt-0.5 flex min-w-0 flex-nowrap items-center gap-1.5 whitespace-nowrap text-[11px] text-foreground/65">
+            <button
+              type="button"
+              data-tour="model-versions-toggle"
+              data-compact
+              onClick={(e) => {
+                stop(e);
+                onToggleVersions();
+              }}
+              onKeyDown={stop}
+              aria-expanded={versionsExpanded}
+              aria-controls={versionsExpanded ? versionRowIds : undefined}
+              aria-label={
+                versionsExpanded
+                  ? t("model.hideVersions", { count: versionCount - 1, defaultValue: "Hide {{count}} versions" })
+                  : t("model.showVersions", { count: versionCount - 1, defaultValue: "Show {{count}} versions" })
+              }
+              className={`inline-flex shrink-0 items-center gap-0.5 whitespace-nowrap rounded-md py-px pl-1.5 pr-1 font-medium ring-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                versionsExpanded
+                  ? "bg-foreground text-background ring-foreground"
+                  : "bg-muted/60 text-foreground/80 ring-border hover:bg-accent hover:text-foreground"
+              }`}
+            >
+              {t("model.versionCount", { count: versionCount, defaultValue: "{{count}} versions" })}
+              <ChevronDown
+                aria-hidden
+                className={`h-3 w-3 transition-transform duration-200 motion-reduce:transition-none ${versionsExpanded ? "rotate-180" : ""}`}
+              />
+            </button>
+            <span className="shrink-0">· {t("model.originalVersion", "Original")}</span>
+            {updatedLabel && <span className="min-w-0 truncate tabular-nums xl:hidden">· {updatedLabel}</span>}
           </div>
-
-          <span className={`text-sm text-foreground truncate ${level > 0 ? "font-medium" : "font-semibold"}`}>{modelTitle}</span>
-
-          <PencilLine className="w-3.5 h-3.5 text-muted-foreground opacity-0 group-hover/title:opacity-100 transition-opacity flex-shrink-0" />
-        </button>
-      </TooltipTrigger>
-      <TooltipContent className="max-w-sm">
-        <p className="break-words font-medium">{modelTitle}</p>
-        <p className="text-muted-foreground">{t("common.tooltips.editName")}</p>
-      </TooltipContent>
-    </Tooltip>
+        )}
+      </div>
+    </div>
   );
 };
 
@@ -160,8 +311,15 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
   familyMemberIds,
   onToggleVersions,
   isLastVersion = false,
+  lastActivityAt,
 }) => {
   const { t } = useTranslation();
+  const activityAt = lastActivityAt ?? model.calculation_completed_at ?? model.updated_at;
+  const updatedLabel = activityAt
+    ? t("model.updatedAt", { date: formatShortDateTime(activityAt), defaultValue: "Updated {{date}}" })
+    : undefined;
+  // matches cell rule
+  const hasVersionsLine = versionCount !== undefined && versionCount > 1 && !!onToggleVersions && familyRootId !== undefined;
   const {
     user,
     isSelected: isModelSelected,
@@ -179,11 +337,12 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
     handleSingleDelete,
     handleShare,
     handleMoveToWorkspace,
+    variant,
   } = useModelDashboardActions();
 
   const runtimeEstimate = runtimeEstimates[model.id] ?? null;
-  // Estimates span queued to completed,
-  const remaining = isActiveStatus(model.status)
+  const active = isActiveStatus(model.status);
+  const remaining = active
     ? remainingSeconds(
         runtimeEstimate?.totalSeconds ?? null,
         model.calculation_queued_at ?? calculationStartTimes[model.id]
@@ -216,47 +375,68 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
   };
   const seenCompleted = useSeenCompletedModelsStore((s) => s.seen);
   const isNew = isRecentlyCompleted(model, seenCompleted);
-  const indentClass = level > 0 ? "pl-8" : "";
+  const isAdmin = variant === "admin";
   const isSelected = isModelSelected(model);
   const canManageModel = canUserDeleteModel(model);
   const currentUserId = user?.id ? String(user.id) : undefined;
   const userAccessLevel = user?.access_level ?? undefined;
+  const isNotModelOwner = Boolean(
+    currentUserId && model.user_id && String(model.user_id) !== String(currentUserId)
+  );
 
-  const isNotModelOwner =
-    currentUserId && model.user_id && String(model.user_id) !== String(currentUserId);
+  // finished running results
+  const openModel = () => {
+    if (model.status === "completed" || active) handleView(model);
+    else handleEdit(model);
+  };
 
-  // Selected, then new, then version.
-  const rowClassName = `group transition-colors duration-150 ${
+  const rowClassName = `group h-14 cursor-pointer outline-none transition-colors duration-150 motion-reduce:transition-none focus-visible:bg-muted/60 focus-visible:shadow-[inset_0_0_0_2px_var(--ring)] ${
     isSelected
       ? "bg-muted/50 shadow-[inset_2px_0_0_0_var(--primary)]"
       : isNew
-        ? "bg-emerald-500/[0.06] shadow-[inset_2px_0_0_0_var(--color-emerald-500)]"
+        ? "bg-emerald-500/[0.06] shadow-[inset_2px_0_0_0_var(--color-emerald-500)] hover:bg-emerald-500/[0.1]"
         : level > 0
           ? "bg-gray-50 hover:bg-[#F0F2F4] dark:bg-muted/20 dark:hover:bg-muted/40"
           : "hover:bg-muted/40"
   }`;
 
+  const statusBadge = <StatusBadge status={model.status} size="small" />;
+
   return (
-    <tr data-tour="model-row" id={level > 0 ? versionRowId(model.id) : undefined} className={rowClassName}>
-      <td className={`pl-4 pr-2 py-2.5 ${indentClass}`}>
-        <div className="flex items-center justify-center gap-1.5">
+    <tr
+      data-tour="model-row"
+      id={level > 0 ? versionRowId(model.id) : undefined}
+      className={rowClassName}
+      tabIndex={0}
+      onClick={openModel}
+      onKeyDown={(e) => {
+        if (e.target !== e.currentTarget) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openModel();
+        }
+      }}
+      aria-label={t("model.openModel", { name: displayTitle(model), defaultValue: "Open {{name}}" })}
+    >
+      <td className="pl-2 pr-0 py-2" onClick={stop}>
+        <div className="flex items-center justify-center gap-1">
           <input
             type="checkbox"
             checked={isSelected}
             onChange={() => handleSelectModel(model)}
+            aria-label={t("model.selectModel", { name: displayTitle(model), defaultValue: "Select {{name}}" })}
             className="h-4 w-4 cursor-pointer rounded border-input accent-primary focus:ring-ring focus:ring-offset-0"
           />
+          {!isAdmin && (
           <Tooltip>
             <TooltipTrigger asChild>
               <button
                 type="button"
                 data-tour="model-pin"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handlePinToggle();
-                }}
-                className={`rounded-md p-1 transition-all duration-150 hover:bg-muted ${
-                  favorited ? "" : "opacity-40 group-hover:opacity-100 focus-visible:opacity-100"
+                data-compact
+                onClick={handlePinToggle}
+                className={`rounded-md p-0.5 transition-all duration-150 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                  favorited ? "" : "opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 focus-visible:opacity-100"
                 }`}
                 aria-label={favorited ? t("model.unpin", "Unpin") : t("model.pin", "Pin to top")}
                 aria-pressed={favorited}
@@ -266,96 +446,93 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
                 />
               </button>
             </TooltipTrigger>
-            <TooltipContent>
-              {favorited ? t("model.unpin", "Unpin") : t("model.pin", "Pin to top")}
-            </TooltipContent>
+            <TooltipContent>{favorited ? t("model.unpin", "Unpin") : t("model.pin", "Pin to top")}</TooltipContent>
           </Tooltip>
-        </div>
-      </td>
-
-      <td className={`relative w-[40%] max-w-0 pl-2 pr-4 py-2.5 ${indentClass}`}>
-        {level > 0 && (
-          // Version connector.
-          <span
-            aria-hidden="true"
-            className={`pointer-events-none absolute left-[2.625rem] top-0 w-px bg-gray-300 dark:bg-gray-600 ${isLastVersion ? "h-1/2" : "bottom-0"}`}
-          />
-        )}
-        <div className="flex min-w-0 flex-col gap-0.5">
-          <ModelNameCell
-            modelTitle={model.title.trim()}
-            parentModelTitle={parentModelTitle}
-            level={level}
-            model={model}
-            isNotModelOwner={isNotModelOwner}
-          />
-          {versionCount !== undefined && versionCount > 1 && onToggleVersions && familyRootId !== undefined && (
-            <div className="ml-2.5 flex min-w-0 items-center gap-1.5">
-              <button
-                type="button"
-                data-tour="model-versions-toggle"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onToggleVersions(familyRootId);
-                }}
-                onKeyDown={(e) => e.stopPropagation()}
-                aria-expanded={versionsExpanded}
-                aria-controls={versionsExpanded ? versionRowIds : undefined}
-                aria-label={
-                  versionsExpanded
-                    ? t("model.hideVersions", { count: versionCount - 1, defaultValue: "Hide {{count}} versions" })
-                    : t("model.showVersions", { count: versionCount - 1, defaultValue: "Show {{count}} versions" })
-                }
-                className="relative inline-flex w-fit items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium text-foreground/70 transition-colors before:absolute before:-inset-x-1 before:-top-0.5 before:-bottom-2 before:content-[''] hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background"
-              >
-                <ChevronRight
-                  aria-hidden="true"
-                  className={`h-3.5 w-3.5 shrink-0 transition-transform duration-200 ease-out motion-reduce:transition-none ${versionsExpanded ? "rotate-90" : ""}`}
-                />
-                {t("model.versions", { count: versionCount - 1 })}
-              </button>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="truncate text-[11px] text-muted-foreground">
-                    · {t("model.originalVersion", "Original")}
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs">
-                  {t(
-                    "model.originalVersionHint",
-                    "This row is the original model. Its status, period and activity are its own; each version has its own row."
-                  )}
-                </TooltipContent>
-              </Tooltip>
-            </div>
           )}
         </div>
       </td>
 
-      <td className="w-[12%] max-w-0 px-4 py-2.5">
-        <span className="block truncate text-xs text-muted-foreground">
-          {model.region || model.country || "—"}
-        </span>
+      <td className={`relative py-2 pr-4 ${level > 0 ? "pl-10" : "pl-2"}`}>
+        {level > 0 && (
+          // tree line edge
+          <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-4 w-5">
+            {isLastVersion ? (
+              <span className="absolute left-0 top-0 h-1/2 w-4 rounded-bl-lg border-b-[1.5px] border-l-[1.5px] border-gray-300 dark:border-gray-600" />
+            ) : (
+              <>
+                <span className="absolute inset-y-0 left-0 border-l-[1.5px] border-gray-300 dark:border-gray-600" />
+                <span className="absolute left-0 top-1/2 w-4 border-t-[1.5px] border-gray-300 dark:border-gray-600" />
+              </>
+            )}
+          </span>
+        )}
+        <ModelNameCell
+          model={model}
+          showId={isAdmin}
+          level={level}
+          parentModelTitle={parentModelTitle}
+          isNotModelOwner={isNotModelOwner && !isAdmin}
+          isNew={isNew}
+          versionCount={versionCount}
+          updatedLabel={updatedLabel}
+          versionsExpanded={versionsExpanded}
+          versionRowIds={versionRowIds}
+          onToggleVersions={
+            onToggleVersions && familyRootId !== undefined ? () => onToggleVersions(familyRootId) : undefined
+          }
+        />
+        {/* no versions line */}
+        {updatedLabel && !hasVersionsLine && (
+          <p className="mt-0.5 truncate text-[11px] tabular-nums text-muted-foreground xl:hidden">{updatedLabel}</p>
+        )}
       </td>
 
-      <td className="hidden w-[14%] whitespace-nowrap px-4 py-2.5 md:table-cell">
-        <span className="text-xs tabular-nums text-muted-foreground">
+      {/* territory owner first */}
+      {isAdmin && (
+      <td className="px-4 py-2">
+        <span className="flex min-w-0 items-center gap-2">
+          <span aria-hidden className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-[11px] font-semibold uppercase text-foreground/70">
+            {(model.user_email || "?").charAt(0)}
+          </span>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="truncate text-xs text-foreground/80">{model.user_email || t("common.unknown")}</span>
+            </TooltipTrigger>
+            <TooltipContent>{model.user_email || t("common.unknown")}</TooltipContent>
+          </Tooltip>
+        </span>
+      </td>
+      )}
+      <td className="px-4 py-2">
+        {model.region || model.country ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="flex min-w-0 items-center gap-1.5 text-xs text-foreground/80">
+                <span className="truncate">{model.region || model.country}</span>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>{model.region || model.country}</TooltipContent>
+          </Tooltip>
+        ) : (
+          <span className="text-xs text-muted-foreground">—</span>
+        )}
+      </td>
+      {!isAdmin && (
+      <td className="hidden truncate px-4 py-2 md:table-cell">
+        <span className="text-xs tabular-nums text-foreground/70">
           {model.from_date && model.to_date ? formatDateRange(model.from_date, model.to_date) : "–"}
         </span>
       </td>
+      )}
 
-      <td className="w-px whitespace-nowrap px-4 py-2.5">
-        {model.status === "completed" && <RiskLevelBadge modelId={model.id} />}
-      </td>
+      <td className="px-4 py-2">{model.status === "completed" ? <RiskScoreCell modelId={model.id} /> : <span className="text-xs text-muted-foreground">—</span>}</td>
 
-      <td className="whitespace-nowrap px-4 py-2.5">
-        <div data-tour="model-status" className="flex items-center gap-2">
+      <td className="px-4 py-2">
+        <div data-tour="model-status" className="flex items-center gap-1.5">
           {model.status === "failed" ? (
             <Tooltip>
               <TooltipTrigger asChild>
-                <div>
-                  <StatusBadge status={model.status} size="small" />
-                </div>
+                <div>{statusBadge}</div>
               </TooltipTrigger>
               <TooltipContent>
                 {model.results?.error
@@ -364,120 +541,57 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
               </TooltipContent>
             </Tooltip>
           ) : (
-            <StatusBadge status={model.status} size="small" />
+            statusBadge
           )}
-
-          {isNew && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  type="button"
-                  data-tour="model-new-badge"
-                  onClick={() => handleView(model)}
-                  className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-500/20 transition-colors hover:bg-emerald-500/20 dark:text-emerald-300"
-                >
-                  <span className="relative flex h-1.5 w-1.5">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-60" />
-                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          {/* run time next */}
+        {active && calculationStartTimes[model.id] ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span>
+                <DurationText startTime={calculationStartTimes[model.id]} spinner />
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>
+              {remainingLabel && <span className="block font-medium">{remainingLabel}</span>}
+              {runtimeEstimate === null ? (
+                t("model.estimateUnavailable", "Not enough comparable successful runs to estimate a finish time")
+              ) : (
+                <>
+                  <span>
+                    {t("model.estimateBasis", {
+                      typical: formatDuration(runtimeEstimate.totalSeconds),
+                      count: runtimeEstimate.sampleCount,
+                      defaultValue_one: "Based on 1 comparable run, which took {{typical}}",
+                      defaultValue_other: "Based on {{count}} comparable runs, which typically take {{typical}}",
+                    })}
                   </span>
-                  {t("model.recentlyCompleted", "New")}
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>
-                {t("model.recentlyCompletedTooltip", {
-                  time: formatDateTime(model.calculation_completed_at!),
-                  defaultValue: "Finished {{time}}. Open it to see the results.",
-                })}
-              </TooltipContent>
-            </Tooltip>
-          )}
-
-          {isActiveStatus(model.status) && calculationStartTimes[model.id] && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="flex items-center gap-1 px-2 py-1 bg-muted rounded-md">
-                  <ElapsedTimer
-                    startTime={calculationStartTimes[model.id]}
-                    isRunning={true}
-                    className="text-xs font-medium text-foreground"
-                    showBlinkingIcon={true}
-                  />
-                  {remainingLabel && (
-                    <span className="text-xs text-muted-foreground">· {remainingLabel}</span>
-                  )}
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                {runtimeEstimate === null ? (
-                  t(
-                    "model.estimateUnavailable",
-                    "Not enough comparable successful runs to estimate a finish time"
-                  )
-                ) : (
-                  <>
-                    <span>
-                      {t("model.estimateBasis", {
-                        typical: formatDuration(runtimeEstimate.totalSeconds),
-                        count: runtimeEstimate.sampleCount,
-                        defaultValue_one: "Based on 1 comparable run, which took {{typical}}",
-                        defaultValue_other:
-                          "Based on {{count}} comparable runs, which typically take {{typical}}",
-                      })}
+                  {runtimeEstimate.approximate && (
+                    <span className="mt-1 block text-muted-foreground">
+                      {t("model.estimateApproximate", "Those runs predate queue tracking, so the real wait is likely longer.")}
                     </span>
-                    {runtimeEstimate.approximate && (
-                      <span className="mt-1 block text-muted-foreground">
-                        {t(
-                          "model.estimateApproximate",
-                          "Those runs predate queue tracking, so the real wait is likely longer."
-                        )}
-                      </span>
-                    )}
-                  </>
-                )}
-              </TooltipContent>
-            </Tooltip>
-          )}
-
-          {model.status === "queue" && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="relative flex items-center justify-center w-6 h-6 cursor-pointer">
-                  <span className="absolute w-5 h-5 bg-amber-100 dark:bg-amber-900/30 rounded-full"></span>
-                  <span className="absolute w-5 h-5 bg-amber-300 dark:bg-amber-600 rounded-full animate-ping opacity-50"></span>
-                  <Clock className="relative w-3 h-3 text-amber-600 dark:text-amber-400" />
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{t("model.queuedTooltip")}</p>
-              </TooltipContent>
-            </Tooltip>
-          )}
-
-          {(model.status === "queue" ||
-            model.status === "calculating" ||
-            model.status === "running" ||
-            model.status === "processing") && <SimulationProgress status={model.status} />}
-
-          {(model.status === "completed" ||
-            model.status === "failed" ||
-            model.status === "cancelled") &&
-            calculationCompletionInfo[model.id] && (
-              <CompletedTimer
-                totalSeconds={calculationCompletionInfo[model.id].totalSeconds}
-                status={model.status}
-              />
-            )}
+                  )}
+                </>
+              )}
+            </TooltipContent>
+          </Tooltip>
+        ) : (
+          <DurationText
+            totalSeconds={
+              model.status === "completed" || model.status === "failed"
+                ? calculationCompletionInfo[model.id]?.totalSeconds
+                : undefined
+            }
+            status={model.status}
+          />
+        )}
         </div>
       </td>
 
-      <td className="hidden w-px whitespace-nowrap px-4 py-2.5 md:table-cell">
-        <span className="text-xs tabular-nums text-muted-foreground">
-          {formatShortDateTime(model.calculation_completed_at ?? model.updated_at)}
-        </span>
-      </td>
+      {isAdmin && <DateCell value={model.created_at} />}
+      <DateCell value={activityAt} />
 
-      <td className="w-px whitespace-nowrap px-4 py-2.5">
-        <div className="flex items-center gap-1 transition-opacity duration-150 sm:opacity-80 sm:group-hover:opacity-100">
+      <td className="sticky right-0 z-[1] bg-card group-data-[overflow=true]/table:shadow-[-8px_0_8px_-8px_rgb(0_0_0/0.12)] group-hover:bg-muted py-2 pl-2 pr-4" onClick={stop}>
+        <div className="flex items-center justify-end">
           <ModelRowActions
             model={model}
             currentUserId={currentUserId}
@@ -493,13 +607,9 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
             disableDelete={!canManageModel}
             deleteTooltip={canManageModel ? t("common.delete") : t("model.sharedCannotDelete")}
             disableMoveToWorkspace={!canManageModel}
-            moveToWorkspaceTooltip={
-              canManageModel ? t("common.tooltips.moveToWorkspace") : t("model.sharedCannotMove")
-            }
+            moveToWorkspaceTooltip={canManageModel ? t("common.tooltips.moveToWorkspace") : t("model.sharedCannotMove")}
             disableShare={!canManageModel}
-            shareTooltip={
-              canManageModel ? t("common.tooltips.share") : t("model.sharedCannotShare")
-            }
+            shareTooltip={canManageModel ? t("common.tooltips.share") : t("model.sharedCannotShare")}
             hasAvailableWebservice={hasAvailableWebservice}
           />
         </div>
@@ -540,6 +650,7 @@ const areRowPropsEqual = (prev: ModelTableRowProps, next: ModelTableRowProps): b
   if (prev.versionsExpanded !== next.versionsExpanded) return false;
   if (prev.familyRootId !== next.familyRootId) return false;
   if (prev.isLastVersion !== next.isLastVersion) return false;
+  if (prev.lastActivityAt !== next.lastActivityAt) return false;
   if ((prev.familyMemberIds ?? []).join(",") !== (next.familyMemberIds ?? []).join(",")) return false;
 
   return true;

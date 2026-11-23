@@ -27,7 +27,6 @@ interface ModelDashboardModalsProps {
 	setMoveModelModal: (state: { isOpen: boolean; model: Model | null; models?: Model[] }) => void;
 	clearSelection: () => void;
 	loadModels: () => Promise<unknown>;
-	loadStats: () => Promise<unknown>;
 	shareModal: { isOpen: boolean; model: Model | null };
 	setShareModal: (state: { isOpen: boolean; model: Model | null }) => void;
 	refetchModels: () => unknown;
@@ -39,7 +38,7 @@ interface ModelDashboardModalsProps {
 }
 
 export function ModelDashboardModals({
-	isCreateWsOpen, setIsCreateWsOpen, handleWorkspaceChange, setWsReloadKey, isShareWsOpen, currentWorkspace, setIsShareWsOpen, isRenameWsOpen, setIsRenameWsOpen, handleRenameWorkspaceSuccess, isCopyWsOpen, setIsCopyWsOpen, handleCopyWorkspaceSuccess, moveModelModal, currentWorkspaceId, setMoveModelModal, clearSelection, loadModels, loadStats, shareModal, setShareModal, refetchModels, bulkCopyModal, setBulkCopyModal, handleCopy, notification, hideNotification,
+	isCreateWsOpen, setIsCreateWsOpen, handleWorkspaceChange, setWsReloadKey, isShareWsOpen, currentWorkspace, setIsShareWsOpen, isRenameWsOpen, setIsRenameWsOpen, handleRenameWorkspaceSuccess, isCopyWsOpen, setIsCopyWsOpen, handleCopyWorkspaceSuccess, moveModelModal, currentWorkspaceId, setMoveModelModal, clearSelection, loadModels, shareModal, setShareModal, refetchModels, bulkCopyModal, setBulkCopyModal, handleCopy, notification, hideNotification,
 }: ModelDashboardModalsProps) {
 	return (
 		<>
@@ -81,7 +80,6 @@ export function ModelDashboardModals({
 						onSuccess={async () => {
 							clearSelection();
 							await loadModels();
-							await loadStats();
 							setMoveModelModal({ isOpen: false, model: null });
 						}}
 					/>

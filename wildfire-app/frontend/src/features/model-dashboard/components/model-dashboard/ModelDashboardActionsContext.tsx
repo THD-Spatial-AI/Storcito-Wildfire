@@ -1,3 +1,4 @@
+import type { StatusTab } from "@/features/model-dashboard/utils/statusHelpers";
 import { createContext, useContext, type ReactNode } from "react";
 import type { Model } from "@/features/model-dashboard/services/modelService";
 import type { RuntimeEstimate } from "@/features/model-dashboard/utils/runtimeEstimate";
@@ -14,7 +15,7 @@ export interface ModelDashboardActionsContextValue {
 	editingModel: Model | null;
 	editTitle: string;
 	calculationStartTimes: Record<number, string>;
-	/** Estimates by model. */
+	/** estimates by model */
 	runtimeEstimates: Record<number, RuntimeEstimate>;
 	calculationCompletionInfo: Record<number, CompletionInfo>;
 	canUserDeleteModel: (model: Model) => boolean;
@@ -40,6 +41,10 @@ export interface ModelDashboardActionsContextValue {
 	isModelLimitReached: boolean;
 	statsTotal: number | undefined;
 	statsModelLimit: number | undefined;
+	/** active status tab */
+	statusTab: StatusTab;
+	/** admin adds columns */
+	variant?: "user" | "admin";
 }
 
 interface ModelDashboardActionsProviderProps {

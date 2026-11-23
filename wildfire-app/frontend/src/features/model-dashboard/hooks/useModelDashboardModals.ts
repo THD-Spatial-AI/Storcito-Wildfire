@@ -26,7 +26,6 @@ interface UseModelDashboardModalsParams {
 	setCurrentWorkspace: (workspace: Workspace | null) => void;
 	onWorkspaceChange: (workspace: Workspace | null) => void;
 	loadModels: () => Promise<void>;
-	loadStats: () => Promise<void>;
 	confirm: (options: {
 		type: "delete";
 		itemType: string;
@@ -38,7 +37,7 @@ interface UseModelDashboardModalsParams {
 	showError: (message: string) => void;
 }
 
-/** Dashboard modal state. */
+/** dashboard modal state */
 export function useModelDashboardModals({
 	currentWorkspace,
 	selectedModels,
@@ -46,7 +45,6 @@ export function useModelDashboardModals({
 	setCurrentWorkspace,
 	onWorkspaceChange,
 	loadModels,
-	loadStats,
 	confirm,
 	showSuccess,
 	showError,
@@ -74,23 +72,22 @@ export function useModelDashboardModals({
 
 	const handleCopyWorkspaceSuccess = useCallback(async (copiedWorkspace: Workspace, sourceWorkspace: Workspace) => {
 		try {
-			// Reload workspace list.
+			// reload workspace list
 			setWsReloadKey((k) => k + 1);
-			// Switch workspace.
+			// switch workspace
 			onWorkspaceChange(copiedWorkspace);
 			await loadModels();
-			await loadStats();
 
 			showSuccess(`Workspace "${copiedWorkspace.name}" created successfully with all models copied from "${sourceWorkspace.name}".`);
 		} catch (error) {
 			if (import.meta.env.DEV) console.error("Failed to load copied workspace:", error);
 			showError("Workspace copied but failed to load. Please refresh the page.");
 		}
-	}, [onWorkspaceChange, loadModels, loadStats, showSuccess, showError]);
+	}, [onWorkspaceChange, loadModels, showSuccess, showError]);
 
 	const handleRenameWorkspaceSuccess = useCallback(async (updatedWorkspace: Workspace) => {
 		try {
-			// Update the current workspace
+			// update current workspace
 			setCurrentWorkspace(updatedWorkspace);
 			setWsReloadKey((k) => k + 1);
 
@@ -112,18 +109,17 @@ export function useModelDashboardModals({
 			onConfirm: async () => {
 				try {
 					await workspaceService.deleteWorkspace(currentWorkspace.id);
-					// Load default workspace.
+					// load default workspace
 					const defaultWorkspace = await workspaceService.getDefaultWorkspace();
 					onWorkspaceChange(defaultWorkspace);
 					setWsReloadKey((k) => k + 1);
-					await loadStats();
 				} catch (error) {
 					if (import.meta.env.DEV) console.error("Failed to delete workspace:", error);
 					alert("Failed to delete workspace. Please try again.");
 				}
 			}
 		});
-	}, [currentWorkspace, confirm, onWorkspaceChange, loadStats]);
+	}, [currentWorkspace, confirm, onWorkspaceChange]);
 
 	const handleShare = useCallback((model: Model) => {
 		setShareModal({
@@ -133,7 +129,7 @@ export function useModelDashboardModals({
 	}, []);
 
 	const handleMoveToWorkspace = useCallback((model: Model) => {
-		// Blur before hiding.
+		// blur before hiding
 		if (document.activeElement instanceof HTMLElement) {
 			document.activeElement.blur();
 		}
@@ -144,15 +140,15 @@ export function useModelDashboardModals({
 	}, []);
 
 	const handleBulkMoveToWorkspace = useCallback(() => {
-		// Blur before hiding.
+		// blur before hiding
 		if (document.activeElement instanceof HTMLElement) {
 			document.activeElement.blur();
 		}
 		const ownedModels = selectedModels.filter((model) => canUserDeleteModel(model));
 
-		// Exclude moved parents.
+		// exclude moved parents
 		const modelsToMove = ownedModels.filter(model => {
-			// Has selected child?
+			// has selected child
 			const hasChildInSelection = ownedModels.some(
 				m => m.parent_model_id === model.id
 			);
@@ -202,5 +198,3 @@ export function useModelDashboardModals({
 		handleBulkCopy,
 	};
 }
-
-export type ModelDashboardModalsApi = ReturnType<typeof useModelDashboardModals>;

@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 import { Model, ModelStats } from "@/features/model-dashboard/services/modelService";
 import { useConfirm } from "@/hooks/useConfirmDialog";
-import { useModelsQuery, useModelStatsQuery, useRuntimeHistoryQuery } from "@/features/model-dashboard/hooks/useModelsQuery";
+import { useModelsQuery, useModelStatsQuery, useTabCountsQuery, useRuntimeHistoryQuery } from "@/features/model-dashboard/hooks/useModelsQuery";
 import { type Workspace } from "@/components/workspace";
 import { useWorkspaceStore } from "@/components/workspace";
 import { useAuthStore } from "@/store/auth-store";
@@ -17,7 +17,7 @@ import { useDeleteConfirm } from '@/hooks/useDeleteConfirm';
 import { useFavoriteModelsStore } from "@/features/model-dashboard/store/favorite-models";
 import { isModelDisabled as checkModelDisabled, isModelCompleted, statusTabParam, type StatusTab } from "@/features/model-dashboard/utils/statusHelpers";
 import { useWebservices } from "@/features/admin-dashboard";
-import { processModelTimingUpdates, type TimingUpdate } from "@/features/model-dashboard/utils/modelTimingUtils";
+import { useCalculationTiming } from "@/features/model-dashboard/hooks/useCalculationTiming";
 import { estimateRuntimesForModels, type RuntimeEstimate } from "@/features/model-dashboard/utils/runtimeEstimate";
 import { buildModelFamilies, flattenFamilies } from "@/features/model-dashboard/utils/dashboardHelpers";
 import { useTranslation } from "@/i18n";
@@ -121,23 +121,6 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 	const [groups] = useState<Group[]>([]);
 	const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
 	
-	const [calculationStartTimes, setCalculationStartTimes] = useState<Record<number, string>>(() => {
-		try {
-			const saved = localStorage.getItem('modelCalculationStartTimes');
-			return saved ? JSON.parse(saved) : {};
-		} catch {
-			return {};
-		}
-	});
-	const [calculationCompletionInfo, setCalculationCompletionInfo] = useState<Record<number, { startTime: string, endTime: string, totalSeconds: number }>>(() => {
-		try {
-			const saved = localStorage.getItem('modelCalculationCompletionInfo');
-			return saved ? JSON.parse(saved) : {};
-		} catch {
-			return {};
-		}
-	});
-
 	const [orderBy, setOrderBy] = useState<string>("last_activity");
 	const [order, setOrder] = useState<"asc" | "desc">("desc");
 	const [filterText, setFilterText] = useState<string>("");
@@ -145,7 +128,7 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 	const [filterToDate, setFilterToDate] = useState<string>("");
 	const [statusTab, setStatusTab] = useState<StatusTab>("all");
 	const [currentPage, setCurrentPage] = useState<number>(0);
-	const [itemsPerPage, setItemsPerPage] = useState<number>(25);
+	const [itemsPerPage, setItemsPerPage] = useState<number>(20);
 	const [currentWorkspaceId, setCurrentWorkspaceId] = useState<number | undefined>(undefined);
 
 	const favoriteIds = useFavoriteModelsStore(s => s.favoriteIds);
@@ -171,15 +154,23 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 	});
 
 	const { data: statsResponse, isSuccess: statsLoaded } = useModelStatsQuery();
+	// tab counts match
+	const { data: tabCounts } = useTabCountsQuery({
+		search: filterText.trim() || undefined,
+		workspace_id: currentWorkspaceId,
+		from_date: filterFromDate || undefined,
+		to_date: filterToDate || undefined,
+		pinned: pinnedParam,
+	});
 	const { data: runtimeHistoryResponse } = useRuntimeHistoryQuery(currentWorkspaceId);
 
 	const { summary: webserviceSummary } = useWebservices({}, { autoRefresh: true, refreshInterval: 10000 });
 	const hasAvailableWebservice = (webserviceSummary?.available ?? 0) > 0;
 
-	// Current page families.
+	// current page families
 	const models = useMemo(() => modelsResponse?.data || [], [modelsResponse?.data]);
 
-	// Pinned families first.
+	// pinned families first
 	const families = useMemo(() => {
 		const built = buildModelFamilies(models);
 		return built.sort((a, b) => {
@@ -189,11 +180,12 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 		});
 	}, [models, favoriteIdSet]);
 	const pageModels = useMemo(() => flattenFamilies(families), [families]);
+	const { calculationStartTimes, calculationCompletionInfo } = useCalculationTiming(pageModels);
 
 	const runtimeHistory = useMemo(() => {
 		const modelsById = new Map<number, Model>();
 		for (const model of runtimeHistoryResponse?.data ?? []) modelsById.set(model.id, model);
-		// Page data is fresher.
+		// page data fresher
 		for (const model of pageModels) modelsById.set(model.id, model);
 		return [...modelsById.values()];
 	}, [pageModels, runtimeHistoryResponse?.data]);
@@ -207,7 +199,7 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 	const totalItems = modelsResponse?.total || 0;
 	const isLoading = isLoadingModels;
 
-	// Stats with defaults.
+	// stats with defaults
 	const stats = useMemo(() => {
 		if (statsResponse?.success && statsResponse.data) {
 			return statsResponse.data;
@@ -215,17 +207,12 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 		return DEFAULT_STATS;
 	}, [statsResponse]);
 
-	// Model limit check.
+	// model limit check
 	const isModelLimitReached = useMemo(() => {
 		if (stats.is_unlimited) return false;
 		if (!stats.model_limit) return false;
 		return stats.total >= stats.model_limit;
 	}, [stats.total, stats.model_limit, stats.is_unlimited]);
-
-	// No-op for compatibility.
-	const loadStats = useCallback(async () => {
-		// Stats via React Query.
-	}, []);
 
 	const {
 		selectedModels,
@@ -251,7 +238,6 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 		handleBulkDelete: bulkDeleteHandler,
 	} = useModelDashboardHandlers({
 		onRefresh: async () => { await refetchModels(); },
-		onStatsRefresh: loadStats,
 	});
 
 	const setWorkspaceFilter = useCallback((workspaceId: number | undefined) => {
@@ -275,7 +261,7 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 	const handleRefresh = useCallback(async () => {
 		setIsRefreshing(true);
 		try {
-			// Reload all.
+			// reload all
 			setWsReloadKey((k) => k + 1);
 			await loadModels();
 		} finally {
@@ -283,7 +269,7 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 		}
 	}, [loadModels]);
 
-	// Modal state.
+	// modal state
 	const {
 		isCreateWsOpen, setIsCreateWsOpen,
 		isShareWsOpen, setIsShareWsOpen,
@@ -307,7 +293,6 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 		setCurrentWorkspace,
 		onWorkspaceChange: handleWorkspaceChange,
 		loadModels,
-		loadStats,
 		confirm,
 		showSuccess,
 		showError,
@@ -317,7 +302,7 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 		setCurrentPage(page);
 	}, []);
 
-	// Date-range filter.
+	// date-range filter
 	const handleDateRangeChange = useCallback((from: string, to: string) => {
 		setFilterFromDate(from);
 		setFilterToDate(to);
@@ -365,13 +350,11 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 		isModelDisabled,
 		onBulkDelete: performBulkDelete,
 		onClearSelection: clearSelection,
-		onLoadStats: loadStats,
 	});
 
 	const { handleSingleDelete } = useDeleteConfirm({
 		sortedModels: pageModels,
 		onDelete: handleDelete,
-		onLoadStats: loadStats,
 	});
 
 	useEffect(() => {
@@ -382,31 +365,8 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 		} else {
 			setWorkspaceFilter(undefined);
 		}
-		loadStats();
-	}, [isLoadingWorkspace, currentWorkspace, loadStats, setWorkspaceFilter]);
+	}, [isLoadingWorkspace, currentWorkspace, setWorkspaceFilter]);
 
-	useEffect(() => {
-		if (!pageModels.length) return;
-
-		const timingUpdate = processModelTimingUpdates(pageModels, calculationStartTimes, calculationCompletionInfo);
-
-		updateCalculationStartTimes(timingUpdate);
-		updateCalculationCompletionInfo(timingUpdate);
-	}, [pageModels, calculationStartTimes, calculationCompletionInfo]);
-
-	const updateCalculationStartTimes = (timingUpdate: TimingUpdate) => {
-		if (timingUpdate.hasStartChanges) {
-			setCalculationStartTimes(timingUpdate.updatedStartTimes);
-			localStorage.setItem('modelCalculationStartTimes', JSON.stringify(timingUpdate.updatedStartTimes));
-		}
-	};
-
-	const updateCalculationCompletionInfo = (timingUpdate: TimingUpdate) => {
-		if (timingUpdate.hasCompletionChanges) {
-			setCalculationCompletionInfo(timingUpdate.updatedCompletionInfo);
-			localStorage.setItem('modelCalculationCompletionInfo', JSON.stringify(timingUpdate.updatedCompletionInfo));
-		}
-	};
 
 
 
@@ -490,12 +450,13 @@ export const ModelDashboard: React.FC<ModelDashboardProps> = () => {
 		isModelLimitReached,
 		statsTotal: stats.total,
 		statsModelLimit: stats.model_limit,
+		statusTab,
 	}), [
 		selectedModels, handleSelectAll, handleSort, orderBy, order, user, isSelected, editingModel, editTitle,
 		calculationStartTimes, runtimeEstimates, calculationCompletionInfo, canUserDeleteModel, hasAvailableWebservice, handleSelectModel,
 		startTitleEdit, setEditTitle, updateTitle, cancelTitleEdit, handleView, handleEdit, handleDownload, handleCopy,
 		handleCalculateSingle, handleSingleDelete, handleShare, handleMoveToWorkspace, currentPage, itemsPerPage,
-		handlePageChange, handleItemsPerPageChange, handleNewModel, isModelLimitReached, stats.total, stats.model_limit,
+		handlePageChange, handleItemsPerPageChange, handleNewModel, isModelLimitReached, stats.total, stats.model_limit, statusTab,
 	]);
 
 return (
@@ -532,10 +493,11 @@ return (
 						stats={stats}
 						handleNewModel={handleNewModel}
 						isModelLimitReached={isModelLimitReached}
-						bulkActions={<ModelDashboardBulkActions selectedCount={selectedModels.length} actions={bulkActions} />}
+						bulkActions={<ModelDashboardBulkActions selectedCount={selectedModels.length} actions={bulkActions} onClear={clearSelection} />}
 						tabs={(
 							<ModelStatusTabs
 								stats={stats}
+								tabCounts={tabCounts}
 								statsLoaded={statsLoaded}
 								pinnedCount={favoriteIds.length}
 								activeTab={statusTab}
@@ -574,7 +536,6 @@ return (
 						setMoveModelModal={setMoveModelModal}
 						clearSelection={clearSelection}
 						loadModels={loadModels}
-						loadStats={loadStats}
 						shareModal={shareModal}
 						setShareModal={setShareModal}
 						refetchModels={refetchModels}

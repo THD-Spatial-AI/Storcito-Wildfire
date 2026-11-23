@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useExpandedFamiliesStore } from "@/features/model-dashboard/store/expanded-families";
 import { useNavigate } from 'react-router-dom';
 import { Model } from '@/features/model-dashboard/services/modelService';
 import { downloadModelArchive } from '@/features/model-dashboard/services/modelDownloadService';
@@ -12,10 +13,10 @@ import {
 
 interface UseModelDashboardHandlersProps {
   onRefresh: () => Promise<void>;
-  onStatsRefresh: () => Promise<void>;
 }
 
-export const useModelDashboardHandlers = ({ onRefresh, onStatsRefresh }: UseModelDashboardHandlersProps) => {
+export const useModelDashboardHandlers = ({ onRefresh }: UseModelDashboardHandlersProps) => {
+  const expandFamily = useExpandedFamiliesStore((s) => s.expand);
   const navigate = useNavigate();
   const duplicateMutation = useDuplicateModelMutation();
   const deleteMutation = useDeleteModelMutation();
@@ -24,8 +25,8 @@ export const useModelDashboardHandlers = ({ onRefresh, onStatsRefresh }: UseMode
   const bulkDeleteMutation = useBulkDeleteModelsMutation();
 
   const refreshData = useCallback(async () => {
-    await Promise.allSettled([onRefresh(), onStatsRefresh()]);
-  }, [onRefresh, onStatsRefresh]);
+    await onRefresh();
+  }, [onRefresh]);
 
   const handleEdit = useCallback((model: Model): void => {
     navigate(`/app/model-dashboard/edit/${model.id}`);
@@ -38,11 +39,13 @@ export const useModelDashboardHandlers = ({ onRefresh, onStatsRefresh }: UseMode
   const handleCopy = useCallback(async (model: Model): Promise<void> => {
     try {
       await duplicateMutation.mutateAsync(model.id);
+      // show new copy
+      expandFamily(model.parent_model_id ?? model.id);
       await refreshData();
     } catch (error) {
       if (import.meta.env.DEV) console.error('Failed to copy model:', error);
     }
-  }, [duplicateMutation, refreshData]);
+  }, [duplicateMutation, refreshData, expandFamily]);
 
   const handleDelete = useCallback(async (model: Model): Promise<void> => {
     try {

@@ -17,7 +17,7 @@ interface UseBulkActionConfigsParams {
 	showBulkDeleteConfirm: () => void;
 }
 
-/** Bulk action config. */
+/** bulk action config */
 export function useBulkActionConfigs({
 	selectedModels,
 	isModelDisabled,

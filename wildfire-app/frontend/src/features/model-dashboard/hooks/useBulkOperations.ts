@@ -8,7 +8,6 @@ interface UseBulkOperationsProps {
 	isModelDisabled: (model: Model) => boolean;
 	onBulkDelete: () => Promise<void>;
 	onClearSelection: () => void;
-	onLoadStats: () => Promise<void>;
 }
 
 export const useBulkOperations = ({
@@ -17,7 +16,6 @@ export const useBulkOperations = ({
 	isModelDisabled,
 	onBulkDelete,
 	onClearSelection,
-	onLoadStats,
 }: UseBulkOperationsProps) => {
 	const confirm = useConfirm();
 
@@ -45,14 +43,13 @@ export const useBulkOperations = ({
 				onClearSelection();
 				try {
 					await onBulkDelete();
-					await onLoadStats();
 				} catch (error) {
 					if (import.meta.env.DEV) console.error("Bulk delete failed:", error);
 					alert("Some models could not be deleted. Please try again.");
 				}
 			}
 		});
-	}, [selectedModels, sortedModels, isModelDisabled, confirm, onBulkDelete, onClearSelection, onLoadStats]);
+	}, [selectedModels, sortedModels, isModelDisabled, confirm, onBulkDelete, onClearSelection]);
 
 	return { showBulkDeleteConfirm };
 };

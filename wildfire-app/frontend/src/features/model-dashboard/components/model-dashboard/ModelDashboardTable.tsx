@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { AlertCircle, ArrowUpDown, BarChart3, ChevronDown, ChevronUp, Plus, RefreshCw } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@spatialhub/ui";
 import Pagination from "@/components/ui/Pagination";
@@ -12,6 +12,10 @@ import {
 import type { ModelFamily } from "@/features/model-dashboard/utils/dashboardHelpers";
 import { useTranslation } from "@/i18n";
 import { useModelDashboardActions } from "./ModelDashboardActionsContext";
+import { useExpandedFamiliesStore } from "@/features/model-dashboard/store/expanded-families";
+import { useRiskScores } from "@/features/model-dashboard/hooks/useRiskScores";
+import type { StatusTab } from "@/features/model-dashboard/utils/statusHelpers";
+import { TableSkeleton } from "@/components/ui/TableSkeleton";
 
 interface ModelDashboardTableProps {
 	isLoading: boolean;
@@ -19,13 +23,35 @@ interface ModelDashboardTableProps {
 	families: ModelFamily[];
 	totalItems: number;
 	filterText: string;
+	/** load failed */
+	isError?: boolean;
+	onRetry?: () => void;
 }
 
-// Dashboard steps needing a row.
+// dashboard steps needing
 const DEMO_ROW_STEPS = new Set([
 	"tabsOverview", "tabAll", "tabPinned", "tabRunning", "tabCompleted", "tabDrafts", "tabFailed",
 	"search", "refresh", "columns", "familyRow", "pin", "primaryAction", "moreMenu", "newBadge",
 ]);
+
+// newest activity across
+const familyLatestActivity = (family: ModelFamily): string | undefined =>
+	[family.display, ...family.otherVersions]
+		.map((m) => m.calculation_completed_at ?? m.updated_at)
+		.filter((v): v is string => Boolean(v))
+		.sort()
+		.at(-1);
+
+// fixed widths
+const USER_COLUMNS = ["w-12", "w-[250px] xl:w-[320px]", "w-[170px] xl:w-[220px]", "w-[125px] xl:w-[140px]", "w-[150px] xl:w-[180px]", "w-[170px] xl:w-[180px]", "w-[160px]", "w-20"];
+// admin column widths
+const ADMIN_COLUMNS = ["w-12", "w-[220px] xl:w-[270px]", "w-[170px] xl:w-[200px]", "w-[125px] xl:w-[140px]", "w-[140px] xl:w-[150px]", "w-[165px] xl:w-[170px]", "w-[120px]", "w-[130px]", "w-20"];
+
+// hidden below xl
+const USER_WIDE_ONLY = new Set([6]);
+const ADMIN_WIDE_ONLY = new Set([6, 7]);
+
+const HEADER_LABEL = "text-[11px] font-semibold uppercase tracking-wider text-muted-foreground";
 
 interface SortHeaderButtonProps {
 	field: string;
@@ -40,8 +66,10 @@ function SortHeaderButton({ field, label, orderBy, order, onSort }: SortHeaderBu
 
 	return (
 		<button
+			type="button"
+			data-compact
 			onClick={() => onSort(field)}
-			className={`group/sort inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider transition-colors duration-150 ${
+			className={`group/sort inline-flex rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider transition-colors duration-150 ${
 				isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
 			}`}
 		>
@@ -55,22 +83,39 @@ function SortHeaderButton({ field, label, orderBy, order, onSort }: SortHeaderBu
 					)}
 				</span>
 			) : (
-				<ArrowUpDown className="h-3 w-3 opacity-0 transition-opacity duration-150 group-hover/sort:opacity-50" />
+				<ArrowUpDown className="h-3 w-3 opacity-40 transition-opacity duration-150 group-hover/sort:opacity-80" />
 			)}
 		</button>
 	);
 }
 
 interface EmptyModelsStateProps {
+	statusTab: StatusTab;
 	filterText: string;
 	isModelLimitReached: boolean;
 	statsTotal: number;
 	statsModelLimit?: number;
 	onNewModel: () => void;
+	/** hide create button */
+	hideCreate?: boolean;
 }
 
-function EmptyModelsState({ filterText, isModelLimitReached, statsTotal, statsModelLimit, onNewModel }: EmptyModelsStateProps) {
+// message per tab
+const EMPTY_TAB_TEXT: Record<Exclude<StatusTab, "all">, [string, string]> = {
+	pinned: ["model.empty.pinned", "No pinned models. Pin a model to keep it at the top."],
+	running: ["model.empty.running", "Nothing is running right now."],
+	completed: ["model.empty.completed", "No finished models yet."],
+	drafts: ["model.empty.drafts", "No drafts. Saved models that were not run appear here."],
+	failed: ["model.empty.failed", "No failed runs."],
+	queue: ["model.empty.queue", "Nothing is waiting in the queue."],
+	in_progress: ["model.empty.running", "Nothing is running right now."],
+	completed_only: ["model.empty.completed", "No finished models yet."],
+	published: ["model.empty.published", "No published models."],
+};
+
+function EmptyModelsState({ statusTab, filterText, isModelLimitReached, statsTotal, statsModelLimit, onNewModel, hideCreate = false }: EmptyModelsStateProps) {
 	const { t } = useTranslation();
+	const tabText = statusTab === "all" ? null : EMPTY_TAB_TEXT[statusTab];
 	return (
 		<div data-tour="models-loaded" className="md-fade-in m-4 sm:m-5 flex flex-col items-center rounded-xl border border-dashed border-border bg-muted/30 px-6 py-16 text-center">
 			<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-border bg-muted/50">
@@ -80,8 +125,11 @@ function EmptyModelsState({ filterText, isModelLimitReached, statsTotal, statsMo
 			<p className="mt-1.5 max-w-sm text-sm text-muted-foreground">
 				{filterText
 					? t('model.noModelsMatch', { search: filterText })
-					: t('model.noModelsYet')}
+					: tabText
+						? t(tabText[0], tabText[1])
+						: t('model.noModelsYet')}
 			</p>
+			{!hideCreate && (
 			<Tooltip>
 				<TooltipTrigger asChild>
 					<span>
@@ -99,7 +147,7 @@ function EmptyModelsState({ filterText, isModelLimitReached, statsTotal, statsMo
 							) : (
 								<Plus className="h-4 w-4" />
 							)}
-							{t('model.createFirstModel')}
+							{tabText ? t('model.newModel') : t('model.createFirstModel')}
 						</button>
 					</span>
 				</TooltipTrigger>
@@ -109,38 +157,27 @@ function EmptyModelsState({ filterText, isModelLimitReached, statsTotal, statsMo
 					</TooltipContent>
 				)}
 			</Tooltip>
-		</div>
-	);
-}
-
-function TableSkeleton({ rows = 6 }: { rows?: number }) {
-	return (
-		<div className="overflow-hidden rounded-xl border border-border">
-			<div className="border-b border-border bg-muted/30 px-4 py-3">
-				<div className="md-skeleton h-3 w-36 rounded-md bg-muted" />
-			</div>
-			<div className="divide-y divide-border/60">
-				{Array.from({ length: rows }, (_, i) => (
-					<div key={i} className="flex items-center gap-4 px-4 py-3.5">
-						<div className="md-skeleton h-4 w-4 shrink-0 rounded bg-muted" />
-						<div
-							className="md-skeleton h-3.5 w-full max-w-[220px] rounded-md bg-muted"
-							style={{ animationDelay: `${i * 90}ms` }}
-						/>
-						<div className="md-skeleton hidden h-5 w-20 shrink-0 rounded-full bg-muted sm:block" />
-						<div className="md-skeleton hidden h-3.5 w-24 shrink-0 rounded-md bg-muted md:block" />
-						<div className="md-skeleton ml-auto h-6 w-24 shrink-0 rounded-md bg-muted" />
-					</div>
-				))}
-			</div>
+			)}
 		</div>
 	);
 }
 
 export function ModelDashboardTable({
-	isLoading, isLoadingWorkspace, families, totalItems, filterText,
+	isLoading, isLoadingWorkspace, families, totalItems, filterText, isError = false, onRetry,
 }: ModelDashboardTableProps) {
 	const { t } = useTranslation();
+	// edge line scrolling
+	const [scrollEl, setScrollEl] = useState<HTMLDivElement | null>(null);
+	const [overflowX, setOverflowX] = useState(false);
+	useEffect(() => {
+		if (!scrollEl || typeof ResizeObserver === "undefined") return;
+		const check = () => setOverflowX(scrollEl.scrollWidth > scrollEl.clientWidth + 1);
+		const observer = new ResizeObserver(check);
+		observer.observe(scrollEl);
+		if (scrollEl.firstElementChild) observer.observe(scrollEl.firstElementChild);
+		check();
+		return () => observer.disconnect();
+	}, [scrollEl]);
 	const {
 		selectedModels,
 		handleSelectAll,
@@ -155,21 +192,15 @@ export function ModelDashboardTable({
 		isModelLimitReached,
 		statsTotal,
 		statsModelLimit,
+		statusTab,
+		variant,
 	} = useModelDashboardActions();
+	const isAdmin = variant === "admin";
 	const stats = { total: statsTotal, model_limit: statsModelLimit };
 
-	const [expandedFamilies, setExpandedFamilies] = useState<ReadonlySet<number>>(new Set());
-	const toggleVersions = useCallback((rootId: number) => {
-		setExpandedFamilies((prev) => {
-			const next = new Set(prev);
-			if (next.has(rootId)) {
-				next.delete(rootId);
-			} else {
-				next.add(rootId);
-			}
-			return next;
-		});
-	}, []);
+	// copy opens family
+	const expandedFamilies = useExpandedFamiliesStore((s) => s.expanded);
+	const toggleVersions = useExpandedFamiliesStore((s) => s.toggle);
 
 	const visibleModels = useMemo(
 		() => families.flatMap((family) => [
@@ -180,12 +211,39 @@ export function ModelDashboardTable({
 	);
 	const tourStepId = useActiveTourStepId();
 	const seenCompleted = useSeenCompletedModelsStore((s) => s.seen);
-	const hasRealNewBadge = families.some((family) => isRecentlyCompleted(family.display, seenCompleted));
-	// Example row during tour.
+	// any shown row
+	const hasRealNewBadge = visibleModels.some((model) => isRecentlyCompleted(model, seenCompleted));
+	// example row during
 	const showDemoRow =
 		tourStepId !== null &&
 		((families.length === 0 && DEMO_ROW_STEPS.has(tourStepId)) ||
 			(tourStepId === "newBadge" && !hasRealNewBadge));
+
+	// risk sort scores
+	const [riskOrder, setRiskOrder] = useState<"asc" | "desc" | null>(null);
+	const completedIds = useMemo(
+		() => families.map((f) => f.display).filter((m) => m.status === "completed").map((m) => m.id),
+		[families]
+	);
+	const riskScores = useRiskScores(completedIds, riskOrder !== null);
+	const sortedFamilies = useMemo(() => {
+		if (!riskOrder) return families;
+		const score = (f: ModelFamily) => riskScores[f.display.id] ?? -1;
+		return [...families].sort((a, b) => (riskOrder === "asc" ? score(a) - score(b) : score(b) - score(a)));
+	}, [families, riskOrder, riskScores]);
+	const sortBy = useCallback(
+		(field: string) => {
+			if (field === "risk") {
+				setRiskOrder((o) => (o === "desc" ? "asc" : "desc"));
+				return;
+			}
+			setRiskOrder(null);
+			handleSort(field);
+		},
+		[handleSort]
+	);
+	const activeOrderBy = riskOrder ? "risk" : orderBy;
+	const activeOrder = riskOrder ?? order;
 
 	const visibleIdSet = useMemo(() => new Set(visibleModels.map((m) => m.id)), [visibleModels]);
 	const allVisibleSelected =
@@ -193,8 +251,26 @@ export function ModelDashboardTable({
 
 	return (
 		<>
-			{/* Table Section */}
-			{(isLoading || isLoadingWorkspace) ? (
+			{/* table section */}
+			{isError && families.length === 0 ? (
+				<div role="alert" className="md-fade-in m-4 flex flex-col items-center rounded-xl border border-dashed border-destructive/40 bg-destructive/5 px-6 py-14 text-center sm:m-5">
+					<AlertCircle className="h-7 w-7 text-destructive" />
+					<h3 className="mt-3 text-base font-semibold text-foreground">{t('model.loadFailed', 'Could not load models')}</h3>
+					<p className="mt-1 max-w-sm text-sm text-muted-foreground">
+						{t('model.loadFailedHint', 'The server did not respond. Check the connection and try again.')}
+					</p>
+					{onRetry && (
+						<button
+							type="button"
+							onClick={onRetry}
+							className="mt-5 inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-card px-3.5 text-sm font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+						>
+							<RefreshCw className="h-4 w-4" />
+							{t('common.retry', 'Try again')}
+						</button>
+					)}
+				</div>
+			) : (isLoading || isLoadingWorkspace) ? (
 				<div className="p-4 sm:px-5 sm:pb-5 space-y-3">
 					<div className="flex items-center gap-2 text-sm text-muted-foreground">
 						<RefreshCw className="h-4 w-4 animate-spin" />
@@ -202,7 +278,7 @@ export function ModelDashboardTable({
 							{isLoadingWorkspace ? t('model.loadingWorkspace') : t('model.loadingModels')}
 						</span>
 					</div>
-					<TableSkeleton />
+					<TableSkeleton rows={6} withCheckbox />
 					<p className="sr-only">
 						{isLoadingWorkspace
 							? t('model.loadingWorkspaceDescription')
@@ -213,17 +289,24 @@ export function ModelDashboardTable({
 				<>
 					{!isLoading && (families.length > 0 || showDemoRow) ? (
 						<div data-tour="models-loaded" className="md-fade-in overflow-hidden">
-							<div className="w-full overflow-auto">
-								<table className="w-full table-auto">
-									<thead>
-										<tr data-tour="model-columns" className="border-b border-border bg-muted/30">
-											<th className="w-12 px-4 py-3 text-center">
+							{/* scrolls inside header */}
+							<div ref={setScrollEl} data-overflow={overflowX} className="group/table max-h-[calc(100dvh-17rem)] w-full overflow-auto">
+								<table className={`w-full table-fixed ${isAdmin ? "min-w-[938px] xl:min-w-[1308px]" : "min-w-[993px] xl:min-w-[1328px]"}`}>
+									<colgroup>
+										{(isAdmin ? ADMIN_COLUMNS : USER_COLUMNS).map((width, i) => (
+											<col key={i} className={`${width} ${(isAdmin ? ADMIN_WIDE_ONLY : USER_WIDE_ONLY).has(i) ? "hidden xl:table-column" : ""}`} />
+										))}
+									</colgroup>
+									<thead className="sticky top-0 z-10">
+										<tr data-tour="model-columns" className="border-b border-border bg-muted/90 backdrop-blur-sm">
+											<th className="py-3 pl-2 pr-0 text-left">
 												<Tooltip>
 													<TooltipTrigger asChild>
 														<input
 															type="checkbox"
 															checked={allVisibleSelected}
 															onChange={() => handleSelectAll(visibleModels)}
+															aria-label={selectedModels.length > 0 ? t('model.deselectAll') : t('model.selectAll')}
 															className="h-4 w-4 cursor-pointer rounded border-input accent-primary focus:ring-ring focus:ring-offset-0"
 														/>
 													</TooltipTrigger>
@@ -232,58 +315,49 @@ export function ModelDashboardTable({
 													</TooltipContent>
 												</Tooltip>
 											</th>
-											<th className="w-[40%] px-4 py-3 text-left">
-												<SortHeaderButton
-													field="title"
-													label={t('model.name')}
-													orderBy={orderBy}
-													order={order}
-													onSort={handleSort}
-												/>
+											<th className="py-3 pl-2 pr-4 text-left">
+												<SortHeaderButton field="title" label={t('model.name')} orderBy={activeOrderBy} order={activeOrder} onSort={sortBy} />
 											</th>
-											<th className="w-[12%] px-4 py-3 text-left">
-												<span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-													{t('model.area')}
-												</span>
+											{isAdmin && (
+												<th className="px-4 py-3 text-left">
+													<SortHeaderButton field="user_email" label={t('model.owner', 'Owner')} orderBy={activeOrderBy} order={activeOrder} onSort={sortBy} />
+												</th>
+											)}
+											<th className="px-4 py-3 text-left">
+												{isAdmin ? (
+													<SortHeaderButton field="region" label={t('model.territory', 'Territory')} orderBy={activeOrderBy} order={activeOrder} onSort={sortBy} />
+												) : (
+													<span className={HEADER_LABEL}>{t('model.territory', 'Territory')}</span>
+												)}
 											</th>
-											<th className="hidden w-[14%] whitespace-nowrap px-4 py-3 text-left md:table-cell">
-												<span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-													{t('model.period')}
-												</span>
+											{!isAdmin && (
+												<th className="hidden px-4 py-3 text-left md:table-cell">
+													<span className={HEADER_LABEL}>{t('model.period')}</span>
+												</th>
+											)}
+											<th className="px-4 py-3 text-left">
+												<SortHeaderButton field="risk" label={t('model.riskScale', 'Risk (0–5)')} orderBy={activeOrderBy} order={activeOrder} onSort={sortBy} />
 											</th>
-											<th className="w-px whitespace-nowrap px-4 py-3 text-left">
-												<span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-													{t('model.risk')}
-												</span>
+											<th className="px-4 py-3 text-left">
+												<SortHeaderButton field="status" label={t('model.status')} orderBy={activeOrderBy} order={activeOrder} onSort={sortBy} />
 											</th>
-											<th className="whitespace-nowrap px-4 py-3 text-left">
-												<SortHeaderButton
-													field="status"
-													label={t('model.status')}
-													orderBy={orderBy}
-													order={order}
-													onSort={handleSort}
-												/>
+											{isAdmin && (
+												<th className="hidden px-4 py-3 text-left xl:table-cell">
+													<SortHeaderButton field="created_at" label={t('model.created', 'Created')} orderBy={activeOrderBy} order={activeOrder} onSort={sortBy} />
+												</th>
+											)}
+											<th className="hidden px-4 py-3 text-left xl:table-cell">
+												<SortHeaderButton field="last_activity" label={t('model.lastActivity')} orderBy={activeOrderBy} order={activeOrder} onSort={sortBy} />
 											</th>
-											<th className="hidden w-px whitespace-nowrap px-4 py-3 text-left md:table-cell">
-												<SortHeaderButton
-													field="last_activity"
-													label={t('model.lastActivity')}
-													orderBy={orderBy}
-													order={order}
-													onSort={handleSort}
-												/>
-											</th>
-											<th className="w-px whitespace-nowrap px-4 py-3 text-left">
-												<span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-													{t('model.actions')}
-												</span>
+											{/* actions stay visible */}
+											<th className="sticky right-0 z-[2] bg-muted py-3 pl-2 pr-4 text-right group-data-[overflow=true]/table:shadow-[-8px_0_8px_-8px_rgb(0_0_0/0.12)]">
+												<span className={HEADER_LABEL}>{t('model.actions')}</span>
 											</th>
 										</tr>
 									</thead>
 									<tbody className="divide-y divide-border/60 bg-card">
 										{showDemoRow && <TourDemoRow />}
-										{families.map((family) => {
+										{sortedFamilies.map((family) => {
 											const expanded = expandedFamilies.has(family.root.id);
 											const rootTitle = family.root.title.trim();
 											return (
@@ -293,6 +367,7 @@ export function ModelDashboardTable({
 														level={0}
 														parentModelTitle={family.display.is_copy ? family.display.parent_model_title || rootTitle : undefined}
 														versionCount={family.versionCount}
+														lastActivityAt={familyLatestActivity(family)}
 														versionsExpanded={expanded}
 														familyRootId={family.root.id}
 														familyMemberIds={family.memberIds}
@@ -321,18 +396,20 @@ export function ModelDashboardTable({
 									itemsPerPage={itemsPerPage}
 									onPageChange={handlePageChange}
 									onItemsPerPageChange={handleItemsPerPageChange}
-									pageSizeOptions={[25, 50, 100]}
+									pageSizeOptions={[20, 50, 100]}
 									isLoading={isLoading}
 								/>
 							)}
 						</div>
 					) : (
 						<EmptyModelsState
+								statusTab={statusTab}
 							filterText={filterText}
 							isModelLimitReached={isModelLimitReached}
 							statsTotal={stats.total ?? 0}
 							statsModelLimit={stats.model_limit}
 							onNewModel={handleNewModel}
+							hideCreate={isAdmin}
 						/>
 					)}
 				</>

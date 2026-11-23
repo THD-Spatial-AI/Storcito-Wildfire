@@ -5,13 +5,11 @@ import { Model } from '@/features/model-dashboard/services/modelService';
 interface UseDeleteConfirmProps {
 	sortedModels: Model[];
 	onDelete: (model: Model) => Promise<void>;
-	onLoadStats: () => Promise<void>;
 }
 
 export const useDeleteConfirm = ({
 	sortedModels,
 	onDelete,
-	onLoadStats,
 }: UseDeleteConfirmProps) => {
 	const confirm = useConfirm();
 
@@ -33,14 +31,13 @@ export const useDeleteConfirm = ({
 			onConfirm: async () => {
 				try {
 					await onDelete(model);
-					await onLoadStats();
 				} catch (error) {
 					if (import.meta.env.DEV) console.error("Delete failed:", error);
 					alert("Failed to delete the model. Please try again.");
 				}
 			}
 		});
-	}, [sortedModels, confirm, onDelete, onLoadStats]);
+	}, [sortedModels, confirm, onDelete]);
 
 	return { handleSingleDelete };
 };
