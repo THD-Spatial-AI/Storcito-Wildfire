@@ -131,8 +131,9 @@ function ModelRowActions<T extends { id: number; status: ModelStatus; user_id?: 
 	];
 
 	const runDisabled = !hasAvailableWebservice;
+	// view icon run
 	const primaryAction = completed
-		? { label: t("model.view"), icon: Eye, onClick: () => onView?.(model), disabled: false, tooltip: undefined as string | undefined, primary: true }
+		? { label: t("model.view"), icon: Eye, onClick: () => onView?.(model), disabled: false, tooltip: t("model.view") as string | undefined, iconOnly: true }
 		: canRun
 			? {
 				label: t("model.run"),
@@ -140,7 +141,7 @@ function ModelRowActions<T extends { id: number; status: ModelStatus; user_id?: 
 				onClick: () => onCalculate?.(model),
 				disabled: runDisabled,
 				tooltip: runDisabled ? t("common.modelActions.engineNotAvailable") : undefined,
-				primary: false,
+				iconOnly: false,
 			}
 			: null;
 
@@ -157,14 +158,15 @@ function ModelRowActions<T extends { id: number; status: ModelStatus; user_id?: 
 									e.stopPropagation();
 									primaryAction.onClick();
 								}}
-								className={`inline-flex h-7 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-70 ${
-									primaryAction.primary
-										? "bg-primary text-primary-foreground hover:bg-primary/90"
-										: "bg-emerald-700 text-white hover:bg-emerald-600"
+								aria-label={primaryAction.label}
+								className={`inline-flex h-8 items-center justify-center gap-1.5 rounded-lg text-xs font-medium text-foreground transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-60 ${
+									primaryAction.iconOnly
+										? "w-8 text-foreground/80 hover:bg-muted hover:text-foreground"
+										: "border border-border bg-card px-2.5 hover:bg-muted"
 								}`}
 							>
-								<primaryAction.icon className="h-3.5 w-3.5" />
-								{primaryAction.label}
+								<primaryAction.icon className={primaryAction.iconOnly ? "h-[18px] w-[18px]" : "h-3.5 w-3.5"} />
+								{!primaryAction.iconOnly && primaryAction.label}
 							</button>
 						</span>
 					</TooltipTrigger>
@@ -180,7 +182,7 @@ function ModelRowActions<T extends { id: number; status: ModelStatus; user_id?: 
 								type="button"
 								data-tour="model-row-menu"
 								aria-label={t("model.actions")}
-								className="inline-flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground"
+								className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-foreground/80 transition-colors duration-150 hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 							>
 								<MoreHorizontal className="h-4 w-4" />
 							</button>
@@ -188,14 +190,17 @@ function ModelRowActions<T extends { id: number; status: ModelStatus; user_id?: 
 					</TooltipTrigger>
 					<TooltipContent>{t("model.actions")}</TooltipContent>
 				</Tooltip>
-				<DropdownMenuContent align="end">
+				{/* look items unchanged */}
+				<DropdownMenuContent align="end" className="min-w-[13rem] rounded-lg border-border/80 p-1 shadow-lg">
 					{menuActions.filter((action) => action.show).map((action) => {
 						const item = (
 							<DropdownMenuItem
 								disabled={action.disabled}
 								variant={action.destructive ? "destructive" : "default"}
 								onSelect={action.onSelect}
-								className={action.disabled ? "data-[disabled]:pointer-events-auto" : undefined}
+								className={`cursor-pointer gap-2.5 rounded-md px-2.5 py-2 transition-colors duration-150 motion-reduce:transition-none ${
+									action.disabled ? "data-[disabled]:pointer-events-auto data-[disabled]:cursor-not-allowed data-[disabled]:opacity-45" : ""
+								}`}
 							>
 								<action.icon />
 								{action.label}

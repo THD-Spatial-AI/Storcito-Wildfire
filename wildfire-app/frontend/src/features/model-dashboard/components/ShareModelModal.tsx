@@ -68,7 +68,7 @@ export const ShareModelModal: React.FC<ShareModelModalProps> = ({
     setFormErrors({});
 
     try {
-      // Backend checks access
+      // backend checks access
       const inputEmail = formData.email.trim().toLowerCase();
       const response = await modelService.shareModel(model.id, inputEmail);
 
@@ -228,7 +228,7 @@ const DirectShareList: React.FC<DirectShareListProps> = ({
   );
 };
 
-// Helper functions
+// helper functions
 function extractShareErrorMessage(error: unknown): string {
   const message = 'Failed to share model. Please try again.';
 
@@ -237,7 +237,7 @@ function extractShareErrorMessage(error: unknown): string {
     const lower = rawMsg.toLowerCase();
 
     if (error.response?.status === 400) {
-      // Workspace case first
+      // workspace case first
       if (lower.includes('workspace already shared')) {
         return 'This user already has access through the workspace that contains this model.';
       } else if (lower.includes('already shared')) {
