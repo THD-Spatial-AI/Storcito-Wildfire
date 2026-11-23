@@ -28,7 +28,7 @@ const ShortcutRow: FC<{ keys: string[]; label: string }> = ({ keys, label }) => 
   </li>
 );
 
-/** Shortcut cheat-sheet card. */
+/** shortcut cheat-sheet card */
 export const MapShortcutsPanel: FC<MapShortcutsPanelProps> = ({
   position,
   canPlay = false,
@@ -43,6 +43,8 @@ export const MapShortcutsPanel: FC<MapShortcutsPanelProps> = ({
       position={position}
       icon={<Keyboard className="h-3.5 w-3.5" />}
       title={t("map.shortcuts.title", "Keyboard shortcuts")}
+      // no keyboard, touch
+      className="[@media(pointer:coarse)]:hidden"
     >
       <ul className="space-y-1 p-2 text-[10px] leading-snug">
         <ShortcutRow keys={["+", "−"]} label={t("map.shortcuts.zoom", "Zoom in and out")} />
