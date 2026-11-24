@@ -1,7 +1,7 @@
+import { getResultLayer } from "@/features/model-results/services/resultsService";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type OlMap from "ol/Map";
 import { useTranslation } from "@/i18n";
-import axios from "@/lib/axios";
 
 import {
   DEFAULT_VISIBLE_RISK_LEVELS,
@@ -26,16 +26,13 @@ interface UseRiskLayersArgs {
 
 const TILE_RETRY_DELAYS_MS = [750, 2_000] as const;
 
-// Tile events fire once per tile rather than once per layer, so a layer is only
-// settled when nothing is outstanding. Failures reset at the start of each load
-// cycle so a successful pan clears a banner left by the previous one.
+// tile events fire
 interface TileLoadStats {
   pending: number;
   failed: number;
 }
 
-// Owns the grouped WMS tile layers on the map: attach/detach, dataset
-// switching, in-place daily-frame swaps, and reactive visibility/opacity.
+// owns grouped wms
 export const useRiskLayers = ({
   map,
   modelId,
@@ -100,9 +97,7 @@ export const useRiskLayers = ({
       return;
     }
 
-    // Do not let one settled group hide another that is still loading or
-    // retrying. Clear the banner only once every current group has finished
-    // with nothing outstanding.
+    // not let one
     if (stats.every((stat) => stat !== undefined && stat.pending === 0)) setTileErrors(0);
   }, []);
 
@@ -146,9 +141,8 @@ export const useRiskLayers = ({
       if (!map) return;
 
       const styleGroups = selectRiskStyleGroups(visibleRiskLevelsRef.current);
-      // Only what actually reaches the WMS URL identifies a source. Re-attaching
-      // the same layer must reuse the tiles already loaded rather than refetch.
-      const sourceKey = `${info.wms_url}|${info.layer_name}`;
+      // actually reaches wms
+      const sourceKey = `${info.wms_url}|${info.layer_name}|${info.version ?? ""}`;
       const currentById = new Map(riskLayerEntriesRef.current.map((entry) => [entry.id, entry]));
       const entriesToAdd: RiskLayerEntry[] = [];
 
@@ -191,8 +185,7 @@ export const useRiskLayers = ({
         source?.on("tileloadstart", () => {
           const stat = stats();
           if (!stat || !isCurrentLayer()) return;
-          // A fresh cycle clears the previous one's failures, so a successful
-          // pan retires a banner raised by the pan before it.
+          // fresh cycle clears
           if (stat.pending === 0) stat.failed = 0;
           stat.pending += 1;
         });
@@ -217,7 +210,7 @@ export const useRiskLayers = ({
 
           const retryDelay = TILE_RETRY_DELAYS_MS[retryAttempt];
           if (retryDelay === undefined) return;
-          // One retry per cycle, scheduled on the first failure of that cycle.
+          // one retry cycle
           if (tileRetryTimeoutsRef.current.has(riskLayer)) return;
           retryAttempt += 1;
 
@@ -225,9 +218,7 @@ export const useRiskLayers = ({
             if (tileRetryTimeoutsRef.current.get(riskLayer) !== timeoutId) return;
             tileRetryTimeoutsRef.current.delete(riskLayer);
             if (!isCurrentLayer()) return;
-            // refresh() re-requests the visible tiles at their existing URLs.
-            // Adding a cache-busting parameter here would turn every retry into
-            // a permanent cache miss for every other viewer too.
+            // refresh re-requests visible
             source.refresh();
           }, retryDelay);
           tileRetryTimeoutsRef.current.set(riskLayer, timeoutId);
@@ -263,10 +254,9 @@ export const useRiskLayers = ({
       const requestId = ++attachLayerRequestRef.current;
       const requestedLayerKey = selectedLayerKeyRef.current;
       try {
-        const resp = await axios.get(`/results/${result.id}/layer`);
+        const info = await getResultLayer<LayerInfo>(result.id);
         if (requestId !== attachLayerRequestRef.current) return;
 
-        const info: LayerInfo | undefined = resp.data?.data;
         if (!info?.wms_url || !info.layer_name) {
           activeLayerInfoRef.current = null;
           setAttachedResultId(null);
@@ -276,7 +266,7 @@ export const useRiskLayers = ({
 
         const layerOptions = info.available_layers ?? [];
         setAvailableLayers(layerOptions);
-        // Render the currently selected component layer (defaults to the risk map).
+        // render selected component
         const selectedLayer = layerOptions.find((l) => l.key === requestedLayerKey);
         const fallbackLayer = layerOptions.find((l) => l.key === "risk");
         const activeLayer: RiskLayerSelection = selectedLayer
@@ -290,12 +280,11 @@ export const useRiskLayers = ({
           setSelectedLayerKey(activeLayer.key);
         }
 
-        const activeInfo: LayerInfo = { ...info, layer_name: activeLayer.layerName };
+        const activeInfo: LayerInfo = { ...info, layer_name: activeLayer.layerName, version: result.id };
         activeLayerInfoRef.current = activeInfo;
         setWms3D({ wmsUrl: info.wms_url, layerName: activeLayer.layerName });
 
-        // Move to the final extent before attaching any WMS source. This avoids
-        // requesting several intermediate zoom grids for a whole-region model.
+        // move final extent
         if (info.bounds) fitMapToBounds(map, info.bounds);
         reconcileRiskLayerEntries(activeInfo);
         setAttachedResultId(result.id);
@@ -318,7 +307,7 @@ export const useRiskLayers = ({
     [map, onError, reconcileRiskLayerEntries, t]
   );
 
-  // Switch the visualized dataset; all layers share the 0–5 scale.
+  // switch visualized dataset
   const selectLayer = useCallback(
     (key: string, activeResult: ModelResult | undefined) => {
       setSelectedLayerKey(key);
@@ -331,7 +320,7 @@ export const useRiskLayers = ({
     [map, attachLayer, removeRiskLayerEntries]
   );
 
-  // Swap the WMS layer in place so frames advance without the map jumping.
+  // swap wms layer
   const applyDailyFrame = useCallback((frame: AvailableLayer) => {
     selectedLayerKeyRef.current = frame.key;
     setSelectedLayerKey(frame.key);
@@ -342,13 +331,12 @@ export const useRiskLayers = ({
       };
     }
     const nextSourceKey = activeLayerInfoRef.current
-      ? `${activeLayerInfoRef.current.wms_url}|${frame.layer_name}`
+      ? `${activeLayerInfoRef.current.wms_url}|${frame.layer_name}|${activeLayerInfoRef.current.version ?? ""}`
       : "";
     const nextEntries = riskLayerEntriesRef.current.map((entry) => {
       const { layer } = entry;
       tileLoadStatsRef.current.set(layer, { pending: 0, failed: 0 });
-      // LAYERS alone identifies the frame; a separate key parameter would only
-      // fragment the tile cache across viewers stepping through the same days.
+      // layers alone identifies
       layer.getSource()?.updateParams({ LAYERS: frame.layer_name });
       return { ...entry, sourceKey: nextSourceKey };
     });
@@ -358,7 +346,7 @@ export const useRiskLayers = ({
     setWms3D((w) => (w ? { ...w, layerName: frame.layer_name } : w));
   }, []);
 
-  // Current frame fully loaded.
+  // current frame fully
   const isFrameLoaded = useCallback(
     () =>
       riskLayerEntriesRef.current.every(
@@ -367,7 +355,7 @@ export const useRiskLayers = ({
     []
   );
 
-  // Reactive layer controls.
+  // reactive layer controls
   useEffect(() => {
     visibleRiskLevelsRef.current = visibleRiskLevels;
     if (activeLayerInfoRef.current) {
@@ -391,7 +379,7 @@ export const useRiskLayers = ({
     scheduleMapRenderRefresh();
   }, [layerOpacity, riskLayerEntries, scheduleMapRenderRefresh]);
 
-  // Detach on unmount / id change.
+  // detach unmount id
   useEffect(() => {
     const tileLoadStats = tileLoadStatsRef.current;
     activeLayerInfoRef.current = null;
@@ -433,6 +421,5 @@ export const useRiskLayers = ({
     selectLayer,
     applyDailyFrame,
     isFrameLoaded,
-    scheduleMapRenderRefresh,
   };
 };

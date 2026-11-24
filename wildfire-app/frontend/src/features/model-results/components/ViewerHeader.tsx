@@ -12,6 +12,7 @@ import {
 } from "@spatialhub/ui";
 import { WorkspaceSelector, type Workspace } from "@/components/workspace";
 import type { Model } from "@/features/model-dashboard";
+import type { ModelDateStepper } from "../hooks/useModelDateStepper";
 
 interface ViewerHeaderProps {
   model: Model | null;
@@ -32,9 +33,10 @@ interface ViewerHeaderProps {
   onModelChange: (modelId: string) => void;
   onOpacityChange: (opacity: number) => void;
   onRefresh: () => void;
+  dateStepper?: ModelDateStepper;
 }
 
-// Viewer top bar.
+// viewer top bar
 export const ViewerHeader: FC<ViewerHeaderProps> = ({
   model,
   dateRange,
@@ -54,9 +56,13 @@ export const ViewerHeader: FC<ViewerHeaderProps> = ({
   onModelChange,
   onOpacityChange,
   onRefresh,
+  dateStepper,
 }) => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n?.language ?? "en";
+  const formatDay = (day: string) =>
+    new Date(`${day}T00:00:00`).toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" });
 
   return (
     <header className="bg-card border-b border-border flex-shrink-0">
@@ -120,7 +126,11 @@ export const ViewerHeader: FC<ViewerHeaderProps> = ({
           {model && (
             <div className="hidden md:flex items-center gap-4 text-sm text-muted-foreground border-l border-border pl-4 min-w-0">
               {model.region && (
-                <span className="flex items-center gap-1 truncate">
+                // keep name visible
+                <span
+                  className="flex min-w-[5.5rem] items-center gap-1"
+                  title={model.region.split(", ").map((part) => t(`locations.${part}`, part)).join(", ")}
+                >
                   <MapPin className="w-4 h-4 flex-shrink-0" />
                   <span className="truncate">
                     {model.region
@@ -130,11 +140,19 @@ export const ViewerHeader: FC<ViewerHeaderProps> = ({
                   </span>
                 </span>
               )}
-              {dateRange && (
+              {dateStepper?.currentDate ? (
+                // day switching lives
                 <span className="flex items-center gap-1 whitespace-nowrap">
                   <Calendar className="w-4 h-4 flex-shrink-0" />
-                  {dateRange}
+                  {formatDay(dateStepper.pendingDate ?? dateStepper.currentDate)}
                 </span>
+              ) : (
+                dateRange && (
+                  <span className="flex items-center gap-1 whitespace-nowrap">
+                    <Calendar className="w-4 h-4 flex-shrink-0" />
+                    {dateRange}
+                  </span>
+                )
               )}
             </div>
           )}
