@@ -10,6 +10,8 @@ import {
   useState,
 } from "react";
 import { useParams } from "react-router-dom";
+import { isAxiosError } from "axios";
+import { Loader2 } from "lucide-react";
 import { useTranslation } from "@/i18n";
 
 import { getModelResults } from "./services/resultsService";
@@ -19,20 +21,21 @@ import { useMapStore, useMapKeyboardShortcuts } from "@/features/interactive-map
 import type { MapKeyControls } from "@/features/interactive-map/useMapKeyboardShortcuts";
 import type { Terrain3DControls } from "./components/CesiumWildfire3DView";
 import MapSearchBar from "@/features/interactive-map/MapSearchBar";
-import { modelService, Model } from "@/features/model-dashboard";
+import { modelService, Model, isActiveStatus } from "@/features/model-dashboard";
 import { CreateWorkspaceModal } from "@/components/workspace";
 
 import { scoreToRiskLevel, toPercentages, useRiskMetrics } from "./hooks/useRiskMetrics";
 import { useRiskLayers } from "./hooks/useRiskLayers";
 import { useFrameWeather } from "./hooks/useFrameWeather";
-import { useReferenceLayers } from "./hooks/useReferenceLayers";
 import { useDailyRiskDistribution } from "./hooks/useDailyRiskDistribution";
 import { useWorkspaceModelSelector } from "./hooks/useWorkspaceModelSelector";
+import { useModelDateStepper } from "./hooks/useModelDateStepper";
 import {
   DAILY_FRAME_KEY_PATTERN,
   DEFAULT_VISIBLE_RISK_LEVELS,
   FIRE_RISK_DEFAULT_OPACITY,
   POLL_INTERVAL_MS,
+  RUNNING_POLL_INTERVAL_MS,
   RISK_LEVELS,
   findResultForModel,
   type ModelResult,
@@ -41,19 +44,39 @@ import {
 } from "./viewer-config";
 import { extractErrorMessage } from "./viewer-helpers";
 import { ViewerHeader } from "./components/ViewerHeader";
-import { ViewerPlayerOverlay } from "./components/ViewerPlayerOverlay";
+import { DateStepperBar } from "./components/DateStepperBar";
+import { RiskSummary } from "./components/RiskSummary";
+import { DailyRiskCard } from "./components/DailyRiskCard";
 import { ViewerSidebarRail } from "./components/ViewerSidebarRail";
 import { ViewerStatusBanners } from "./components/ViewerStatusBanners";
-import { OverlaysPanel, RiskLegendPanel } from "./components/ViewerMapPanels";
+import { RiskLegendPanel } from "./components/ViewerMapPanels";
 import { MapShortcutsPanel } from "@/components/map-controls/MapShortcutsPanel";
 import { RiskTimelinePanel } from "./components/RiskTimelinePanel";
 import { useSeenCompletedModelsStore } from "@/features/model-dashboard/store/seen-completed-models";
 
-// Daily playback pacing.
+// daily playback pacing
 const FRAME_MIN_MS = 2000;
 const FRAME_MAX_MS = 15000;
 
-// Lazy-load Cesium.
+// rate limit network
+const isRetryable = (err: unknown) => {
+  if (!isAxiosError(err)) return false;
+  const status = err.response?.status;
+  return status === undefined || status === 429 || status >= 500;
+};
+
+const withRetry = async <T,>(request: () => Promise<T>, attempts = 4): Promise<T> => {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await request();
+    } catch (err) {
+      if (attempt >= attempts || !isRetryable(err)) throw err;
+      await new Promise((resolve) => setTimeout(resolve, 1_000 * 2 ** attempt));
+    }
+  }
+};
+
+// lazy-load cesium
 const CesiumWildfire3DView = lazy(() =>
   import("./components/CesiumWildfire3DView").then((m) => ({ default: m.CesiumWildfire3DView }))
 );
@@ -89,10 +112,8 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   const [playing, setPlaying] = useState(false);
   const playFrameRef = useRef(0);
   const [showTimeline, setShowTimeline] = useState(false);
-  const [roadsVisible, setRoadsVisible] = useState(true);
-  const [labelsVisible, setLabelsVisible] = useState(false);
 
-  // Fullscreen the document.
+  // fullscreen the document
   const [isFullscreen, setIsFullscreen] = useState(false);
   useEffect(() => {
     const onChange = () => setIsFullscreen(Boolean(document.fullscreenElement));
@@ -108,9 +129,8 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   };
 
   const workspaceSelector = useWorkspaceModelSelector(model, resolvedModelId);
-  const { metrics: legendMetrics } = useRiskMetrics(resolvedModelId);
-
   const activeResult = findResultForModel(results, resolvedModelId);
+  const { metrics: legendMetrics } = useRiskMetrics(resolvedModelId, activeResult?.id);
   const layerReady = activeResult?.geoserver_status === "configured";
   const layerPending = Boolean(activeResult && !layerReady);
   const pollTimerRef = useRef<number | null>(null);
@@ -126,7 +146,6 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     selectLayer,
     applyDailyFrame,
     isFrameLoaded,
-    scheduleMapRenderRefresh,
   } = useRiskLayers({
     map,
     modelId: resolvedModelId,
@@ -136,11 +155,11 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     onError: setError,
   });
 
-  useReferenceLayers(map, roadsVisible, labelsVisible, scheduleMapRenderRefresh);
 
-  // ----- Data loading -----
+  // data loading
 
-  const loadData = useCallback(async () => {
+  // silent background poll
+  const loadData = useCallback(async (silent = false) => {
     const requestedModelId = resolvedModelId;
     const requestId = ++loadRequestRef.current;
 
@@ -150,22 +169,24 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
       return;
     }
     try {
-      setError(null);
-      setLoading(true);
-      const [modelRes, list] = await Promise.all([
-        modelService.getModelById(requestedModelId),
-        getModelResults<ModelResult>(requestedModelId),
-      ]);
+      if (!silent) setLoading(true);
+      const [modelRes, list] = await withRetry(() =>
+        Promise.all([
+          modelService.getModelById(requestedModelId),
+          getModelResults<ModelResult>(requestedModelId),
+        ]),
+      );
 
       if (requestId !== loadRequestRef.current || activeModelIdRef.current !== requestedModelId) {
         return;
       }
 
+      setError(null);
       setModel(modelRes.success && modelRes.data ? modelRes.data : null);
 
       setResults(list);
     } catch (err) {
-      if (requestId !== loadRequestRef.current || activeModelIdRef.current !== requestedModelId) {
+      if (silent || requestId !== loadRequestRef.current || activeModelIdRef.current !== requestedModelId) {
         return;
       }
       setError(
@@ -199,26 +220,63 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     loadData();
   }, [loadData]);
 
-  // Attach when ready.
+  // attach when ready
   useEffect(() => {
     if (!map || !activeResult || attachedResultId === activeResult.id) return;
     if (activeResult.geoserver_status !== "configured") return;
     attachLayer(activeResult);
   }, [map, activeResult, attachLayer, attachedResultId]);
 
-  // Poll for readiness.
+  const modelRunning = Boolean(model && isActiveStatus(model.status));
+  const refreshQuietly = useCallback(() => void loadData(true), [loadData]);
+
+  // poll for readiness
   useEffect(() => {
-    if (!layerPending) return;
-    pollTimerRef.current = window.setInterval(() => {
-      loadData();
-    }, POLL_INTERVAL_MS);
+    if (!layerPending || modelRunning) return;
+    pollTimerRef.current = window.setInterval(refreshQuietly, POLL_INTERVAL_MS);
     return () => {
       if (pollTimerRef.current !== null) {
         clearInterval(pollTimerRef.current);
         pollTimerRef.current = null;
       }
     };
-  }, [layerPending, loadData]);
+  }, [layerPending, modelRunning, refreshQuietly]);
+
+  const dateStepper = useModelDateStepper(model, refreshQuietly, {
+    failed: t("modelResults.dateStep.failed", "Could not switch to that day. Please try again."),
+  });
+
+  // one status poller
+  const watchRun = modelRunning || Boolean(dateStepper.pendingDate);
+  useEffect(() => {
+    const modelId = resolvedModelId;
+    if (!watchRun || !modelId) return;
+    const startedAt = Date.now();
+    let cancelled = false;
+    let timer = 0;
+    const tick = async () => {
+      try {
+        const res = await modelService.getModelById(modelId);
+        if (cancelled || activeModelIdRef.current !== modelId) return;
+        if (res.success && res.data && isActiveStatus(res.data.status)) {
+          setModel(res.data);
+        } else {
+          // finished fetch results
+          await loadData(true);
+        }
+      } catch {
+        // next tick retries
+      }
+      if (cancelled) return;
+      const delay = Date.now() - startedAt < 30_000 ? RUNNING_POLL_INTERVAL_MS : 5_000;
+      timer = window.setTimeout(() => void tick(), delay);
+    };
+    timer = window.setTimeout(() => void tick(), RUNNING_POLL_INTERVAL_MS);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [watchRun, resolvedModelId, loadData]);
 
   const handleSelectLayer = useCallback(
     (key: string) => {
@@ -228,7 +286,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     [activeResult, selectLayer]
   );
 
-  // Daily risk animation.
+  // daily risk animation
 
   const dailyFrames = useMemo(
     () =>
@@ -237,16 +295,14 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
         .sort((a, b) => a.key.localeCompare(b.key)),
     [availableLayers]
   );
-  // Player owns frames.
+  // player owns frames
   const switcherLayers = useMemo(
     () => availableLayers.filter((l) => !DAILY_FRAME_KEY_PATTERN.test(l.key)),
     [availableLayers]
   );
   const playingFrameDate = DAILY_FRAME_KEY_PATTERN.exec(selectedLayerKey)?.[1] ?? null;
-  const dailyFrameIndex = dailyFrames.findIndex((f) => f.key === selectedLayerKey);
 
-  const { currentFrameWeather, rankedRiskDays, riskRankIndex, setRiskRankIndex, riskRankDay } =
-    useFrameWeather(resolvedModelId, dailyFrames, playingFrameDate);
+  const { currentFrameWeather, peakDate } = useFrameWeather(resolvedModelId, dailyFrames, playingFrameDate);
 
   useEffect(() => {
     if (!playing) return;
@@ -254,7 +310,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
       setPlaying(false);
       return;
     }
-    // Resume current frame.
+    // resume current frame
     const current = dailyFrames.findIndex((f) => f.key === selectedLayerKeyRef.current);
     playFrameRef.current = current >= 0 ? current : -1;
     let shownAt = 0;
@@ -264,7 +320,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
       shownAt = Date.now();
     };
     advance();
-    // Wait for tiles, capped.
+    // wait tiles capped
     const id = window.setInterval(() => {
       const elapsed = Date.now() - shownAt;
       if (elapsed < FRAME_MIN_MS) return;
@@ -293,7 +349,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     [applyDailyFrame, dailyFrames]
   );
 
-  // Derived state.
+  // derived state
 
   const dateRange = useMemo(() => {
     if (!model?.from_date || !model?.to_date) return null;
@@ -310,7 +366,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     return toPercentages(day.distribution, day.valid_samples);
   }, [playingFrameDate, dailySeries.data, modelDistribution]);
 
-  // The player bar reads the same frame, so its figures cannot contradict the legend.
+  // player bar reads
   const frameMetrics = useMemo(() => {
     if (!playingFrameDate) return legendMetrics;
     const day = dailySeries.data?.days.find((d) => d.date === playingFrameDate);
@@ -340,7 +396,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     };
   }, [playingFrameDate, dailySeries.data, legendMetrics, riskDistribution]);
 
-  // Availability stays whole-model so the checkboxes hold still during playback.
+  // availability stays whole-model
   const riskLevelAvailability = useMemo<VisibleRiskLevels>(() => {
     if (!modelDistribution) {
       return { 1: true, 2: true, 3: true, 4: true, 5: true };
@@ -356,7 +412,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
 
   const hasRiskLayers = Boolean(activeResult && attachedResultId === activeResult.id);
 
-  // 3D camera keys
+  // 3d camera keys
   const terrainControls = useMemo<MapKeyControls | null>(
     () =>
       show3D
@@ -369,7 +425,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     [show3D]
   );
 
-  // Map keyboard shortcuts.
+  // map keyboard shortcuts
   useMapKeyboardShortcuts(map, {
     controls: terrainControls,
     onTogglePlay: layerReady && dailyFrames.length >= 2 ? () => setPlaying((v) => !v) : undefined,
@@ -405,7 +461,7 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
     [riskLevelAvailability]
   );
 
-  // ----- Render -----
+  // viewer layout
 
   const header = (
     <ViewerHeader
@@ -426,32 +482,68 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
       onCreateWorkspace={() => workspaceSelector.setIsCreateWsOpen(true)}
       onModelChange={workspaceSelector.handleModelChange}
       onOpacityChange={setLayerOpacity}
-      onRefresh={loadData}
+      onRefresh={() => void loadData()}
+      dateStepper={dateStepper}
     />
   );
 
+  const switchingDay = dateStepper.pendingDate;
+  // map way
+  const preparing =
+    !error &&
+    (!map || modelRunning || layerPending || Boolean(activeResult && !hasRiskLayers) || (!model && loading));
+  const loadingTitle = switchingDay
+    ? t("modelResults.dateStep.loading", {
+        date: new Date(`${switchingDay}T00:00:00`).toLocaleDateString(undefined, { dateStyle: "long" }),
+        defaultValue: "Loading the map for {{date}}",
+      })
+    : preparing
+      ? modelRunning
+        ? t("modelResults.preparing.title", "Preparing your risk map")
+        : // finished model loading
+          t("modelResults.opening.title", "Loading your map")
+      : null;
   const mapOverlays = (
     <>
-      {layerReady && (
-        <ViewerPlayerOverlay
-          dailyFrames={dailyFrames}
+      <DateStepperBar
+        stepper={dateStepper}
+        summary={layerReady && !switchingDay && dailyFrames.length < 2 ? <RiskSummary metrics={frameMetrics} /> : null}
+      />
+      {loadingTitle && (
+        <div className="md-fade-in pointer-events-none absolute inset-0 z-40 flex items-center justify-center bg-background/45 backdrop-blur-[2px]">
+          <div className="md-rise flex items-center gap-3 rounded-2xl border border-border bg-card/95 px-5 py-4 shadow-xl">
+            <Loader2 className="h-6 w-6 shrink-0 animate-spin text-foreground" />
+            <div>
+              <p className="text-sm font-semibold text-foreground">{loadingTitle}</p>
+              <p className="text-xs text-muted-foreground">
+                {switchingDay
+                  ? t("modelResults.dateStep.loadingHint", "Prepared days open in a few seconds.")
+                  : modelRunning
+                    ? t(
+                        "modelResults.preparing.hint",
+                        "Prepared days open in a few seconds, other days take a few minutes.",
+                      )
+                    : t("modelResults.opening.hint", "Just a moment…")}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+      {layerReady && dailyFrames.length >= 2 && (
+        // multi-day runs timeline
+        <DailyRiskCard
+          days={dailyFrames.map((frame) => frame.key.slice(5))}
+          activeDate={playingFrameDate}
+          peakDate={peakDate}
           playing={playing}
           onTogglePlay={() => setPlaying((v) => !v)}
-          playingFrameDate={playingFrameDate}
-          dailyFrameIndex={dailyFrameIndex}
-          currentFrameWeather={currentFrameWeather}
-          rankedRiskDays={rankedRiskDays}
-          riskRankDay={riskRankDay}
-          riskRankIndex={riskRankIndex}
-          onSelectRankedDay={(day, pausePlayback) => {
-            showFrameByDate(day.date, pausePlayback);
-            setRiskRankIndex((i) => (i + 1) % (rankedRiskDays?.length ?? 1));
-          }}
-          legendMetrics={frameMetrics}
+          onSelectDate={(date) => showFrameByDate(date, true)}
+          weather={currentFrameWeather}
+          summary={<RiskSummary metrics={frameMetrics} />}
         />
       )}
 
-      {/* 3D terrain layer. */}
+      {/* 3d terrain layer */}
       {show3D && wms3D && (
         <Suspense fallback={null}>
           <CesiumWildfire3DView
@@ -461,30 +553,21 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
             aoi={model?.coordinates}
             visibleRiskLevels={visibleRiskLevels}
             layerVisible={layerVisible}
-            roadsVisible={roadsVisible}
-            labelsVisible={labelsVisible}
             controlsRef={terrainControlsRef}
           />
         </Suspense>
       )}
 
       <ViewerStatusBanners
-        mapReady={Boolean(map)}
+        // one loading card
+        mapReady={Boolean(map) || Boolean(loadingTitle)}
         loading={loading}
         error={error}
         tileErrors={tileErrors}
-        layerPending={layerPending}
-        hasResults={results.length > 0}
+        layerPending={layerPending && !loadingTitle}
+        hasResults={results.length > 0 || Boolean(loadingTitle)}
       />
 
-      {map && (
-        <OverlaysPanel
-          roadsVisible={roadsVisible}
-          labelsVisible={labelsVisible}
-          onRoadsChange={setRoadsVisible}
-          onLabelsChange={setLabelsVisible}
-        />
-      )}
 
       <div className="absolute bottom-10 left-2 z-10 flex w-44 flex-col gap-2">
         {hasRiskLayers && (

@@ -1,6 +1,7 @@
-// Types and constants shared by the results-viewer modules.
+// types constants shared
 import type TileLayer from "ol/layer/Tile";
 import type TileWMS from "ol/source/TileWMS";
+import { riskColor } from "@/lib/riskPalette";
 
 export interface ModelResult {
   id: number;
@@ -34,11 +35,13 @@ export interface LayerInfo {
   wms_url: string;
   layer_name: string;
   status: string;
+  /** result id new */
+  version?: number;
   bounds?: LayerBounds;
   available_layers?: AvailableLayer[];
 }
 
-/** Per-day fire weather data */
+/** per-day fire weather */
 export interface FrameWeather {
   wind_speed_kmh?: number | null;
   wind_direction_deg?: number | null;
@@ -49,17 +52,11 @@ export interface FrameWeather {
 
 export const EPSG_32629 = "EPSG:32629";
 export const POLL_INTERVAL_MS = 10_000;
-// Raster transparency is applied only here; users adjust it with the opacity slider.
-export const FIRE_RISK_DEFAULT_OPACITY = 0.7;
+/** model queued running */
+export const RUNNING_POLL_INTERVAL_MS = 1_500;
+// raster transparency applied
+export const FIRE_RISK_DEFAULT_OPACITY = 1;
 export const FIRE_RISK_STYLE_VERSION = "risk-style-storcito-v8";
-export const MAP_REFERENCE_LIGHT_ROADS_OPACITY = 0.82;
-export const MAP_REFERENCE_LIGHT_LABELS_OPACITY = 0.62;
-// Transparent transportation overlay, readable over the risk raster.
-export const ESRI_TRANSPORTATION_REFERENCE_URL =
-  "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}";
-export const ESRI_PLACES_REFERENCE_URL =
-  "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}";
-export const ESRI_ATTRIBUTION = "© 2026, Deggendorf Institute of Technology | Esri contribution";
 
 export const DAILY_FRAME_KEY_PATTERN = /^risk_(\d{4}-\d{2}-\d{2})$/;
 
@@ -67,7 +64,7 @@ export const RISK_LEVELS = [
   {
     id: "very_low",
     label: "Very Low",
-    color: "#9ca3af",
+    get color() { return riskColor(1); },
     value: 1,
     style: "fire_risk_level_1",
     metricKey: "veryLow",
@@ -75,7 +72,7 @@ export const RISK_LEVELS = [
   {
     id: "low",
     label: "Low",
-    color: "#16a34a",
+    get color() { return riskColor(2); },
     value: 2,
     style: "fire_risk_level_2",
     metricKey: "low",
@@ -83,7 +80,7 @@ export const RISK_LEVELS = [
   {
     id: "moderate",
     label: "Moderate",
-    color: "#eab308",
+    get color() { return riskColor(3); },
     value: 3,
     style: "fire_risk_level_3",
     metricKey: "moderate",
@@ -91,7 +88,7 @@ export const RISK_LEVELS = [
   {
     id: "high",
     label: "High",
-    color: "#f97316",
+    get color() { return riskColor(4); },
     value: 4,
     style: "fire_risk_level_4",
     metricKey: "high",
@@ -99,7 +96,7 @@ export const RISK_LEVELS = [
   {
     id: "very_high",
     label: "Very High",
-    color: "#dc2626",
+    get color() { return riskColor(5); },
     value: 5,
     style: "fire_risk_level_5",
     metricKey: "veryHigh",

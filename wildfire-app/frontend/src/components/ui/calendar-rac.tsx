@@ -137,16 +137,21 @@ function CalendarGridComponent({
   )
 }
 
+// shared month focus
+function useFocusedMonth(initial: () => DateValue | undefined) {
+  const [focusedDate, setFocusedDate] = useState<DateValue | undefined>(initial)
+  const handleYearChange = (year: number) => {
+    const base = focusedDate ?? today(getLocalTimeZone())
+    setFocusedDate(new CalendarDate(year, base.month, 1))
+  }
+  return { focusedDate, setFocusedDate, handleYearChange }
+}
+
 function RangeCalendar({ className, minYear = 1980, maxYear = 2025, isDateMarked, ...props }: RangeCalendarProps) {
   // open selection last
-  const [focusedDate, setFocusedDate] = useState<DateValue | undefined>(
+  const { focusedDate, setFocusedDate, handleYearChange } = useFocusedMonth(
     () => props.value?.end ?? props.defaultValue?.end ?? props.maxValue ?? undefined
   )
-
-  const handleYearChange = (year: number) => {
-    const currentDate = focusedDate || today(getLocalTimeZone())
-    setFocusedDate(new CalendarDate(year, currentDate.month, 1))
-  }
 
   return (
     <RangeCalendarRac
@@ -175,18 +180,14 @@ type CalendarProps = Omit<ComponentProps<typeof CalendarRac>, "value" | "default
   }
 
 function Calendar({ className, minYear = 1980, maxYear = 2025, isDateMarked, onChange, ...props }: CalendarProps) {
-  const [focusedDate, setFocusedDate] = useState<DateValue>(
+  const { focusedDate, setFocusedDate, handleYearChange } = useFocusedMonth(
     () => props.value ?? props.defaultValue ?? props.maxValue ?? today(getLocalTimeZone())
   )
 
   // follow outside selection
   useEffect(() => {
     if (props.value) setFocusedDate(props.value)
-  }, [props.value])
-
-  const handleYearChange = (year: number) => {
-    setFocusedDate(new CalendarDate(year, focusedDate.month, 1))
-  }
+  }, [props.value, setFocusedDate])
 
   return (
     <CalendarRac

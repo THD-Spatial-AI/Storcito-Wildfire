@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Eye, EyeOff, Flame, Layers, MapPin, Route } from "lucide-react";
+import { Eye, EyeOff, Flame } from "lucide-react";
 import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 
@@ -8,83 +8,6 @@ import { PanelCard } from "@/components/map-controls/PanelCard";
 import type { RiskDistribution } from "../hooks/useRiskMetrics";
 import { RISK_LEVELS, type RiskLevelValue, type VisibleRiskLevels } from "../viewer-config";
 import { riskGradient } from "@/lib/riskPalette";
-
-const PanelCheckbox: FC<{
-  checked: boolean;
-  disabled?: boolean;
-  onChange: (checked: boolean) => void;
-  accent: "emerald" | "orange";
-}> = ({ checked, disabled = false, onChange, accent }) => (
-  <div className="relative flex items-center justify-center">
-    <input
-      type="checkbox"
-      className={`peer h-3.5 w-3.5 cursor-pointer appearance-none rounded border border-border bg-background transition-colors disabled:cursor-not-allowed ${
-        accent === "emerald"
-          ? "checked:border-emerald-600 checked:bg-emerald-600"
-          : "checked:border-orange-600 checked:bg-orange-600"
-      }`}
-      checked={checked}
-      disabled={disabled}
-      onChange={(e) => onChange(e.target.checked)}
-    />
-    <svg
-      className="pointer-events-none absolute h-2 w-2 text-white opacity-0 peer-checked:opacity-100"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth="3"
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
-    </svg>
-  </div>
-);
-
-export { PanelCard };
-
-const rowClass =
-  "group flex items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-muted/60";
-
-interface OverlaysPanelProps {
-  roadsVisible: boolean;
-  labelsVisible: boolean;
-  onRoadsChange: (visible: boolean) => void;
-  onLabelsChange: (visible: boolean) => void;
-}
-
-// roads labels toggles
-export const OverlaysPanel: FC<OverlaysPanelProps> = ({
-  roadsVisible,
-  labelsVisible,
-  onRoadsChange,
-  onLabelsChange,
-}) => {
-  const { t } = useTranslation();
-
-  return (
-    <PanelCard
-      position="top-4 left-2"
-      icon={<Layers className="h-3.5 w-3.5" />}
-      title={t("modelResults.layers.title", "Overlays")}
-    >
-      <div className="p-1">
-        <label className={`${rowClass} cursor-pointer`}>
-          <PanelCheckbox checked={roadsVisible} onChange={onRoadsChange} accent="emerald" />
-          <Route className="h-3.5 w-3.5 text-muted-foreground transition-colors group-hover:text-foreground" />
-          <span className="flex-1 text-[11px] font-medium text-foreground">
-            {t("modelResults.layers.roads", "Roads")}
-          </span>
-        </label>
-        <label className={`${rowClass} cursor-pointer`}>
-          <PanelCheckbox checked={labelsVisible} onChange={onLabelsChange} accent="emerald" />
-          <MapPin className="h-3.5 w-3.5 text-muted-foreground transition-colors group-hover:text-foreground" />
-          <span className="flex-1 text-[11px] font-medium text-foreground">
-            {t("modelResults.layers.labels", "Labels & places")}
-          </span>
-        </label>
-      </div>
-    </PanelCard>
-  );
-};
 
 interface RiskLegendPanelProps {
   visibleRiskLevels: VisibleRiskLevels;
