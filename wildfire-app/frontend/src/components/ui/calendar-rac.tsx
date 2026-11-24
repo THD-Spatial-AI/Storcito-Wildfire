@@ -1,10 +1,11 @@
 "use client"
 
-import { ComponentProps, useState } from "react"
-import { getLocalTimeZone, today, CalendarDate } from "@internationalized/date"
+import { ComponentProps, useEffect, useState } from "react"
+import { getLocalTimeZone, today, CalendarDate, type DateValue } from "@internationalized/date"
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDown } from "lucide-react"
 import {
   Button,
+  Calendar as CalendarRac,
   CalendarCell as CalendarCellRac,
   CalendarGridBody as CalendarGridBodyRac,
   CalendarGridHeader as CalendarGridHeaderRac,
@@ -25,6 +26,8 @@ type RangeCalendarProps = ComponentProps<typeof RangeCalendarRac> &
   BaseCalendarProps & {
     minYear?: number
     maxYear?: number
+    /** dot days */
+    isDateMarked?: (date: DateValue) => boolean
   }
 
 function CalendarHeader({ minYear = 1980, maxYear = 2025, onYearChange }: Readonly<{ minYear?: number; maxYear?: number; onYearChange?: (year: number) => void }>) {
@@ -76,7 +79,10 @@ function CalendarHeader({ minYear = 1980, maxYear = 2025, onYearChange }: Readon
   )
 }
 
-function CalendarGridComponent({ isRange = false }: Readonly<{ isRange?: boolean }>) {
+function CalendarGridComponent({
+  isRange = false,
+  isDateMarked,
+}: Readonly<{ isRange?: boolean; isDateMarked?: (date: DateValue) => boolean }>) {
   const now = today(getLocalTimeZone())
 
   return (
@@ -93,11 +99,11 @@ function CalendarGridComponent({ isRange = false }: Readonly<{ isRange?: boolean
           <CalendarCellRac
             date={date}
             className={cn(
-              "text-foreground data-hovered:bg-accent data-selected:bg-primary data-hovered:text-foreground data-selected:text-primary-foreground data-focus-visible:ring-ring/50 relative flex size-9 items-center justify-center rounded-md p-0 text-sm font-normal whitespace-nowrap [transition-property:color,background-color,border-radius,box-shadow] duration-150 outline-none data-disabled:pointer-events-none data-disabled:opacity-30 data-focus-visible:z-10 data-focus-visible:ring-[3px] data-unavailable:pointer-events-none data-unavailable:opacity-30",
-              // Range-specific styles
+              "mx-auto text-foreground data-hovered:bg-accent data-selected:bg-primary data-hovered:text-foreground data-selected:text-primary-foreground data-focus-visible:ring-ring/50 relative flex size-9 items-center justify-center rounded-md p-0 text-sm font-normal whitespace-nowrap [transition-property:color,background-color,border-radius,box-shadow] duration-150 outline-none data-disabled:pointer-events-none data-disabled:opacity-30 data-focus-visible:z-10 data-focus-visible:ring-[3px] data-unavailable:pointer-events-none data-unavailable:opacity-30",
+              // range-specific styles
               isRange &&
                 "data-selected:bg-accent data-selected:text-foreground data-invalid:data-selection-end:bg-destructive data-invalid:data-selection-start:bg-destructive data-selection-end:bg-primary data-selection-start:bg-primary data-selection-end:text-primary-foreground data-selection-start:text-primary-foreground data-invalid:bg-red-100 data-selected:rounded-none data-selection-end:rounded-e-md data-invalid:data-selection-end:text-white data-selection-start:rounded-s-md data-invalid:data-selection-start:text-white",
-              // Today indicator styles
+              // today indicator styles
               date.compare(now) === 0 &&
                 cn(
                   "after:bg-primary after:pointer-events-none after:absolute after:start-1/2 after:bottom-1 after:z-10 after:size-[3px] after:-translate-x-1/2 after:rounded-full",
@@ -106,16 +112,37 @@ function CalendarGridComponent({ isRange = false }: Readonly<{ isRange?: boolean
                     : "data-selected:after:bg-background"
                 )
             )}
-          />
+          >
+            {({ formattedDate, isSelected, isSelectionStart, isSelectionEnd }) => (
+              <>
+                {formattedDate}
+                {/* marked day */}
+                {isDateMarked?.(date) && (
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "pointer-events-none absolute end-1 top-1 size-1.5 rounded-full",
+                      (isRange ? isSelectionStart || isSelectionEnd : isSelected)
+                        ? "bg-primary-foreground"
+                        : "bg-foreground/60"
+                    )}
+                  />
+                )}
+              </>
+            )}
+          </CalendarCellRac>
         )}
       </CalendarGridBodyRac>
     </CalendarGridRac>
   )
 }
 
-function RangeCalendar({ className, minYear = 1980, maxYear = 2025, ...props }: RangeCalendarProps) {
-  const [focusedDate, setFocusedDate] = useState<CalendarDate | undefined>(undefined)
-  
+function RangeCalendar({ className, minYear = 1980, maxYear = 2025, isDateMarked, ...props }: RangeCalendarProps) {
+  // open selection last
+  const [focusedDate, setFocusedDate] = useState<DateValue | undefined>(
+    () => props.value?.end ?? props.defaultValue?.end ?? props.maxValue ?? undefined
+  )
+
   const handleYearChange = (year: number) => {
     const currentDate = focusedDate || today(getLocalTimeZone())
     setFocusedDate(new CalendarDate(year, currentDate.month, 1))
@@ -131,9 +158,51 @@ function RangeCalendar({ className, minYear = 1980, maxYear = 2025, ...props }: 
       )}
     >
       <CalendarHeader minYear={minYear} maxYear={maxYear} onYearChange={handleYearChange} />
-      <CalendarGridComponent isRange />
+      <CalendarGridComponent isRange isDateMarked={isDateMarked} />
     </RangeCalendarRac>
   )
 }
 
-export { RangeCalendar }
+type CalendarProps = Omit<ComponentProps<typeof CalendarRac>, "value" | "defaultValue" | "onChange"> &
+  BaseCalendarProps & {
+    value?: DateValue | null
+    defaultValue?: DateValue | null
+    onChange?: (value: DateValue) => void
+    minYear?: number
+    maxYear?: number
+    /** dot days */
+    isDateMarked?: (date: DateValue) => boolean
+  }
+
+function Calendar({ className, minYear = 1980, maxYear = 2025, isDateMarked, onChange, ...props }: CalendarProps) {
+  const [focusedDate, setFocusedDate] = useState<DateValue>(
+    () => props.value ?? props.defaultValue ?? props.maxValue ?? today(getLocalTimeZone())
+  )
+
+  // follow outside selection
+  useEffect(() => {
+    if (props.value) setFocusedDate(props.value)
+  }, [props.value])
+
+  const handleYearChange = (year: number) => {
+    setFocusedDate(new CalendarDate(year, focusedDate.month, 1))
+  }
+
+  return (
+    <CalendarRac
+      {...props}
+      // single day only
+      onChange={(next) => {
+        if (!Array.isArray(next)) onChange?.(next as DateValue)
+      }}
+      focusedValue={focusedDate}
+      onFocusChange={setFocusedDate}
+      className={composeRenderProps(className, (className) => cn("w-fit", className))}
+    >
+      <CalendarHeader minYear={minYear} maxYear={maxYear} onYearChange={handleYearChange} />
+      <CalendarGridComponent isDateMarked={isDateMarked} />
+    </CalendarRac>
+  )
+}
+
+export { Calendar, RangeCalendar }
