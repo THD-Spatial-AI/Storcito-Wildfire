@@ -5,7 +5,6 @@ import OnboardingWizard from "@/features/onboarding/OnboardingWizard";
 import { Authorized } from "@/middleware/authorized";
 import { SessionExpiryBanner } from "@/components/ui/SessionExpiryBanner";
 import { AppLayoutSidebar } from "./app-layout/AppLayoutSidebar";
-import { AppLayoutTopbar } from "./app-layout/AppLayoutTopbar";
 import { useAppLayoutState } from "./app-layout/hooks/useAppLayoutState";
 
 interface AppLayoutProps {
@@ -19,6 +18,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     changeBaseLayer,
     completeOnboarding,
     cssVariables,
+    topbarHeight,
+    navExpanded,
+    navWidth,
+    toggleNav,
     getUserInitial,
     handleSmartRestartTour,
     isActive,
@@ -36,15 +39,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       <OnboardingWizard isOpen={showOnboarding} onComplete={completeOnboarding} />
 
       <div
-        className="relative flex h-full w-full overflow-hidden bg-background text-foreground"
+        // pages read nav
+        data-nav={navExpanded ? "expanded" : "collapsed"}
+        className="group/app relative flex h-full w-full overflow-hidden bg-background text-foreground"
         style={cssVariables}
       >
-        <AppLayoutTopbar
-          user={user}
-          navigationHandlers={navigationHandlers}
-          navigateHome={() => navigate("/")}
-        />
-
         <AppLayoutSidebar
           accessibleBaseLayers={accessibleBaseLayers}
           selectedBaseLayerId={selectedBaseLayerId}
@@ -57,13 +56,22 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           navigateTo={navigate}
           userMenuItems={userMenuItems}
           getUserInitial={getUserInitial}
+          topbarHeight={topbarHeight}
+          navigateHome={() => navigate("/")}
+          expanded={navExpanded}
+          navWidth={navWidth}
+          onToggleExpanded={toggleNav}
+          userName={user?.name}
+          userEmail={user?.email}
+          isGuest={!user}
         />
 
         <main
-          className="relative isolate flex-1 bg-background text-foreground"
+          // own layer dialogs
+          className="relative isolate flex-1 min-w-0 bg-background text-foreground transition-[padding] duration-200 ease-out"
           style={{
             paddingTop: "var(--topbar-height)",
-            paddingLeft: "var(--sidebar-width)",
+            paddingLeft: "var(--nav-width)",
           }}
         >
           <Authorized>

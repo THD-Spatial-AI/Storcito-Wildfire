@@ -1,8 +1,9 @@
+import type { ComponentType } from "react";
 import type { LucideIcon } from "lucide-react";
 
 export interface SidebarItem {
   path: string;
-  icon: LucideIcon;
+  icon: ComponentType<{ className?: string }>;
   title: string;
   color: string;
   bgColor: string;
@@ -14,6 +15,8 @@ export interface UserMenuItem {
   icon: LucideIcon;
   label: string;
   onClick: () => void;
+  /** divider above item */
+  separatorBefore?: boolean;
 }
 
 export interface NavigationHandlers {

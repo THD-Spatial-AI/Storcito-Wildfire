@@ -20,6 +20,7 @@ import {
 
 import { cn } from "@/lib/utils";
 import { SIDEBAR_WIDTH, TOPBAR_HEIGHT } from "./constants";
+import { NAV_ROW_CLASS } from "@/components/ui/SidebarButton";
 
 type BaseLayerInfo = {
   id: string;
@@ -31,12 +32,20 @@ interface LayersSheetProps {
   baseLayers: BaseLayerInfo[];
   selectedBaseLayerId: string;
   changeBaseLayer: (layerId: string) => void;
+  /** top bar height */
+  topbarHeight?: string;
+  /** left nav width */
+  navWidth?: string;
+  expanded?: boolean;
 }
 
 export const LayersSheet: React.FC<LayersSheetProps> = ({
   baseLayers,
   selectedBaseLayerId,
   changeBaseLayer,
+  topbarHeight = TOPBAR_HEIGHT,
+  navWidth = SIDEBAR_WIDTH,
+  expanded = false,
 }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [open, setOpen] = useState(false);
@@ -69,12 +78,17 @@ export const LayersSheet: React.FC<LayersSheetProps> = ({
                   "--sidebar-bg": "#d1fae5",
                 } as React.CSSProperties
               }
-              className={cn(
-                "cursor-pointer w-9 h-9 rounded-button flex items-center justify-center transition-all duration-normal relative group",
-                "border-2 border-transparent hover:bg-muted"
-              )}
+              className={
+                expanded
+                  ? NAV_ROW_CLASS
+                  : cn(
+                      "cursor-pointer w-9 h-9 rounded-button flex items-center justify-center transition-all duration-normal relative group",
+                      "border-2 border-transparent hover:bg-muted"
+                    )
+              }
             >
-              <Layers className="cursor-pointer w-5 h-5 text-muted-foreground group-hover:text-foreground" />
+              <Layers className="cursor-pointer w-5 h-5 shrink-0 text-muted-foreground group-hover:text-foreground" />
+              {expanded && <span className="truncate">{t("mapLayers.tooltip", "Base Maps")}</span>}
             </button>
           </SheetTrigger>
         </TooltipTrigger>
@@ -85,8 +99,8 @@ export const LayersSheet: React.FC<LayersSheetProps> = ({
       <SheetContent
         style={
           {
-            "--sidebar-width": SIDEBAR_WIDTH,
-            "--topbar-height": TOPBAR_HEIGHT,
+            "--sidebar-width": navWidth,
+            "--topbar-height": topbarHeight,
           } as React.CSSProperties
         }
         side="left"

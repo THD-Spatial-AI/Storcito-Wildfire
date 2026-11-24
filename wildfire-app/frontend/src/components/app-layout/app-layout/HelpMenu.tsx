@@ -9,6 +9,7 @@ import {
   TooltipTrigger,
 } from "@spatialhub/ui";
 import { HelpCircle, type LucideIcon } from "lucide-react";
+import { NAV_ROW_CLASS } from "@/components/ui/SidebarButton";
 
 import { Authorized } from "@/middleware/authorized";
 
@@ -19,10 +20,11 @@ interface HelpMenuProps {
   onDocumentation: () => void;
   onRestartTour: () => void;
   onFeedback: () => void;
+  /** wide nav row */
+  expanded?: boolean;
 }
 
-// Consolidates the low-frequency help actions (docs, guided tour, feedback) and
-// the app version into one "?" popover, keeping the rail uncluttered.
+// rarely used help
 export const HelpMenu: React.FC<HelpMenuProps> = ({
   documentationIcon: DocIcon,
   restartTourIcon: TourIcon,
@@ -30,8 +32,10 @@ export const HelpMenu: React.FC<HelpMenuProps> = ({
   onDocumentation,
   onRestartTour,
   onFeedback,
+  expanded = false,
 }) => {
   const { t } = useTranslation();
+  const helpLabel = t("common.tooltips.help", "Help");
 
   return (
     <Tooltip>
@@ -41,10 +45,15 @@ export const HelpMenu: React.FC<HelpMenuProps> = ({
             <button
               type="button"
               data-tour="help"
-              aria-label={t("common.tooltips.help", "Help")}
-              className="cursor-pointer w-7 h-7 rounded-button flex items-center justify-center transition-all duration-normal hover:bg-muted group"
+              aria-label={helpLabel}
+              className={
+                expanded
+                  ? NAV_ROW_CLASS
+                  : "cursor-pointer w-9 h-9 rounded-button flex items-center justify-center transition-all duration-normal hover:bg-muted group"
+              }
             >
-              <HelpCircle className="w-4 h-4 text-muted-foreground group-hover:text-foreground" />
+              <HelpCircle className="w-5 h-5 shrink-0 text-muted-foreground group-hover:text-foreground" />
+              {expanded && <span className="truncate">{helpLabel}</span>}
             </button>
           </DropdownMenuTrigger>
         </TooltipTrigger>
@@ -65,7 +74,7 @@ export const HelpMenu: React.FC<HelpMenuProps> = ({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <TooltipContent side="right">{t("common.tooltips.help", "Help")}</TooltipContent>
+      <TooltipContent side="right">{helpLabel}</TooltipContent>
     </Tooltip>
   );
 };

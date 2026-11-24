@@ -10,21 +10,18 @@ import {
   TooltipTrigger,
 } from "@spatialhub/ui";
 import {
-  BadgeCheck,
-  BookOpen,
+  Bell,
   CalendarDays,
   CalendarRange,
-  Copy,
-  Crosshair,
   ExternalLink,
-  Flame,
-  GraduationCap,
-  Keyboard,
-  LayoutGrid,
-  ListTree,
+  LayoutPanelLeft,
+  ListChecks,
   MapPin,
-  Pin,
+  MapPinned,
+  PanelLeft,
+  ShieldCheck,
   Sparkles,
+  Table2,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -39,22 +36,20 @@ interface WhatsNewItem {
   icon: LucideIcon;
 }
 
-// Bump per release.
-const RELEASE_DATE = "2026-10-27";
+// bump per release
+const RELEASE_DATE = "2026-11-18";
 const SEEN_KEY = "whatsNew.seenVersion";
 
 const WHATS_NEW_ITEMS: WhatsNewItem[] = [
-  { key: "families", group: "new", icon: ListTree },
-  { key: "tabs", group: "new", icon: LayoutGrid },
-  { key: "pinning", group: "new", icon: Pin },
-  { key: "newBadge", group: "new", icon: BadgeCheck },
-  { key: "coordinates", group: "new", icon: Crosshair },
-  { key: "tour", group: "improved", icon: GraduationCap },
-  { key: "docs", group: "improved", icon: BookOpen },
-  { key: "shortcuts", group: "improved", icon: Keyboard },
-  { key: "fireWeather", group: "fixed", icon: Flame },
-  { key: "sharing", group: "fixed", icon: Copy },
-  { key: "dateField", group: "fixed", icon: CalendarRange },
+  { key: "dayStepper", group: "new", icon: CalendarDays },
+  { key: "rangeModes", group: "new", icon: CalendarRange },
+  { key: "multiArea", group: "new", icon: MapPinned },
+  { key: "sidebar", group: "new", icon: PanelLeft },
+  { key: "creation", group: "improved", icon: LayoutPanelLeft },
+  { key: "dashboard", group: "improved", icon: Table2 },
+  { key: "notifications", group: "improved", icon: Bell },
+  { key: "counts", group: "fixed", icon: ListChecks },
+  { key: "security", group: "fixed", icon: ShieldCheck },
 ];
 
 const GROUP_STYLES: Record<ReleaseGroup, { badge: string; tile: string }> = {
@@ -86,7 +81,7 @@ const writeSeen = (version: string) => {
   try {
     localStorage.setItem(SEEN_KEY, version);
   } catch {
-    // Storage blocked.
+    // storage blocked
   }
 };
 
@@ -120,6 +115,7 @@ export const WhatsNewDialog: React.FC<WhatsNewDialogProps> = ({ version }) => {
           <button
             type="button"
             data-tour="version"
+            data-compact
             onClick={handleOpen}
             aria-label={t("whatsNew.open")}
             className="group relative cursor-pointer rounded-full border border-border bg-muted/50 px-1.5 py-0.5 text-[9px] font-medium tabular-nums text-muted-foreground transition-colors hover:border-primary/50 hover:bg-primary/10 hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
