@@ -4,33 +4,34 @@ import "cesium/Build/Cesium/Widgets/widgets.css";
 import { Plus, Minus, Mountain } from "lucide-react";
 import { useTranslation } from "@/i18n";
 import { withCartoBasemapKey } from "@/utils/carto-basemap";
+import { riskStyle } from "@/lib/riskPalette";
 
-/** Keyboard camera controls */
+/** keyboard camera controls */
 export interface Terrain3DControls {
   zoomIn: () => void;
   zoomOut: () => void;
-  /** Fractional pan */
+  /** fractional pan */
   pan: (dx: number, dy: number) => void;
 }
 
 interface CesiumWildfire3DViewProps {
   wmsUrl: string;
-  /** GeoServer layer name (swapped by the day player). */
+  /** geoserver layer name */
   layerName: string;
-  /** Model AOI as GeoJSON (EPSG:4326). */
+  /** model aoi geojson */
   aoi?: unknown;
   visibleRiskLevels?: Record<number, boolean>;
-  /** Risk drape visibility */
+  /** risk drape visibility */
   layerVisible?: boolean;
   roadsVisible?: boolean;
   labelsVisible?: boolean;
-  /** Exposes camera controls */
+  /** exposes camera controls */
   controlsRef?: RefObject<Terrain3DControls | null>;
-  /** Return to the 2D map when 3D cannot start. */
+  /** return 2d map */
   onExit?: () => void;
 }
 
-/** WebGL availability, the usual reason 3D will not start. */
+/** webgl availability usual */
 const hasWebGL = (): boolean => {
   try {
     const canvas = document.createElement("canvas");
@@ -44,27 +45,27 @@ const hasWebGL = (): boolean => {
   }
 };
 
-// Transparent-background Esri reference overlays, kept above the risk drape.
+// transparent-background esri reference
 const ESRI_TRANSPORTATION_URL =
   "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}";
 const ESRI_PLACES_URL =
   "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}";
-// Drape alpha while roads are shown, so casings stay readable.
+// drape alpha roads
 const DRAPE_ALPHA_WITH_ROADS = 0.8;
-// Camera step fractions
+// camera step fractions
 const ZOOM_IN_FACTOR = 0.4;
 const ZOOM_OUT_FACTOR = -0.6;
 const PAN_FRACTION = 0.25;
-// Relief exaggeration options
+// relief exaggeration options
 const RELIEF_OPTIONS = [1, 2, 3, 5] as const;
 const DEFAULT_RELIEF = 3;
-// North-west hillshade light
+// north-west hillshade light
 const LIGHT_AZIMUTH_DEG = 315;
 const LIGHT_ELEVATION_DEG = 45;
-// No-AOI fallback
+// no-aoi fallback
 const FALLBACK_LIGHT_CENTER = Cesium.Cartographic.fromDegrees(-8.0, 42.8);
 
-// Same per-level GeoServer styles as the 2D viewer (legend checkboxes apply).
+// same per-level geoserver
 const RISK_LEVEL_STYLES: Record<number, string> = {
   1: "fire_risk_level_1",
   2: "fire_risk_level_2",
@@ -110,13 +111,13 @@ function aoiRectangle(aoi: unknown): Cesium.Rectangle | null {
   return Cesium.Rectangle.fromDegrees(minX, minY, maxX, maxY);
 }
 
-/** Hillshade light direction */
+/** hillshade light direction */
 function hillshadeLightDirection(rectangle: Cesium.Rectangle | null): Cesium.Cartesian3 {
   const center = rectangle ? Cesium.Rectangle.center(rectangle) : FALLBACK_LIGHT_CENTER;
   const enu = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartographic.toCartesian(center));
   const azimuth = Cesium.Math.toRadians(LIGHT_AZIMUTH_DEG);
   const elevation = Cesium.Math.toRadians(LIGHT_ELEVATION_DEG);
-  // Negated sun vector
+  // negated sun vector
   const local = new Cesium.Cartesian3(
     -Math.cos(elevation) * Math.sin(azimuth),
     -Math.cos(elevation) * Math.cos(azimuth),
@@ -126,7 +127,7 @@ function hillshadeLightDirection(rectangle: Cesium.Rectangle | null): Cesium.Car
   return Cesium.Cartesian3.normalize(direction, direction);
 }
 
-/** 3D terrain view rendered inside the map container, under the shared 2D overlays. */
+/** 3d terrain view */
 export const CesiumWildfire3DView = ({
   wmsUrl,
   layerName,
@@ -148,7 +149,7 @@ export const CesiumWildfire3DView = ({
   const [relief, setRelief] = useState<number>(DEFAULT_RELIEF);
   const reliefRef = useRef(relief);
   reliefRef.current = relief;
-  // Refs mirror the latest props for init(), which may run deferred.
+  // refs mirror latest
   const drapeRef = useRef({ wmsUrl, layerName });
   drapeRef.current = { wmsUrl, layerName };
   const aoiRef = useRef(aoi);
@@ -187,7 +188,7 @@ export const CesiumWildfire3DView = ({
         new Cesium.WebMapServiceImageryProvider({
           url: drapeRef.current.wmsUrl,
           layers: drapeRef.current.layerName,
-          parameters: { transparent: true, format: "image/png", styles: style },
+          parameters: { transparent: true, format: "image/png", styles: riskStyle(style) },
           ...(aoiRectRef.current ? { rectangle: aoiRectRef.current } : {}),
         })
       );
@@ -197,8 +198,7 @@ export const CesiumWildfire3DView = ({
     });
     if (roadsLayerRef.current) viewer.imageryLayers.raiseToTop(roadsLayerRef.current);
     if (labelsLayerRef.current) viewer.imageryLayers.raiseToTop(labelsLayerRef.current);
-    // Keep the previous day's drape until the new tiles are actually loaded
-    // (queue drained), so animation frames never show a half-loaded mix.
+    // keep previous day
     if (previous.length > 0) {
       let done = false;
       let unsubscribe: (() => void) | null = null;
@@ -217,7 +217,7 @@ export const CesiumWildfire3DView = ({
     }
   };
 
-  // Create the viewer once the container has a size (zero-size canvas stays blank).
+  // create viewer container
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -256,7 +256,7 @@ export const CesiumWildfire3DView = ({
         );
       });
 
-      // CARTO base — no Cesium Ion imagery dependency.
+      // carto base
       const baseLayer = new Cesium.ImageryLayer(
         new Cesium.UrlTemplateImageryProvider({
           url: withCartoBasemapKey(
@@ -305,8 +305,7 @@ export const CesiumWildfire3DView = ({
       ];
       cam.zoomEventTypes = [Cesium.CameraEventType.WHEEL, Cesium.CameraEventType.PINCH];
 
-      // Self-hosted Sentinel-2 imagery above the base (regional coverage only;
-      // CARTO stays visible outside it), below the risk drape.
+      // self-hosted sentinel-2 imagery
       if (SATELLITE_URL) {
         viewer.imageryLayers.addImageryProvider(
           new Cesium.UrlTemplateImageryProvider({
@@ -319,7 +318,7 @@ export const CesiumWildfire3DView = ({
 
       applyDrape(viewer);
 
-      // Transparent Esri reference overlays above the drape.
+      // transparent esri reference
       roadsLayerRef.current = viewer.imageryLayers.addImageryProvider(
         new Cesium.UrlTemplateImageryProvider({
           url: ESRI_TRANSPORTATION_URL,
@@ -337,7 +336,7 @@ export const CesiumWildfire3DView = ({
       );
       labelsLayerRef.current.show = labelsVisibleRef.current;
 
-      // Open centered on the AOI at a tilted angle.
+      // open centered aoi
       const rectangle = aoiRectangle(aoiRef.current);
       if (rectangle) {
         const sphere = Cesium.BoundingSphere.fromRectangle3D(rectangle);
@@ -389,7 +388,7 @@ export const CesiumWildfire3DView = ({
     viewerRef.current?.scene.requestRender();
   }, [visibleRiskLevels, layerVisible]);
 
-  // Roads/Labels toggles from the shared Overlays panel.
+  // roads/labels toggles shared
   useEffect(() => {
     if (roadsLayerRef.current) roadsLayerRef.current.show = roadsVisible;
     if (labelsLayerRef.current) labelsLayerRef.current.show = labelsVisible;
@@ -412,7 +411,7 @@ export const CesiumWildfire3DView = ({
     v.camera.zoomIn(h * factor);
   };
 
-  // Height-scaled pan
+  // height-scaled pan
   const panBy = (dx: number, dy: number) => {
     const v = viewerRef.current;
     if (!v || v.isDestroyed()) return;
@@ -421,7 +420,7 @@ export const CesiumWildfire3DView = ({
     if (dy !== 0) v.camera.moveUp(step * dy);
   };
 
-  // Publish camera controls
+  // publish camera controls
   useEffect(() => {
     if (!controlsRef) return;
     controlsRef.current = {
@@ -469,7 +468,7 @@ export const CesiumWildfire3DView = ({
         </div>
       )}
 
-      {/* Zoom controls for the 3D camera (the 2D ones target the hidden OL map). */}
+      {/* zoom controls 3d */}
       <div
         className="absolute z-[6] flex flex-col overflow-hidden rounded-lg border border-border bg-white/95 shadow-lg backdrop-blur"
         style={{ top: "3.5rem", right: "calc(1rem + var(--sidebar-offset, 0rem))" }}
@@ -492,7 +491,7 @@ export const CesiumWildfire3DView = ({
         </button>
       </div>
 
-      {/* Relief exaggeration control */}
+      {/* relief exaggeration control */}
       {TERRAIN_URL && (
         <div
           role="group"

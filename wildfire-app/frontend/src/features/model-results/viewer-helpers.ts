@@ -1,10 +1,11 @@
-// Pure helpers for the results viewer (safe to unit test).
+// pure helpers results
 import TileLayer from "ol/layer/Tile";
 import TileWMS from "ol/source/TileWMS";
 import type Map from "ol/Map";
 import { get as getProj, transformExtent } from "ol/proj";
 import proj4 from "proj4";
 import { register as registerProj4 } from "ol/proj/proj4";
+import { riskStyle } from "@/lib/riskPalette";
 
 import {
   EPSG_32629,
@@ -14,11 +15,7 @@ import {
   type LayerInfo,
 } from "./viewer-config";
 
-// The request URL for a given tile must be identical for every viewer, so
-// nothing per-session or per-attach belongs in these params. STYLE_VERSION only
-// busts the browser cache: GeoWebCache ignores parameters it does not know, so
-// bumping it does NOT drop cached tiles drawn with an older SLD. Changing a
-// style requires a GWC truncate on the server side as well.
+// request url given
 export function buildWMSLayer(
   info: LayerInfo,
   styleName: string,
@@ -28,8 +25,10 @@ export function buildWMSLayer(
     url: info.wms_url,
     params: {
       LAYERS: info.layer_name,
-      STYLES: styleName,
+      STYLES: riskStyle(styleName),
       STYLE_VERSION: FIRE_RISK_STYLE_VERSION,
+      // same every viewer
+      ...(info.version != null ? { RV: info.version } : {}),
       TILED: true,
       FORMAT: "image/png",
       TRANSPARENT: true,
@@ -57,9 +56,7 @@ export function fitMapToBounds(map: Map, bounds: LayerBounds) {
 
   try {
     const extent = transformExtent([minx, miny, maxx, maxy], sourceCrs, "EPSG:3857");
-    // Fit synchronously before WMS layers are attached. Animating a large AOI
-    // through several zoom levels makes OpenLayers request every intermediate
-    // tile grid and can overwhelm GeoServer before the final view is reached.
+    // fit synchronously before
     map.getView().fit(extent, { padding: [50, 50, 50, 50], maxZoom: 14 });
   } catch (err) {
     if (import.meta.env.DEV) console.warn("[ModelResultsViewer] bounds fit failed", err);
