@@ -14,7 +14,7 @@ export interface RiskDistribution {
 
 export interface RiskMetrics {
   overallRiskLevel: RiskLevel | null;
-  /** 1..5 scale (mean) */
+  /** 1 5 scale */
   overallRiskScore: number | null;
   affectedAreaKm2: number | null;
   affectedAreaHectares: number | null;
@@ -24,7 +24,7 @@ export interface RiskMetrics {
   riskTrend: RiskTrend | null;
   previousScore: number | null;
   sampleCount: number | null;
-  /** Percentages 0..100, summing to ~100 */
+  /** class share percent */
   riskDistribution: RiskDistribution | null;
 }
 
@@ -39,7 +39,7 @@ interface BackendDistribution {
 interface BackendMetrics {
   model_id: number;
   result_id: number;
-  overall_score: number; // 0..1
+  overall_score: number; // 0 1
   level: RiskLevel | 'unknown';
   affected_area_km2: number;
   total_area_km2: number;
@@ -66,7 +66,7 @@ const mapTrend = (trend: BackendMetrics['trend']): RiskTrend | null => {
 const mapLevel = (level: BackendMetrics['level']): RiskLevel | null =>
   level === 'unknown' ? null : level;
 
-/** Mean 1..5 score to its band. */
+/** score to level */
 export const scoreToRiskLevel = (score: number): RiskLevel => {
   if (score < 1.5) return "very_low";
   if (score < 2.5) return "low";
@@ -112,7 +112,8 @@ const EMPTY: RiskMetrics = {
   riskDistribution: null,
 };
 
-export const useRiskMetrics = (modelId: number | undefined) => {
+/** version refetches after */
+export const useRiskMetrics = (modelId: number | undefined, version?: number) => {
   const [metrics, setMetrics] = useState<RiskMetrics>(EMPTY);
   const [isLoading, setIsLoading] = useState(false);
   const [ready, setReady] = useState(false);
@@ -126,14 +127,13 @@ export const useRiskMetrics = (modelId: number | undefined) => {
     }
 
     let cancelled = false;
-    const controller = new AbortController();
 
     const fetchMetrics = async () => {
       setIsLoading(true);
       setError(null);
 
       try {
-        const body = await riskMetricsService.getForModel(modelId, controller.signal);
+        const body = await riskMetricsService.getForModel(modelId, version);
         if (cancelled) return;
         if (!body.ready || !body.data) {
           setMetrics(EMPTY);
@@ -174,9 +174,8 @@ export const useRiskMetrics = (modelId: number | undefined) => {
     fetchMetrics();
     return () => {
       cancelled = true;
-      controller.abort();
     };
-  }, [modelId]);
+  }, [modelId, version]);
 
   return { metrics, isLoading, error, ready };
 };

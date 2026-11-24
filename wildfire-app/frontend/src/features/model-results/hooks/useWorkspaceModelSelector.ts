@@ -1,18 +1,18 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "@/lib/axios";
 
 import { useWorkspaceStore, type Workspace } from "@/components/workspace";
 import type { Model } from "@/features/model-dashboard";
 
-// Header selector state.
+// header selector state
 export const useWorkspaceModelSelector = (
   model: Model | null,
   resolvedModelId: number | undefined
 ) => {
   const navigate = useNavigate();
   const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace | null>(null);
-  const [workspaceModels, setWorkspaceModels] = useState<Model[]>([]);
+  const [fetchedModels, setWorkspaceModels] = useState<Model[]>([]);
   const [selectedModelId, setSelectedModelId] = useState<number | null>(null);
   const [isLoadingModels, setIsLoadingModels] = useState(false);
   const [isCreateWsOpen, setIsCreateWsOpen] = useState(false);
@@ -42,13 +42,22 @@ export const useWorkspaceModelSelector = (
     initializeWorkspace();
   }, [initializeWorkspace]);
 
+  // workspace not poll
+  const modelWorkspace = (model?.workspace as Workspace | undefined) ?? null;
+  const modelWorkspaceId = modelWorkspace?.id;
   useEffect(() => {
-    if (model?.workspace) {
-      const ws = model.workspace as Workspace;
-      setSelectedWorkspace(ws);
-      loadWorkspaceModels(ws);
-    }
-  }, [model, loadWorkspaceModels]);
+    if (!modelWorkspace) return;
+    setSelectedWorkspace(modelWorkspace);
+    loadWorkspaceModels(modelWorkspace);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modelWorkspaceId, loadWorkspaceModels]);
+
+  // open model stays
+  const workspaceModels = useMemo(() => {
+    if (!model || (modelWorkspaceId && selectedWorkspace?.id !== modelWorkspaceId)) return fetchedModels;
+    const listed = fetchedModels.some((m) => m.id === model.id);
+    return listed ? fetchedModels.map((m) => (m.id === model.id ? model : m)) : [model, ...fetchedModels];
+  }, [fetchedModels, model, modelWorkspaceId, selectedWorkspace?.id]);
 
   useEffect(() => {
     if (resolvedModelId) setSelectedModelId(resolvedModelId);

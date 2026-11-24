@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "@/lib/axios";
 
-export interface DayAreas {
+interface DayAreas {
   very_low: number;
   low: number;
   moderate: number;
@@ -17,7 +17,7 @@ export interface DayDistribution {
   total_samples: number;
 }
 
-export interface DailyRiskSeries {
+interface DailyRiskSeries {
   model_id: number;
   result_id: number;
   days: DayDistribution[];
@@ -28,7 +28,7 @@ interface DailyRiskResponse {
   ready: boolean;
 }
 
-// Per-day class distributions; fetched lazily (first server computation is slow).
+// per-day class distributions
 export const useDailyRiskDistribution = (modelId: number | undefined, enabled: boolean) => {
   const [data, setData] = useState<DailyRiskSeries | null>(null);
   const [isLoading, setIsLoading] = useState(false);

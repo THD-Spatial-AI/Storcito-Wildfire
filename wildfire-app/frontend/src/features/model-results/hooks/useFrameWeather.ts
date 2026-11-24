@@ -3,13 +3,12 @@ import axios from "@/lib/axios";
 
 import type { AvailableLayer, FrameWeather } from "../viewer-config";
 
-export interface RankedRiskDay {
+interface RankedRiskDay {
   date: string;
   fwi: number;
 }
 
-// Per-day AOI-mean fire weather for the player, plus the FWI-ranked day list.
-// Failed fetches are left unset (not cached as null) so showing that day retries.
+// per-day aoi-mean fire
 export const useFrameWeather = (
   modelId: number | undefined,
   dailyFrames: AvailableLayer[],
@@ -27,7 +26,7 @@ export const useFrameWeather = (
       try {
         const resp = await axios.get(`/models/${modelId}/fire-weather`, {
           params: { date: day },
-          // On-demand engine computation can outlast the default 30s timeout.
+          // on-demand engine computation
           timeout: 90_000,
         });
         const summary = (resp.data?.data?.weather_summary ?? null) as FrameWeather | null;
@@ -42,7 +41,7 @@ export const useFrameWeather = (
     [modelId]
   );
 
-  // Prefetch every frame day sequentially once the daily layers are known.
+  // prefetch every frame
   useEffect(() => {
     if (dailyFrames.length < 2) return;
     let cancelled = false;
@@ -57,16 +56,14 @@ export const useFrameWeather = (
     };
   }, [dailyFrames, fetchFrameWeather]);
 
-  // Retry on demand when the visible frame still has no weather.
+  // retry demand visible
   useEffect(() => {
     if (playingFrameDate && frameWeather[playingFrameDate] === undefined) {
       void fetchFrameWeather(playingFrameDate);
     }
   }, [playingFrameDate, frameWeather, fetchFrameWeather]);
 
-  const currentFrameWeather = playingFrameDate ? frameWeather[playingFrameDate] : null;
-
-  // Days ranked by AOI-mean FWI (desc); null until every day's weather is known.
+  // days ranked aoi-mean
   const rankedRiskDays = useMemo<RankedRiskDay[] | null>(() => {
     const days: RankedRiskDay[] = [];
     for (const frame of dailyFrames) {
@@ -78,8 +75,10 @@ export const useFrameWeather = (
     return days.sort((a, b) => b.fwi - a.fwi);
   }, [dailyFrames, frameWeather]);
 
-  const [riskRankIndex, setRiskRankIndex] = useState(0);
-  const riskRankDay = rankedRiskDays?.[riskRankIndex % (rankedRiskDays.length || 1)] ?? null;
+  const peakDate = rankedRiskDays?.[0]?.date ?? null;
+  // nothing picked map
+  const shownDate = playingFrameDate ?? peakDate;
+  const currentFrameWeather = shownDate ? frameWeather[shownDate] : null;
 
-  return { currentFrameWeather, rankedRiskDays, riskRankIndex, setRiskRankIndex, riskRankDay };
+  return { currentFrameWeather, rankedRiskDays, peakDate };
 };
