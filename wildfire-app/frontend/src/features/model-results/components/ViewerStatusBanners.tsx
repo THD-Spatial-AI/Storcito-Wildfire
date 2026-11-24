@@ -11,7 +11,7 @@ interface ViewerStatusBannersProps {
   hasResults: boolean;
 }
 
-// Floating status messages: map init, errors, tile failures, publishing, empty run.
+// floating status messages
 export const ViewerStatusBanners: FC<ViewerStatusBannersProps> = ({
   mapReady,
   loading,
@@ -36,14 +36,14 @@ export const ViewerStatusBanners: FC<ViewerStatusBannersProps> = ({
       )}
 
       {error && (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] max-w-xl bg-destructive text-destructive-foreground rounded-lg shadow-lg px-4 py-2.5 flex items-center gap-2">
+        <div className="absolute top-40 left-1/2 -translate-x-1/2 z-[1000] max-w-xl bg-destructive text-destructive-foreground rounded-lg shadow-lg px-4 py-2.5 flex items-center gap-2">
           <AlertCircle className="w-5 h-5 flex-shrink-0" />
           <span className="text-sm">{error}</span>
         </div>
       )}
 
       {tileErrors > 0 && (
-        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-[1000] bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-300 rounded-lg shadow-lg px-4 py-2 text-xs">
+        <div className="absolute top-52 left-1/2 -translate-x-1/2 z-[1000] bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-300 rounded-lg shadow-lg px-4 py-2 text-xs">
           {t("modelResults.errors.tileLoad", "Some tiles failed to load from GeoServer ({{count}})", {
             count: tileErrors,
           })}

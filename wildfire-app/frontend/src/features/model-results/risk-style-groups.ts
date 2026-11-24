@@ -1,6 +1,6 @@
 import type { RiskLevelValue, VisibleRiskLevels } from "./viewer-config";
 
-export interface RiskStyleGroup {
+interface RiskStyleGroup {
   id: string;
   style: string;
   values: readonly RiskLevelValue[];
@@ -42,11 +42,7 @@ const SINGLE_LEVEL_GROUPS = new Map<RiskLevelValue, RiskStyleGroup>(
   ])
 );
 
-/**
- * Produces an exact, non-overlapping cover of the checked risk levels while
- * using the fewest common GeoServer styles. The normal viewer state therefore
- * renders with one WMS request instead of five requests per map image.
- */
+/** produces exact non-overlapping */
 export function selectRiskStyleGroups(visible: VisibleRiskLevels): RiskStyleGroup[] {
   const remaining = new Set<RiskLevelValue>(
     ALL_LEVELS.filter((value) => visible[value])

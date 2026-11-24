@@ -6,6 +6,7 @@ import { useTranslation } from "@/i18n";
 
 import type { DayDistribution } from "../hooks/useDailyRiskDistribution";
 import { formatFrameDate } from "./DailyPlayerControls";
+import { riskColor, riskColorOr } from "@/lib/riskPalette";
 
 interface RiskTimelinePanelProps {
   days: DayDistribution[] | null;
@@ -17,14 +18,14 @@ interface RiskTimelinePanelProps {
 }
 
 const LEVELS: Array<{ key: keyof DayDistribution["area_km2"]; label: string; color: string }> = [
-  { key: "very_low", label: "Very Low", color: "#2563eb" },
-  { key: "low", label: "Low", color: "#16a34a" },
-  { key: "moderate", label: "Moderate", color: "#eab308" },
-  { key: "high", label: "High", color: "#ea580c" },
-  { key: "very_high", label: "Very High", color: "#dc2626" },
+  { key: "very_low", label: "Very Low", get color() { return riskColorOr(1, "#2563eb"); } },
+  { key: "low", label: "Low", get color() { return riskColor(2); } },
+  { key: "moderate", label: "Moderate", get color() { return riskColor(3); } },
+  { key: "high", label: "High", get color() { return riskColorOr(4, "#ea580c"); } },
+  { key: "very_high", label: "Very High", get color() { return riskColor(5); } },
 ];
 
-// Stacked area chart: analyzed km² per risk class for each day of a dynamic run.
+// stacked area chart
 export const RiskTimelinePanel: FC<RiskTimelinePanelProps> = ({
   days,
   isLoading,
@@ -80,7 +81,7 @@ export const RiskTimelinePanel: FC<RiskTimelinePanelProps> = ({
         itemStyle: { color: level.color },
         areaStyle: { color: level.color, opacity: 0.75 },
         emphasis: { focus: "series" as const },
-        // The playing day marker rides on the first series only.
+        // playing day marker
         markLine:
           i === 0 && currentLabel && labels.includes(currentLabel)
             ? {

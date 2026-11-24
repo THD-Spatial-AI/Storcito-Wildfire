@@ -37,7 +37,7 @@ interface ViewerSidebarRailProps {
   onSelectLayer: (key: string) => void;
 }
 
-// Right-hand button rail: 3D, fullscreen, timeline, visibility, dataset switcher.
+// right-hand button rail
 export const ViewerSidebarRail: FC<ViewerSidebarRailProps> = ({
   show3D,
   can3D,
@@ -60,6 +60,7 @@ export const ViewerSidebarRail: FC<ViewerSidebarRailProps> = ({
     <aside className="absolute right-0 bottom-0 bg-card border-l border-border shadow-lg z-[51] w-[var(--sidebar-width)] top-0">
       <div className="flex flex-col items-center gap-3 py-4">
         <SidebarButton
+          tooltipSide="left"
           icon={Mountain}
           tooltip={
             show3D
@@ -71,6 +72,7 @@ export const ViewerSidebarRail: FC<ViewerSidebarRailProps> = ({
           disabled={!can3D}
         />
         <SidebarButton
+          tooltipSide="left"
           icon={isFullscreen ? Minimize2 : Maximize2}
           tooltip={
             isFullscreen
@@ -82,6 +84,7 @@ export const ViewerSidebarRail: FC<ViewerSidebarRailProps> = ({
         />
         {showTimelineButton && (
           <SidebarButton
+          tooltipSide="left"
             icon={ChartArea}
             tooltip={t("modelResults.timeline.title", "Risk Over Time")}
             onClick={onToggleTimeline}
@@ -90,6 +93,7 @@ export const ViewerSidebarRail: FC<ViewerSidebarRailProps> = ({
         )}
         {hasRiskLayers && (
           <SidebarButton
+          tooltipSide="left"
             icon={layerVisible ? Eye : EyeOff}
             tooltip={
               layerVisible
@@ -105,6 +109,7 @@ export const ViewerSidebarRail: FC<ViewerSidebarRailProps> = ({
             <DropdownMenuTrigger asChild>
               <div className="relative">
                 <SidebarButton
+          tooltipSide="left"
                   icon={Layers2}
                   tooltip={t("modelResults.layer.dataset", "Layer")}
                   onClick={() => {}}

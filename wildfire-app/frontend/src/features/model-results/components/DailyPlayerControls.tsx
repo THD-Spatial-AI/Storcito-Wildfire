@@ -4,7 +4,7 @@ import { Pause, Play } from "lucide-react";
 import { InfoIcon } from "@/components/ui/InfoTooltip";
 import { type TooltipKey } from "@/components/shared/tooltip-contents";
 
-// Shared daily-player pieces used by the results viewer and the comparison view.
+// shared daily-player pieces
 
 export const PlayPauseButton = ({
   playing,
