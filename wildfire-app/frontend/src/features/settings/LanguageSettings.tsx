@@ -17,8 +17,9 @@ const LanguageSettings: React.FC = () => {
     return 'border-border bg-card hover:border-muted-foreground/40 hover:bg-muted/60';
   };
 
+  // two compact columns
   return (
-    <div className="space-y-1.5">
+    <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
       {languages.map((language, index) => (
         <button
           key={language.code}

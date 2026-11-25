@@ -4,19 +4,6 @@ interface UserSettings {
   [key: string]: string;
 }
 
-interface WeatherLocation {
-  id: string;
-  name: string;
-  latitude: number;
-  longitude: number;
-  source?: string;
-}
-
-interface WeatherLocationData {
-  location: WeatherLocation;
-  customLocations: WeatherLocation[];
-}
-
 interface MapLocation {
   id: string;
   name: string;
@@ -43,16 +30,14 @@ class SettingsService {
   private _pendingFetch: Promise<UserSettings> | null = null;
   private readonly CACHE_TTL = 5000; // 5 seconds
 
-  /**
-   * All settings.
-   */
+  /** all settings */
   async getAllSettings(): Promise<UserSettings> {
-    // Serve fresh cache.
+    // serve fresh cache
     if (this._settingsCache && Date.now() - this._settingsCache.timestamp < this.CACHE_TTL) {
       return this._settingsCache.data;
     }
 
-    // Deduplicate concurrent requests
+    // deduplicate concurrent requests
     if (this._pendingFetch) return this._pendingFetch;
 
     this._pendingFetch = (async () => {
@@ -72,14 +57,12 @@ class SettingsService {
     return this._pendingFetch;
   }
 
-  /** Invalidate cache. */
+  /** invalidate cache */
   invalidateCache(): void {
     this._settingsCache = null;
   }
 
-  /**
-   * One setting.
-   */
+  /** one setting */
   async getSetting(key: string): Promise<string | null> {
     try {
       const response = await axios.get<{ success: boolean; data: { key: string; value: string } }>(
@@ -95,9 +78,7 @@ class SettingsService {
     }
   }
 
-  /**
-   * Read consent flag.
-   */
+  /** read consent flag */
   async getPrivacyAccepted(): Promise<boolean | null> {
     try {
       const { data } = await axios.get<{ success: boolean; data?: Record<string, unknown> }>(this.BASE_PATH);
@@ -109,7 +90,7 @@ class SettingsService {
     }
   }
 
-  /** Patch settings. */
+  /** patch settings */
   async updateSettings(patch: Record<string, unknown>): Promise<boolean> {
     try {
       await axios.patch<{ success: boolean }>(this.BASE_PATH, patch);
@@ -120,7 +101,7 @@ class SettingsService {
     }
   }
 
-  /** Persist consent. */
+  /** persist consent */
   async setPrivacyAccepted(accepted: boolean): Promise<boolean> {
     try {
       await axios.put<{ success: boolean }>(`${this.BASE_PATH}/privacy-accepted`, { accepted });
@@ -131,9 +112,7 @@ class SettingsService {
     }
   }
 
-  /**
-   * Write a setting.
-   */
+  /** write a setting */
   async setSetting(key: string, value: string): Promise<boolean> {
     try {
       await axios.put<{ success: boolean }>(
@@ -148,9 +127,7 @@ class SettingsService {
     }
   }
 
-  /**
-   * Delete a specific setting
-   */
+  /** delete specific setting */
   async deleteSetting(key: string): Promise<boolean> {
     try {
       await axios.delete<{ success: boolean }>(`${this.BASE_PATH}/${key}`);
@@ -162,9 +139,7 @@ class SettingsService {
     }
   }
 
-  /**
-   * Delete all user settings
-   */
+  /** delete all settings */
   async deleteAllSettings(): Promise<boolean> {
     try {
       await axios.delete<{ success: boolean }>(this.BASE_PATH);
@@ -172,30 +147,6 @@ class SettingsService {
       return true;
     } catch {
       if (import.meta.env.DEV) console.error('Failed to delete all settings');
-      return false;
-    }
-  }
-
-  async getWeatherLocation(): Promise<WeatherLocationData | null> {
-    try {
-      const settings = await this.getAllSettings();
-      if (!settings.weather_location) return null;
-      const parsed = JSON.parse(settings.weather_location) as unknown;
-      return parsed as WeatherLocationData;
-    } catch (e) {
-      if (import.meta.env.DEV) console.error('Failed to parse weather location:', e);
-      return null;
-    }
-  }
-
-  async setWeatherLocation(location: WeatherLocationData): Promise<boolean> {
-    try {
-      const value = JSON.stringify(location);
-      await axios.put<{ success: boolean }>(`${this.BASE_PATH}/weather-location`, { weather_location: value });
-      this.invalidateCache();
-      return true;
-    } catch (e) {
-      if (import.meta.env.DEV) console.error('Failed to save weather location:', e);
       return false;
     }
   }
@@ -220,17 +171,6 @@ class SettingsService {
       return true;
     } catch (e) {
       if (import.meta.env.DEV) console.error('Failed to save map location:', e);
-      return false;
-    }
-  }
-
-  async deleteWeatherLocation(): Promise<boolean> {
-    try {
-      await axios.put<{ success: boolean }>(`${this.BASE_PATH}/weather-location`, { weather_location: '' });
-      this.invalidateCache();
-      return true;
-    } catch (error) {
-      if (import.meta.env.DEV) console.error('Failed to delete weather location:', error);
       return false;
     }
   }
@@ -297,7 +237,7 @@ class SettingsService {
     }
   }
 
-  /** Complete area tour. */
+  /** complete area tour */
   async markAreaSelectTourCompleted(): Promise<boolean> {
     try {
       await axios.patch<{ success: boolean }>(this.BASE_PATH, { area_select_tour_completed: true });
@@ -308,19 +248,7 @@ class SettingsService {
     }
   }
 
-  /** Save intro preference. */
-  async setModelIntroCardDismissed(dismissed: boolean): Promise<boolean> {
-    try {
-      await axios.patch<{ success: boolean }>(this.BASE_PATH, { model_intro_card_dismissed: dismissed });
-      this.invalidateCache();
-      return true;
-    } catch (e) {
-      if (import.meta.env.DEV) console.error('Failed to save model intro preference:', e);
-      return false;
-    }
-  }
-
-  /** Complete product tour. */
+  /** complete product tour */
   async markProductTourCompleted(): Promise<boolean> {
     try {
       await axios.put<{ success: boolean }>(`${this.BASE_PATH}/product-tour-completed`, { completed: true });
@@ -332,11 +260,9 @@ class SettingsService {
     }
   }
 
-  // Polygon Limits
+  // polygon limits
 
-  /**
-   * All polygon limits.
-   */
+  /** all polygon limits */
   async getPolygonLimits(): Promise<Record<string, number>> {
     try {
       const response = await axios.get<{ success: boolean; data: Record<string, number> }>(
@@ -345,7 +271,7 @@ class SettingsService {
       return response.data.data || {};
     } catch (e) {
       if (import.meta.env.DEV) console.error('Failed to fetch polygon limits:', e);
-      // Return defaults
+      // return defaults
       return {
         very_low: 50,
         intermediate: 100,
@@ -355,9 +281,7 @@ class SettingsService {
     }
   }
 
-  /**
-   * Own polygon limit.
-   */
+  /** own polygon limit */
   async getMyPolygonLimit(): Promise<{ access_level: string; building_limit: number }> {
     try {
       const response = await axios.get<{ success: boolean; data: { access_level: string; building_limit: number } }>(
@@ -370,9 +294,7 @@ class SettingsService {
     }
   }
 
-  /**
-   * Update polygon limits.
-   */
+  /** update polygon limits */
   async updatePolygonLimits(limits: Record<string, number>): Promise<boolean> {
     try {
       await axios.put<{ success: boolean }>(`${this.BASE_PATH}/polygon-limits`, limits);
@@ -383,9 +305,7 @@ class SettingsService {
     }
   }
 
-  /**
-   * Update one limit.
-   */
+  /** update one limit */
   async updatePolygonLimit(accessLevel: string, buildingLimit: number): Promise<boolean> {
     try {
       await axios.put<{ success: boolean }>(`${this.BASE_PATH}/polygon-limit`, {
@@ -399,11 +319,9 @@ class SettingsService {
     }
   }
 
-  // Model Limits
+  // model limits
 
-  /**
-   * All model limits.
-   */
+  /** all model limits */
   async getModelLimits(): Promise<Record<string, number>> {
     try {
       const response = await axios.get<{ success: boolean; data: Record<string, number> }>(
@@ -412,7 +330,7 @@ class SettingsService {
       return response.data.data || {};
     } catch (e) {
       if (import.meta.env.DEV) console.error('Failed to fetch model limits:', e);
-      // Return defaults
+      // return defaults
       return {
         very_low: 10,
         intermediate: 25,
@@ -422,9 +340,7 @@ class SettingsService {
     }
   }
 
-  /**
-   * Own model limit.
-   */
+  /** own model limit */
   async getMyModelLimit(): Promise<{
     access_level: string;
     model_limit: number;
@@ -462,9 +378,7 @@ class SettingsService {
     }
   }
 
-  /**
-   * Update model limits.
-   */
+  /** update model limits */
   async updateModelLimits(limits: Record<string, number>): Promise<boolean> {
     try {
       await axios.put<{ success: boolean }>(`${this.BASE_PATH}/model-limits`, limits);
@@ -475,9 +389,7 @@ class SettingsService {
     }
   }
 
-  /**
-   * Update one limit.
-   */
+  /** update one limit */
   async updateModelLimit(accessLevel: string, modelLimit: number): Promise<boolean> {
     try {
       await axios.put<{ success: boolean }>(`${this.BASE_PATH}/model-limit`, {
