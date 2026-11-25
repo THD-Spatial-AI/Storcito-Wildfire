@@ -10,6 +10,7 @@ interface MapShortcutsPanelProps {
   can3D?: boolean;
   hasRiskLayers?: boolean;
   canFullscreen?: boolean;
+  canNewModel?: boolean;
 }
 
 const KEY_CLASS =
@@ -35,6 +36,7 @@ export const MapShortcutsPanel: FC<MapShortcutsPanelProps> = ({
   can3D = false,
   hasRiskLayers = false,
   canFullscreen = false,
+  canNewModel = false,
 }) => {
   const { t } = useTranslation();
 
@@ -49,6 +51,7 @@ export const MapShortcutsPanel: FC<MapShortcutsPanelProps> = ({
       <ul className="space-y-1 p-2 text-[10px] leading-snug">
         <ShortcutRow keys={["+", "−"]} label={t("map.shortcuts.zoom", "Zoom in and out")} />
         <ShortcutRow keys={["←", "↑", "↓", "→"]} label={t("map.shortcuts.pan", "Move the map")} />
+        {canNewModel && <ShortcutRow keys={["N"]} label={t("map.shortcuts.newModel", "New model")} />}
         {canPlay && (
           <ShortcutRow
             keys={["Space"]}

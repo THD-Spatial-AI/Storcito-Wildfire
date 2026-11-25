@@ -1,1 +1,0 @@
-export { MapLibreOverlay } from './MapLibreOverlay';

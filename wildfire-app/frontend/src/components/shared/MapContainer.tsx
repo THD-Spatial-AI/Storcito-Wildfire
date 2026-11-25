@@ -1,8 +1,7 @@
 import React, { ReactNode, useEffect, useState } from 'react';
-import { isMapLibreLayerId, useMapStore } from "@/features/interactive-map/store/map-store";
+import { useMapStore } from "@/features/interactive-map/store/map-store";
 import { useMapProvider } from "@/providers/map-context";
 import { initializeMap } from '@/features/interactive-map/utils/mapUtils';
-import { MapLibreOverlay } from '@/components/map-controls/maplibre';
 
 interface MapContainerProps {
 	topBar: ReactNode;
@@ -36,7 +35,6 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 }) => {
 	const { mapRef, initMapInstance, MapControls } = useMapProvider();
 	const { map } = useMapStore();
-	const isMapLibre = useMapStore(s => isMapLibreLayerId(s.selectedBaseLayerId));
 	const [muted, setMuted] = useState<boolean>(false);
 
 	// Initialize map using shared utility
@@ -113,10 +111,6 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 									onDrop={onDrop}
 									onDragOver={onDragOver}
 								/>
-
-								{map && isMapLibre && (
-									<MapLibreOverlay olMap={map} visible={isMapLibre} />
-								)}
 
 								{map && !muted && !hideMapControls && <MapControls />}
 

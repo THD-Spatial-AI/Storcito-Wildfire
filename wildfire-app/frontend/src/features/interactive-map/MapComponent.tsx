@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { isMapLibreLayerId, useMapStore } from "@/features/interactive-map/store/map-store";
+import { useMapStore } from "@/features/interactive-map/store/map-store";
 import { useMapProvider } from "@/providers/map-context";
 import { useAuth } from "@/providers/auth-provider";
 import { useDocumentTitle } from "@/hooks/use-document-title";
@@ -11,15 +11,16 @@ import { MapControls } from "@/components/map-controls/MapControls";
 import { BookmarkMenu } from "@/features/interactive-map/components/BookmarkMenu";
 import MapSearchBar from "./MapSearchBar";
 import { useMapKeyboardShortcuts } from "./useMapKeyboardShortcuts";
+import { MapShortcutsPanel } from "@/components/map-controls/MapShortcutsPanel";
 import { settingsService } from "@/features/settings";
 import { useNavigate } from "react-router-dom";
 import { Plus, Map as MapIcon, Layers } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@spatialhub/ui";
 import { useTranslation } from "@/i18n";
-import { MapLibreOverlay } from "@/components/map-controls/maplibre";
 import { toLonLat, fromLonLat } from "ol/proj";
 import { useMapPageLayers } from "./useMapPageLayers";
 import { useMapPageOLLayers } from "./useMapPageOLLayers";
+import { motionMs } from "@/lib/motion";
 
 const PRIVACY_ACCEPTED_EVENT = "privacy-accepted";
 
@@ -33,11 +34,10 @@ export const MapComponent: React.FC = () => {
   const [muted, setMuted] = useState<boolean>(false);
   const [showPrivacyDialog, setShowPrivacyDialog] = useState<boolean>(false);
   const [mapAccepted, setMapAccepted] = useState<boolean>(false);
-  const [isCheckingPrivacy, setIsCheckingPrivacy] = useState<boolean>(true); // Add loading state
+  const [isCheckingPrivacy, setIsCheckingPrivacy] = useState<boolean>(true); // add loading state
   const { map } = useMapStore();
-  const isMapLibre = useMapStore((s) => isMapLibreLayerId(s.selectedBaseLayerId));
 
-  // Fetch map layers.
+  // fetch map layers
   const mapPageLayers = useMapPageLayers(user?.id);
   const newModelLabel = t("model.newModel");
   const openNewModel = useCallback(() => navigate("/app/model-dashboard/new-model"), [navigate]);
@@ -54,12 +54,12 @@ export const MapComponent: React.FC = () => {
     [navigate]
   );
 
-  // Boundary and model layers.
+  // boundary model layers
   useMapPageOLLayers({
     map,
-    isMapLibre,
     availableBoundaryGeoJSON: mapPageLayers.availableBoundaryGeoJSON,
     userModelGeoJSON: mapPageLayers.userModelGeoJSON,
+    riskLayer: mapPageLayers.riskLayer,
     onModelClick: handleModelClick,
   });
 
@@ -79,7 +79,7 @@ export const MapComponent: React.FC = () => {
       view.animate({
         center: fromLonLat([longitude, latitude]),
         zoom,
-        duration: 800,
+        duration: motionMs(800),
       });
     },
     [map]
@@ -96,36 +96,36 @@ export const MapComponent: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // Cache first, then verify.
+    // cache first verify
     const checkPrivacy = async () => {
       setIsCheckingPrivacy(true);
 
-      // Instant local read.
+      // instant local read
       const localPrivacy = localStorage.getItem("privacy_accepted");
 
       if (!user) {
-        // Guests: local only.
+        // guests local only
         const accepted = localPrivacy === "true";
         setMapAccepted(accepted);
         setIsCheckingPrivacy(false);
         return;
       }
 
-      // Local first, then sync.
+      // local first sync
       if (localPrivacy === "true") {
         setMapAccepted(true);
         setIsCheckingPrivacy(false);
 
-        // Background verify.
+        // background verify
         void settingsService.getPrivacyAccepted().then((dbAccepted) => {
-          if (dbAccepted === null) return; // Keep cache.
+          if (dbAccepted === null) return; // keep cache
           setMapAccepted(dbAccepted);
           localStorage.setItem("privacy_accepted", String(dbAccepted));
         });
         return;
       }
 
-      // No cache: ask server.
+      // no cache ask
       const dbAccepted = await settingsService.getPrivacyAccepted();
       const accepted = dbAccepted === true;
       setMapAccepted(accepted);
@@ -134,37 +134,37 @@ export const MapComponent: React.FC = () => {
     };
 
     checkPrivacy();
-  }, [user]); // Re-check when user changes
+  }, [user]); // re-check user changes
 
   const handleAcceptPrivacy = async () => {
-    // Instant feedback.
+    // instant feedback
     setMapAccepted(true);
     setShowPrivacyDialog(false);
 
-    // Persist locally.
+    // persist locally
     localStorage.setItem("privacy_accepted", "true");
 
-    // Persist for users.
+    // persist for users
     if (user) {
       try {
         await settingsService.setPrivacyAccepted(true);
-        // Await save first.
+        // await save first
         setTimeout(() => {
           globalThis.dispatchEvent(new CustomEvent(PRIVACY_ACCEPTED_EVENT));
         }, 500);
       } catch {
-        // Dispatch regardless.
+        // dispatch regardless
         settingsService.invalidateCache();
         globalThis.dispatchEvent(new CustomEvent(PRIVACY_ACCEPTED_EVENT));
       }
     } else {
-      // Guests: dispatch now.
+      // guests dispatch now
       globalThis.dispatchEvent(new CustomEvent(PRIVACY_ACCEPTED_EVENT));
     }
   };
 
   const handleDenyPrivacy = async () => {
-    // Persist denial.
+    // persist denial
     if (user) {
       try {
         await settingsService.setPrivacyAccepted(false);
@@ -176,7 +176,7 @@ export const MapComponent: React.FC = () => {
     setShowPrivacyDialog(false);
     setMapAccepted(false);
 
-    // Update localStorage (hybrid approach)
+    // update localstorage
     localStorage.setItem("privacy_accepted", "false");
   };
 
@@ -189,13 +189,13 @@ export const MapComponent: React.FC = () => {
   };
 
   useEffect(() => {
-    // Needs privacy consent.
+    // needs privacy consent
     if (map || authLoading || isCheckingPrivacy || !mapAccepted) return;
     initializeMap(mapRef, initMapInstance, setMuted);
   }, [map, mapRef, initMapInstance, authLoading, mapAccepted, isCheckingPrivacy]);
 
   useEffect(() => {
-    // Needs privacy consent.
+    // needs privacy consent
     if (!authLoading && map && mapRef.current && mapAccepted) {
       const timer = setTimeout(() => {
         const container = mapRef.current;
@@ -214,7 +214,7 @@ export const MapComponent: React.FC = () => {
     }
   }, [muted, map, clearDrawingLayers]);
 
-  // Detach on unmount.
+  // detach on unmount
   useEffect(() => {
     const currentMap = map;
     return () => {
@@ -224,7 +224,7 @@ export const MapComponent: React.FC = () => {
     };
   }, [map]);
 
-  // Pick content.
+  // pick content
   const renderMapContent = () => {
     if (isCheckingPrivacy) {
       return (
@@ -241,25 +241,18 @@ export const MapComponent: React.FC = () => {
       return (
         <>
           <div ref={mapRef} className={cn("w-full h-full")} data-tour="map" />
-          {map && isMapLibre && (
-            <MapLibreOverlay
-              olMap={map}
-              visible={isMapLibre}
-              availableBoundaryGeoJSON={mapPageLayers.availableBoundaryGeoJSON}
-              userModelGeoJSON={mapPageLayers.userModelGeoJSON}
-              onUserModelClick={handleModelClick}
-            />
-          )}
 
           {map && <MapSearchBar />}
 
           <MapControls onZoomIn={zoomIn} onZoomOut={zoomOut} onCenterMap={centerMap} />
 
-          {/* Map legend. */}
+          {/* shortcuts above legend */}
           {map && (
+            <div className="absolute bottom-[4.5rem] left-4 z-30 flex flex-col items-start gap-2">
+            <MapShortcutsPanel canNewModel={Boolean(user)} />
             <section
               aria-label={t("map.legend.title", "Map outlines")}
-              className="md-fade-in absolute bottom-[4.5rem] left-4 z-30 max-w-[min(18rem,calc(100vw-2rem))] rounded-xl border border-border/60 bg-card/95 p-2 text-xs shadow-lg backdrop-blur-md"
+              className="md-fade-in max-w-[min(18rem,calc(100vw-2rem))] rounded-xl border border-border/60 bg-card/95 p-2 text-xs shadow-lg backdrop-blur-md"
             >
               <p className="px-1 text-[10px] font-semibold uppercase tracking-wide text-foreground">
                 {t("map.legend.title", "Map outlines")}
@@ -315,10 +308,12 @@ export const MapComponent: React.FC = () => {
                 <p className="pt-0.5">{t("map.legend.zoomDetail", "The default view is Galicia; the base map reveals more detail as you zoom in.")}</p>
               </div>
             </section>
+            </div>
           )}
 
           {map && (
-            <div className="absolute top-4 right-4 z-30">
+            // below locate button
+            <div className="absolute top-[11rem] right-4 z-30">
               <BookmarkMenu getCurrentView={getCurrentView} flyTo={flyTo} />
             </div>
           )}

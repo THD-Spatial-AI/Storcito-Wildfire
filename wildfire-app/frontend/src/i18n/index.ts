@@ -2,71 +2,53 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
-// Wildfire-owned locales. These already include the app-specific overrides
-// (branding, tour copy) merged into the base strings — see src/i18n/locales.
+// wildfire-owned locales
 import en from "./locales/en.json";
 import de from "./locales/de.json";
 import es from "./locales/es.json";
 import gl from "./locales/gl.json";
 import pt from "./locales/pt.json";
-import fr from "./locales/fr.json";
-import it from "./locales/it.json";
-import nl from "./locales/nl.json";
-import pl from "./locales/pl.json";
-import cs from "./locales/cs.json";
 import el from "./locales/el.json";
 
-// Language configuration
+// language configuration
 export const languages = [
   { code: "en", name: "English", nativeName: "English", flag: "🇬🇧" },
   { code: "de", name: "German", nativeName: "Deutsch", flag: "🇩🇪" },
   { code: "es", name: "Spanish", nativeName: "Español", flag: "🇪🇸" },
   { code: "gl", name: "Galician", nativeName: "Galego", flag: "🇪🇸" },
   { code: "pt", name: "Portuguese", nativeName: "Português", flag: "🇵🇹" },
-  { code: "fr", name: "French", nativeName: "Français", flag: "🇫🇷" },
-  { code: "it", name: "Italian", nativeName: "Italiano", flag: "🇮🇹" },
-  { code: "nl", name: "Dutch", nativeName: "Nederlands", flag: "🇳🇱" },
-  { code: "pl", name: "Polish", nativeName: "Polski", flag: "🇵🇱" },
-  { code: "cs", name: "Czech", nativeName: "Čeština", flag: "🇨🇿" },
   { code: "el", name: "Greek", nativeName: "Ελληνικά", flag: "🇬🇷" },
 ] as const;
 
 export type LanguageCode = (typeof languages)[number]["code"];
 
-export interface Language {
+interface Language {
   code: LanguageCode;
   name: string;
   nativeName: string;
   flag: string;
 }
 
-// All translation resources
+// all translation resources
 const resources = {
   en: { translation: en },
   de: { translation: de },
   es: { translation: es },
   gl: { translation: gl },
   pt: { translation: pt },
-  fr: { translation: fr },
-  it: { translation: it },
-  nl: { translation: nl },
-  pl: { translation: pl },
-  cs: { translation: cs },
   el: { translation: el },
 };
 
-export interface I18nConfig {
-  /** Storage key for persisting language selection */
+interface I18nConfig {
+  /** storage key persisting */
   storageKey?: string;
-  /** Fallback language if detection fails */
+  /** fallback language detection */
   fallbackLng?: LanguageCode;
-  /** Enable debug mode */
+  /** enable debug mode */
   debug?: boolean;
 }
 
-/**
- * Initialize i18n with configuration
- */
+/** initialize i18n configuration */
 export const initI18n = (config: I18nConfig = {}) => {
   const { storageKey = "app_language", fallbackLng = "en", debug = false } = config;
 
@@ -75,10 +57,12 @@ export const initI18n = (config: I18nConfig = {}) => {
     .use(initReactI18next)
     .init({
       resources,
+      // removed codes fallback
+      supportedLngs: languages.map((l) => l.code),
       fallbackLng,
       defaultNS: "translation",
 
-      // Language detection options
+      // language detection options
       detection: {
         order: ["localStorage", "navigator", "htmlTag"],
         caches: ["localStorage"],
@@ -86,10 +70,10 @@ export const initI18n = (config: I18nConfig = {}) => {
       },
 
       interpolation: {
-        escapeValue: false, // React already escapes values
+        escapeValue: false, // react escapes values
       },
 
-      // React specific options
+      // react specific options
       react: {
         useSuspense: false,
         bindI18n: "languageChanged loaded",
@@ -102,17 +86,13 @@ export const initI18n = (config: I18nConfig = {}) => {
   return i18n;
 };
 
-/**
- * Get current language info
- */
+/** get current language */
 export const getCurrentLanguage = (): Language => {
   const code = i18n.language?.split("-")[0] || "en";
   return languages.find((l) => l.code === code) || languages[0];
 };
 
-/**
- * Change the current language
- */
+/** change current language */
 export const changeLanguage = async (
   code: LanguageCode,
   storageKey = "app_language"
@@ -121,5 +101,5 @@ export const changeLanguage = async (
   localStorage.setItem(storageKey, code);
 };
 
-// Re-export useful items from react-i18next
+// re-export useful items
 export { useTranslation } from "react-i18next";

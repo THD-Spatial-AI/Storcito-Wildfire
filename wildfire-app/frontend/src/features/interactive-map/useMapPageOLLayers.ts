@@ -15,6 +15,11 @@ import {
   boundaryStyleFunction,
   boundaryLabelStyle,
 } from "@/features/interactive-map/utils/mapStyleUtils";
+import { buildWMSLayer } from "@/features/model-results/viewer-helpers";
+import type { LayerInfo } from "@/features/model-results/viewer-config";
+
+// all risk classes
+const RISK_STYLE = "fire_risk_classified";
 
 const BOUNDARY_LAYER_NAME = "map-page-boundaries";
 const MODEL_LAYER_NAME = "map-page-user-models";
@@ -23,7 +28,8 @@ const MODEL_LAYER_NAME = "map-page-user-models";
 
 function userModelStyleFunction(feature: FeatureLike, resolution: number): Style[] {
   const isHovered = feature.get("_hovered") === true;
-  const fillAlpha = isHovered ? 0.42 : 0.28;
+  // risk layer instead
+  const fillAlpha = feature.get("has_risk") ? 0 : isHovered ? 0.42 : 0.28;
   const strokeWidth = isHovered ? 3.5 : 2.5;
 
   const styles: Style[] = [
@@ -78,19 +84,29 @@ function boundaryWithLabelStyle(feature: FeatureLike, resolution: number): Style
 
 interface UseMapPageOLLayersOpts {
   map: OLMap | null;
-  isMapLibre: boolean;
   availableBoundaryGeoJSON?: GeoJSON.FeatureCollection;
   userModelGeoJSON?: GeoJSON.FeatureCollection;
+  riskLayer?: LayerInfo;
   onModelClick?: (modelId: number, status?: string) => void;
 }
 
 export function useMapPageOLLayers({
   map,
-  isMapLibre,
   availableBoundaryGeoJSON,
   userModelGeoJSON,
+  riskLayer,
   onModelClick,
 }: UseMapPageOLLayersOpts) {
+  // model risk raster
+  useEffect(() => {
+    if (!map || !riskLayer) return;
+    const layer = buildWMSLayer(riskLayer, RISK_STYLE, 52);
+    map.addLayer(layer);
+    return () => {
+      map.removeLayer(layer);
+    };
+  }, [map, riskLayer]);
+
   const boundaryLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
   const modelLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
   const hoveredFeatureRef = useRef<Feature<Geometry> | null>(null);
@@ -117,8 +133,6 @@ export function useMapPageOLLayers({
     cleanupRef.current?.();
     cleanupRef.current = null;
     removeExistingLayers(map);
-
-    if (isMapLibre) return;
 
     const format = new GeoJSONFormat();
 
@@ -222,7 +236,6 @@ export function useMapPageOLLayers({
     };
   }, [
     map,
-    isMapLibre,
     availableBoundaryGeoJSON,
     userModelGeoJSON,
     onModelClick,

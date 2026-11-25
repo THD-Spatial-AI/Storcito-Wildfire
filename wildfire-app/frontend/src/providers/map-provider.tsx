@@ -1,6 +1,5 @@
 import { useRef, useEffect, useCallback, useMemo } from "react";
 import {
-	isMapLibreLayerId,
 	normalizeBaseLayerId,
 	useMapStore,
 } from "@/features/interactive-map/store/map-store";
@@ -17,6 +16,7 @@ import { MAP_ZOOM } from "@/features/interactive-map/utils/mapUtils";
 import { MapControls } from "@/components/map-controls/MapControls";
 
 import { MapContext } from "@/providers/map-context";
+import { motionMs } from "@/lib/motion";
 
 
 if (typeof HTMLCanvasElement !== 'undefined') {
@@ -84,13 +84,11 @@ export const MapProvider: React.FC<MapProviderProps> = ({ children }) => {
 
 		const normalizedSelectedBaseLayerId = normalizeBaseLayerId(selectedBaseLayerId);
 		const baseLayerInfo = layers.find((l) => l.id === normalizedSelectedBaseLayerId) ?? layers[0];
-		const isMapLibre = isMapLibreLayerId(baseLayerInfo.id);
 		if (baseLayerInfo.id !== selectedBaseLayerId) {
 			setSelectedBaseLayerId(baseLayerInfo.id);
 		}
 		const initialBaseLayer = new TileLayer({
 			source: baseLayerInfo.source,
-			visible: !isMapLibre,
 		});
 
 		const olMap = new OlMap({
@@ -125,14 +123,10 @@ export const MapProvider: React.FC<MapProviderProps> = ({ children }) => {
 			if (selected.id !== selectedBaseLayerId) {
 				setSelectedBaseLayerId(selected.id);
 			}
-			if (isMapLibreLayerId(selected.id)) {
-				baseLayer.setVisible(false);
-			} else {
-				baseLayer.setVisible(true);
-				baseLayer.setSource(selected.source);
-				// swapping source previously
-				selected.source.refresh();
-			}
+			baseLayer.setVisible(true);
+			baseLayer.setSource(selected.source);
+			// swapping source previously
+			selected.source.refresh();
 			if (map) {
 				requestAnimationFrame(() => {
 					map.getLayers().forEach((layer: BaseLayer) => {
@@ -182,7 +176,7 @@ export const MapProvider: React.FC<MapProviderProps> = ({ children }) => {
 				view.animate({
 					center: newCenter,
 					zoom: mapLocation.zoom,
-					duration: 500,
+					duration: motionMs(500),
 				});
 			}
 		}
@@ -220,7 +214,7 @@ export const MapProvider: React.FC<MapProviderProps> = ({ children }) => {
 	const zoomBy = useCallback((step: number) => {
 		const view = map?.getView();
 		const zoom = view?.getZoom();
-		if (view && zoom !== undefined) view.animate({ zoom: zoom + step, duration: 250 });
+		if (view && zoom !== undefined) view.animate({ zoom: zoom + step, duration: motionMs(250) });
 	}, [map]);
 	const zoomIn = useCallback(() => zoomBy(1), [zoomBy]);
 	const zoomOut = useCallback(() => zoomBy(-1), [zoomBy]);
@@ -231,7 +225,7 @@ export const MapProvider: React.FC<MapProviderProps> = ({ children }) => {
 		map.getView().animate({
 			center: savedCenter,
 			zoom: mapLocation.zoom || zoom,
-			duration: 1000,
+			duration: motionMs(1000),
 		});
 	}, [map, mapLocation, zoom]);
 

@@ -82,7 +82,8 @@ export const useAppLayoutState = () => {
 
   const hasAccessToLayer = useCallback(
     (layer: { accessLevel: AccessLevel }): boolean => {
-      if (!user) return false;
+      // guests basic maps
+      if (!user) return layer.accessLevel === "very_low";
 
       return hasMinimumAccessLevel(user.access_level, layer.accessLevel);
     },

@@ -8,11 +8,8 @@ describe("chooseRasterFallbackLayerId", () => {
 
   it("skips providers that are cooling down", () => {
     expect(
-      chooseRasterFallbackLayerId(
-        "osm_standard",
-        new Set(["osm_standard", "carto_positron"]),
-      ),
-    ).toBe("osm_humanitarian");
+      chooseRasterFallbackLayerId("osm_standard", new Set(["osm_standard"])),
+    ).toBe("carto_positron");
   });
 
   it("returns to OSM Standard after a CARTO failure", () => {
@@ -23,7 +20,7 @@ describe("chooseRasterFallbackLayerId", () => {
     expect(
       chooseRasterFallbackLayerId(
         "osm_standard",
-        new Set(["osm_standard", "carto_positron", "osm_humanitarian"]),
+        new Set(["osm_standard", "carto_positron"]),
       ),
     ).toBeNull();
   });

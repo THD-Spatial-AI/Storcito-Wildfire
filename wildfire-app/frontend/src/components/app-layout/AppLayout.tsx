@@ -18,9 +18,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     changeBaseLayer,
     completeOnboarding,
     cssVariables,
-    topbarHeight,
     navExpanded,
-    navWidth,
     toggleNav,
     getUserInitial,
     handleSmartRestartTour,
@@ -56,10 +54,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           navigateTo={navigate}
           userMenuItems={userMenuItems}
           getUserInitial={getUserInitial}
-          topbarHeight={topbarHeight}
           navigateHome={() => navigate("/")}
           expanded={navExpanded}
-          navWidth={navWidth}
           onToggleExpanded={toggleNav}
           userName={user?.name}
           userEmail={user?.email}

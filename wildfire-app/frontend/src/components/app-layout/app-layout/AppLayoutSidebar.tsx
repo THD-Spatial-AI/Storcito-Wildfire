@@ -37,11 +37,9 @@ interface AppLayoutSidebarProps {
   navigateTo: (path: string) => void;
   userMenuItems: UserMenuItem[];
   getUserInitial: () => string;
-  topbarHeight?: string;
   navigateHome?: () => void;
   /** wide nav labels */
   expanded?: boolean;
-  navWidth?: string;
   onToggleExpanded?: () => void;
   userName?: string | null;
   userEmail?: string | null;
@@ -61,10 +59,8 @@ export const AppLayoutSidebar: React.FC<AppLayoutSidebarProps> = ({
   navigateTo,
   userMenuItems,
   getUserInitial,
-  topbarHeight,
   navigateHome,
   expanded = false,
-  navWidth,
   onToggleExpanded,
   userName,
   userEmail,
@@ -168,8 +164,6 @@ export const AppLayoutSidebar: React.FC<AppLayoutSidebarProps> = ({
           baseLayers={accessibleBaseLayers}
           selectedBaseLayerId={selectedBaseLayerId}
           changeBaseLayer={changeBaseLayer}
-          topbarHeight={topbarHeight}
-          navWidth={navWidth}
           expanded={expanded}
         />
       </nav>

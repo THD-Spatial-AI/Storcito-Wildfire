@@ -39,7 +39,7 @@ export function buildWMSLayer(
   const layer = new TileLayer({
     source,
     opacity: FIRE_RISK_DEFAULT_OPACITY,
-    className: "ol-layer fire-risk-overlay ol-visible-in-maplibre mix-blend-multiply",
+    className: "ol-layer fire-risk-overlay mix-blend-multiply",
   });
   layer.setZIndex(zIndex);
   return layer;

@@ -1,25 +1,16 @@
-import { useState } from "react";
-import { Layers, MapIcon } from "lucide-react";
+import { Layers } from "lucide-react";
 import { useTranslation } from "@/i18n";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-  Label,
-  RadioGroup,
-  RadioGroupItem,
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@spatialhub/ui";
 
 import { cn } from "@/lib/utils";
-import { SIDEBAR_WIDTH, TOPBAR_HEIGHT } from "./constants";
 import { NAV_ROW_CLASS } from "@/components/ui/SidebarButton";
 
 type BaseLayerInfo = {
@@ -32,52 +23,32 @@ interface LayersSheetProps {
   baseLayers: BaseLayerInfo[];
   selectedBaseLayerId: string;
   changeBaseLayer: (layerId: string) => void;
-  /** top bar height */
-  topbarHeight?: string;
-  /** left nav width */
-  navWidth?: string;
   expanded?: boolean;
 }
 
+/** base map picker */
 export const LayersSheet: React.FC<LayersSheetProps> = ({
   baseLayers,
   selectedBaseLayerId,
   changeBaseLayer,
-  topbarHeight = TOPBAR_HEIGHT,
-  navWidth = SIDEBAR_WIDTH,
   expanded = false,
 }) => {
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [open, setOpen] = useState(false);
   const { t } = useTranslation();
-
-  const handleOpen = () => {
-    setOpen(true);
-    setTimeout(() => setIsAnimating(true), 10);
+  const label = t("mapLayers.tooltip", "Base Maps");
+  const descriptions: Record<string, string> = {
+    osm_standard: t("mapLayers.baseLayers.osmStandard"),
+    carto_positron: t("mapLayers.baseLayers.cartoPositron"),
   };
-
-  const handleClose = () => {
-    setIsAnimating(false);
-    setTimeout(() => setOpen(false), 300);
-  };
-
-  const openSheet = () => handleOpen();
-  const closeSheet = () => handleClose();
 
   return (
-    <Sheet open={open} onOpenChange={(isOpen) => (isOpen ? openSheet() : closeSheet())}>
+    <DropdownMenu>
       <Tooltip>
         <TooltipTrigger asChild>
-          <SheetTrigger asChild>
+          <DropdownMenuTrigger asChild>
             <button
               type="button"
               data-tour="layers"
-              style={
-                {
-                  "--sidebar-color": "#10b981",
-                  "--sidebar-bg": "#d1fae5",
-                } as React.CSSProperties
-              }
+              aria-label={label}
               className={
                 expanded
                   ? NAV_ROW_CLASS
@@ -88,111 +59,48 @@ export const LayersSheet: React.FC<LayersSheetProps> = ({
               }
             >
               <Layers className="cursor-pointer w-5 h-5 shrink-0 text-muted-foreground group-hover:text-foreground" />
-              {expanded && <span className="truncate">{t("mapLayers.tooltip", "Base Maps")}</span>}
+              {expanded && <span className="truncate">{label}</span>}
             </button>
-          </SheetTrigger>
+          </DropdownMenuTrigger>
         </TooltipTrigger>
         <TooltipContent side="right">
-          <p>{t("mapLayers.tooltip", "Base Maps")}</p>
+          <p>{label}</p>
         </TooltipContent>
       </Tooltip>
-      <SheetContent
-        style={
-          {
-            "--sidebar-width": navWidth,
-            "--topbar-height": topbarHeight,
-          } as React.CSSProperties
-        }
-        side="left"
-        className={cn(
-          "p-0 h-[calc(100%-var(--topbar-height))] w-[320px] mt-[var(--topbar-height)] ml-[var(--sidebar-width)]",
-          "transition-transform duration-300 ease-in-out bg-card text-foreground",
-          isAnimating ? "translate-x-0" : "-translate-x-full"
-        )}
-      >
-        <div className="px-5 py-4 border-b border-border bg-muted/50">
-          <SheetTitle className="font-semibold text-base flex items-center gap-2.5 text-foreground">
-            <div className="p-1.5 rounded-lg bg-foreground">
-              <Layers className="size-4 text-background" />
-            </div>
-            {t("mapLayers.title")}
-          </SheetTitle>
-          <p className="text-xs text-muted-foreground mt-1.5">{t("mapLayers.description")}</p>
+
+      {/* small card beside */}
+      <DropdownMenuContent side="right" align="start" sideOffset={8} className="z-[60] w-64 p-1.5">
+        <p className="px-2 pb-1.5 pt-1 text-xs font-semibold text-foreground">{t("mapLayers.title")}</p>
+        <div role="group" aria-label={t("mapLayers.title")}>
+          {baseLayers.map((layer) => {
+            const active = layer.id === selectedBaseLayerId;
+            return (
+              <DropdownMenuItem
+                key={layer.id}
+                role="menuitemradio"
+                aria-checked={active}
+                onSelect={() => changeBaseLayer(layer.id)}
+                className={cn("flex items-start gap-2.5 rounded-lg px-2 py-2", active && "bg-muted")}
+              >
+                {/* radio dot */}
+                <span
+                  aria-hidden
+                  className={cn(
+                    "mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full border",
+                    active ? "border-foreground" : "border-muted-foreground"
+                  )}
+                >
+                  {active && <span className="size-2 rounded-full bg-foreground" />}
+                </span>
+                <span className="grid min-w-0 gap-0.5">
+                  <span className="text-sm font-medium text-foreground">{layer.name}</span>
+                  <span className="text-xs text-muted-foreground">{descriptions[layer.id] || layer.description}</span>
+                </span>
+              </DropdownMenuItem>
+            );
+          })}
         </div>
-
-        <div className="relative overflow-y-auto no-scrollbar h-[calc(100%-80px)] px-4 py-4">
-          <div className="relative">
-            <Accordion type="single" collapsible defaultValue="base-layers">
-              <AccordionItem value="base-layers" className="border-none">
-                <AccordionTrigger className="hover:no-underline py-2 px-3 rounded-lg hover:bg-muted transition-colors">
-                  <span className="flex items-center gap-2 text-sm font-medium text-foreground">
-                    <div className="p-1 rounded bg-muted">
-                      <MapIcon className="size-3.5 text-muted-foreground" />
-                    </div>
-                    {t("mapLayers.baseLayers.title")}
-                  </span>
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 pb-0">
-                  <p className="text-xs text-muted-foreground px-1 mb-3">
-                    {t("mapLayers.baseLayers.description")}
-                  </p>
-                  <RadioGroup
-                    className="gap-2"
-                    value={selectedBaseLayerId}
-                    onValueChange={changeBaseLayer}
-                  >
-                    {baseLayers.map((layer) => (
-                      <BaseLayerOption key={layer.id} layer={layer} />
-                    ))}
-                  </RadioGroup>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div>
-        </div>
-      </SheetContent>
-    </Sheet>
-  );
-};
-
-interface BaseLayerOptionProps {
-  layer: BaseLayerInfo;
-}
-
-const BaseLayerOption: React.FC<BaseLayerOptionProps> = ({ layer }) => {
-  const { id, name } = layer;
-  const { t } = useTranslation();
-
-  const getLayerDescription = (layerId: string) => {
-    const descriptionMap: Record<string, string> = {
-      osm_standard: t("mapLayers.baseLayers.osmStandard"),
-      osm_humanitarian: t("mapLayers.baseLayers.osmHumanitarian"),
-      carto_positron: t("mapLayers.baseLayers.cartoPositron"),
-      carto_voyager: t("mapLayers.baseLayers.cartoVoyager"),
-      maplibre_voyager: t("mapLayers.baseLayers.maplibreVoyager", "Detailed vector basemap"),
-    };
-    return descriptionMap[layerId] || layer.description;
-  };
-
-  return (
-    <label
-      htmlFor={id}
-      className="group border border-border has-data-[state=checked]:border-foreground has-data-[state=checked]:bg-muted relative flex w-full items-start gap-3 rounded-xl p-3 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer hover:border-muted-foreground text-left"
-    >
-      <RadioGroupItem
-        value={id}
-        id={id}
-        aria-describedby={`${id}-description`}
-        className="order-1 mt-0.5 cursor-pointer border-muted-foreground data-[state=checked]:border-foreground data-[state=checked]:bg-foreground"
-      />
-      <div className="grid grow gap-1">
-        <Label htmlFor={id} className="text-sm font-medium text-foreground cursor-pointer">
-          {name}
-        </Label>
-        <p id={`${id}-description`} className="text-muted-foreground text-xs leading-relaxed">
-          {getLayerDescription(id)}
-        </p>
-      </div>
-    </label>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };

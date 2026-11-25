@@ -44,25 +44,23 @@ interface MapStore {
 }
 
 // retired base layers
-const LEGACY_MAPLIBRE_LAYER_ID = "maplibre_3d";
-const MAPLIBRE_DARK_LAYER_ID = "maplibre_dark";
+// retired vector maps
+const RETIRED_MAPLIBRE_LAYER_IDS = new Set(["maplibre_3d", "maplibre_dark", "maplibre_voyager"]);
 const RETIRED_OPENTOPOMAP_LAYER_ID = "opentopomap";
-const MAPLIBRE_VOYAGER_LAYER_ID = "maplibre_voyager";
-const DEFAULT_BASE_LAYER_ID = "osm_standard";
+const RETIRED_HUMANITARIAN_LAYER_ID = "osm_humanitarian";
+const RETIRED_RASTER_VOYAGER_LAYER_ID = "carto_voyager";
+const DEFAULT_BASE_LAYER_ID = "carto_positron";
 
 export function normalizeBaseLayerId(id: string): string {
-	if (id === LEGACY_MAPLIBRE_LAYER_ID || id === MAPLIBRE_DARK_LAYER_ID) {
-		return MAPLIBRE_VOYAGER_LAYER_ID;
-	}
-	if (id === RETIRED_OPENTOPOMAP_LAYER_ID) {
+	if (
+		RETIRED_MAPLIBRE_LAYER_IDS.has(id) ||
+		id === RETIRED_RASTER_VOYAGER_LAYER_ID ||
+		id === RETIRED_OPENTOPOMAP_LAYER_ID ||
+		id === RETIRED_HUMANITARIAN_LAYER_ID
+	) {
 		return DEFAULT_BASE_LAYER_ID;
 	}
 	return id;
-}
-
-export function isMapLibreLayerId(id: string): boolean {
-	const normalized = normalizeBaseLayerId(id);
-	return normalized === MAPLIBRE_VOYAGER_LAYER_ID;
 }
 
 const failedBaseLayersUntil = new globalThis.Map<string, number>();
@@ -138,19 +136,6 @@ const baseLayers: BaseLayerInfo[] = [
 		accessLevel: "very_low",
 	},
 	{
-		id: "osm_humanitarian",
-		name: "OSM Humanitarian",
-		description: "Humanitarian style OpenStreetMap",
-		source: withTileRetry(new XYZ({
-			url: "https://tile-{a-c}.openstreetmap.fr/hot/{z}/{x}/{y}.png",
-			attributions: [
-				OSM_ATTR,
-				'© <a href="https://www.hotosm.org/">Humanitarian OpenStreetMap Team</a>',
-			],
-		}), "osm_humanitarian"),
-		accessLevel: "intermediate",
-	},
-	{
 		id: "carto_positron",
 		name: "CartoDB Positron",
 		description: "Light theme base map by CartoDB",
@@ -163,29 +148,8 @@ const baseLayers: BaseLayerInfo[] = [
 				CARTO_ATTR,
 			],
 		}), "carto_positron"),
-		accessLevel: "intermediate",
-	},
-	{
-		id: "carto_voyager",
-		name: "CartoDB Voyager (Raster)",
-		description: "Detailed base map by CartoDB",
-		source: withTileRetry(new XYZ({
-			url: withCartoBasemapKey(
-				"https://{a-d}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
-			),
-			attributions: [
-				OSM_ATTR,
-				CARTO_ATTR,
-			],
-		}), "carto_voyager"),
-		accessLevel: "expert",
-	},
-	{
-		id: MAPLIBRE_VOYAGER_LAYER_ID,
-		name: "MapLibre Voyager",
-		description: "Detailed vector basemap",
-		source: new XYZ({ url: '' }), // vector source loaded
-		accessLevel: "intermediate",
+		// default for everyone
+		accessLevel: "very_low",
 	},
 ];
 
@@ -201,7 +165,7 @@ export const useMapStore = create<MapStore>()(
 			layers: baseLayers,
 			baseLayer: null,
 			setBaseLayer: (layer) => set({ baseLayer: layer }),
-			selectedBaseLayerId: "osm_standard",
+			selectedBaseLayerId: DEFAULT_BASE_LAYER_ID,
 			setSelectedBaseLayerId: (id) => set({ selectedBaseLayerId: normalizeBaseLayerId(id) }),
 			overlayLayers: [],
 			addOverlayLayer: (layer) => {
