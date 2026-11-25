@@ -6,19 +6,19 @@ export interface ProfileData {
 	access_level: string;
 }
 
-/** Fetch profile. */
+/** fetch profile */
 export async function getProfile(): Promise<ProfileData | null> {
 	const response = await axios.get<{ data?: ProfileData }>('/users/profile');
 	return response.data.data ?? null;
 }
 
-/** Update profile. */
+/** update profile */
 export async function updateProfile(payload: { name: string }): Promise<boolean> {
 	const response = await axios.put<{ success: boolean }>('/users/profile', payload);
 	return response.data.success;
 }
 
-/** Change password. */
+/** change password */
 export async function changePassword(data: {
 	new_password: string;
 	new_password_confirmation: string;

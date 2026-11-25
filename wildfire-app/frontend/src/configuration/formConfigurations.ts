@@ -24,7 +24,7 @@ type FormIcon = NonNullable<FormSection["fields"][number]["icon"]>;
 const formIcon = (icon: unknown): FormIcon => icon as FormIcon;
 
 // shared backend rules
-const passwordRules = (t?: TranslateFunction) => [
+export const passwordRules = (t?: TranslateFunction) => [
 	{ label: t?.("profile.password.requirements.minChars") ?? "At least 8 characters", test: (v: string) => v.length >= 8 },
 	{ label: t?.("profile.password.requirements.uppercase") ?? "One uppercase letter", test: (v: string) => /[A-Z]/.test(v) },
 	{ label: t?.("profile.password.requirements.lowercase") ?? "One lowercase letter", test: (v: string) => /[a-z]/.test(v) },
