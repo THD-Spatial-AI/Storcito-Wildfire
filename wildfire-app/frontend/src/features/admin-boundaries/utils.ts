@@ -17,3 +17,10 @@ export const singleChoice = (items: BoundaryItem[]): BoundaryItem | null => {
   const covered = items.filter((item) => item.covered);
   return covered.length === 1 ? covered[0] : null;
 };
+
+/** auto-picked leading levels */
+export const leadingAutoPicks = (options: BoundaryItem[][], selected: (BoundaryItem | null)[], max: number): number => {
+  let n = 0;
+  while (n < max && selected[n] && singleChoice(options[n])?.code === selected[n]?.code) n += 1;
+  return n;
+};

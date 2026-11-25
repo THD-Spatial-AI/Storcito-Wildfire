@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { filterBoundaries, normalizeName, singleChoice } from "./utils";
+import { filterBoundaries, leadingAutoPicks, normalizeName, singleChoice } from "./utils";
 import type { BoundaryItem } from "./types";
 
 const item = (code: string, name: string, covered = true): BoundaryItem => ({
@@ -35,5 +35,14 @@ describe("boundary utils", () => {
 
   it("leaves real choices to the user", () => {
     expect(singleChoice([item("15", "A Coruña"), item("27", "Lugo")])).toBeNull();
+  });
+
+  it("counts leading auto-picked levels", () => {
+    const es = item("ES", "España");
+    const gal = item("12", "Galicia");
+    const options = [[es], [gal, item("13", "Madrid", false)], [item("15", "A Coruña"), item("27", "Lugo")]];
+    expect(leadingAutoPicks(options, [es, gal, item("15", "A Coruña")], 3)).toBe(2);
+    expect(leadingAutoPicks(options, [es, gal, null], 1)).toBe(1);
+    expect(leadingAutoPicks(options, [null, null, null], 3)).toBe(0);
   });
 });
