@@ -1,362 +1,128 @@
-import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React from "react";
+import { useSearchParams } from "react-router-dom";
 import { useDocumentTitle } from "@/hooks/use-document-title";
-import { WeatherSettings } from "@/features/weather";
 import MapSettings from "@/features/settings/MapLocationSettings";
 import NotificationSettings from "@/features/settings/NotificationSettings";
-import DataDisplaySettings from "@/features/settings/DataDisplaySettings";
+import AccessibilitySettings from "@/features/settings/AccessibilitySettings";
 import LanguageSettings from "@/features/settings/LanguageSettings";
 import NotificationManagement from "@/features/settings/NotificationManagement";
-import ModelCreationPreferences from "@/features/settings/ModelCreationPreferences";
+import { ProfileSettings } from "@/features/profile";
+import { SettingsSection } from "@/features/settings/SettingsSection";
 
 import { useAuthStore } from "@/store/auth-store";
-import { useTranslation, getCurrentLanguage } from "@/i18n";
-import {
-  Globe,
-  Cloud,
-  MapPin,
-  Bell,
-  Sliders,
-  Send,
-  ArrowLeft,
-  Sparkles,
-  User,
-  LayoutGrid,
-  Monitor,
-  Shield,
-} from "lucide-react";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@spatialhub/ui";
-import LegalPage from "@/pages/legal/LegalPage";
+import { useTranslation } from "@/i18n";
+import { Accessibility, Bell, User, KeyRound, SlidersHorizontal } from "lucide-react";
+import { BackButton } from "@/components/ui/BackButton";
+import { SectionNav, type SectionNavGroup } from "@/components/ui/SectionNav";
 
-type TabKey = "general" | "display" | "notifications" | "privacyTerms";
+const TAB_KEYS = ["profile", "security", "preferences", "accessibility", "notifications"] as const;
+type TabKey = (typeof TAB_KEYS)[number];
 
+// profile and settings
 const SettingsPage: React.FC = () => {
   const { t } = useTranslation();
   useDocumentTitle(t("settings.title"));
-  const navigate = useNavigate();
-  const location = useLocation();
   const user = useAuthStore((state) => state.user);
   const isExpert = user?.access_level === "expert";
-  const [activeTab, setActiveTab] = useState<TabKey>("general");
 
-  // Tab config.
-  const TABS: { key: string; label: string; icon: typeof LayoutGrid; expertOnly?: boolean }[] = [
-    { key: "general", label: t("settings.tabs.general"), icon: LayoutGrid },
-    { key: "display", label: t("settings.tabs.display"), icon: Monitor },
-    { key: "notifications", label: t("settings.tabs.notifications"), icon: Bell },
-    { key: "privacyTerms", label: t("settings.tabs.privacyTerms", "Privacy & Terms"), icon: Shield },
+  // tab in url
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requested = searchParams.get("tab");
+  const activeTab: TabKey = TAB_KEYS.includes(requested as TabKey) ? (requested as TabKey) : "profile";
+  const setActiveTab = (tab: TabKey) => setSearchParams({ tab }, { replace: true });
+
+  // left menu groups
+  const groups: SectionNavGroup<TabKey>[] = [
+    {
+      items: [
+        { key: "profile", label: t("common.menu.profile"), icon: User },
+        { key: "preferences", label: t("settings.tabs.preferences", "Preferences"), icon: SlidersHorizontal },
+        { key: "accessibility", label: t("settings.tabs.accessibility", "Accessibility"), icon: Accessibility },
+        { key: "notifications", label: t("settings.tabs.notifications"), icon: Bell },
+      ],
+    },
+    {
+      label: t("settings.groups.access", "Access"),
+      items: [{ key: "security", label: t("settings.tabs.security", "Security"), icon: KeyRound }],
+    },
   ];
 
-  // Came from admin?
-  const cameFromAdmin =
-    location.state?.from === "admin" || document.referrer.includes("admin-dashboard");
-
-  const handleBack = () => {
-    if (cameFromAdmin) {
-      navigate("/app/admin-dashboard");
-    } else {
-      navigate(-1);
-    }
-  };
-
-  // Filter by access.
-  const visibleTabs = TABS.filter((tab) => !tab.expertOnly || isExpert);
-
-  // Get current language info
-  const currentLanguage = getCurrentLanguage();
-
-  // Translated level label.
-  const getAccessLevelLabel = (level: string | undefined) => {
-    if (!level) return t("settings.stats.user");
+  const levelLabel = (level: string | undefined) => {
     const labels: Record<string, string> = {
       very_low: t("settings.accessLevels.basic", "Basic"),
       intermediate: t("settings.accessLevels.intermediate", "Intermediate"),
       manager: t("settings.accessLevels.manager", "Manager"),
       expert: t("settings.accessLevels.expert", "Expert"),
     };
-    return labels[level] || t("settings.stats.user");
+    return (level && labels[level]) || t("settings.stats.user");
   };
-
-  // Stats cards for settings
-  const statsCards = [
-    {
-      title: t("settings.stats.language"),
-      value: currentLanguage.nativeName,
-      icon: <Globe className="w-3.5 h-3.5 text-muted-foreground" />,
-    },
-    {
-      title: t("settings.stats.theme"),
-      value: t("settings.stats.system"),
-      icon: <Monitor className="w-3.5 h-3.5 text-muted-foreground" />,
-    },
-    {
-      title: t("settings.stats.notifications"),
-      value: t("settings.stats.enabled"),
-      icon: <Bell className="w-3.5 h-3.5 text-muted-foreground" />,
-    },
-    {
-      title: t("settings.stats.accessLevel"),
-      value: getAccessLevelLabel(user?.access_level),
-      icon: <User className="w-3.5 h-3.5 text-muted-foreground" />,
-    },
-  ];
+  const initial = (user?.name || user?.email || "?").charAt(0).toUpperCase();
 
   return (
-    <div className="md-scope min-h-screen bg-background">
-      <div className="p-3 md:p-4 lg:p-5 max-w-[1600px] mx-auto space-y-4">
-        {/* Header section. */}
-        <div className="md-rise relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-800 via-gray-900 to-black p-4 md:p-5 text-white shadow-xl">
-          {/* Background decorations */}
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAyNHYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-50"></div>
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-radial from-white/5 to-transparent rounded-full -translate-y-1/2 translate-x-1/2"></div>
+    <div className="md-scope min-h-full bg-background">
+      <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
+        <BackButton className="mb-4" />
 
-          <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div className="flex items-center gap-4">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={handleBack}
-                    className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/10 transition-all duration-200 hover:scale-105 active:scale-95"
-                    aria-label={t("settings.goBack")}
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent>{t("settings.goBack")}</TooltipContent>
-              </Tooltip>
-              <div>
-                <div className="flex items-center gap-2 text-gray-400 dark:text-gray-300 text-sm mb-1">
-                  <Sparkles className="w-4 h-4" />
-                  <span>{t("settings.configuration")}</span>
-                </div>
-                <h1 className="text-xl md:text-2xl font-bold tracking-tight">
-                  {t("settings.title")}
-                </h1>
-                <p className="text-gray-300 text-sm">{t("settings.subtitle")}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10">
-                <User className="w-4 h-4 text-gray-300" />
-                <span className="text-sm font-medium">{user?.name}</span>
-                <span className="px-2 py-0.5 rounded-full bg-white/20 text-xs font-medium capitalize">
-                  {user?.access_level}
-                </span>
-              </div>
-            </div>
+        {/* account header */}
+        <div className="md-rise mb-8 flex items-center gap-3">
+          <span
+            aria-hidden
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-lg font-semibold text-foreground"
+          >
+            {initial}
+          </span>
+          <div className="min-w-0">
+            <h1 className="truncate text-lg font-semibold tracking-tight text-foreground sm:text-xl">
+              {user?.name || user?.email}
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              {t("settings.personalAccount", "Your personal account")} · {levelLabel(user?.access_level)}
+            </p>
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div
-          className="md-rise grid grid-cols-2 md:grid-cols-4 gap-3"
-          style={{ animationDelay: "60ms" }}
-        >
-          {statsCards.map((stat) => (
-            <div
-              key={stat.title}
-              className="group relative bg-card rounded-lg p-2.5 shadow-sm border border-border hover:shadow-md hover:border-ring hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
-            >
-              <div className="relative flex items-center gap-2.5">
-                <div className="p-1.5 rounded-md bg-muted flex-shrink-0">{stat.icon}</div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold truncate">
-                    {stat.title}
-                  </p>
-                  <p className="text-sm font-bold text-foreground truncate capitalize">
-                    {stat.value}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[232px_minmax(0,1fr)]">
+          {/* section menu */}
+          <SectionNav groups={groups} active={activeTab} onSelect={setActiveTab} ariaLabel={t("settings.title")} />
 
-        {/* Tabbed content. */}
-        <div
-          className="md-rise bg-card rounded-2xl shadow-sm border border-border"
-          style={{ animationDelay: "120ms" }}
-        >
-          {/* Tab Navigation */}
-          <div className="border-b border-border bg-muted/50">
-            <nav className="flex overflow-x-auto scrollbar-hide px-2 md:px-4 py-2 gap-1">
-              {visibleTabs.map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.key}
-                    onClick={() => setActiveTab(tab.key as TabKey)}
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm whitespace-nowrap transition-all duration-200 active:scale-[0.98] ${
-                      activeTab === tab.key
-                        ? "bg-primary text-primary-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
+          {/* readable form width */}
+          <div key={activeTab} className="md-fade-in min-w-0 max-w-4xl space-y-10">
+            {activeTab === "profile" && <ProfileSettings section="profile" />}
+            {activeTab === "security" && <ProfileSettings section="security" />}
 
-          {/* Tab Content */}
-          <div key={activeTab} className="md-fade-in p-3 md:p-4">
-            {activeTab === "general" && (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-                {/* Language Settings */}
-                <div className="md-rise bg-gradient-to-br from-muted/50 to-card rounded-lg p-3 border border-border transition-shadow duration-200 hover:shadow-md">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="p-1.5 bg-muted rounded">
-                      <Globe className="w-3.5 h-3.5 text-foreground" />
-                    </div>
-                    <div>
-                      <h3 className="text-xs font-semibold text-foreground">
-                        {t("settings.language.title")}
-                      </h3>
-                      <p className="text-[9px] text-muted-foreground uppercase tracking-wider">
-                        {t("settings.language.subtitle")}
-                      </p>
-                    </div>
+            {activeTab === "preferences" && (
+              <>
+                <SettingsSection title={t("settings.language.title")} description={t("settings.language.subtitle")}>
+                  <div className="max-w-xl">
+                    <LanguageSettings />
                   </div>
-                  <LanguageSettings />
-                </div>
-
-                {/* Weather Location */}
-                <div
-                  className="md-rise bg-gradient-to-br from-muted/50 to-card rounded-lg p-3 border border-border transition-shadow duration-200 hover:shadow-md"
-                  style={{ animationDelay: "60ms" }}
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="p-1.5 bg-muted rounded">
-                      <Cloud className="w-3.5 h-3.5 text-foreground" />
-                    </div>
-                    <div>
-                      <h3 className="text-xs font-semibold text-foreground">
-                        {t("settings.weatherLocation.title")}
-                      </h3>
-                      <p className="text-[9px] text-muted-foreground uppercase tracking-wider">
-                        {t("settings.weatherLocation.subtitle")}
-                      </p>
-                    </div>
+                </SettingsSection>
+                <SettingsSection title={t("settings.mapLocation.title")} description={t("settings.mapLocation.subtitle")}>
+                  <div className="max-w-xl">
+                    <MapSettings />
                   </div>
-                  <WeatherSettings />
-                </div>
-
-                {/* Map Location */}
-                <div
-                  className="md-rise bg-gradient-to-br from-muted/50 to-card rounded-lg p-3 border border-border transition-shadow duration-200 hover:shadow-md"
-                  style={{ animationDelay: "120ms" }}
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="p-1.5 bg-muted rounded">
-                      <MapPin className="w-3.5 h-3.5 text-foreground" />
-                    </div>
-                    <div>
-                      <h3 className="text-xs font-semibold text-foreground">
-                        {t("settings.mapLocation.title")}
-                      </h3>
-                      <p className="text-[9px] text-muted-foreground uppercase tracking-wider">
-                        {t("settings.mapLocation.subtitle")}
-                      </p>
-                    </div>
-                  </div>
-                  <MapSettings />
-                </div>
-              </div>
+                </SettingsSection>
+              </>
             )}
 
-            {activeTab === "display" && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                {/* Data & Display */}
-                <div className="md-rise bg-gradient-to-br from-muted/50 to-card rounded-lg p-3 border border-border transition-shadow duration-200 hover:shadow-md">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="p-1.5 bg-muted rounded">
-                      <Sliders className="w-3.5 h-3.5 text-foreground" />
-                    </div>
-                    <div>
-                      <h3 className="text-xs font-semibold text-foreground">
-                        {t("settings.dataDisplay.title")}
-                      </h3>
-                      <p className="text-[9px] text-muted-foreground uppercase tracking-wider">
-                        {t("settings.dataDisplay.subtitle")}
-                      </p>
-                    </div>
-                  </div>
-                  <DataDisplaySettings />
-                </div>
-
-                {/* Model Creation Preferences */}
-                <div
-                  className="md-rise bg-gradient-to-br from-muted/50 to-card rounded-lg p-3 border border-border transition-shadow duration-200 hover:shadow-md"
-                  style={{ animationDelay: "60ms" }}
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="p-1.5 bg-muted rounded">
-                      <Sparkles className="w-3.5 h-3.5 text-foreground" />
-                    </div>
-                    <div>
-                      <h3 className="text-xs font-semibold text-foreground">{t("settings.modelCreation.sectionTitle", "Model creation")}</h3>
-                      <p className="text-[9px] text-muted-foreground uppercase tracking-wider">
-                        {t("settings.modelCreation.guidancePreferences", "Guidance preferences")}
-                      </p>
-                    </div>
-                  </div>
-                  <ModelCreationPreferences />
-                </div>
-              </div>
-            )}
+            {activeTab === "accessibility" && <AccessibilitySettings />}
 
             {activeTab === "notifications" && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                {/* Notification Settings */}
-                <div className="md-rise bg-gradient-to-br from-muted/50 to-card rounded-lg p-3 border border-border transition-shadow duration-200 hover:shadow-md">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="p-1.5 bg-muted rounded">
-                      <Bell className="w-3.5 h-3.5 text-foreground" />
-                    </div>
-                    <div>
-                      <h3 className="text-xs font-semibold text-foreground">
-                        {t("settings.notifications.title")}
-                      </h3>
-                      <p className="text-[9px] text-muted-foreground uppercase tracking-wider">
-                        {t("settings.notifications.subtitle")}
-                      </p>
-                    </div>
+              <>
+                <SettingsSection title={t("settings.notifications.title")} description={t("settings.notifications.subtitle")}>
+                  <div className="max-w-xl">
+                    <NotificationSettings />
                   </div>
-                  <NotificationSettings />
-                </div>
-
-                {/* Expert only. */}
+                </SettingsSection>
+                {/* expert only */}
                 {isExpert && (
-                  <div
-                    className="md-rise bg-gradient-to-br from-muted/50 to-card rounded-lg p-3 border border-border transition-shadow duration-200 hover:shadow-md"
-                    style={{ animationDelay: "60ms" }}
-                  >
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="p-1.5 bg-muted rounded">
-                        <Send className="w-3.5 h-3.5 text-foreground" />
-                      </div>
-                      <div>
-                        <h3 className="text-xs font-semibold text-foreground">
-                          {t("settings.sendNotification.title")}
-                        </h3>
-                        <p className="text-[9px] text-muted-foreground uppercase tracking-wider">
-                          {t("settings.sendNotification.subtitle")}
-                        </p>
-                      </div>
+                  <SettingsSection title={t("settings.sendNotification.title")} description={t("settings.sendNotification.subtitle")}>
+                    <div className="max-w-xl">
+                      <NotificationManagement />
                     </div>
-                    <NotificationManagement />
-                  </div>
+                  </SettingsSection>
                 )}
-              </div>
-            )}
-
-            {activeTab === "privacyTerms" && (
-              <div className="md-rise bg-gradient-to-br from-muted/50 to-card rounded-lg p-3 border border-border">
-                <LegalPage />
-              </div>
+              </>
             )}
           </div>
         </div>
