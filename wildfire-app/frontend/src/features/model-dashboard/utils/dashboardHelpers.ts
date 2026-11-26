@@ -25,3 +25,18 @@ export const buildModelFamilies = (roots: Model[]): ModelFamily[] =>
 
 export const flattenFamilies = (families: ModelFamily[]): Model[] =>
 	families.flatMap((family) => [family.root, ...(family.root.versions ?? [])]);
+
+export const modelNameId = (id: number) => `model-name-${id}`;
+
+/** focus model name */
+export const focusModelName = (id: number) =>
+	requestAnimationFrame(() => document.getElementById(modelNameId(id))?.focus());
+
+/** focus after removal */
+export const focusFirstModel = () =>
+	window.setTimeout(() => {
+		const target =
+			document.querySelector<HTMLElement>('[id^="model-name-"]') ??
+			document.querySelector<HTMLElement>('[data-tour="status-tabs"] [aria-pressed="true"]');
+		target?.focus();
+	}, 50);

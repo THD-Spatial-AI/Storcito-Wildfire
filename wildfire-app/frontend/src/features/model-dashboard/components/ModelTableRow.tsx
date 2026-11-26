@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { ChevronDown, Copy, Loader2, PencilLine, Users, Pin } from "lucide-react";
+import { ChevronDown, Loader2, PencilLine, Users, Pin } from "lucide-react";
 import { Model } from "@/features/model-dashboard/services/modelService";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { remainingSeconds } from "@/features/model-dashboard/utils/runtimeEstimate";
@@ -18,6 +18,7 @@ import {
 import { isActiveStatus } from "@/features/model-dashboard/utils/statusHelpers";
 import { displayTitle } from "@/features/model-dashboard/utils/modelDisplay";
 import { useModelDashboardActions } from "./model-dashboard/ModelDashboardActionsContext";
+import { focusModelName, modelNameId } from "@/features/model-dashboard/utils/dashboardHelpers";
 
 const getErrorMessage = (error: unknown): string => {
   if (typeof error === "string") return error;
@@ -92,10 +93,14 @@ const DurationText: React.FC<{ startTime?: string; totalSeconds?: number; status
           : null;
   if (!tooltipKey) return chip;
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>{chip}</TooltipTrigger>
-      <TooltipContent>{t(tooltipKey, { time })}</TooltipContent>
-    </Tooltip>
+    <>
+      <Tooltip>
+        <TooltipTrigger asChild>{chip}</TooltipTrigger>
+        <TooltipContent>{t(tooltipKey, { time })}</TooltipContent>
+      </Tooltip>
+      {/* tooltip text spoken */}
+      <span className="sr-only">{t(tooltipKey, { time })}</span>
+    </>
   );
 };
 
@@ -132,6 +137,8 @@ interface ModelNameCellProps {
   versionsExpanded: boolean;
   versionRowIds: string;
   onToggleVersions?: () => void;
+  /** name opens model */
+  onOpen: () => void;
 }
 
 const ModelNameCell: React.FC<ModelNameCellProps> = ({
@@ -146,12 +153,14 @@ const ModelNameCell: React.FC<ModelNameCellProps> = ({
   versionsExpanded,
   versionRowIds,
   onToggleVersions,
+  onOpen,
 }) => {
   const { t } = useTranslation();
   const { editingModel, editTitle, setEditTitle, updateTitle, cancelTitleEdit, handleView, startTitleEdit } =
     useModelDashboardActions();
   const title = displayTitle(model);
   const renameLabel = t("model.rename", "Rename");
+  const ownerText = `${t("model.ownedBy")}: ${model.user_email || t("common.unknown")}`;
 
   if (editingModel?.id === model.id) {
     return (
@@ -163,8 +172,15 @@ const ModelNameCell: React.FC<ModelNameCellProps> = ({
         onClick={stop}
         onKeyDown={(e) => {
           e.stopPropagation();
-          if (e.key === "Enter") updateTitle();
-          if (e.key === "Escape") cancelTitleEdit();
+          // back to name
+          if (e.key === "Enter") {
+            void updateTitle();
+            focusModelName(model.id);
+          }
+          if (e.key === "Escape") {
+            cancelTitleEdit();
+            focusModelName(model.id);
+          }
         }}
         autoFocus
         aria-label={renameLabel}
@@ -179,13 +195,21 @@ const ModelNameCell: React.FC<ModelNameCellProps> = ({
         <div className="group/name flex min-w-0 items-center gap-1.5">
           <Tooltip>
             <TooltipTrigger asChild>
-              <span
-                className={`truncate text-sm text-foreground decoration-foreground/30 underline-offset-[3px] transition-colors duration-150 hover:underline ${
+              {/* keyboard open target */}
+              <button
+                id={modelNameId(model.id)}
+                type="button"
+                onClick={(e) => {
+                  stop(e);
+                  onOpen();
+                }}
+                aria-label={t("model.openModel", { name: title, defaultValue: "Open {{name}}" })}
+                className={`min-w-0 truncate rounded-sm text-left text-sm text-foreground decoration-foreground/30 underline-offset-[3px] transition-colors duration-150 hover:underline focus-visible:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                   level > 0 ? "font-medium" : "font-semibold"
                 }`}
               >
                 {title}
-              </span>
+              </button>
             </TooltipTrigger>
             <TooltipContent className="max-w-sm break-words">{model.title.trim()}</TooltipContent>
           </Tooltip>
@@ -194,7 +218,7 @@ const ModelNameCell: React.FC<ModelNameCellProps> = ({
               #{model.id}
             </span>
           )}
-          {/* rename on hover */}
+          {/* always visible rename */}
           <Tooltip>
             <TooltipTrigger asChild>
               <button
@@ -206,18 +230,19 @@ const ModelNameCell: React.FC<ModelNameCellProps> = ({
                 onKeyDown={stop}
                 aria-label={renameLabel}
                 data-compact
-                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-muted hover:text-foreground focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group-hover/name:opacity-100"
+                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-60 transition-opacity hover:bg-muted hover:text-foreground hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <PencilLine className="h-3.5 w-3.5" />
               </button>
             </TooltipTrigger>
             <TooltipContent>{renameLabel}</TooltipContent>
           </Tooltip>
-          {model.is_copy && (
+          {/* tree shows versions */}
+          {model.is_copy && level === 0 && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-muted">
-                  <Copy className="h-3 w-3 text-muted-foreground" />
+                <span className="inline-flex h-5 shrink-0 items-center rounded-md bg-muted px-1.5 text-[11px] font-medium text-muted-foreground">
+                  {t("model.copyBadge", "Copy")}
                 </span>
               </TooltipTrigger>
               <TooltipContent>{t("model.copyOf", { name: parentModelTitle || t("model.anotherModel") })}</TooltipContent>
@@ -227,11 +252,14 @@ const ModelNameCell: React.FC<ModelNameCellProps> = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-muted">
-                  <Users className="h-3 w-3 text-muted-foreground" />
+                  <Users aria-hidden className="h-3 w-3 text-muted-foreground" />
+                  <span className="sr-only">
+                    {ownerText}
+                  </span>
                 </span>
               </TooltipTrigger>
               <TooltipContent>
-                {t("model.ownedBy")}: {model.user_email || t("common.unknown")}
+                {ownerText}
               </TooltipContent>
             </Tooltip>
           )}
@@ -364,15 +392,9 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
     .filter((id) => id !== familyRootId)
     .map(versionRowId)
     .join(" ");
-  const favorited = memberIds.some((id) => favoriteIds.includes(id));
-  const handlePinToggle = () => {
-    const pinned = memberIds.filter((id) => favoriteIds.includes(id));
-    if (pinned.length > 0) {
-      pinned.forEach(toggleFavorite);
-    } else {
-      toggleFavorite(memberIds[0]);
-    }
-  };
+  // own pin only
+  const favorited = favoriteIds.includes(model.id);
+  const handlePinToggle = () => toggleFavorite(model.id);
   const seenCompleted = useSeenCompletedModelsStore((s) => s.seen);
   const isNew = isRecentlyCompleted(model, seenCompleted);
   const isAdmin = variant === "admin";
@@ -390,7 +412,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
     else handleEdit(model);
   };
 
-  const rowClassName = `group h-14 cursor-pointer outline-none transition-colors duration-150 motion-reduce:transition-none focus-visible:bg-muted/60 focus-visible:shadow-[inset_0_0_0_2px_var(--ring)] ${
+  const rowClassName = `group h-14 cursor-pointer outline-none transition-colors duration-150 motion-reduce:transition-none focus-within:bg-muted/40 ${
     isSelected
       ? "bg-muted/50 shadow-[inset_2px_0_0_0_var(--primary)]"
       : isNew
@@ -407,16 +429,8 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
       data-tour="model-row"
       id={level > 0 ? versionRowId(model.id) : undefined}
       className={rowClassName}
-      tabIndex={0}
+      // pointer opens row
       onClick={openModel}
-      onKeyDown={(e) => {
-        if (e.target !== e.currentTarget) return;
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          openModel();
-        }
-      }}
-      aria-label={t("model.openModel", { name: displayTitle(model), defaultValue: "Open {{name}}" })}
     >
       <td className="pl-2 pr-0 py-2" onClick={stop}>
         <div className="flex items-center justify-center gap-1">
@@ -436,7 +450,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
                 data-compact
                 onClick={handlePinToggle}
                 className={`rounded-md p-0.5 transition-all duration-150 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-                  favorited ? "" : "opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 focus-visible:opacity-100"
+                  favorited ? "" : "opacity-60 hover:opacity-100 focus-visible:opacity-100"
                 }`}
                 aria-label={favorited ? t("model.unpin", "Unpin") : t("model.pin", "Pin to top")}
                 aria-pressed={favorited}
@@ -480,6 +494,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
           onToggleVersions={
             onToggleVersions && familyRootId !== undefined ? () => onToggleVersions(familyRootId) : undefined
           }
+          onOpen={openModel}
         />
         {/* no versions line */}
         {updatedLabel && !hasVersionsLine && (
@@ -549,6 +564,7 @@ const ModelTableRowBase: React.FC<ModelTableRowProps> = ({
             <TooltipTrigger asChild>
               <span>
                 <DurationText startTime={calculationStartTimes[model.id]} spinner />
+                {remainingLabel && <span className="sr-only">, {remainingLabel}</span>}
               </span>
             </TooltipTrigger>
             <TooltipContent>

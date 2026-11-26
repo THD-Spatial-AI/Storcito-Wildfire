@@ -30,16 +30,18 @@ const RiskScoreCell: React.FC<{ modelId: number }> = ({ modelId }) => {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <span className="inline-flex items-center gap-2">
-          <span className="w-8 text-right text-xs font-semibold tabular-nums text-foreground">{value}</span>
-          <span aria-hidden className="relative h-1.5 w-20 overflow-hidden rounded-full bg-muted">
-            <span
-              className="absolute inset-y-0 left-0 rounded-full"
-              style={{ width: `${Math.min(100, Math.max(0, (score / 5) * 100))}%`, backgroundColor: band.color }}
-            />
+        {/* not colour alone */}
+        <span className="inline-flex flex-col">
+          <span className="inline-flex items-center gap-2">
+            <span className="w-8 text-right text-xs font-semibold tabular-nums text-foreground">{value}</span>
+            <span aria-hidden className="relative h-1.5 w-20 overflow-hidden rounded-full bg-muted">
+              <span
+                className="absolute inset-y-0 left-0 rounded-full"
+                style={{ width: `${Math.min(100, Math.max(0, (score / 5) * 100))}%`, backgroundColor: band.color }}
+              />
+            </span>
           </span>
-          {/* not colour alone */}
-          <span className="sr-only">{label}</span>
+          <span className="pl-10 text-[10px] leading-tight text-muted-foreground">{label}</span>
         </span>
       </TooltipTrigger>
       <TooltipContent>

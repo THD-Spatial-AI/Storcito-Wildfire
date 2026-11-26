@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AlertCircle, ArrowUpDown, BarChart3, ChevronDown, ChevronUp, Plus, RefreshCw } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@spatialhub/ui";
 import Pagination from "@/components/ui/Pagination";
@@ -163,6 +163,33 @@ function EmptyModelsState({ statusTab, filterText, isModelLimitReached, statsTot
 	);
 }
 
+// screen reader texts
+function useTableAnnouncements(families: ModelFamily[], totalItems: number, isLoading: boolean, isAdmin: boolean) {
+	const { t } = useTranslation();
+	const [announcement, setAnnouncement] = useState("");
+	const lastStatus = useRef(new Map<number, string>());
+	useEffect(() => {
+		const finished: string[] = [];
+		for (const m of families.flatMap((f) => [f.root, ...f.otherVersions])) {
+			const prev = lastStatus.current.get(m.id);
+			if (prev && prev !== m.status && (m.status === "completed" || m.status === "failed")) {
+				finished.push(
+					m.status === "completed"
+						? t("model.announce.finished", { name: m.title, defaultValue: "{{name}} finished" })
+						: t("model.announce.failed", { name: m.title, defaultValue: "{{name}} failed" })
+				);
+			}
+			lastStatus.current.set(m.id, m.status);
+		}
+		if (finished.length > 0) setAnnouncement(finished.join(". "));
+	}, [families, t]);
+	return {
+		announcement,
+		count: isLoading ? "" : t("model.resultCount", { count: totalItems, defaultValue: "{{count}} models" }),
+		caption: isAdmin ? t("model.tableCaptionAdmin", "All models") : t("model.tableCaption", "Your models"),
+	};
+}
+
 export function ModelDashboardTable({
 	isLoading, isLoadingWorkspace, families, totalItems, filterText, isError = false, onRetry,
 }: ModelDashboardTableProps) {
@@ -235,6 +262,11 @@ export function ModelDashboardTable({
 	);
 	const activeOrderBy = riskOrder ? "risk" : orderBy;
 	const activeOrder = riskOrder ?? order;
+	const spoken = useTableAnnouncements(families, totalItems, isLoading, isAdmin);
+
+	// announced sort state
+	const ariaSort = (field: string): "ascending" | "descending" | "none" =>
+		activeOrderBy === field ? (activeOrder === "asc" ? "ascending" : "descending") : "none";
 
 	const visibleIdSet = useMemo(() => new Set(visibleModels.map((m) => m.id)), [visibleModels]);
 	const allVisibleSelected =
@@ -242,6 +274,11 @@ export function ModelDashboardTable({
 
 	return (
 		<>
+			{/* screen reader updates */}
+			<p role="status" className="sr-only">
+				{spoken.count}
+			</p>
+			<p role="status" className="sr-only">{spoken.announcement}</p>
 			{/* table section */}
 			{isError && families.length === 0 ? (
 				<div role="alert" className="md-fade-in m-4 flex flex-col items-center rounded-xl border border-dashed border-destructive/40 bg-destructive/5 px-6 py-14 text-center sm:m-5">
@@ -283,6 +320,9 @@ export function ModelDashboardTable({
 							{/* scrolls inside header */}
 							<div ref={setScrollEl} data-overflow={overflowX} className="group/table max-h-[calc(100dvh-17rem)] w-full overflow-auto">
 								<table className={`w-full table-fixed ${isAdmin ? "min-w-[938px] xl:min-w-[1308px]" : "min-w-[993px] xl:min-w-[1328px]"}`}>
+									<caption className="sr-only">
+										{spoken.caption}
+									</caption>
 									<colgroup>
 										{(isAdmin ? ADMIN_COLUMNS : USER_COLUMNS).map((width, i) => (
 											<col key={i} className={`${width} ${(isAdmin ? ADMIN_WIDE_ONLY : USER_WIDE_ONLY).has(i) ? "hidden xl:table-column" : ""}`} />
@@ -306,15 +346,15 @@ export function ModelDashboardTable({
 													</TooltipContent>
 												</Tooltip>
 											</th>
-											<th className="py-3 pl-2 pr-4 text-left">
+											<th aria-sort={ariaSort("title")} className="py-3 pl-2 pr-4 text-left">
 												<SortHeaderButton field="title" label={t('model.name')} orderBy={activeOrderBy} order={activeOrder} onSort={sortBy} />
 											</th>
 											{isAdmin && (
-												<th className="px-4 py-3 text-left">
+												<th aria-sort={ariaSort("user_email")} className="px-4 py-3 text-left">
 													<SortHeaderButton field="user_email" label={t('model.owner', 'Owner')} orderBy={activeOrderBy} order={activeOrder} onSort={sortBy} />
 												</th>
 											)}
-											<th className="px-4 py-3 text-left">
+											<th aria-sort={ariaSort("region")} className="px-4 py-3 text-left">
 												{isAdmin ? (
 													<SortHeaderButton field="region" label={t('model.territory', 'Territory')} orderBy={activeOrderBy} order={activeOrder} onSort={sortBy} />
 												) : (
@@ -326,18 +366,18 @@ export function ModelDashboardTable({
 													<span className={HEADER_LABEL}>{t('model.period')}</span>
 												</th>
 											)}
-											<th className="px-4 py-3 text-left">
+											<th aria-sort={ariaSort("risk")} className="px-4 py-3 text-left">
 												<SortHeaderButton field="risk" label={t('model.riskScale', 'Risk (0–5)')} orderBy={activeOrderBy} order={activeOrder} onSort={sortBy} />
 											</th>
-											<th className="px-4 py-3 text-left">
+											<th aria-sort={ariaSort("status")} className="px-4 py-3 text-left">
 												<SortHeaderButton field="status" label={t('model.status')} orderBy={activeOrderBy} order={activeOrder} onSort={sortBy} />
 											</th>
 											{isAdmin && (
-												<th className="hidden px-4 py-3 text-left xl:table-cell">
+												<th aria-sort={ariaSort("created_at")} className="hidden px-4 py-3 text-left xl:table-cell">
 													<SortHeaderButton field="created_at" label={t('model.created', 'Created')} orderBy={activeOrderBy} order={activeOrder} onSort={sortBy} />
 												</th>
 											)}
-											<th className="hidden px-4 py-3 text-left xl:table-cell">
+											<th aria-sort={ariaSort("last_activity")} className="hidden px-4 py-3 text-left xl:table-cell">
 												<SortHeaderButton field="last_activity" label={t('model.lastActivity')} orderBy={activeOrderBy} order={activeOrder} onSort={sortBy} />
 											</th>
 											{/* actions stay visible */}

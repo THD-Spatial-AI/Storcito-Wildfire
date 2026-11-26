@@ -44,7 +44,13 @@ export function ModelStatusTabs({
 	const limitText = `${stats.total}/${stats.model_limit}`;
 
 	return (
-		<div data-tour="status-tabs" className="flex flex-wrap items-center gap-x-1 gap-y-2 border-b border-border px-2 sm:px-3">
+		// labelled filter buttons
+		<div
+			data-tour="status-tabs"
+			role="group"
+			aria-label={t("model.statusFilter", "Filter by status")}
+			className="flex flex-wrap items-center gap-x-1 gap-y-2 border-b border-border px-2 sm:px-3"
+		>
 			{tabs.map((tab) => {
 				const isActive = activeTab === tab;
 				const isEmpty = statsLoaded && countOf(tab) === 0;

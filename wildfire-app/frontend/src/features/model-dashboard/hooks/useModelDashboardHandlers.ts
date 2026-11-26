@@ -3,6 +3,7 @@ import { useExpandedFamiliesStore } from "@/features/model-dashboard/store/expan
 import { useNavigate } from 'react-router-dom';
 import { Model } from '@/features/model-dashboard/services/modelService';
 import { downloadModelArchive } from '@/features/model-dashboard/services/modelDownloadService';
+import { focusFirstModel } from '@/features/model-dashboard/utils/dashboardHelpers';
 import {
   useDuplicateModelMutation,
   useDeleteModelMutation,
@@ -51,6 +52,8 @@ export const useModelDashboardHandlers = ({ onRefresh }: UseModelDashboardHandle
     try {
       await deleteMutation.mutateAsync(model.id);
       await refreshData();
+      // keep focus
+      focusFirstModel();
     } catch (error) {
       if (import.meta.env.DEV) console.error('Failed to delete model:', error);
       throw error;
@@ -94,6 +97,7 @@ export const useModelDashboardHandlers = ({ onRefresh }: UseModelDashboardHandle
     try {
       await bulkDeleteMutation.mutateAsync(modelIds);
       await refreshData();
+      focusFirstModel();
     } catch (error) {
       if (import.meta.env.DEV) console.error('Failed to delete models:', error);
       throw error;
