@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { Fragment, useCallback, useMemo, useState } from "react";
 import { AlertCircle, ArrowUpDown, BarChart3, ChevronDown, ChevronUp, Plus, RefreshCw } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@spatialhub/ui";
 import Pagination from "@/components/ui/Pagination";
@@ -11,6 +11,7 @@ import {
 } from "@/features/model-dashboard/store/seen-completed-models";
 import type { ModelFamily } from "@/features/model-dashboard/utils/dashboardHelpers";
 import { useTranslation } from "@/i18n";
+import { useHorizontalOverflow } from "@/hooks/useHorizontalOverflow";
 import { useModelDashboardActions } from "./ModelDashboardActionsContext";
 import { useExpandedFamiliesStore } from "@/features/model-dashboard/store/expanded-families";
 import { useRiskScores } from "@/features/model-dashboard/hooks/useRiskScores";
@@ -167,17 +168,7 @@ export function ModelDashboardTable({
 }: ModelDashboardTableProps) {
 	const { t } = useTranslation();
 	// edge line scrolling
-	const [scrollEl, setScrollEl] = useState<HTMLDivElement | null>(null);
-	const [overflowX, setOverflowX] = useState(false);
-	useEffect(() => {
-		if (!scrollEl || typeof ResizeObserver === "undefined") return;
-		const check = () => setOverflowX(scrollEl.scrollWidth > scrollEl.clientWidth + 1);
-		const observer = new ResizeObserver(check);
-		observer.observe(scrollEl);
-		if (scrollEl.firstElementChild) observer.observe(scrollEl.firstElementChild);
-		check();
-		return () => observer.disconnect();
-	}, [scrollEl]);
+	const { setScrollEl, overflowX } = useHorizontalOverflow();
 	const {
 		selectedModels,
 		handleSelectAll,

@@ -1,9 +1,6 @@
 import axios from '@/lib/axios';
+import type { ApiResponse } from "@/types/api";
 
-interface ApiResponse<T> {
-    success: boolean;
-    data: T;
-}
 
 export interface ApiToken {
     id: number;
@@ -21,7 +18,7 @@ export interface ApiToken {
 }
 
 export interface CreatedApiToken {
-    /** Full plaintext token — available only in this response, never again. */
+    /** full plaintext token */
     token: string;
     id: number;
     name: string;
@@ -31,9 +28,9 @@ export interface CreatedApiToken {
     created_at: string;
 }
 
-export interface CreateApiTokenPayload {
+interface CreateApiTokenPayload {
     name: string;
-    /** undefined → server default (90 days); 0 → never expires. */
+    /** 0 never expires */
     expires_in_days?: number;
     scope?: 'read' | 'full';
 }

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { Activity, Plus } from "lucide-react";
+import { Activity, Plus, Zap } from "lucide-react";
+import { AdminSectionHeader } from "../AdminSectionHeader";
 import { useAuthStore } from "@/store/auth-store";
 import { useTranslation } from "@/i18n";
 import { RefreshButton, SearchInput } from "@/features/model-dashboard/components/model-dashboard/ToolbarControls";
@@ -43,15 +44,18 @@ export const WebservicesManagement: React.FC<WebservicesManagementProps> = ({ re
 
 	return (
 		<div className="space-y-4">
-			<div className="flex flex-wrap items-start justify-between gap-3">
-				<div>
-					<h2 className="text-base font-semibold tracking-tight text-foreground">
-						{t("webservicesManagement.sectionTitle", "Simulation Engine")}
-					</h2>
-					<p className="mt-0.5 text-sm text-muted-foreground">
-						{t("webservicesManagement.sectionSubtitle", "Calculation engines that run the risk models")}
-					</p>
-				</div>
+			<AdminSectionHeader
+				icon={Zap}
+				title={t("webservicesManagement.sectionTitle", "Simulation Engine")}
+				subtitle={t("webservicesManagement.sectionSubtitle", "Calculation engines that run the risk models")}
+			>
+				<SearchInput
+					value={ws.searchInput}
+					onChange={ws.setSearchInput}
+					placeholder={t("webservicesManagement.searchByNameOrAddress", "Search by name or address…")}
+					className="w-full sm:w-72 sm:flex-none"
+				/>
+				<RefreshButton onClick={ws.handleRefresh} spinning={ws.isRefreshing} label={t("webservicesManagement.refresh")} />
 				{!readOnly && (
 					<button
 						type="button"
@@ -62,7 +66,7 @@ export const WebservicesManagement: React.FC<WebservicesManagementProps> = ({ re
 						{t("webservicesManagement.registerEngine", "Register engine")}
 					</button>
 				)}
-			</div>
+			</AdminSectionHeader>
 
 			{/* own runs note */}
 			{(ws.userRunningCount > 0 || ws.userQueueCount > 0) && (
@@ -76,17 +80,7 @@ export const WebservicesManagement: React.FC<WebservicesManagementProps> = ({ re
 			)}
 
 			<div className="md-card overflow-hidden">
-				<div className="flex flex-wrap items-center gap-2 p-4 sm:px-5">
-					<SearchInput
-						value={ws.searchInput}
-						onChange={ws.setSearchInput}
-						placeholder={t("webservicesManagement.searchByNameOrAddress", "Search by name or address…")}
-						className="sm:max-w-[26.75rem]"
-					/>
-					<RefreshButton onClick={ws.handleRefresh} spinning={ws.isRefreshing} label={t("webservicesManagement.refresh")} />
-				</div>
-
-				<div role="tablist" className="flex flex-wrap items-center gap-x-1 gap-y-2 border-t border-border px-2 sm:px-3">
+				<div role="tablist" className="flex flex-wrap items-center gap-x-1 gap-y-2 px-2 sm:px-3">
 					{TABS.map((key) => {
 						const active = tab === key;
 						return (

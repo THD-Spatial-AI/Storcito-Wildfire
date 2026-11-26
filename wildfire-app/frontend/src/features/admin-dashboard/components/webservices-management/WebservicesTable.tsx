@@ -13,6 +13,7 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import type { WebserviceInstance } from "@/features/admin-dashboard/types";
 import { formatDateTime24h, formatShortDateTime } from "@/utils/dateHelpers";
 import { useTranslation } from "@/i18n";
+import { useHorizontalOverflow } from "@/hooks/useHorizontalOverflow";
 
 export type EngineState = "online" | "busy" | "offline" | "inactive" | "maintenance";
 
@@ -42,7 +43,8 @@ const STATE_FALLBACK: Record<EngineState, string> = {
 };
 
 const HEADER_LABEL = "text-[11px] font-semibold uppercase tracking-wider text-muted-foreground";
-const STICKY = "sticky right-0 shadow-[-8px_0_8px_-8px_rgb(0_0_0/0.12)]";
+// edge line scrolling
+const STICKY = "sticky right-0 group-data-[overflow=true]/table:shadow-[-8px_0_8px_-8px_rgb(0_0_0/0.12)]";
 const ICON_BUTTON =
 	"inline-flex h-8 w-8 items-center justify-center rounded-lg text-foreground/80 transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
@@ -67,13 +69,14 @@ export function WebservicesTable({
 	webservices, loading, readOnly, currentPage, itemsPerPage, setCurrentPage, setItemsPerPage, onAdd, onEdit, onDelete, onServiceAction,
 }: WebservicesTableProps) {
 	const { t } = useTranslation();
+	const { setScrollEl, overflowX } = useHorizontalOverflow();
 	const label = (s: WebserviceInstance) => s.name || `${t("webservicesManagement.table.service")} ${s.id}`;
 	const rows = webservices.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
 	const columns = readOnly ? 4 : 5;
 
 	return (
 		<>
-			<div className="overflow-x-auto">
+			<div ref={setScrollEl} data-overflow={overflowX} className="group/table overflow-x-auto">
 				<table className="w-full min-w-[760px] table-fixed">
 					<colgroup>
 						<col />
@@ -258,6 +261,7 @@ export function WebservicesTable({
 						setItemsPerPage(n);
 						setCurrentPage(0);
 					}}
+					pageSizeOptions={[10, 20, 50]}
 					isLoading={loading}
 				/>
 			)}

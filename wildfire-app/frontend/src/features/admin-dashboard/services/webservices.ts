@@ -4,11 +4,8 @@ import type {
     WebserviceFilters,
     WebserviceInstance,
 } from '@/features/admin-dashboard/types';
+import type { ApiResponse } from "@/types/api";
 
-interface ApiResponse<T> {
-    success: boolean;
-    data: T;
-}
 
 
 export interface StorcitoCoverageFeatureCollection {
@@ -21,7 +18,7 @@ export interface StorcitoCoverageFeatureCollection {
     }>;
 }
 
-export interface WebserviceSummary {
+interface WebserviceSummary {
     total: number;
     online: number;
     available: number;
