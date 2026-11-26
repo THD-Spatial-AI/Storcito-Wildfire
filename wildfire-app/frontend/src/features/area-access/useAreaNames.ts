@@ -35,3 +35,8 @@ export function useAreaNames(refs: AreaRef[]): Record<string, string> {
 export function rememberAreaName(ref: AreaRef, name: string) {
 	known.set(areaKey(ref), name);
 }
+
+/** names a to z */
+export function sortedAreaNames(refs: AreaRef[], names: Record<string, string>): string[] {
+	return refs.map((r) => names[areaKey(r)] ?? r.code).sort((a, b) => a.localeCompare(b));
+}
