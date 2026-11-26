@@ -57,10 +57,11 @@ export function AccessCapabilitiesCard({ accessLevel }: AccessCapabilitiesCardPr
 	];
 
 	return (
-		<div className="max-w-xl">
-			<ul className="divide-y divide-border/70">
+		<div className="max-w-3xl">
+			{/* two compact columns */}
+			<ul className="grid gap-x-8 gap-y-1 sm:grid-cols-2">
 				{capabilities.map((cap) => (
-					<li key={cap.key} className="flex items-center gap-3 py-2.5">
+					<li key={cap.key} className="flex items-center gap-3 py-1.5">
 						<span
 							className={cn(
 								"flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
@@ -70,13 +71,15 @@ export function AccessCapabilitiesCard({ accessLevel }: AccessCapabilitiesCardPr
 						>
 							{cap.allowed ? <Check className="h-3 w-3" /> : <Minus className="h-3 w-3" />}
 						</span>
-						<span className={cn("min-w-0 flex-1 text-sm", cap.allowed ? "text-foreground" : "text-muted-foreground")}>
+						<span className={cn("min-w-0 text-sm", cap.allowed ? "text-foreground" : "text-muted-foreground")}>
 							{cap.label}
+							{cap.detail && cap.allowed && (
+								<span className="ml-1.5 text-xs tabular-nums text-muted-foreground">· {cap.detail}</span>
+							)}
 							<span className="sr-only">
 								{cap.allowed ? t("adminDashboard.access.allowed", "Allowed") : t("adminDashboard.access.notAllowed", "Not included")}
 							</span>
 						</span>
-						{cap.detail && cap.allowed && <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{cap.detail}</span>}
 					</li>
 				))}
 			</ul>

@@ -60,11 +60,11 @@ const SettingsPage: React.FC = () => {
 
   return (
     <div className="md-scope min-h-full bg-background">
-      <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
-        <BackButton className="mb-4" />
+      <div className="w-full px-4 py-6 sm:px-6 lg:px-8 [@media(pointer:coarse)]:py-3">
 
         {/* account header */}
-        <div className="md-rise mb-8 flex items-center gap-3">
+        <div className="md-rise mb-8 flex items-center gap-3 [@media(pointer:coarse)]:mb-4">
+          <BackButton iconOnly />
           <span
             aria-hidden
             className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-lg font-semibold text-foreground"
@@ -81,7 +81,7 @@ const SettingsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[232px_minmax(0,1fr)]">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[232px_minmax(0,1fr)] [@media(pointer:coarse)]:gap-5">
           {/* section menu */}
           <SectionNav groups={groups} active={activeTab} onSelect={setActiveTab} ariaLabel={t("settings.title")} />
 

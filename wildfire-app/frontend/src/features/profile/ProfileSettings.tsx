@@ -392,8 +392,11 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ section = "profile" }
 					description={t('adminDashboard.access.subtitle', 'What your access level allows')}
 				>
 					<AccessCapabilitiesCard accessLevel={formData.access_level as AuthUser["access_level"]} />
-					<YourAreas />
-					<YourPeriods />
+					{/* areas and dates */}
+					<div className="mt-3 max-w-3xl border-t border-border pt-2">
+						<YourAreas />
+						<YourPeriods />
+					</div>
 				</SettingsSection>
 			)}
 			</div>

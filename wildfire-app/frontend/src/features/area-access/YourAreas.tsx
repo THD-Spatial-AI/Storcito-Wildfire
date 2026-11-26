@@ -29,9 +29,10 @@ function AccessRow({ icon, label, failed, loaded, restricted, all, preview, unre
 				? shortList(all, preview)
 				: unrestrictedLabel;
 	return (
-		<div className="flex max-w-xl items-start justify-between gap-4 border-t border-border py-2.5 text-sm">
-			<span className="flex items-center gap-2.5 text-foreground">
-				{icon}
+		<div className="flex max-w-3xl items-start justify-between gap-4 py-1.5 text-sm">
+			{/* same icon column */}
+			<span className="flex items-center gap-3 text-foreground">
+				<span className="flex h-5 w-5 shrink-0 items-center justify-center text-muted-foreground">{icon}</span>
 				{label}
 			</span>
 			<span className="text-right text-xs text-muted-foreground" title={all.join(", ")}>
@@ -55,7 +56,7 @@ export function YourAreas() {
 
 	return (
 		<AccessRow
-			icon={<MapPin className="h-4 w-4 text-muted-foreground" />}
+			icon={<MapPin className="h-4 w-4" />}
 			label={t("areaAccess.yourAreas", "Areas where you can create models")}
 			failed={failed}
 			loaded={Boolean(data)}
@@ -79,7 +80,7 @@ export function YourPeriods() {
 
 	return (
 		<AccessRow
-			icon={<CalendarRange className="h-4 w-4 text-muted-foreground" />}
+			icon={<CalendarRange className="h-4 w-4" />}
 			label={t("periodAccess.yourPeriods", "Dates you can model")}
 			failed={failed}
 			loaded={Boolean(data)}
