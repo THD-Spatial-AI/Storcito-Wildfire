@@ -3,7 +3,6 @@ import {
   Bug,
   CheckCircle,
   Clock,
-  Filter,
   Flag,
   Lightbulb,
   MessageCircle,
@@ -35,16 +34,11 @@ export function FeedbackManagementFilters({
   const { t } = useTranslation();
 
   return (
-    <div className="md-rise bg-card rounded-xl border border-border p-4 shadow-sm" style={{ animationDelay: "60ms" }}>
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-muted-foreground" />
-          <span className="text-sm font-medium text-foreground">
-            {t("feedbackManagement.filters.label")}
-          </span>
-        </div>
-        <div className="flex flex-wrap gap-3">
+    // plain toolbar row
+    <div className="md-rise" style={{ animationDelay: "60ms" }} role="group" aria-label={t("feedbackManagement.filters.label")}>
+      <div className="flex flex-wrap items-center gap-2">
           <FilterDropdown
+            className="h-9"
             options={[
               { value: "all", label: t("feedbackManagement.filters.allStatus") },
               {
@@ -74,6 +68,7 @@ export function FeedbackManagementFilters({
             icon={<Clock className="w-3.5 h-3.5 text-muted-foreground" />}
           />
           <FilterDropdown
+            className="h-9"
             options={[
               { value: "all", label: t("feedbackManagement.filters.allCategories") },
               {
@@ -103,6 +98,7 @@ export function FeedbackManagementFilters({
             icon={<Tag className="w-3.5 h-3.5 text-muted-foreground" />}
           />
           <FilterDropdown
+            className="h-9"
             options={[
               { value: "all", label: t("feedbackManagement.filters.allPriorities") },
               {
@@ -131,7 +127,6 @@ export function FeedbackManagementFilters({
             placeholder={t("feedbackManagement.filters.allPriorities")}
             icon={<Flag className="w-3.5 h-3.5 text-muted-foreground" />}
           />
-        </div>
       </div>
     </div>
   );

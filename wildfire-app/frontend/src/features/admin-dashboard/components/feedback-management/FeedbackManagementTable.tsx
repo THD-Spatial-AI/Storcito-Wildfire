@@ -192,7 +192,7 @@ export function FeedbackManagementTable({
           <tbody className="divide-y divide-border">
             {feedbacks.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-6 py-16 text-center">
+                <td colSpan={8} className="px-6 py-10 text-center">
                   <div className="md-fade-in flex flex-col items-center justify-center gap-3">
                     <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-2xl flex items-center justify-center">
                       <MessageCircle className="w-8 h-8 text-gray-400 dark:text-gray-300" />

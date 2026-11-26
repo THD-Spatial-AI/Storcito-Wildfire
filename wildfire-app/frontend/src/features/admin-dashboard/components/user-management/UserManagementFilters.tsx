@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
-import { Check, Edit, RefreshCw, Trash2, UserPlus, Users, XCircle } from "lucide-react";
+import { Check, Edit, RefreshCw, Search, Trash2, UserPlus, Users, XCircle } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@spatialhub/ui";
 import { GroupSelector } from "@/components/group/GroupSelector";
 import type { Group } from "@/components/workspace";
 import { isExpertOrManager } from "@/features/admin-dashboard/utils/accessLevelUtils";
 import { useTranslation } from "@/i18n";
+import { AdminSectionHeader } from "../AdminSectionHeader";
 import type { User } from "./types";
 
 interface UserManagementFiltersProps {
@@ -53,17 +54,7 @@ export function UserManagementFilters({
 	const { t } = useTranslation();
 
 	return (
-		<div className="md-rise flex flex-wrap items-center justify-between gap-3">
-			<div className="flex items-center gap-3.5">
-				<div className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-card shadow-sm">
-					<Users className="h-5 w-5 text-muted-foreground" />
-				</div>
-				<div>
-					<h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">{t("userManagement.title")}</h2>
-					<p className="mt-0.5 text-sm text-muted-foreground">{t("userManagement.subtitle")}</p>
-				</div>
-			</div>
-			<div className="flex flex-wrap items-center gap-2">
+		<AdminSectionHeader icon={Users} title={t("userManagement.title")} subtitle={t("userManagement.subtitle")}>
 				<div className="relative">
 					<input
 						type="text"
@@ -74,9 +65,7 @@ export function UserManagementFilters({
 						aria-label="Search users"
 					/>
 					<span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-						<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-							<path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z" />
-						</svg>
+						<Search className="h-4 w-4" />
 					</span>
 					{searchTerm && (
 						<button
@@ -122,7 +111,7 @@ export function UserManagementFilters({
 						<TooltipContent>{t("userManagement.groups.selectOrCreate")}</TooltipContent>
 					</Tooltip>
 				)}
-				{/* Group actions when a group is selected - single toggle icon (hidden for Default) */}
+				{/* group actions toggle */}
 				{selectedGroup && isExpertOrManager(user) && (
 					<div className="flex items-center gap-2">
 						{selectedGroup.name?.toLowerCase() !== 'default' && (
@@ -181,7 +170,6 @@ export function UserManagementFilters({
 					<span className="hidden sm:inline">{t("userManagement.addNewUser")}</span>
 					<span className="sm:hidden">{t("userManagement.add")}</span>
 				</button>
-			</div>
-		</div>
+		</AdminSectionHeader>
 	);
 }

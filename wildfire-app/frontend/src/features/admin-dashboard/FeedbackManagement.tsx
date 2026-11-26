@@ -14,6 +14,7 @@ import { FeedbackManagementFilters } from "./components/feedback-management/Feed
 import { FeedbackManagementTable } from "./components/feedback-management/FeedbackManagementTable";
 import { FeedbackManagementModals } from "./components/feedback-management/FeedbackManagementModals";
 import type { FeedbackEditForm, FeedbackItem } from "./components/feedback-management/types";
+import { TableSkeleton } from "@/components/ui/TableSkeleton";
 
 const initialEditForm: FeedbackEditForm = {
   status: "pending",
@@ -161,30 +162,11 @@ export const FeedbackManagement = () => {
   };
 
   if (loading && feedbacks.length === 0) {
-    return (
-      <div className="overflow-hidden rounded-xl border border-border">
-        <div className="border-b border-border bg-muted/40 px-4 py-3">
-          <div className="md-skeleton h-3 w-36 rounded-md bg-muted" />
-        </div>
-        <div className="divide-y divide-border">
-          {Array.from({ length: 5 }, (_, i) => (
-            <div key={i} className="flex items-center gap-4 px-4 py-3.5">
-              <div
-                className="md-skeleton h-3.5 w-full max-w-[220px] rounded-md bg-muted"
-                style={{ animationDelay: `${i * 90}ms` }}
-              />
-              <div className="md-skeleton hidden h-5 w-20 shrink-0 rounded-full bg-muted sm:block" />
-              <div className="md-skeleton hidden h-3.5 w-24 shrink-0 rounded-md bg-muted md:block" />
-              <div className="md-skeleton ml-auto h-6 w-24 shrink-0 rounded-md bg-muted" />
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+    return <TableSkeleton />;
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <FeedbackManagementHeader
         loading={loading}
         isRefreshing={isRefreshing}

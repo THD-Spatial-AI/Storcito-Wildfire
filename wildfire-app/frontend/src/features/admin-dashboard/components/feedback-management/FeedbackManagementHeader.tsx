@@ -1,6 +1,7 @@
 import { MessageSquare, RefreshCw } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@spatialhub/ui";
 import { useTranslation } from "@/i18n";
+import { AdminSectionHeader } from "../AdminSectionHeader";
 import type { FeedbackStatusCounts } from "./types";
 
 interface FeedbackManagementHeaderProps {
@@ -19,17 +20,7 @@ export function FeedbackManagementHeader({
   const { t } = useTranslation();
 
   return (
-    <div className="md-rise flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card shadow-sm">
-          <MessageSquare className="w-5 h-5 text-muted-foreground" />
-        </div>
-        <div>
-          <h2 className="text-lg font-semibold text-foreground">{t("feedbackManagement.title")}</h2>
-          <p className="text-xs text-muted-foreground">{t("feedbackManagement.subtitle")}</p>
-        </div>
-      </div>
-      <div className="flex items-center gap-3">
+    <AdminSectionHeader icon={MessageSquare} title={t("feedbackManagement.title")} subtitle={t("feedbackManagement.subtitle")}>
         <Tooltip>
           <TooltipTrigger asChild>
             <button
@@ -74,7 +65,6 @@ export function FeedbackManagementHeader({
             </span>
           </div>
         </div>
-      </div>
-    </div>
+    </AdminSectionHeader>
   );
 }
