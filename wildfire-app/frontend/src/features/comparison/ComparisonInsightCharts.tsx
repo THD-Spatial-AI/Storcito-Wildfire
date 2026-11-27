@@ -5,6 +5,8 @@ import { ArrowRight, MoveDownRight, MoveUpRight } from "lucide-react";
 import { useTranslation } from "@/i18n";
 
 import type { RiskMapBounds, RiskMapSample, RiskMapSamples } from "./useRiskMapSamples";
+import { chartRiskColor } from "@/lib/riskPalette";
+import { RISK_LEVELS } from "@/features/model-results/viewer-config";
 
 interface ComparisonInsightChartsProps {
   baselineMap?: RiskMapSamples | null;
@@ -19,13 +21,12 @@ interface ComparisonInsightChartsProps {
 
 type RiskLevel = Exclude<RiskMapSample["level"], "unknown">;
 
-const ORDERED_LEVELS: Array<{ level: RiskLevel; label: string; color: string }> = [
-  { level: "very_low", label: "Very Low", color: "#2563eb" },
-  { level: "low", label: "Low", color: "#16a34a" },
-  { level: "moderate", label: "Moderate", color: "#eab308" },
-  { level: "high", label: "High", color: "#ea580c" },
-  { level: "very_high", label: "Very High", color: "#dc2626" },
-];
+// shared class list
+const ORDERED_LEVELS: Array<{ level: RiskLevel; label: string; color: string }> = RISK_LEVELS.map((lvl) => ({
+  level: lvl.id as RiskLevel,
+  label: lvl.label,
+  get color() { return chartRiskColor(lvl.value); },
+}));
 
 const levelIndex = (level: RiskMapSample["level"]): number =>
   ORDERED_LEVELS.findIndex((l) => l.level === level);
@@ -35,7 +36,7 @@ const BASELINE_COLOR = "#2563eb";
 const COMPARISON_COLOR = "#8b5cf6";
 const DENSITY_BINS = 32;
 
-// Continuous-score bins map to classes by rounding, so class k covers [k-0.5, k+0.5).
+// bins round classes
 const CLASS_BANDS: Array<{ from: number; to: number; color: string }> = ORDERED_LEVELS.map(
   (level, i) => ({
     from: i === 0 ? 1 : i + 0.5,
@@ -44,7 +45,7 @@ const CLASS_BANDS: Array<{ from: number; to: number; color: string }> = ORDERED_
   })
 );
 
-// Risk-score frequency distribution, as % of valid sampled cells per bin.
+// risk-score frequency distribution
 const computeDensity = (
   samples: RiskMapSamples | null | undefined
 ): Array<[number, number]> | null => {
@@ -98,7 +99,7 @@ interface TransitionEntry {
   percent: number;
 }
 
-// Change analysis needs both models sampled on (almost) the same grid.
+// same grid needed
 const boundsAlign = (a: RiskMapBounds, b: RiskMapBounds): boolean => {
   const tol = Math.max(a.maxx - a.minx, a.maxy - a.miny, 1e-9) * 0.02;
   return (
@@ -335,7 +336,7 @@ export const ComparisonInsightCharts: FC<ComparisonInsightChartsProps> = ({
         lineStyle: { width: 2.5, color: curve.color, type: i === 0 ? "solid" : "dashed" },
         itemStyle: { color: curve.color },
         areaStyle: { color: curve.color, opacity: 0.12 },
-        // Class-coloured background bands, attached once to the first series.
+        // class-coloured background bands
         markArea:
           i === 0
             ? {
@@ -355,7 +356,7 @@ export const ComparisonInsightCharts: FC<ComparisonInsightChartsProps> = ({
     const comparisonShares = computeClassShares(comparisonMap);
     if (!baselineShares && !comparisonShares) return null;
 
-    // Absolute km² when both totals are known; % shares otherwise.
+    // km² when known
     const absolute =
       (baselineShares === null || baselineAreaKm2 !== null) &&
       (comparisonShares === null || comparisonAreaKm2 !== null);
@@ -403,7 +404,7 @@ export const ComparisonInsightCharts: FC<ComparisonInsightChartsProps> = ({
       },
       yAxis: {
         type: "category",
-        // Categories render bottom-up; reverse so Very Low sits on top.
+        // categories render bottom-up
         data: [...ORDERED_LEVELS].reverse().map((l) => l.label),
         axisTick: { show: false },
         axisLine: { show: false },

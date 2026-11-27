@@ -3,6 +3,8 @@ import ReactECharts from 'echarts-for-react';
 import type { EChartsOption } from 'echarts';
 
 import type { RiskDistribution } from '@/features/model-results';
+import { chartRiskColor } from "@/lib/riskPalette";
+import { RISK_LEVELS } from "@/features/model-results/viewer-config";
 
 interface DistributionComparisonChartProps {
   baseline: RiskDistribution;
@@ -12,13 +14,11 @@ interface DistributionComparisonChartProps {
   dark?: boolean;
 }
 
-const LEVELS: Array<{ key: keyof RiskDistribution; label: string; color: string }> = [
-  { key: 'veryLow', label: 'Very Low', color: '#2563eb' },
-  { key: 'low', label: 'Low', color: '#16a34a' },
-  { key: 'moderate', label: 'Moderate', color: '#eab308' },
-  { key: 'high', label: 'High', color: '#ea580c' },
-  { key: 'veryHigh', label: 'Very High', color: '#dc2626' },
-];
+const LEVELS: Array<{ key: keyof RiskDistribution; label: string; color: string }> = RISK_LEVELS.map((lvl) => ({
+  key: lvl.metricKey as keyof RiskDistribution,
+  label: lvl.label,
+  get color() { return chartRiskColor(lvl.value); },
+}));
 
 export const DistributionComparisonChart: FC<DistributionComparisonChartProps> = ({
   baseline,
@@ -49,7 +49,7 @@ export const DistributionComparisonChart: FC<DistributionComparisonChartProps> =
       },
       yAxis: {
         type: 'category',
-        // Bottom-up order.
+        // bottom-up order
         data: [comparisonLabel, baselineLabel],
         axisTick: { show: false },
         axisLine: { show: false },

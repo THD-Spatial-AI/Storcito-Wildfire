@@ -6,7 +6,8 @@ import { useTranslation } from "@/i18n";
 
 import type { DayDistribution } from "../hooks/useDailyRiskDistribution";
 import { formatFrameDate } from "./DailyPlayerControls";
-import { riskColor, riskColorOr } from "@/lib/riskPalette";
+import { chartRiskColor } from "@/lib/riskPalette";
+import { RISK_LEVELS } from "../viewer-config";
 
 interface RiskTimelinePanelProps {
   days: DayDistribution[] | null;
@@ -17,13 +18,12 @@ interface RiskTimelinePanelProps {
   onClose: () => void;
 }
 
-const LEVELS: Array<{ key: keyof DayDistribution["area_km2"]; label: string; color: string }> = [
-  { key: "very_low", label: "Very Low", get color() { return riskColorOr(1, "#2563eb"); } },
-  { key: "low", label: "Low", get color() { return riskColor(2); } },
-  { key: "moderate", label: "Moderate", get color() { return riskColor(3); } },
-  { key: "high", label: "High", get color() { return riskColorOr(4, "#ea580c"); } },
-  { key: "very_high", label: "Very High", get color() { return riskColor(5); } },
-];
+// shared class list
+const LEVELS: Array<{ key: keyof DayDistribution["area_km2"]; label: string; color: string }> = RISK_LEVELS.map((lvl) => ({
+  key: lvl.id as keyof DayDistribution["area_km2"],
+  label: lvl.label,
+  get color() { return chartRiskColor(lvl.value); },
+}));
 
 // stacked area chart
 export const RiskTimelinePanel: FC<RiskTimelinePanelProps> = ({

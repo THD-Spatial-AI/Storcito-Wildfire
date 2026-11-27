@@ -15,6 +15,15 @@ export const riskColor = (level: 1 | 2 | 3 | 4 | 5): string =>
 export const riskColorOr = (level: 1 | 2 | 3 | 4 | 5, fallback: string): string =>
 	useAccessibilityStore.getState().palette === "colorblind" ? riskColor(level) : fallback;
 
+// chart blue, orange
+const CHART_FALLBACK: Partial<Record<1 | 2 | 3 | 4 | 5, string>> = { 1: "#2563eb", 4: "#ea580c" };
+
+/** chart class colour */
+export const chartRiskColor = (level: 1 | 2 | 3 | 4 | 5): string => {
+	const fallback = CHART_FALLBACK[level];
+	return fallback ? riskColorOr(level, fallback) : riskColor(level);
+};
+
 /** geoserver style name */
 export const riskStyle = (name: string): string =>
 	useAccessibilityStore.getState().palette === "colorblind" ? `${name}_cb` : name;

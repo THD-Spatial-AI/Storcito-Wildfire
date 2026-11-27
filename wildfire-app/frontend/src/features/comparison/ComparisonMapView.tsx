@@ -21,6 +21,12 @@ import { register as registerProj4 } from "ol/proj/proj4";
 
 import { getModelResults, getResultLayer } from "@/features/model-results";
 import type { Model } from "@/features/model-dashboard";
+import { chartRiskColor, riskStyle } from "@/lib/riskPalette";
+import { ALL_LEVELS_STYLE } from "@/features/model-results/risk-style-groups";
+import { RISK_LEVELS } from "@/features/model-results/viewer-config";
+
+// browser default policy
+const OSM_REFERRER = "strict-origin-when-cross-origin";
 
 interface ComparisonMapViewProps {
   model1: Model;
@@ -55,7 +61,7 @@ interface LayerInfo {
   available_layers?: AvailableLayer[];
 }
 
-// One layer per day.
+// one layer day
 const DAILY_FRAME_KEY = /^risk_\d{4}-\d{2}-\d{2}$/;
 
 const extractDailyFrames = (info: LayerInfo): AvailableLayer[] =>
@@ -79,7 +85,7 @@ const buildWMSLayer = (info: LayerInfo): TileLayer<TileWMS> =>
       url: info.wms_url,
       params: {
         LAYERS: info.layer_name,
-        STYLES: "fire_risk_classified",
+        STYLES: riskStyle(ALL_LEVELS_STYLE),
         STYLE_VERSION: FIRE_RISK_STYLE_VERSION,
         TILED: true,
         FORMAT: "image/png",
@@ -113,13 +119,11 @@ interface SideState {
   layerName?: string;
 }
 
-const LEGEND = [
-  { label: "Very Low", color: "#2563eb" },
-  { label: "Low", color: "#16a34a" },
-  { label: "Moderate", color: "#eab308" },
-  { label: "High", color: "#ea580c" },
-  { label: "Very High", color: "#dc2626" },
-] as const;
+// shared class list
+const LEGEND = RISK_LEVELS.map((lvl) => ({
+  label: lvl.label,
+  get color() { return chartRiskColor(lvl.value); },
+}));
 
 export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }) => {
   const { t } = useTranslation();
@@ -146,10 +150,10 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
   const [leftExtent, setLeftExtent] = useState<number[] | null>(null);
   const [rightExtent, setRightExtent] = useState<number[] | null>(null);
 
-  // Daily frame player.
+  // daily frame player
   const [leftFrames, setLeftFrames] = useState<AvailableLayer[]>([]);
   const [rightFrames, setRightFrames] = useState<AvailableLayer[]>([]);
-  // null = overall map.
+  // null overall map
   const [frameIndex, setFrameIndex] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
 
@@ -162,7 +166,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
   const leftFrame = frameForSide(leftFrames, frameIndex);
   const rightFrame = frameForSide(rightFrames, frameIndex);
 
-  // Swap in place.
+  // swap in place
   useEffect(() => {
     if (leftFrame) leftLayerRef.current?.getSource()?.updateParams({ LAYERS: leftFrame.layer_name });
   }, [leftFrame]);
@@ -182,11 +186,11 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
     return () => clearInterval(id);
   }, [playing, frameCount]);
 
-  // ---------- fullscreen ----------
+  // fullscreen
   useEffect(() => {
     const onChange = () => {
       setIsFullscreen(Boolean(document.fullscreenElement));
-      // Refresh after resize.
+      // refresh after resize
       window.setTimeout(() => {
         leftMapRef.current?.updateSize();
         rightMapRef.current?.updateSize();
@@ -211,7 +215,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
     syncingRef.current = false;
   };
 
-  // ---------- init maps ----------
+  // init maps
   useEffect(() => {
     if (!leftRef.current || !rightRef.current) return;
 
@@ -223,13 +227,13 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
 
     const left = new OLMap({
       target: leftRef.current,
-      layers: [new TileLayer({ source: new OSM() })],
+      layers: [new TileLayer({ source: new OSM({ referrerPolicy: OSM_REFERRER }) })],
       view: sharedView(),
       controls: [],
     });
     const right = new OLMap({
       target: rightRef.current,
-      layers: [new TileLayer({ source: new OSM() })],
+      layers: [new TileLayer({ source: new OSM({ referrerPolicy: OSM_REFERRER }) })],
       view: sharedView(),
       controls: [],
     });
@@ -244,7 +248,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
     };
   }, []);
 
-  // ---------- sync handlers ----------
+  // sync handlers
   useEffect(() => {
     const left = leftMapRef.current;
     const right = rightMapRef.current;
@@ -273,7 +277,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
       rView.on("change:resolution", () => sync(right, left)),
       rView.on("change:rotation", () => sync(right, left)),
     ];
-    // Align once immediately.
+    // align once immediately
     sync(left, right);
 
     return () => {
@@ -281,7 +285,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
     };
   }, [synced]);
 
-  // Load side layer.
+  // load side layer
   const loadSide = async (
     model: Model,
     mapRef: React.MutableRefObject<OLMap | null>,
@@ -320,7 +324,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
       const map = mapRef.current;
       if (!map) return;
 
-      // Drop previous layer.
+      // drop previous layer
       if (layerRef.current) {
         map.removeLayer(layerRef.current);
         layerRef.current = null;
@@ -355,7 +359,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
     }
   };
 
-  // React to model change.
+  // react model change
   useEffect(() => {
     setLeftExtent(null);
     setPlaying(false);
@@ -392,7 +396,7 @@ export const ComparisonMapView: FC<ComparisonMapViewProps> = ({ model1, model2 }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [model2.id]);
 
-  // Disjoint: go independent.
+  // disjoint go independent
   useEffect(() => {
     if (!leftExtent || !rightExtent) return;
     if (!extentsIntersect(leftExtent, rightExtent)) {
