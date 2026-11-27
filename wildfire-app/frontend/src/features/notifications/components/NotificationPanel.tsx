@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { CheckCircle2, AlertCircle, Info, AlertTriangle } from 'lucide-react';
-import { IconX } from '@tabler/icons-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { CheckCircle2, AlertCircle, Info, AlertTriangle, Map as MapIcon, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/i18n';
 
@@ -10,6 +10,7 @@ interface Notification {
   message: string;
   type: 'success' | 'error' | 'info' | 'warning';
   timestamp: Date;
+  modelId?: number;
 }
 
 interface NotificationPanelProps {
@@ -17,7 +18,7 @@ interface NotificationPanelProps {
   onClose: () => void;
 }
 
-// Translation key mappings for known notification patterns
+// translation key mappings
 const NOTIFICATION_TITLE_KEYS: Record<string, string> = {
   'Model Calculation Complete': 'notifications.messages.modelCalculationComplete',
   'Model Calculation Failed': 'notifications.messages.modelCalculationFailed',
@@ -46,43 +47,18 @@ const NOTIFICATION_MESSAGE_PATTERNS: Array<{
   },
 ];
 
-const GRADIENT_GRAY = 'from-gray-800 to-gray-900 dark:from-gray-700 dark:to-gray-800';
-const BG_GRAY_700 = 'bg-gray-700 dark:bg-gray-600';
-const BG_GRAY_600 = 'bg-gray-600 dark:bg-gray-500';
-
+// status colour type
 const NOTIFICATION_CONFIG = {
-  success: {
-    gradient: GRADIENT_GRAY,
-    iconBg: BG_GRAY_700,
-    progressBar: BG_GRAY_600,
-    icon: CheckCircle2,
-    label: 'Success',
-  },
-  error: {
-    gradient: GRADIENT_GRAY,
-    iconBg: BG_GRAY_700,
-    progressBar: BG_GRAY_600,
-    icon: AlertCircle,
-    label: 'Error',
-  },
-  warning: {
-    gradient: GRADIENT_GRAY,
-    iconBg: BG_GRAY_700,
-    progressBar: BG_GRAY_600,
-    icon: AlertTriangle,
-    label: 'Warning',
-  },
-  info: {
-    gradient: GRADIENT_GRAY,
-    iconBg: BG_GRAY_700,
-    progressBar: BG_GRAY_600,
-    icon: Info,
-    label: 'Info',
-  },
+  success: { icon: CheckCircle2, tone: 'bg-foreground text-background', bar: 'bg-foreground/60' },
+  error: { icon: AlertCircle, tone: 'bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-400', bar: 'bg-red-500/70' },
+  warning: { icon: AlertTriangle, tone: 'bg-muted text-foreground', bar: 'bg-foreground/40' },
+  info: { icon: Info, tone: 'bg-muted text-foreground', bar: 'bg-foreground/40' },
 } as const;
 
 const NotificationPanel: React.FC<NotificationPanelProps> = ({ notification, onClose }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
   const [displayedNotification, setDisplayedNotification] = useState<Notification | null>(null);
   const [isLeaving, setIsLeaving] = useState(false);
   const [progress, setProgress] = useState(100);
@@ -90,7 +66,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ notification, onC
   const isClosingRef = useRef(false);
   const lastShownIdRef = useRef<number | null>(null);
   
-  // Translate notification title if a known pattern exists
+  // translate notification title
   const getTranslatedTitle = useCallback((title: string): string => {
     const translationKey = NOTIFICATION_TITLE_KEYS[title];
     if (translationKey) {
@@ -99,7 +75,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ notification, onC
     return title;
   }, [t]);
   
-  // Translate notification message if a known pattern exists
+  // translate notification message
   const getTranslatedMessage = useCallback((message: string): string => {
     for (const { pattern, key, extractParams } of NOTIFICATION_MESSAGE_PATTERNS) {
       const match = message.match(pattern);
@@ -171,7 +147,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ notification, onC
     }
   }, [notification, handleClose, clearTimers]);
 
-  // Cleanup on unmount
+  // cleanup on unmount
   useEffect(() => {
     return () => {
       clearTimers();
@@ -184,76 +160,72 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ notification, onC
   const IconComponent = config.icon;
   const translatedTitle = getTranslatedTitle(displayedNotification.title);
   const translatedMessage = getTranslatedMessage(displayedNotification.message);
-  const translatedLabel = t(`notifications.types.${displayedNotification.type}`, { defaultValue: config.label });
+  const resultsPath =
+    displayedNotification.type === 'success' && displayedNotification.modelId
+      ? `/app/model-results/${displayedNotification.modelId}`
+      : null;
+  // hide on page
+  const showViewButton = Boolean(resultsPath && pathname !== resultsPath);
 
   return (
-    <div className="fixed top-20 right-6 z-[9999] pointer-events-none">
+    // bottom right corner
+    <div className="pointer-events-none fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 z-[9999]">
       <div
+        role="status"
         className={cn(
-          'pointer-events-auto w-[340px] overflow-hidden',
-          'bg-white dark:bg-gray-900 rounded-2xl',
-          'shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)]',
-          'border border-gray-100 dark:border-gray-700',
-          'transform transition-all duration-400 ease-out',
-          isLeaving 
-            ? 'translate-x-[120%] opacity-0' 
-            : 'translate-x-0 opacity-100'
+          'pointer-events-auto relative w-[360px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-border bg-card text-card-foreground',
+          'shadow-[0_18px_50px_-12px_rgba(0,0,0,0.25)] dark:shadow-[0_18px_50px_-12px_rgba(0,0,0,0.7)]',
+          'transform transition-all duration-300 ease-out',
+          isLeaving ? 'translate-x-3 opacity-0' : 'translate-x-0 opacity-100'
         )}
       >
-        {/* Gradient header */}
-        <div className={cn('bg-gradient-to-r p-4', config.gradient)}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center", config.iconBg)}>
-                <IconComponent className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <span className="text-xs font-medium text-gray-400 dark:text-gray-300 uppercase tracking-wider">
-                  {translatedLabel}
-                </span>
-                <h4 className="text-sm font-semibold text-white leading-tight mt-0.5">
-                  {translatedTitle}
-                </h4>
-              </div>
+        <div className="flex gap-3 p-4 pr-10">
+          <span className={cn('flex size-10 shrink-0 items-center justify-center rounded-full', config.tone)}>
+            <IconComponent className="size-5" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h4 className="text-sm font-semibold leading-snug text-foreground">{translatedTitle}</h4>
+            <p className="mt-0.5 line-clamp-3 text-[13px] leading-relaxed text-muted-foreground">{translatedMessage}</p>
+            <div className="mt-3 flex items-center gap-2">
+              {showViewButton && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (resultsPath) navigate(resultsPath);
+                    handleClose();
+                  }}
+                  className="inline-flex h-8 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg bg-primary px-3 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                >
+                  <MapIcon className="size-3.5" />
+                  {t('notifications.viewMap', 'View map')}
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={handleClose}
+                className="inline-flex h-8 shrink-0 items-center whitespace-nowrap rounded-lg px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                {t('notifications.dismiss')}
+              </button>
+              <span className="ml-auto shrink-0 whitespace-nowrap text-[11px] tabular-nums text-muted-foreground/80">
+                {displayedNotification.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </span>
             </div>
-            <button
-              onClick={handleClose}
-              className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-gray-400 dark:text-gray-300 hover:text-white transition-colors"
-            >
-              <IconX className="w-4 h-4" />
-            </button>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="p-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-3">
-            {translatedMessage}
-          </p>
-          
-          <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
-            <span className="text-xs text-gray-400 dark:text-gray-500">
-              {displayedNotification.timestamp.toLocaleTimeString('en-GB', { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                hour12: false
-              })}
-            </span>
-            <button
-              onClick={handleClose}
-              className="text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-            >
-              {t('notifications.dismiss')}
-            </button>
-          </div>
-        </div>
+        <button
+          type="button"
+          onClick={handleClose}
+          aria-label={t('notifications.dismiss')}
+          className="absolute right-2.5 top-2.5 rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        >
+          <X className="size-4" />
+        </button>
 
-        {/* Progress bar */}
-        <div className="h-1 bg-gray-100 dark:bg-gray-800">
-          <div
-            className={cn('h-full transition-all duration-100 ease-linear', config.progressBar)}
-            style={{ width: `${progress}%` }}
-          />
+        {/* time left */}
+        <div className="h-0.5 bg-muted">
+          <div className={cn('h-full transition-all duration-100 ease-linear', config.bar)} style={{ width: `${progress}%` }} />
         </div>
       </div>
     </div>

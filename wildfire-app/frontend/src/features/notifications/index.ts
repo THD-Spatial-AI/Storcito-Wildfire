@@ -1,3 +1,2 @@
-/** Public API. */
+/** public api */
 export { useNotification } from "./hooks/useNotification";
-export { notificationsService } from "./services/notifications";

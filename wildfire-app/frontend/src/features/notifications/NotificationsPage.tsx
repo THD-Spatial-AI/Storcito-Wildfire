@@ -8,11 +8,11 @@ import { Button } from '@spatialhub/ui';
 import { useTranslation } from '@/i18n';
 import {
   useNotificationsQuery,
-  useMarkNotificationReadMutation,
-  useMarkAllNotificationsReadMutation,
   useClearAllNotificationsMutation,
+  useNotificationTabs,
   type Notification,
 } from '@/features/notifications/hooks/useNotificationsQuery';
+import { NotificationKindTabs } from '@/components/ui/NotificationDropdown';
 import { getNotificationResultPath } from '@/features/notifications/notification-navigation';
 import {
   NotificationDetailDialog,
@@ -28,30 +28,13 @@ const NotificationsPage = () => {
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const confirm = useConfirm();
 
-  // Fetch notifications with React Query (last 30 days, auto-refetches every 30s)
+  // fetch notifications react
   const { data, isLoading } = useNotificationsQuery({ last30Days: true });
   const notifications = useMemo(() => data?.notifications || [], [data?.notifications]);
 
-  // Mutations
-  const markAsReadMutation = useMarkNotificationReadMutation();
-  const markAllAsReadMutation = useMarkAllNotificationsReadMutation();
+  // mutations
   const clearAllMutation = useClearAllNotificationsMutation();
-
-  const markAsRead = async (id: number | string) => {
-    try {
-      await markAsReadMutation.mutateAsync(id);
-    } catch (error) {
-      if (import.meta.env.DEV) console.error('Failed to mark as read:', error);
-    }
-  };
-
-  const markAllAsRead = async () => {
-    try {
-      await markAllAsReadMutation.mutateAsync();
-    } catch (error) {
-      if (import.meta.env.DEV) console.error('Failed to mark all as read:', error);
-    }
-  };
+  const { tab, setTab, visible, unread, markRead, markVisibleRead, canClear } = useNotificationTabs(notifications);
 
   const clearAllNotifications = async () => {
     await confirm({
@@ -72,9 +55,9 @@ const NotificationsPage = () => {
 
   const handleNotificationClick = async (notification: Notification) => {
     if (!notification.read) {
-      await markAsRead(notification.id);
+      await markRead(notification.id);
     }
-    // Model-completion notifications open the results directly.
+    // model-completion notifications open
     const resultPath = getNotificationResultPath(notification);
     if (resultPath) {
       navigate(resultPath);
@@ -84,13 +67,13 @@ const NotificationsPage = () => {
     setDetailDialogOpen(true);
   };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = unread.all;
 
-  // Virtualization setup
+  // virtualization setup
   const parentRef = useRef<HTMLDivElement>(null);
 
   const rowVirtualizer = useVirtualizer({
-    count: notifications.length,
+    count: visible.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 110,
     overscan: 5,
@@ -98,8 +81,8 @@ const NotificationsPage = () => {
   });
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl bg-background flex flex-col h-[calc(100vh-64px)] overflow-hidden">
-      {/* Header */}
+    <div className="container mx-auto px-4 py-8 max-w-3xl bg-background flex flex-col h-[calc(100dvh-64px)] overflow-hidden">
+      {/* header */}
       <div className="mb-8 shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -120,37 +103,43 @@ const NotificationsPage = () => {
             </div>
           </div>
           
-          {notifications.length > 0 && (
+          {visible.length > 0 && (
             <div className="flex items-center gap-2">
-              {unreadCount > 0 && (
+              {unread[tab] > 0 && (
                 <Button
-                  onClick={markAllAsRead}
+                  onClick={() => void markVisibleRead()}
                   variant="ghost"
                   className="h-9 px-4 text-sm font-medium text-muted-foreground hover:text-foreground"
                 >
                   {t('notifications.markAllRead')}
                 </Button>
               )}
-              <Button
-                onClick={clearAllNotifications}
-                variant="ghost"
-                className="h-9 px-4 text-sm font-medium text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
-              >
-                {t('notifications.clearAll')}
-              </Button>
+              {canClear && (
+                <Button
+                  onClick={clearAllNotifications}
+                  variant="ghost"
+                  className="h-9 px-4 text-sm font-medium text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
+                >
+                  {t('notifications.clearAll')}
+                </Button>
+              )}
             </div>
           )}
         </div>
       </div>
 
-      {/* Notifications List Container */}
+      {notifications.length > 0 && (
+        <NotificationKindTabs tab={tab} onChange={setTab} unread={unread} className="mb-4 shrink-0" />
+      )}
+
+      {/* notifications list container */}
       <div className="flex-1 overflow-hidden">
         {isLoading ? (
           <div className="text-center py-16 h-full flex flex-col justify-center">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-muted border-t-foreground mx-auto"></div>
             <p className="mt-4 text-sm text-muted-foreground">{t('notifications.loading')}</p>
           </div>
-        ) : notifications.length === 0 ? (
+        ) : visible.length === 0 ? (
           <div className="text-center py-16 bg-card rounded-2xl border border-border">
             <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
               <Bell className="w-8 h-8 text-muted-foreground" />
@@ -171,7 +160,7 @@ const NotificationsPage = () => {
               }}
             >
               {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-                const notification = notifications[virtualRow.index];
+                const notification = visible[virtualRow.index];
                 const typeStyles = getNotificationTypeStyles(notification.type);
                 
                 return (
@@ -251,7 +240,7 @@ const NotificationsPage = () => {
         )}
       </div>
 
-      {/* Notification Detail Dialog */}
+      {/* notification detail dialog */}
       <NotificationDetailDialog
         notification={selectedNotification}
         open={detailDialogOpen}

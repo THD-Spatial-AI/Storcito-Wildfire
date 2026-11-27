@@ -1,12 +1,12 @@
 import axios from '@/lib/axios';
 import type { Notification } from '@/features/notifications/hooks/useNotificationsQuery';
 
-export interface NotificationsResponse {
+interface NotificationsResponse {
     success: boolean;
     notifications: Notification[];
 }
 
-export interface NotificationActionResponse {
+interface NotificationActionResponse {
     success: boolean;
     message?: string;
 }
@@ -33,7 +33,7 @@ class NotificationsService {
         return data;
     }
 
-    /** Schedule maintenance. */
+    /** schedule maintenance */
     async sendMaintenance(payload: {
         service: string;
         scheduled_date: string;

@@ -16,10 +16,10 @@ import { cn } from "@/lib/utils";
 import { TimeAgo } from "@/components/ui/TimeAgo";
 import {
   useNotificationsQuery,
-  useMarkNotificationReadMutation,
-  useMarkAllNotificationsReadMutation,
   useClearAllNotificationsMutation,
+  useNotificationTabs,
   type Notification,
+  type NotificationTab,
 } from "@/features/notifications/hooks/useNotificationsQuery";
 import { getNotificationResultPath } from "@/features/notifications/notification-navigation";
 import {
@@ -27,6 +27,55 @@ import {
   getNotificationTypeStyles,
   getNotificationTypeIcon,
 } from "./NotificationDetailDialog";
+
+/** all models system */
+export function NotificationKindTabs({
+  tab,
+  onChange,
+  unread,
+  className,
+}: {
+  tab: NotificationTab;
+  onChange: (tab: NotificationTab) => void;
+  unread: Record<NotificationTab, number>;
+  className?: string;
+}) {
+  const { t } = useTranslation();
+  const tabs: [NotificationTab, string][] = [
+    ["all", t("notifications.tabs.all", "All")],
+    ["model", t("notifications.tabs.models", "Models")],
+    ["system", t("notifications.tabs.system", "System")],
+  ];
+  return (
+    <div role="tablist" aria-label={t("notifications.tabs.label", "Notification type")} className={cn("flex gap-1", className)}>
+      {tabs.map(([id, label]) => (
+        <button
+          key={id}
+          type="button"
+          role="tab"
+          aria-selected={tab === id}
+          onClick={() => onChange(id)}
+          className={cn(
+            "inline-flex h-7 items-center gap-1.5 rounded-md px-2.5 text-xs font-medium transition-colors",
+            tab === id ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+          )}
+        >
+          {label}
+          {unread[id] > 0 && (
+            <span
+              className={cn(
+                "min-w-4 rounded-full px-1 text-[10px] leading-4 tabular-nums",
+                tab === id ? "bg-background/20" : "bg-muted text-foreground"
+              )}
+            >
+              {unread[id]}
+            </span>
+          )}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 /** rail sidebar icon */
 export const NotificationDropdown: React.FC<{ rail?: boolean; expanded?: boolean }> = ({ rail = false, expanded = false }) => {
@@ -43,9 +92,8 @@ export const NotificationDropdown: React.FC<{ rail?: boolean; expanded?: boolean
   const notifications = data?.notifications || [];
 
   // read actions
-  const markAsReadMutation = useMarkNotificationReadMutation();
-  const markAllAsReadMutation = useMarkAllNotificationsReadMutation();
   const clearAllMutation = useClearAllNotificationsMutation();
+  const { tab, setTab, visible, unread, markRead, markVisibleRead, canClear } = useNotificationTabs(notifications);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -60,23 +108,7 @@ export const NotificationDropdown: React.FC<{ rail?: boolean; expanded?: boolean
   }, [unreadCount]);
 
   // show 3 recent
-  const recentNotifications = notifications.slice(0, 3);
-
-  const markAsRead = async (id: string | number) => {
-    try {
-      await markAsReadMutation.mutateAsync(id);
-    } catch (error) {
-      if (import.meta.env.DEV) console.error('Failed to mark notification as read:', error);
-    }
-  };
-
-  const markAllAsRead = async () => {
-    try {
-      await markAllAsReadMutation.mutateAsync();
-    } catch (error) {
-      if (import.meta.env.DEV) console.error('Failed to mark all as read:', error);
-    }
-  };
+  const recentNotifications = visible.slice(0, 3);
 
   const clearAllNotifications = async () => {
     try {
@@ -88,7 +120,7 @@ export const NotificationDropdown: React.FC<{ rail?: boolean; expanded?: boolean
 
   const handleNotificationClick = async (notification: Notification) => {
     // mark as read
-    await markAsRead(notification.id);
+    await markRead(notification.id);
 
     // finished run link
     const resultPath = getNotificationResultPath(notification);
@@ -162,27 +194,35 @@ export const NotificationDropdown: React.FC<{ rail?: boolean; expanded?: boolean
           <h3 className="font-semibold text-sm text-foreground">
             {title}
           </h3>
-          {notifications.length > 0 && (
+          {visible.length > 0 && (
             <div className="flex items-center gap-2">
               <button
-                onClick={markAllAsRead}
+                onClick={() => void markVisibleRead()}
                 className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 {t('notifications.markAllRead')}
               </button>
-              <span className="text-muted-foreground/50">|</span>
-              <button
-                onClick={clearAllNotifications}
-                className="text-xs font-medium text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
-              >
-                {t('notifications.clearAll')}
-              </button>
+              {canClear && (
+                <>
+                  <span className="text-muted-foreground/50">|</span>
+                  <button
+                    onClick={clearAllNotifications}
+                    className="text-xs font-medium text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
+                  >
+                    {t('notifications.clearAll')}
+                  </button>
+                </>
+              )}
             </div>
           )}
         </div>
 
+        {notifications.length > 0 && (
+          <NotificationKindTabs tab={tab} onChange={setTab} unread={unread} className="border-b border-border px-3 py-2" />
+        )}
+
         {/* notifications list */}
-        {notifications.length === 0 ? (
+        {visible.length === 0 ? (
           <div className="px-4 py-8 text-center">
             <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto mb-3">
               <Bell className="w-6 h-6 text-muted-foreground" />

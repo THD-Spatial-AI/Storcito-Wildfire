@@ -9,6 +9,7 @@ interface BrowserNotification {
   type: 'success' | 'error' | 'info' | 'warning';
   read: boolean;
   created_at: string;
+  model_id?: number;
 }
 
 interface InAppNotification {
@@ -17,6 +18,7 @@ interface InAppNotification {
   message: string;
   type: 'success' | 'error' | 'info' | 'warning';
   timestamp: Date;
+  modelId?: number;
 }
 
 const NOTIFICATION_ICON = '/images/logo/wildfire-app-logo.png';
@@ -116,6 +118,7 @@ export const useBrowserNotifications = (enabled: boolean, useInAppPanel = true) 
           message: notification.message,
           type: notification.type,
           timestamp: new Date(),
+          modelId: notification.model_id,
         });
       }
 
@@ -154,18 +157,18 @@ export const useBrowserNotifications = (enabled: boolean, useInAppPanel = true) 
   }, [handleNotificationEvent]);
 
   const connectSSE = useCallback(() => {
-    // Connect if enabled, regardless of notification permission when using in-app panel
+    // off, no stream
     if (!enabled) {
       return;
     }
     
-    // Don't connect if user is not authenticated
+    // guests skip stream
     const user = useAuthStore.getState().user;
     if (!user) {
       return;
     }
     
-    // Only require permission when not using in-app panel
+    // require permission
     if (!useInAppPanel && permission !== 'granted') {
       return;
     }
@@ -188,14 +191,14 @@ export const useBrowserNotifications = (enabled: boolean, useInAppPanel = true) 
         eventSource.close();
         clearReconnectTimeout();
         
-        // Only reconnect if user is still authenticated
+        // reconnect user authenticated
         const user = useAuthStore.getState().user;
         if (!user) {
           return;
         }
         
         reconnectTimeoutRef.current = setTimeout(() => {
-          // Double-check user is still authenticated before reconnecting
+          // double-check user authenticated
           const currentUser = useAuthStore.getState().user;
           if (currentUser) {
             connectSSE();
@@ -210,14 +213,14 @@ export const useBrowserNotifications = (enabled: boolean, useInAppPanel = true) 
   }, [enabled, permission, useInAppPanel, handleNotificationEvent, clearReconnectTimeout]);
 
   useEffect(() => {
-    // Close if disabled
+    // close if disabled
     if (!enabled) {
       closeEventSource();
       clearReconnectTimeout();
       return;
     }
     
-    // Close if not using in-app panel and no permission
+    // unused, close stream
     if (!useInAppPanel && permission !== 'granted') {
       closeEventSource();
       clearReconnectTimeout();

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { QueryClient } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { config } from "@/configuration/app";
 import { useAuthStore } from "@/store/auth-store";
 import { notificationsService } from "@/features/notifications/services/notifications";
@@ -23,7 +23,7 @@ interface NotificationsResponse {
   notifications: Notification[];
 }
 
-// React Query keys
+// react query keys
 const notificationKeys = {
   all: ["notifications"] as const,
   lists: () => [...notificationKeys.all, "list"] as const,
@@ -32,13 +32,13 @@ const notificationKeys = {
 
 let eventSource: EventSource | null = null;
 
-// Close the event source connection (call on logout)
+// close event source
 export function closeNotificationStream() {
   if (eventSource) {
     try {
       eventSource.close();
     } catch {
-      // Ignore close errors
+      // ignore close errors
     }
     eventSource = null;
   }
@@ -57,7 +57,7 @@ export const useNotificationsQuery = (params?: { last30Days?: boolean }) => {
     refetchOnWindowFocus: false,
   });
 
-  // SSE subscription (singleton per tab)
+  // sse subscription
   const mountedRef = useRef(false);
   useEffect(() => {
     if (mountedRef.current) return;
@@ -68,7 +68,7 @@ export const useNotificationsQuery = (params?: { last30Days?: boolean }) => {
     }
 
     return () => {
-      // Do not close eventSource to keep singleton across hook mounts
+      // stream stays shared
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -76,20 +76,20 @@ export const useNotificationsQuery = (params?: { last30Days?: boolean }) => {
   return query;
 };
 
-// Helper function to build SSE stream URL
+// stream endpoint url
 function buildStreamUrl(): string {
   const base = config.api.baseUrl || "/api";
   const normalizedBase = base.endsWith("/") ? base.slice(0, -1) : base;
   return `${normalizedBase}/notifications/stream`;
 }
 
-// Helper function to initialize SSE connection
+// open shared stream
 function initializeEventSource(queryClient: QueryClient) {
   if (eventSource) {
     return;
   }
 
-  // Don't connect if user is not authenticated
+  // guests skip stream
   const user = useAuthStore.getState().user;
   if (!user) {
     return;
@@ -110,25 +110,25 @@ function initializeEventSource(queryClient: QueryClient) {
       handleEventSourceError(queryClient);
     };
   } catch {
-    // Ignore connection errors
+    // ignore connection errors
   }
 }
 
-// Handle incoming notification from SSE
+// handle incoming notification
 function handleIncomingNotification(ev: MessageEvent, queryClient: QueryClient) {
   try {
     const incoming = JSON.parse(ev.data) as Notification;
     updateNotificationsList(incoming, queryClient);
-    // If notification is about model completion/failure, refresh the models list
+    // notification about model
     if (incoming.type === "success" || incoming.type === "error") {
       queryClient.invalidateQueries({ queryKey: ["models"] });
     }
   } catch {
-    // Ignore parse errors
+    // ignore parse errors
   }
 }
 
-// Update notifications list with new notification
+// update notifications list
 function updateNotificationsList(incoming: Notification, queryClient: QueryClient) {
   queryClient.setQueriesData<NotificationsResponse>(
     { queryKey: notificationKeys.lists() },
@@ -144,24 +144,24 @@ function updateNotificationsList(incoming: Notification, queryClient: QueryClien
   );
 }
 
-// Handle SSE error with reconnection
+// handle sse error
 function handleEventSourceError(queryClient: QueryClient) {
   try {
     eventSource?.close();
   } catch {
-    // Ignore close errors
+    // ignore close errors
   }
   eventSource = null;
 
-  // Only attempt to reconnect if user is still authenticated
+  // reconnect if signed
   const user = useAuthStore.getState().user;
   if (!user) {
     return;
   }
 
-  // Attempt to reconnect after 5 seconds
+  // retry after delay
   setTimeout(() => {
-    // Double-check user is still authenticated before reconnecting
+    // double-check user authenticated
     const currentUser = useAuthStore.getState().user;
     if (currentUser) {
       initializeEventSource(queryClient);
@@ -169,39 +169,26 @@ function handleEventSourceError(queryClient: QueryClient) {
   }, 5000);
 }
 
-// Mark single notification as read
-export const useMarkNotificationReadMutation = () => {
+// optimistic list update
+const useOptimisticListMutation = <V,>(
+  call: (vars: V) => Promise<unknown>,
+  update: (list: Notification[], vars: V) => Notification[],
+) => {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: async (id: number | string) => {
-      return notificationsService.markRead(id);
-    },
-    onMutate: async (id) => {
+    mutationFn: call,
+    onMutate: async (vars: V) => {
       await queryClient.cancelQueries({ queryKey: notificationKeys.lists() });
-
-      const previousData = queryClient.getQueriesData({
-        queryKey: notificationKeys.lists(),
-      });
-
-      queryClient.setQueriesData<NotificationsResponse>(
-        { queryKey: notificationKeys.lists() },
-        (old) => {
-          if (!old?.notifications) return old;
-          return {
-            ...old,
-            notifications: old.notifications.map((n) => (n.id === id ? { ...n, read: true } : n)),
-          };
-        }
+      const previousData = queryClient.getQueriesData({ queryKey: notificationKeys.lists() });
+      queryClient.setQueriesData<NotificationsResponse>({ queryKey: notificationKeys.lists() }, (old) =>
+        old?.notifications ? { ...old, notifications: update(old.notifications, vars) } : old,
       );
-
       return { previousData };
     },
-    onError: (_error, _id, context) => {
-      if (context?.previousData) {
-        for (const [queryKey, data] of context.previousData) {
-          queryClient.setQueryData(queryKey, data);
-        }
+    onError: (_error, _vars, context) => {
+      // roll back
+      for (const [queryKey, data] of context?.previousData ?? []) {
+        queryClient.setQueryData(queryKey, data);
       }
     },
     onSettled: () => {
@@ -210,84 +197,66 @@ export const useMarkNotificationReadMutation = () => {
   });
 };
 
-// Mark all notifications as read
-export const useMarkAllNotificationsReadMutation = () => {
-  const queryClient = useQueryClient();
+// mark one read
+export const useMarkNotificationReadMutation = () =>
+  useOptimisticListMutation(
+    (id: number | string) => notificationsService.markRead(id),
+    (list, id) => list.map((n) => (n.id === id ? { ...n, read: true } : n)),
+  );
 
-  return useMutation({
-    mutationFn: async () => {
-      return notificationsService.markAllRead();
-    },
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: notificationKeys.lists() });
+// mark all read
+export const useMarkAllNotificationsReadMutation = () =>
+  useOptimisticListMutation<void>(
+    () => notificationsService.markAllRead(),
+    (list) => list.map((n) => ({ ...n, read: true })),
+  );
 
-      const previousData = queryClient.getQueriesData({
-        queryKey: notificationKeys.lists(),
-      });
+// clear all
+export const useClearAllNotificationsMutation = () =>
+  useOptimisticListMutation<void>(
+    () => notificationsService.clearAll(),
+    () => [],
+  );
 
-      queryClient.setQueriesData<NotificationsResponse>(
-        { queryKey: notificationKeys.lists() },
-        (old) => {
-          if (!old?.notifications) return old;
-          return {
-            ...old,
-            notifications: old.notifications.map((n) => ({ ...n, read: true })),
-          };
-        }
-      );
+export type NotificationTab = "all" | "model" | "system";
 
-      return { previousData };
-    },
-    onError: (_error, _variables, context) => {
-      if (context?.previousData) {
-        for (const [queryKey, data] of context.previousData) {
-          queryClient.setQueryData(queryKey, data);
-        }
-      }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: notificationKeys.lists() });
-    },
-  });
-};
+// maintenance is system
+export const isSystemNotification = (n: Notification) => n.type === "maintenance" || Boolean(n.service);
 
-// Clear all notifications
-export const useClearAllNotificationsMutation = () => {
-  const queryClient = useQueryClient();
+/** tab filter actions */
+export function useNotificationTabs(notifications: Notification[]) {
+  const [tab, setTab] = useState<NotificationTab>("all");
+  const markOne = useMarkNotificationReadMutation();
+  const markAll = useMarkAllNotificationsReadMutation();
 
-  return useMutation({
-    mutationFn: async () => {
-      return notificationsService.clearAll();
-    },
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: notificationKeys.lists() });
+  const visible = useMemo(
+    () => (tab === "all" ? notifications : notifications.filter((n) => (tab === "system") === isSystemNotification(n))),
+    [notifications, tab],
+  );
+  const unread = useMemo(() => {
+    const open = notifications.filter((n) => !n.read);
+    const system = open.filter(isSystemNotification).length;
+    return { all: open.length, model: open.length - system, system };
+  }, [notifications]);
 
-      const previousData = queryClient.getQueriesData({
-        queryKey: notificationKeys.lists(),
-      });
+  // only this tab
+  const markVisibleRead = async () => {
+    try {
+      if (tab === "all") await markAll.mutateAsync();
+      else await Promise.all(visible.filter((n) => !n.read).map((n) => markOne.mutateAsync(n.id)));
+    } catch (error) {
+      if (import.meta.env.DEV) console.error("Failed to mark as read:", error);
+    }
+  };
 
-      queryClient.setQueriesData<NotificationsResponse>(
-        { queryKey: notificationKeys.lists() },
-        (old) => {
-          if (!old) return old;
-          return {
-            ...old,
-            notifications: [],
-          };
-        }
-      );
+  const markRead = async (id: number | string) => {
+    try {
+      await markOne.mutateAsync(id);
+    } catch (error) {
+      if (import.meta.env.DEV) console.error("Failed to mark as read:", error);
+    }
+  };
 
-      return { previousData };
-    },
-    onError: (_error, _variables, context) => {
-      if (context?.previousData) {
-        for (const [queryKey, data] of context.previousData) {
-          queryClient.setQueryData(queryKey, data);
-        }
-      }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: notificationKeys.lists() });
-    },
-  });
-};
+  // server clears everything
+  return { tab, setTab, visible, unread, markRead, markVisibleRead, canClear: tab === "all" };
+}
