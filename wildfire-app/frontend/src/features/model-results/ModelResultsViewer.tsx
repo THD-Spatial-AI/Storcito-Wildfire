@@ -12,6 +12,7 @@ import {
 import { useParams } from "react-router-dom";
 import { isAxiosError } from "axios";
 import { Loader2 } from "lucide-react";
+import { useTheme } from "next-themes";
 import { useTranslation } from "@/i18n";
 
 import { getModelResults } from "./services/resultsService";
@@ -25,7 +26,7 @@ import { modelService, Model, isActiveStatus } from "@/features/model-dashboard"
 import { CreateWorkspaceModal } from "@/components/workspace";
 
 import { scoreToRiskLevel, toPercentages, useRiskMetrics } from "./hooks/useRiskMetrics";
-import { useRiskLayers } from "./hooks/useRiskLayers";
+import { useRiskLayers, useRiskMapExtras } from "./hooks/useRiskLayers";
 import { useFrameWeather } from "./hooks/useFrameWeather";
 import { useDailyRiskDistribution } from "./hooks/useDailyRiskDistribution";
 import { useWorkspaceModelSelector } from "./hooks/useWorkspaceModelSelector";
@@ -49,7 +50,7 @@ import { RiskSummary } from "./components/RiskSummary";
 import { DailyRiskCard } from "./components/DailyRiskCard";
 import { ViewerSidebarRail } from "./components/ViewerSidebarRail";
 import { ViewerStatusBanners } from "./components/ViewerStatusBanners";
-import { RiskLegendPanel } from "./components/ViewerMapPanels";
+import { CellValueCard, RiskLegendPanel } from "./components/ViewerMapPanels";
 import { MapShortcutsPanel } from "@/components/map-controls/MapShortcutsPanel";
 import { RiskTimelinePanel } from "./components/RiskTimelinePanel";
 import { useSeenCompletedModelsStore } from "@/features/model-dashboard/store/seen-completed-models";
@@ -411,6 +412,9 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
   }, [modelDistribution]);
 
   const hasRiskLayers = Boolean(activeResult && attachedResultId === activeResult.id);
+  const { resolvedTheme } = useTheme();
+  // labels, cell info
+  const { cell, closeCell } = useRiskMapExtras({ map, wms: wms3D, enabled: hasRiskLayers, dark: resolvedTheme === "dark" });
 
   // 3d camera keys
   const terrainControls = useMemo<MapKeyControls | null>(
@@ -569,6 +573,8 @@ export const ModelResultsViewer: FC<ModelResultsViewerProps> = ({ modelId: propM
       />
 
 
+      {/* clicked cell value */}
+      {cell && <CellValueCard cell={cell} onClose={closeCell} />}
       <div className="absolute bottom-10 left-2 z-10 flex w-44 flex-col gap-2">
         {hasRiskLayers && (
           <RiskLegendPanel

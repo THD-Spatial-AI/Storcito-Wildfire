@@ -8,10 +8,13 @@ interface RiskStyleGroup {
 
 const ALL_LEVELS: readonly RiskLevelValue[] = [1, 2, 3, 4, 5];
 
+/** every class shown */
+export const ALL_LEVELS_STYLE = "fire_risk_classified";
+
 const SUFFIX_GROUPS: readonly RiskStyleGroup[] = [
   {
     id: "all",
-    style: "fire_risk_classified",
+    style: ALL_LEVELS_STYLE,
     values: ALL_LEVELS,
   },
   {

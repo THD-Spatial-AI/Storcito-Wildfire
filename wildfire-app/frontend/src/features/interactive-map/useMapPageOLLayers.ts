@@ -15,11 +15,10 @@ import {
   boundaryStyleFunction,
   boundaryLabelStyle,
 } from "@/features/interactive-map/utils/mapStyleUtils";
-import { buildWMSLayer } from "@/features/model-results/viewer-helpers";
+import { buildWMSLayer, createLabelsLayer } from "@/features/model-results/viewer-helpers";
 import type { LayerInfo } from "@/features/model-results/viewer-config";
+import { ALL_LEVELS_STYLE } from "@/features/model-results/risk-style-groups";
 
-// all risk classes
-const RISK_STYLE = "fire_risk_classified";
 
 const BOUNDARY_LAYER_NAME = "map-page-boundaries";
 const MODEL_LAYER_NAME = "map-page-user-models";
@@ -87,6 +86,8 @@ interface UseMapPageOLLayersOpts {
   availableBoundaryGeoJSON?: GeoJSON.FeatureCollection;
   userModelGeoJSON?: GeoJSON.FeatureCollection;
   riskLayer?: LayerInfo;
+  riskOpacity?: number;
+  dark?: boolean;
   onModelClick?: (modelId: number, status?: string) => void;
 }
 
@@ -95,17 +96,33 @@ export function useMapPageOLLayers({
   availableBoundaryGeoJSON,
   userModelGeoJSON,
   riskLayer,
+  riskOpacity = 1,
+  dark = false,
   onModelClick,
 }: UseMapPageOLLayersOpts) {
+  const riskRef = useRef<ReturnType<typeof buildWMSLayer> | null>(null);
+  const riskOpacityRef = useRef(riskOpacity);
   // model risk raster
   useEffect(() => {
     if (!map || !riskLayer) return;
-    const layer = buildWMSLayer(riskLayer, RISK_STYLE, 52);
+    const layer = buildWMSLayer(riskLayer, ALL_LEVELS_STYLE, 52);
+    layer.setOpacity(riskOpacityRef.current);
+    riskRef.current = layer;
+    // names above colours
+    const labels = createLabelsLayer(dark);
     map.addLayer(layer);
+    map.addLayer(labels);
     return () => {
+      riskRef.current = null;
       map.removeLayer(layer);
+      map.removeLayer(labels);
     };
-  }, [map, riskLayer]);
+  }, [map, riskLayer, dark]);
+
+  useEffect(() => {
+    riskOpacityRef.current = riskOpacity;
+    riskRef.current?.setOpacity(riskOpacity);
+  }, [riskOpacity]);
 
   const boundaryLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
   const modelLayerRef = useRef<VectorLayer<VectorSource> | null>(null);

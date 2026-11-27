@@ -1,11 +1,12 @@
 import { FC } from "react";
-import { Eye, EyeOff, Flame } from "lucide-react";
+import { Eye, EyeOff, Flame, X } from "lucide-react";
 import { useTranslation } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 import { PanelCard } from "@/components/map-controls/PanelCard";
 
 import type { RiskDistribution } from "../hooks/useRiskMetrics";
+import type { RiskCellInfo } from "../hooks/useRiskLayers";
 import { RISK_LEVELS, type RiskLevelValue, type VisibleRiskLevels } from "../viewer-config";
 import { riskGradient } from "@/lib/riskPalette";
 
@@ -131,3 +132,38 @@ export const RiskLegendPanel: FC<RiskLegendPanelProps> = ({
     </PanelCard>
   );
 };
+
+/** clicked cell class */
+export function CellValueCard({ cell, onClose }: { cell: RiskCellInfo; onClose: () => void }) {
+  const { t } = useTranslation();
+  const level = cell.value ? RISK_LEVELS.find((lvl) => lvl.value === cell.value) : undefined;
+  return (
+    <div
+      role="status"
+      className="pointer-events-auto absolute z-30 -translate-x-1/2 -translate-y-[calc(100%+10px)] rounded-lg border border-border bg-card/95 px-2.5 py-1.5 text-xs shadow-lg backdrop-blur-sm"
+      style={{ left: cell.pixel[0], top: cell.pixel[1] }}
+    >
+      <span className="flex items-center gap-2">
+        {level ? (
+          <>
+            <span aria-hidden className="size-2.5 rounded-full" style={{ backgroundColor: level.color }} />
+            <span className="font-semibold text-foreground">{t(`modelResults.legend.levels.${level.id}`, level.label)}</span>
+            <span className="text-muted-foreground">
+              {t("modelResults.cell.classOf", { value: level.value, defaultValue: "class {{value}} of 5" })}
+            </span>
+          </>
+        ) : (
+          <span className="text-muted-foreground">{t("modelResults.cell.none", "No risk value here")}</span>
+        )}
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label={t("common.close", "Close")}
+          className="-mr-1 rounded p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+        >
+          <X className="size-3" />
+        </button>
+      </span>
+    </div>
+  );
+}

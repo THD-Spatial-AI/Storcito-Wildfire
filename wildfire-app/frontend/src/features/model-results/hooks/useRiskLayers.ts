@@ -1,6 +1,7 @@
 import { getResultLayer } from "@/features/model-results/services/resultsService";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type OlMap from "ol/Map";
+import type MapBrowserEvent from "ol/MapBrowserEvent";
 import { useTranslation } from "@/i18n";
 
 import {
@@ -12,7 +13,13 @@ import {
   type RiskLayerSelection,
   type VisibleRiskLevels,
 } from "../viewer-config";
-import { buildWMSLayer, extractErrorMessage, fitMapToBounds } from "../viewer-helpers";
+import {
+  buildWMSLayer,
+  createLabelsLayer,
+  extractErrorMessage,
+  fetchRiskClass,
+  fitMapToBounds,
+} from "../viewer-helpers";
 import { selectRiskStyleGroups } from "../risk-style-groups";
 
 interface UseRiskLayersArgs {
@@ -423,3 +430,60 @@ export const useRiskLayers = ({
     isFrameLoaded,
   };
 };
+
+export interface RiskCellInfo {
+  pixel: number[];
+  value: number | null;
+}
+
+/** labels, cell info */
+export function useRiskMapExtras({
+  map,
+  wms,
+  enabled,
+  dark,
+}: {
+  map: OlMap | null;
+  wms: { wmsUrl: string; layerName: string } | null;
+  enabled: boolean;
+  dark: boolean;
+}) {
+  const [cell, setCell] = useState<RiskCellInfo | null>(null);
+  const wmsUrl = wms?.wmsUrl;
+  const layerName = wms?.layerName;
+
+  // names above colours
+  useEffect(() => {
+    if (!map || !enabled) return;
+    const labels = createLabelsLayer(dark);
+    map.addLayer(labels);
+    return () => {
+      map.removeLayer(labels);
+    };
+  }, [map, enabled, dark]);
+
+  // tap shows class
+  useEffect(() => {
+    if (!map || !enabled || !wmsUrl || !layerName) return;
+    let request = 0;
+    const onClick = (event: MapBrowserEvent) => {
+      const view = map.getView();
+      const resolution = view.getResolution();
+      if (resolution === undefined) return;
+      const id = ++request;
+      void fetchRiskClass(wmsUrl, layerName, event.coordinate, resolution, view.getProjection().getCode())
+        .then((value) => id === request && setCell({ pixel: event.pixel, value }))
+        .catch(() => id === request && setCell(null));
+    };
+    const hide = () => setCell(null);
+    map.on("singleclick", onClick);
+    map.on("movestart", hide);
+    return () => {
+      map.un("singleclick", onClick);
+      map.un("movestart", hide);
+      setCell(null);
+    };
+  }, [map, enabled, wmsUrl, layerName]);
+
+  return { cell, closeCell: () => setCell(null) };
+}

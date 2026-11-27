@@ -6,6 +6,8 @@ import { get as getProj, transformExtent } from "ol/proj";
 import proj4 from "proj4";
 import { register as registerProj4 } from "ol/proj/proj4";
 import { riskStyle } from "@/lib/riskPalette";
+import XYZ from "ol/source/XYZ";
+import { withCartoBasemapKey } from "@/utils/carto-basemap";
 
 import {
   EPSG_32629,
@@ -96,4 +98,42 @@ export function extractErrorMessage(err: unknown, fallback: string): string {
     if (data?.message) return data.message;
   }
   return fallback;
+}
+
+/** names above risk */
+export function createLabelsLayer(dark: boolean): TileLayer<XYZ> {
+  const style = dark ? "dark_only_labels" : "light_only_labels";
+  const layer = new TileLayer({
+    source: new XYZ({
+      url: withCartoBasemapKey(`https://{a-d}.basemaps.cartocdn.com/${style}/{z}/{x}/{y}.png`),
+      attributions: '© <a href="https://carto.com/attributions">CARTO</a>',
+      crossOrigin: "anonymous",
+    }),
+    className: "ol-layer risk-labels",
+  });
+  layer.setZIndex(900);
+  return layer;
+}
+
+/** class at point */
+export async function fetchRiskClass(
+  wmsUrl: string,
+  layerName: string,
+  coordinate: number[],
+  resolution: number,
+  projection: string
+): Promise<number | null> {
+  const source = new TileWMS({ url: wmsUrl, params: { LAYERS: layerName }, serverType: "geoserver" });
+  const url = source.getFeatureInfoUrl(coordinate, resolution, projection, {
+    INFO_FORMAT: "application/json",
+    QUERY_LAYERS: layerName,
+    FEATURE_COUNT: 1,
+  });
+  if (!url) return null;
+  // proxy allows any origin
+  const response = await fetch(url);
+  if (!response.ok) return null;
+  const data = (await response.json()) as { features?: { properties?: Record<string, unknown> }[] };
+  const value = Object.values(data.features?.[0]?.properties ?? {})[0];
+  return typeof value === "number" && value >= 1 && value <= 5 ? Math.round(value) : null;
 }

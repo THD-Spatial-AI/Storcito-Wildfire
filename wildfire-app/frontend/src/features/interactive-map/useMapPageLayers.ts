@@ -63,6 +63,7 @@ export function useMapPageLayers(userId: string | number | null | undefined): Ma
             status: model.status,
             region: model.region,
             country: model.country,
+            created_at: model.created_at,
             has_risk: Boolean(risk),
           },
           geometry: coords as GeoJSON.Geometry,
