@@ -1,26 +1,27 @@
 import { useEffect } from 'react';
 import type { Map as OlMap } from 'ol';
+import { motionMs } from "@/lib/motion";
 
-/** 3D camera controls */
+/** 3d camera controls */
 export interface MapKeyControls {
   zoomIn: () => void;
   zoomOut: () => void;
-  /** Fractional pan */
+  /** fractional pan */
   pan: (dx: number, dy: number) => void;
 }
 
 interface Options {
-  /** Called for the "new model" shortcut; omitted for signed-out visitors. */
+  /** new model key */
   onNewModel?: () => void;
-  /** Space: play/pause (results viewer). */
+  /** space play/pause */
   onTogglePlay?: () => void;
-  /** F: fullscreen. */
+  /** f fullscreen */
   onToggleFullscreen?: () => void;
-  /** T: 3D terrain. */
+  /** t 3d terrain */
   onToggle3D?: () => void;
-  /** L: layer visibility. */
+  /** l layer visibility */
   onToggleLayerVisible?: () => void;
-  /** Overrides zoom/pan */
+  /** overrides zoom/pan */
   controls?: MapKeyControls | null;
 }
 
@@ -34,13 +35,13 @@ function isTypingTarget(target: EventTarget | null): boolean {
   return ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName);
 }
 
-/** Space must not re-trigger a focused button. */
+/** space not re-trigger */
 function isActivatableTarget(target: EventTarget | null): boolean {
   const el = target as HTMLElement | null;
   return !!el && ['BUTTON', 'A'].includes(el.tagName);
 }
 
-/** Map keyboard shortcuts */
+/** map keyboard shortcuts */
 export function useMapKeyboardShortcuts(
   map: OlMap | null,
   {
@@ -64,7 +65,7 @@ export function useMapKeyboardShortcuts(
       const view = map?.getView();
       const zoom = view?.getZoom();
       if (!view || zoom === undefined) return;
-      view.animate({ zoom: zoom + steps, duration: 200 });
+      view.animate({ zoom: zoom + steps, duration: motionMs(200) });
     };
 
     const panBy = (dx: number, dy: number) => {
@@ -79,7 +80,7 @@ export function useMapKeyboardShortcuts(
       if (!view || !center || resolution === undefined || !size) return;
       view.animate({
         center: [center[0] + dx * size[0] * resolution, center[1] + dy * size[1] * resolution],
-        duration: 200,
+        duration: motionMs(200),
       });
     };
 

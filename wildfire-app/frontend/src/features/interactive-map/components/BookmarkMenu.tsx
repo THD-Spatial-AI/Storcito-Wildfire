@@ -39,7 +39,8 @@ export const BookmarkMenu: React.FC<BookmarkMenuProps> = ({ getCurrentView, flyT
         <Button
           variant="secondary"
           size="icon"
-          className="h-8 w-8 shadow-md"
+          data-compact
+          className="size-8 rounded-full border border-border shadow-sm"
           aria-label={t("map.bookmarks.title", "Map bookmarks")}
         >
           <Bookmark className="h-4 w-4" />
@@ -53,6 +54,8 @@ export const BookmarkMenu: React.FC<BookmarkMenuProps> = ({ getCurrentView, flyT
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               onKeyDown={(e) => {
+                // menu typeahead off
+                e.stopPropagation();
                 if (e.key === "Enter") handleSave();
                 if (e.key === "Escape") { setIsNaming(false); setNewName(""); }
               }}
@@ -65,7 +68,13 @@ export const BookmarkMenu: React.FC<BookmarkMenuProps> = ({ getCurrentView, flyT
             </Button>
           </div>
         ) : (
-          <DropdownMenuItem onClick={() => setIsNaming(true)}>
+          // keep menu open
+          <DropdownMenuItem
+            onSelect={(e) => {
+              e.preventDefault();
+              setIsNaming(true);
+            }}
+          >
             <Plus className="mr-2 h-4 w-4" />
             {t("map.bookmarks.saveCurrentView", "Save current view")}
           </DropdownMenuItem>
@@ -86,7 +95,7 @@ export const BookmarkMenu: React.FC<BookmarkMenuProps> = ({ getCurrentView, flyT
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); removeBookmark(bm.id); }}
-              className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-destructive/10 transition-opacity"
+              className="opacity-0 group-hover:opacity-100 [@media(pointer:coarse)]:opacity-100 p-0.5 rounded hover:bg-destructive/10 transition-opacity"
               aria-label={t("map.bookmarks.delete", { name: bm.name, defaultValue: "Delete {{name}}" })}
             >
               <Trash2 className="h-3 w-3 text-destructive" />

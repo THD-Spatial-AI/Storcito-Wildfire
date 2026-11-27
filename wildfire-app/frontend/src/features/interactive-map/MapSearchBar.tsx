@@ -7,6 +7,7 @@ import { Search, X } from "lucide-react";
 import { useTranslation } from "@/i18n";
 import { loadSearchBoundaryLayer, removeSearchBoundaryLayer, fitToFeatures } from "@/features/interactive-map/utils/searchBoundaryLayer";
 import { parseCoordinateQuery } from "@/features/interactive-map/utils/coordinateParser";
+import { motionMs } from "@/lib/motion";
 
 const MapSearchBar: React.FC<{ className?: string }> = ({ className }) => {
   const { t } = useTranslation();
@@ -22,15 +23,15 @@ const MapSearchBar: React.FC<{ className?: string }> = ({ className }) => {
   const selectResult = (r: GeocodingResult) => {
     if (!map) return;
 
-    // If the result has a boundary polygon, show it and fit to it
+    // result has boundary
     if (r.geojson && r.geojson.type !== 'Point') {
       const layer = loadSearchBoundaryLayer(map, r.geojson, r.name);
       const features = layer.getSource()?.getFeatures();
       if (features && features.length > 0) {
-        fitToFeatures(map, features, { padding: 60, duration: 500, maxZoom: 14 });
+        fitToFeatures(map, features, { padding: 60, duration: motionMs(500), maxZoom: 14 });
       }
     } else {
-      // Point result marker
+      // point result marker
       const pointGeojson: GeoJSON.Point =
         r.geojson?.type === 'Point'
           ? r.geojson
@@ -40,11 +41,11 @@ const MapSearchBar: React.FC<{ className?: string }> = ({ className }) => {
       map.getView().animate({
         center: position,
         zoom: 12,
-        duration: 500,
+        duration: motionMs(500),
       });
     }
 
-    // Clear search UI and collapse
+    // clear search ui
     setSearch("");
     setResults([]);
     setIsExpanded(false);
@@ -61,7 +62,7 @@ const MapSearchBar: React.FC<{ className?: string }> = ({ className }) => {
     }
   }, [map]);
 
-  // Handle click outside to close search bar
+  // handle click outside
   useEffect(() => {
     if (!isExpanded) return;
 
@@ -71,7 +72,7 @@ const MapSearchBar: React.FC<{ className?: string }> = ({ className }) => {
       }
     };
 
-    // Add small delay to prevent immediate closure when opening
+    // add small delay
     const timer = setTimeout(() => {
       document.addEventListener("mousedown", handleClickOutside);
     }, 100);
@@ -82,7 +83,7 @@ const MapSearchBar: React.FC<{ className?: string }> = ({ className }) => {
     };
   }, [handleCollapse, isExpanded]);
 
-  // Debounced search for geocode
+  // debounced search geocode
   useEffect(() => {
     if (!search.trim()) {
       setResults([]);
@@ -137,7 +138,7 @@ const MapSearchBar: React.FC<{ className?: string }> = ({ className }) => {
       data-tour="municipality-search"
     >
       {isExpanded ? (
-        // Expanded - Search Bar
+        // expanded search bar
         <div className="bg-popover text-popover-foreground rounded-lg shadow-lg p-2 w-80 max-w-[calc(100vw-2rem)] border border-border">
           <div className="flex items-center gap-2 mb-2">
             <Search className="w-4 h-4 text-muted-foreground flex-shrink-0" />
@@ -186,10 +187,11 @@ const MapSearchBar: React.FC<{ className?: string }> = ({ className }) => {
           )}
         </div>
       ) : (
-        // Collapsed - Compact Search Icon Button
+        // collapsed compact search
         <Tooltip>
           <TooltipTrigger asChild>
             <button
+              data-compact
               onClick={handleExpand}
               className="flex items-center justify-center size-8 rounded-full bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 transition-colors border border-border"
             >

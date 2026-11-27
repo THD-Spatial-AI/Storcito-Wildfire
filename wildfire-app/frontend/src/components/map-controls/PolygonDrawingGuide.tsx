@@ -7,17 +7,32 @@ const TEXT_MUTED_FOREGROUND = "text-muted-foreground";
 const STEP_MARKER_CLASS = "flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300";
 
 interface PolygonDrawingGuideProps {
-	/** Whether polygon drawing is available (no polygon exists yet or multiple allowed) */
+	/** polygon drawing available */
 	canDraw: boolean;
-	/** Whether user is currently drawing */
+	/** user drawing */
 	isDrawing: boolean;
-	/** Number of existing polygons */
+	/** number existing polygons */
 	polygonCount: number;
-	/** Number of points in current drawing */
+	/** points so far */
 	currentPointCount?: number;
-	/** Whether editing is enabled for completed polygons */
+	/** edit finished shapes */
 	enableEditing?: boolean;
 }
+
+/** shared guide close */
+const DismissButton = ({ onClick, className = "" }: { onClick: () => void; className?: string }) => {
+	const { t } = useTranslation();
+	return (
+		<button
+			type="button"
+			onClick={onClick}
+			className={`absolute top-2 right-2 p-1 rounded-full hover:bg-muted/80 transition-colors text-muted-foreground hover:text-foreground ${className}`}
+			aria-label={t("polygon.dismissGuide", "Dismiss guide")}
+		>
+			<X className="w-3.5 h-3.5" />
+		</button>
+	);
+};
 
 export const PolygonDrawingGuide: FC<PolygonDrawingGuideProps> = ({
 	canDraw,
@@ -33,10 +48,10 @@ export const PolygonDrawingGuide: FC<PolygonDrawingGuideProps> = ({
 	const [isEditGuideDismissed, setIsEditGuideDismissed] = useState(false);
 	const [isEditExpanded, setIsEditExpanded] = useState(true);
 
-	// Determine current step based on drawing state
+	// determine current step
 	const currentStep = !isDrawing ? 1 : currentPointCount >= 3 ? 3 : currentPointCount >= 1 ? 2 : 1;
 
-	// Show draw guide until polygon is finished or dismissed
+	// show draw guide
 	useEffect(() => {
 		if (polygonCount > 0 || isDrawGuideDismissed) {
 			setIsDrawGuideVisible(false);
@@ -45,13 +60,13 @@ export const PolygonDrawingGuide: FC<PolygonDrawingGuideProps> = ({
 		}
 	}, [canDraw, polygonCount, isDrawGuideDismissed]);
 
-	// Show edit guide when polygon exists
+	// show edit guide
 	useEffect(() => {
 		if (polygonCount > 0 && enableEditing && !isEditGuideDismissed) {
 			setIsEditGuideVisible(true);
 		} else if (polygonCount === 0) {
 			setIsEditGuideVisible(false);
-			// Reset dismissed state when polygon is cleared so it shows again for new polygons
+			// reset dismissed state
 			setIsEditGuideDismissed(false);
 		}
 	}, [polygonCount, enableEditing, isEditGuideDismissed]);
@@ -66,7 +81,7 @@ export const PolygonDrawingGuide: FC<PolygonDrawingGuideProps> = ({
 		setIsEditGuideVisible(false);
 	};
 
-	// Show nothing if both guides are hidden
+	// both guides hidden
 	if (!isDrawGuideVisible && !isEditGuideVisible) return null;
 
 	const drawSteps = [
@@ -90,21 +105,21 @@ export const PolygonDrawingGuide: FC<PolygonDrawingGuideProps> = ({
 
 	const getStepStyle = (step: number) => {
 		if (step < currentStep) {
-			// Completed step
+			// completed step
 			return {
 				circle: "bg-foreground border-foreground",
 				number: "text-background",
 				showCheck: true,
 			};
 		} else if (step === currentStep) {
-			// Current step
+			// current step
 			return {
 				circle: "bg-foreground/10 border-foreground animate-pulse",
 				number: TEXT_FOREGROUND,
 				showCheck: false,
 			};
 		} else {
-			// Future step
+			// future step
 			return {
 				circle: "bg-muted border-muted-foreground/30",
 				number: TEXT_MUTED_FOREGROUND,
@@ -113,30 +128,24 @@ export const PolygonDrawingGuide: FC<PolygonDrawingGuideProps> = ({
 		}
 	};
 
-	// Edit guide (shown when polygon exists)
+	// edit guide
 	if (isEditGuideVisible) {
 		return (
 			<div
 				className="absolute z-40 animate-in slide-in-from-right-2 fade-in duration-300 flex flex-col"
 				style={{
 					top: "14rem",
-					maxHeight: "calc(100vh - 18rem)",
+					maxHeight: "calc(100dvh - 18rem)",
 					right: "calc(1rem + var(--sidebar-offset, 0rem))"
 				}}
 			>
 				<div className="relative w-64 max-h-full flex flex-col bg-card/98 backdrop-blur-md border border-border rounded-lg shadow-xl overflow-hidden">
-					{/* Close button */}
-					<button
-						onClick={handleDismissEditGuide}
-						className="absolute top-2 right-2 p-1 rounded-full hover:bg-muted/80 transition-colors text-muted-foreground hover:text-foreground z-10 bg-card/80"
-						aria-label="Dismiss guide"
-					>
-						<X className="w-3.5 h-3.5" />
-					</button>
+					{/* close button */}
+					<DismissButton onClick={handleDismissEditGuide} className="z-10 bg-card/80" />
 
-					{/* Scrollable Content */}
+					{/* scrollable content */}
 					<div className="overflow-y-auto flex-1 p-4">
-						{/* Edit Polygon Section - Collapsible */}
+						{/* edit polygon section */}
 						<button
 							onClick={() => setIsEditExpanded(!isEditExpanded)}
 							className="w-full flex items-center justify-between mb-2"
@@ -150,7 +159,7 @@ export const PolygonDrawingGuide: FC<PolygonDrawingGuideProps> = ({
 
 						{isEditExpanded && (
 							<div className="space-y-2 mb-3">
-								{/* Move vertices */}
+								{/* move vertices */}
 								<div className="flex items-center gap-2">
 									<div className="flex-shrink-0 w-6 h-6 rounded bg-muted flex items-center justify-center">
 										<Move className="w-3.5 h-3.5 text-foreground" />
@@ -160,7 +169,7 @@ export const PolygonDrawingGuide: FC<PolygonDrawingGuideProps> = ({
 									</div>
 								</div>
 
-								{/* Add vertex */}
+								{/* add vertex */}
 								<div className="flex items-center gap-2">
 									<div className="flex-shrink-0 w-6 h-6 rounded bg-muted flex items-center justify-center">
 										<Plus className="w-3.5 h-3.5 text-foreground" />
@@ -170,7 +179,7 @@ export const PolygonDrawingGuide: FC<PolygonDrawingGuideProps> = ({
 									</div>
 								</div>
 
-								{/* Remove vertex */}
+								{/* remove vertex */}
 								<div className="flex items-center gap-2">
 									<div className="flex-shrink-0 w-6 h-6 rounded bg-muted flex items-center justify-center">
 										<Trash2 className="w-3.5 h-3.5 text-foreground" />
@@ -184,7 +193,7 @@ export const PolygonDrawingGuide: FC<PolygonDrawingGuideProps> = ({
 									</div>
 								</div>
 
-								{/* Escape hint */}
+								{/* escape hint */}
 								<div className="flex items-center justify-center gap-2 text-xs text-muted-foreground pt-1">
 									<kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-[10px] font-mono">Esc</kbd>
 									<span>{t('polygon.escToClear', 'to clear polygon')}</span>
@@ -199,7 +208,7 @@ export const PolygonDrawingGuide: FC<PolygonDrawingGuideProps> = ({
 		);
 	}
 
-	// Draw guide (shown when no polygon exists)
+	// draw guide
 	if (!isDrawGuideVisible) return null;
 
 	return (
@@ -211,16 +220,10 @@ export const PolygonDrawingGuide: FC<PolygonDrawingGuideProps> = ({
 			}}
 		>
 			<div className="relative w-64 bg-card/98 backdrop-blur-md border border-border rounded-lg shadow-xl overflow-hidden">
-				{/* Close button */}
-				<button
-					onClick={handleDismissDrawGuide}
-					className="absolute top-2 right-2 p-1 rounded-full hover:bg-muted/80 transition-colors text-muted-foreground hover:text-foreground"
-					aria-label="Dismiss guide"
-				>
-					<X className="w-3.5 h-3.5" />
-				</button>
+				{/* close button */}
+				<DismissButton onClick={handleDismissDrawGuide} />
 
-				{/* Content */}
+				{/* content */}
 				<div className="p-4 pt-4">
 					<h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
 						<MousePointer2 className="w-4 h-4 text-primary" />
@@ -257,7 +260,7 @@ export const PolygonDrawingGuide: FC<PolygonDrawingGuideProps> = ({
 						})}
 					</div>
 
-					{/* Animated polygon creation hint */}
+					{/* animated polygon creation */}
 					<div className="mt-4 p-3 bg-muted/50 rounded-md border border-border/50">
 						<div className="flex flex-col items-center gap-2">
 							<svg width="120" height="80" viewBox="0 0 120 80" className="text-foreground" role="img" aria-label="Animated polygon drawing guide">
@@ -321,7 +324,7 @@ export const PolygonDrawingGuide: FC<PolygonDrawingGuideProps> = ({
 						</div>
 					</div>
 
-					{/* Escape hint - show when drawing */}
+					{/* escape while drawing */}
 					{isDrawing && (
 						<div className="mt-3 flex items-center justify-center gap-2 text-[10px] text-muted-foreground">
 							<kbd className="px-1.5 py-0.5 bg-muted border border-border rounded text-[9px] font-mono">Esc</kbd>

@@ -29,6 +29,7 @@ export const MapControls: React.FC<MapControlsProps> = ({ onZoomIn, onZoomOut, o
         <Tooltip>
           <TooltipTrigger asChild>
             <button
+              data-compact
               className={buttonClass}
               onClick={onZoomIn}
             >
@@ -43,6 +44,7 @@ export const MapControls: React.FC<MapControlsProps> = ({ onZoomIn, onZoomOut, o
         <Tooltip>
           <TooltipTrigger asChild>
             <button
+              data-compact
               className={buttonClass}
               onClick={onZoomOut}
             >
@@ -57,6 +59,7 @@ export const MapControls: React.FC<MapControlsProps> = ({ onZoomIn, onZoomOut, o
         <Tooltip>
           <TooltipTrigger asChild>
             <button
+              data-compact
               className={buttonClass}
               onClick={onCenterMap}
             >
