@@ -1,6 +1,6 @@
-/** Coordinate query parsing. */
+/** coordinate query parsing */
 
-export interface ParsedCoordinate {
+interface ParsedCoordinate {
   latitude: number;
   longitude: number;
 }
@@ -43,14 +43,14 @@ const parsePair = (query: string): ParsedCoordinate | null => {
   if (h1 === "E" || h1 === "W" || h2 === "N" || h2 === "S") {
     return { latitude: second, longitude: first };
   }
-  // Swap implausible latitudes
+  // swap implausible latitudes
   if (Math.abs(first) > 90 && Math.abs(second) <= 90) {
     return { latitude: second, longitude: first };
   }
   return { latitude: first, longitude: second };
 };
 
-/** Parse query coordinates. */
+/** parse query coordinates */
 export const parseCoordinateQuery = (query: string): ParsedCoordinate | null => {
   const trimmed = query.trim();
   if (!trimmed) return null;

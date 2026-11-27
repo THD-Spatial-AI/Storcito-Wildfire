@@ -15,17 +15,13 @@ export interface AdministrativeRegionResult {
   displayName: string;
   country: string;
   countryCode?: string;
-  source: "nominatim";
+  source: "nominatim" | "ine";
   geojson: GeoJSON.Polygon | GeoJSON.MultiPolygon;
 }
 
-/** Same-origin client for the backend's validated Nominatim proxy. */
+/** nominatim proxy client */
 class GeocodingService {
-  /**
-   * Search for locations using Nominatim geocoding
-   * @param query - Search query string
-   * @returns Promise with array of geocoding results
-   */
+  /** search places */
   async search(query: string): Promise<GeocodingResult[]> {
     if (!query.trim()) return [];
 
@@ -79,12 +75,7 @@ class GeocodingService {
     }
   }
 
-  /**
-   * Reverse geocode: get location name from coordinates
-   * @param latitude - Latitude coordinate
-   * @param longitude - Longitude coordinate
-   * @returns Promise with location name
-   */
+  /** place name lookup */
   async reverse(latitude: number, longitude: number): Promise<string | null> {
     try {
       const response = await axios.get<{
@@ -120,12 +111,7 @@ class GeocodingService {
     return data;
   }
 
-  /**
-   * Reverse geocode: get region and country from coordinates
-   * @param latitude - Latitude coordinate
-   * @param longitude - Longitude coordinate
-   * @returns Promise with region (formatted as "City, State, Country") and country info
-   */
+  /** region country lookup */
   async reverseRegion(
     latitude: number,
     longitude: number
@@ -149,22 +135,22 @@ class GeocodingService {
       });
       const address = response.data?.data?.address || {};
 
-      // Build a detailed location string: "City, State, Country"
+      // build detailed location
       const parts: string[] = [];
 
-      // Add city/town/village
+      // add city/town/village
       const city = address.city || address.town || address.village || address.municipality || "";
       if (city) parts.push(city);
 
-      // Add state/region (if different from city)
+      // add state/region
       const state = address.state || address.county || "";
       if (state && state !== city) parts.push(state);
 
-      // Add country
+      // add country
       const country = address.country || "";
       if (country) parts.push(country);
 
-      // Join with comma and space
+      // join comma space
       const region = parts.join(", ");
 
       return { region, country };

@@ -1,6 +1,4 @@
-/**
- * Map styling utilities for boundary features (generic).
- */
+/** map styling utilities */
 
 import { Style, Fill, Stroke, Text, Circle as CircleStyle } from 'ol/style';
 import type { Feature } from 'ol';
@@ -11,10 +9,10 @@ import { getCenter } from 'ol/extent';
 export function boundaryStyleFunction(_feature: Feature<Geometry>, resolution?: number): Style[] {
     const res = resolution || 1;
 
-    // Zoomed out (seeing large area) — clean solid line, no dashes
+    // zoomed out clean
     if (res > 20) {
         return [
-            // Soft outer glow
+            // soft outer glow
             new Style({
                 stroke: new Stroke({
                     color: 'rgba(99, 102, 241, 0.10)',
@@ -23,7 +21,7 @@ export function boundaryStyleFunction(_feature: Feature<Geometry>, resolution?: 
                     lineJoin: 'round'
                 })
             }),
-            // Solid line
+            // solid line
             new Style({
                 fill: new Fill({
                     color: 'rgba(99, 102, 241, 0.04)'
@@ -38,10 +36,10 @@ export function boundaryStyleFunction(_feature: Feature<Geometry>, resolution?: 
         ];
     }
 
-    // Medium zoom — solid line with stronger presence
+    // medium zoom solid
     if (res > 5) {
         return [
-            // Outer glow
+            // outer glow
             new Style({
                 stroke: new Stroke({
                     color: 'rgba(99, 102, 241, 0.12)',
@@ -50,7 +48,7 @@ export function boundaryStyleFunction(_feature: Feature<Geometry>, resolution?: 
                     lineJoin: 'round'
                 })
             }),
-            // Fill + main line
+            // fill main line
             new Style({
                 fill: new Fill({
                     color: 'rgba(99, 102, 241, 0.05)'
@@ -63,7 +61,7 @@ export function boundaryStyleFunction(_feature: Feature<Geometry>, resolution?: 
                     lineJoin: 'round'
                 })
             }),
-            // White inner accent
+            // white inner accent
             new Style({
                 stroke: new Stroke({
                     color: 'rgba(255, 255, 255, 0.5)',
@@ -76,9 +74,9 @@ export function boundaryStyleFunction(_feature: Feature<Geometry>, resolution?: 
         ];
     }
 
-    // Zoomed in — full detail with depth
+    // zoomed full detail
     return [
-        // Outer glow
+        // outer glow
         new Style({
             stroke: new Stroke({
                 color: 'rgba(99, 102, 241, 0.10)',
@@ -87,7 +85,7 @@ export function boundaryStyleFunction(_feature: Feature<Geometry>, resolution?: 
                 lineJoin: 'round'
             })
         }),
-        // Shadow
+        // shadow
         new Style({
             stroke: new Stroke({
                 color: 'rgba(55, 48, 163, 0.15)',
@@ -96,7 +94,7 @@ export function boundaryStyleFunction(_feature: Feature<Geometry>, resolution?: 
                 lineJoin: 'round'
             })
         }),
-        // Main boundary line
+        // main boundary line
         new Style({
             fill: new Fill({
                 color: 'rgba(99, 102, 241, 0.06)'
@@ -109,7 +107,7 @@ export function boundaryStyleFunction(_feature: Feature<Geometry>, resolution?: 
                 lineJoin: 'round'
             })
         }),
-        // White accent line for contrast
+        // white accent line
         new Style({
             stroke: new Stroke({
                 color: 'rgba(255, 255, 255, 0.55)',
@@ -122,10 +120,13 @@ export function boundaryStyleFunction(_feature: Feature<Geometry>, resolution?: 
     ];
 }
 
-/**
- * Style for search result boundary — uses a bold rose/magenta color
- * to clearly stand out from default (indigo), selected (amber), and the green map background.
- */
+/** style search result */
+// round line style
+const line = (color: string, width: number, dash?: { lineDash: number[]; lineDashOffset?: number }) =>
+    new Style({ stroke: new Stroke({ color, width, lineCap: 'round', lineJoin: 'round', ...dash }) });
+const DASH = { lineDash: [16, 8] };
+const DASH_OFFSET = { lineDash: [16, 8], lineDashOffset: 4 };
+
 export function searchBoundaryStyleFunction(feature: Feature<Geometry>, resolution?: number): Style[] {
     const res = resolution || 1;
     const geometryType = feature.getGeometry()?.getType();
@@ -149,103 +150,31 @@ export function searchBoundaryStyleFunction(feature: Feature<Geometry>, resoluti
     }
 
     if (res > 20) {
-        return [
-            new Style({
-                stroke: new Stroke({
-                    color: 'rgba(190, 24, 93, 0.20)',
-                    width: 8,
-                    lineCap: 'round',
-                    lineJoin: 'round'
-                })
-            }),
-            new Style({
-                stroke: new Stroke({
-                    color: 'rgba(190, 24, 93, 0.85)',
-                    width: 3,
-                    lineCap: 'round',
-                    lineJoin: 'round'
-                })
-            })
-        ];
+        return [line('rgba(190, 24, 93, 0.20)', 8), line('rgba(190, 24, 93, 0.85)', 3)];
     }
 
     if (res > 5) {
         return [
-            new Style({
-                stroke: new Stroke({
-                    color: 'rgba(190, 24, 93, 0.22)',
-                    width: 10,
-                    lineCap: 'round',
-                    lineJoin: 'round'
-                })
-            }),
-            new Style({
-                stroke: new Stroke({
-                    color: 'rgba(190, 24, 93, 0.88)',
-                    width: 3,
-                    lineDash: [16, 8],
-                    lineCap: 'round',
-                    lineJoin: 'round'
-                })
-            }),
-            new Style({
-                stroke: new Stroke({
-                    color: 'rgba(255, 255, 255, 0.6)',
-                    width: 1,
-                    lineDash: [16, 8],
-                    lineDashOffset: 4,
-                    lineCap: 'round'
-                })
-            })
+            line('rgba(190, 24, 93, 0.22)', 10),
+            line('rgba(190, 24, 93, 0.88)', 3, DASH),
+            line('rgba(255, 255, 255, 0.6)', 1, DASH_OFFSET),
         ];
     }
 
     return [
-        new Style({
-            stroke: new Stroke({
-                color: 'rgba(190, 24, 93, 0.20)',
-                width: 12,
-                lineCap: 'round',
-                lineJoin: 'round'
-            })
-        }),
-        new Style({
-            stroke: new Stroke({
-                color: 'rgba(131, 24, 67, 0.25)',
-                width: 7,
-                lineCap: 'round',
-                lineJoin: 'round'
-            })
-        }),
-        new Style({
-            stroke: new Stroke({
-                color: 'rgba(190, 24, 93, 0.92)',
-                width: 3,
-                lineDash: [16, 8],
-                lineCap: 'round',
-                lineJoin: 'round'
-            })
-        }),
-        new Style({
-            stroke: new Stroke({
-                color: 'rgba(255, 255, 255, 0.6)',
-                width: 1,
-                lineDash: [16, 8],
-                lineDashOffset: 4,
-                lineCap: 'round'
-            })
-        })
+        line('rgba(190, 24, 93, 0.20)', 12),
+        line('rgba(131, 24, 67, 0.25)', 7),
+        line('rgba(190, 24, 93, 0.92)', 3, DASH),
+        line('rgba(255, 255, 255, 0.6)', 1, DASH_OFFSET),
     ];
 }
 
-/**
- * Only shown when zoomed in enough to avoid clutter
- */
+/** shown zoomed enough */
 export function boundaryLabelStyle(name: string, geometry: Geometry, resolution?: number): Style {
     const center = getCenter(geometry.getExtent());
     const res = resolution || 1;
 
-    // Hide label when zoomed out — the boundary line is enough
+    // hide label zoomed
     if (res > 20) {
         return new Style({});
     }
