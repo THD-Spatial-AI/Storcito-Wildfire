@@ -5,8 +5,11 @@ import "@/styles/global.css";
 
 import { initI18n } from "@/i18n";
 import { FeedbackOverlay } from "@/feedback";
+import { installPenClickFix } from "@/utils/penClick";
 
 initI18n({ storageKey: "wildfire-app_language" });
+// apple pencil taps
+installPenClickFix();
 
 const RELOAD_FLAG = "wildfire-app_chunk-reload";
 const RELOAD_COOLDOWN_MS = 60_000;

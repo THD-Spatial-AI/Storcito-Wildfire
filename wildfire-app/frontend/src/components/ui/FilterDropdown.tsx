@@ -34,13 +34,15 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
 	disabled = false,
 }) => (
 	<Select
-		value={toSelectValue(value)}
+		// placeholder when unset
+		value={value === "" && !options.some((o) => o.value === "") ? "" : toSelectValue(value)}
 		onValueChange={(v) => onChange(fromSelectValue(v))}
 		disabled={disabled}
 	>
 		<SelectTrigger className={cn('h-10 min-w-[140px] w-auto gap-2 bg-card shadow-sm', className)}>
+			{/* beats trigger line-clamp */}
 			{icon && (
-				<span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-muted">
+				<span className="!flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-muted">
 					{icon}
 				</span>
 			)}

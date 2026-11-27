@@ -444,7 +444,7 @@ function renderCheckboxField(ctx: RenderContext) {
   
   return (
     <div className="space-y-1.5" key={field.key}>
-      <div className="flex items-center gap-3">
+      <label className="flex w-fit cursor-pointer items-center gap-3">
         <div className="relative flex items-center">
           <input
             type="checkbox"
@@ -457,11 +457,11 @@ function renderCheckboxField(ctx: RenderContext) {
             required={field.required}
           />
         </div>
-        <label className="text-sm font-medium text-foreground cursor-pointer select-none">
+        <span className="text-sm font-medium text-foreground select-none">
           {field.label}
           {field.required && <span className="text-destructive ml-0.5">*</span>}
-        </label>
-      </div>
+        </span>
+      </label>
       {field.description && <p className="text-xs text-muted-foreground ml-8">{field.description}</p>}
       <div className="min-h-[1.125rem] ml-8">
         {fieldError && <p className="text-xs text-destructive">{fieldError}</p>}

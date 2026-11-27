@@ -10,7 +10,7 @@ function Button({
 	variant,
 	size,
 	asChild = false,
-	ref: _ref,
+	ref,
 	...props
 }: React.ComponentProps<"button"> &
 	ButtonVariantsProps & {
@@ -18,7 +18,8 @@ function Button({
 	}) {
 	const Comp = asChild ? Slot : "button";
 
-	return <Comp data-slot="button" className={cn(buttonVariants({ variant, size, className }))} {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)} />;
+	// radix anchors need ref
+	return <Comp ref={ref} data-slot="button" className={cn(buttonVariants({ variant, size, className }))} {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)} />;
 }
 
 export { Button };
